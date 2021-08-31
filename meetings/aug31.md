@@ -1,5 +1,10 @@
 - brainstorming ideas
-    -
+    - endurance workout tracking, with performance analysis. Let’s you record the route of your run / cycle / drive, and you can check metrics like speed, acceleration, elevation change, etc
+    - Nextdoor - local neighborhood-based information sharing. Think of reddit, except you have to verify that you live in a district. People can post information about yard sales, organize meetups, advertise yard sales, report crime, etc. Interesting aspect will be that we have to design the app so that it can dynamically adjust the radius of coverage for what posts to show you (what’s relevant to your neighborhood).
+    - Blind - Anonymous tech / engineering / consulting information sharing
+    - sports pick up game finder - helps sport enthusiasts connect with each other and open events for pick up games and others can join/follow the game. Video streaming of the game and people can comment - live chat / reactions. Possibly after the game is finished people who joined can upload pictures. (picture upload feature)
+    - ANU students messanger - offer students
+    - SNS similar to instagram
 - functional specifications
     - basic
         - Users must be able to login (not necessarily sign up). (up to 3 marks)
