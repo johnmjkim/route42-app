@@ -84,6 +84,7 @@
 - suggestion features
     - do we need permission for route tracking feature?
     - "live" route tracking
+    - roadtrip tracking - use live route tracking to share location and for meeting up / merging
 
 - ToDo after meeting
     - Create/clone group repo: https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project
