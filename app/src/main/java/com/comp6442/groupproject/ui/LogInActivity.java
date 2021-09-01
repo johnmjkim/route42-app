@@ -26,22 +26,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import com.comp6442.groupproject.R;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthSettings;
-import com.google.firebase.auth.FirebaseUser;
 
 public class LogInActivity extends Activity implements View.OnClickListener {
 
   private static final String TAG = "EmailPassword";
   private FirebaseAuth mAuth;
-  EditText ed1,ed2;
+  EditText ed1, ed2;
   Button b1;
 
   @Override
@@ -55,24 +50,21 @@ public class LogInActivity extends Activity implements View.OnClickListener {
 
     setContentView(R.layout.activity_login);
 
-    ed1 = (EditText)findViewById(R.id.username);
-    ed2 = (EditText)findViewById(R.id.password);
-    b1 = (Button)findViewById(R.id.login);
+    ed1 = (EditText) findViewById(R.id.username);
+    ed2 = (EditText) findViewById(R.id.password);
+    b1 = (Button) findViewById(R.id.login);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);
 
     // for testing
     mAuth.createUserWithEmailAndPassword("foo@bar.com", "password")
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                  if (task.isSuccessful()) {
-                    Log.d(TAG, "Created test user.");
-                  } else {
-                    Log.d(TAG, "Test user already exists.");
-                  }
-                }
-    });;
+            .addOnCompleteListener(this, task -> {
+              if (task.isSuccessful()) {
+                Log.d(TAG, "Created test user.");
+              } else {
+                Log.d(TAG, "Test user already exists.");
+              }
+            });
   }
 
   @Override
@@ -81,7 +73,7 @@ public class LogInActivity extends Activity implements View.OnClickListener {
     // Check if user is signed in (non-null) and update UI accordingly.
     FirebaseUser user = mAuth.getCurrentUser();
 
-    if(user == null){
+    if (user != null) {
       Log.i(TAG, "User already logged in. Taking user to home..");
       home(user);
     }
@@ -91,10 +83,6 @@ public class LogInActivity extends Activity implements View.OnClickListener {
   public void onClick(View view) {
     String username = ed1.getText().toString();
     String password = ed2.getText().toString();
-    FirebaseAuthSettings settings = mAuth.getFirebaseAuthSettings();
-
-    Log.i(TAG, username);
-    Log.i(TAG, password);
     signIn(username, password);
   }
 
@@ -121,22 +109,19 @@ public class LogInActivity extends Activity implements View.OnClickListener {
 
   private void signIn(String email, String password) {
     mAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-              @Override
-              public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                  // Sign in success, update UI with the signed-in user's information
-                  FirebaseUser user = mAuth.getCurrentUser();
-                  assert user != null;
-                  Log.i(TAG, String.format("Sign in successful: %s", user.getEmail()));
-                  Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                  home(user);
-                } else {
-                  // If sign in fails, display a message to the user.
-                  Log.w(TAG, "signInWithEmail:failure", task.getException());
-                  Toast.makeText(LogInActivity.this, "Authentication failed.",
-                          Toast.LENGTH_SHORT).show();
-                }
+            .addOnCompleteListener(this, task -> {
+              if (task.isSuccessful()) {
+                // Sign in success, update UI with the signed-in user's information
+                FirebaseUser user = mAuth.getCurrentUser();
+                assert user != null;
+                Log.i(TAG, String.format("Sign in successful: %s", user.getEmail()));
+                Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                home(user);
+              } else {
+                // If sign in fails, display a message to the user.
+                Log.w(TAG, "signInWithEmail:failure", task.getException());
+                Toast.makeText(LogInActivity.this, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show();
               }
             });
   }
@@ -144,6 +129,7 @@ public class LogInActivity extends Activity implements View.OnClickListener {
   private void home(FirebaseUser user) {
     // take user to app home screen
     Intent intent = new Intent(this, HomeActivity.class);
+    intent.putExtra("email", user.getEmail());
     startActivity(intent);
   }
 
