@@ -72,6 +72,7 @@ public class LogInActivity extends Activity implements View.OnClickListener{
     } else {
       Log.i(TAG, "User already logged in. Taking user to home..");
       // take user to app home screen
+      // TODO
     }
   }
 
