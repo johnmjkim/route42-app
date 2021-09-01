@@ -1,7 +1,7 @@
 # Requirements
 
-- Android Gradle Plugin Version 4.2.2
-- Gradle version 6.7.1
+- Android Gradle Plugin Version 7.0.1
+- Gradle version 7.0.2
 - Emulator: Pixel 4 API 30
 
 # Getting Started
