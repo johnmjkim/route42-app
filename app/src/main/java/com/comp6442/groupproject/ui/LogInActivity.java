@@ -42,13 +42,16 @@ public class LogInActivity extends Activity implements View.OnClickListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    // Initialize Firebase Auth
-    // 10.0.2.2 is the special IP address to connect to the 'localhost' of
-    // the host computer from an Android emulator.
-    mAuth = FirebaseAuth.getInstance();
-    mAuth.useEmulator("10.0.2.2", 9099);
-
     setContentView(R.layout.activity_login);
+
+    // Initialize Firebase Auth
+    mAuth = FirebaseAuth.getInstance();
+    boolean useEmulator = true;
+    if (useEmulator) {
+      // 10.0.2.2 is the special IP address to connect to the 'localhost' of
+      // the host computer from an Android emulator.
+      mAuth.useEmulator("10.0.2.2", 9099);
+    }
 
     ed1 = (EditText) findViewById(R.id.username);
     ed2 = (EditText) findViewById(R.id.password);
@@ -88,21 +91,18 @@ public class LogInActivity extends Activity implements View.OnClickListener {
 
 //  private void createAccount(String email, String password) {
 //    mAuth.createUserWithEmailAndPassword(email, password)
-//            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//              @Override
-//              public void onComplete(@NonNull Task<AuthResult> task) {
-//                if (task.isSuccessful()) {
-//                  // Sign in success, update UI with the signed-in user's information
-//                  Log.d(TAG, "createUserWithEmail:success");
-//                  FirebaseUser user = mAuth.getCurrentUser();
-//                  updateUI(user);
-//                } else {
-//                  // If sign in fails, display a message to the user.
-//                  Log.w(TAG, "createUserWithEmail:failure", task.getException());
-//                  Toast.makeText(LogInActivity.this, "Authentication failed.",
-//                          Toast.LENGTH_SHORT).show();
-//                  updateUI(null);
-//                }
+//            .addOnCompleteListener(this, task -> {
+//              if (task.isSuccessful()) {
+//                // Sign in success, update UI with the signed-in user's information
+//                FirebaseUser user = mAuth.getCurrentUser();
+//                Log.i(TAG, String.format("Successfully created account: %s", user.getEmail()));
+//                Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
+//                home(user);
+//              } else {
+//                // If sign in fails, display a message to the user.
+//                Log.w(TAG, "Failed to create account", task.getException());
+//                Toast.makeText(LogInActivity.this, "Authentication failed.",
+//                        Toast.LENGTH_SHORT).show();
 //              }
 //            });
 //  }
@@ -119,8 +119,8 @@ public class LogInActivity extends Activity implements View.OnClickListener {
                 home(user);
               } else {
                 // If sign in fails, display a message to the user.
-                Log.w(TAG, "signInWithEmail:failure", task.getException());
-                Toast.makeText(LogInActivity.this, "Authentication failed.",
+                Log.w(TAG, "Failed to sign in", task.getException());
+                Toast.makeText(LogInActivity.this, "Sign in failed.",
                         Toast.LENGTH_SHORT).show();
               }
             });
@@ -132,15 +132,4 @@ public class LogInActivity extends Activity implements View.OnClickListener {
     intent.putExtra("email", user.getEmail());
     startActivity(intent);
   }
-
-//  private void sendEmailVerification() {
-//    final FirebaseUser user = mAuth.getCurrentUser();
-//    user.sendEmailVerification()
-//            .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-//              @Override
-//              public void onComplete(@NonNull Task<Void> task) {
-//                // Email sent
-//              }
-//            });
-//  }
 }
