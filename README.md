@@ -1,3 +1,9 @@
+# Requirements
+
+- Android Gradle Plugin Version 4.2.2 
+- Gradle version 6.7.1
+- Emulator: Pixel 4 API 30
+
 # Getting Started
 
 1. Set up the development environment
