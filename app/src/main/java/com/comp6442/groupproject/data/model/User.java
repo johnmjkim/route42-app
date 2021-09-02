@@ -5,17 +5,20 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class User {
-  private String uid;
+  @NonNull
+  private final String uid;
 
   private String userName;
 
   @NonNull
   private String email;
 
-  public User(@NonNull String email) {
+  public User(@NonNull String uid, @NonNull String email) {
+    this.uid = uid;
     this.email = email;
   }
 
+  @NonNull
   public String getUid() {
     return uid;
   }
@@ -27,10 +30,6 @@ public class User {
   @NonNull
   public String getEmail() {
     return email;
-  }
-
-  public void setUid(@NonNull String uid) {
-    this.uid = uid;
   }
 
   public void setUserName(String userName) {

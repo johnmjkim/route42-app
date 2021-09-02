@@ -5,9 +5,9 @@ import java.util.Objects;
 import android.util.Log;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import com.comp6442.groupproject.data.model.User;
 
@@ -35,15 +35,17 @@ public final class UserRepository extends FirestoreRepository<User> {
   }
 
   public void addUser(FirebaseUser firebaseUser) {
-    User user = new User(Objects.requireNonNull(firebaseUser.getEmail()));
-    user.setUid(firebaseUser.getUid());
-    this.collection.add(user)
-            .addOnSuccessListener(
-                    documentReference -> Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId()))
-            .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+    // add user only if uid does not exist in user collection
+    User user = new User(
+            Objects.requireNonNull(firebaseUser.getUid()),
+            Objects.requireNonNull(firebaseUser.getEmail())
+    );
+    this.collection.document(firebaseUser.getUid())
+            .set(user)
+            .addOnFailureListener(e -> Log.w(TAG, "Failed to add user: " + firebaseUser.getUid()));
   }
 
-  public Task<DocumentSnapshot> getUser(String uid) {
-    return this.collection.document(uid).get();
+  public Task<QuerySnapshot> getUser(String uid) {
+    return this.collection.whereEqualTo("uid", uid).get();
   }
 }
