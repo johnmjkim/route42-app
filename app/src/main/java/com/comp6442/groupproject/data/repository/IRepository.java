@@ -1,4 +1,4 @@
-package com.comp6442.groupproject.repository;
+package com.comp6442.groupproject.data.repository;
 
 import java.util.Optional;
 

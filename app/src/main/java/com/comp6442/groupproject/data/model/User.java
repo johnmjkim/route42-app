@@ -1,19 +1,18 @@
-package com.comp6442.groupproject.model;
+package com.comp6442.groupproject.data.model;
 
+import androidx.annotation.NonNull;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class User extends Model {
-  public static final String FIELD_FIREBASE_UID = "uid";
-  public static final String FIELD_USERNAME = "username";
-  public static final String FIELD_EMAIL = "email";
-
+public class User {
   private String uid;
+
   private String userName;
+
+  @NonNull
   private String email;
 
-  public User(String userName, String email) {
-    this.userName = userName;
+  public User(@NonNull String email) {
     this.email = email;
   }
 
@@ -25,11 +24,20 @@ public class User extends Model {
     return userName;
   }
 
+  @NonNull
   public String getEmail() {
     return email;
   }
 
-  public void setUid(String uid) {
+  public void setUid(@NonNull String uid) {
     this.uid = uid;
+  }
+
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
+
+  public void setEmail(@NonNull String email) {
+    this.email = email;
   }
 }

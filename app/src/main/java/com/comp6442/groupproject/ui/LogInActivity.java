@@ -26,15 +26,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.comp6442.groupproject.model.User;
-import com.comp6442.groupproject.repository.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.comp6442.groupproject.data.repository.UserRepository;
 import com.comp6442.groupproject.R;
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
@@ -57,9 +55,9 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     // the host computer from an Android emulator.
     mAuth.useEmulator("10.0.2.2", 9099);
 
-    ed1 = (EditText) findViewById(R.id.username);
-    ed2 = (EditText) findViewById(R.id.password);
-    b1 = (Button) findViewById(R.id.login);
+    ed1 = findViewById(R.id.username);
+    ed2 = findViewById(R.id.password);
+    b1 = findViewById(R.id.login);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);
 
