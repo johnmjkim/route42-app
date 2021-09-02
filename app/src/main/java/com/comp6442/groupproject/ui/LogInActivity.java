@@ -18,8 +18,8 @@ package com.comp6442.groupproject.ui;
  * limitations under the License.
  */
 
-import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,18 +27,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.comp6442.groupproject.model.User;
+import com.comp6442.groupproject.repository.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import com.comp6442.groupproject.R;
 
-public class LogInActivity extends Activity implements View.OnClickListener {
+public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
 
   private static final String TAG = "EmailPassword";
   private FirebaseAuth mAuth;
   EditText ed1, ed2;
   Button b1;
 
+  @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -46,12 +52,10 @@ public class LogInActivity extends Activity implements View.OnClickListener {
 
     // Initialize Firebase Auth
     mAuth = FirebaseAuth.getInstance();
-    boolean useEmulator = true;
-    if (useEmulator) {
-      // 10.0.2.2 is the special IP address to connect to the 'localhost' of
-      // the host computer from an Android emulator.
-      mAuth.useEmulator("10.0.2.2", 9099);
-    }
+
+    // 10.0.2.2 is the special IP address to connect to the 'localhost' of
+    // the host computer from an Android emulator.
+    mAuth.useEmulator("10.0.2.2", 9099);
 
     ed1 = (EditText) findViewById(R.id.username);
     ed2 = (EditText) findViewById(R.id.password);
@@ -68,6 +72,12 @@ public class LogInActivity extends Activity implements View.OnClickListener {
                 Log.d(TAG, "Test user already exists.");
               }
             });
+
+    mAuth.signInWithEmailAndPassword("foo@bar.com", "password");
+    FirebaseUser user = mAuth.getCurrentUser();
+    assert user != null;
+    UserRepository.getInstance().addUser(user);
+    mAuth.signOut();
   }
 
   @Override
@@ -89,34 +99,18 @@ public class LogInActivity extends Activity implements View.OnClickListener {
     signIn(username, password);
   }
 
-//  private void createAccount(String email, String password) {
-//    mAuth.createUserWithEmailAndPassword(email, password)
-//            .addOnCompleteListener(this, task -> {
-//              if (task.isSuccessful()) {
-//                // Sign in success, update UI with the signed-in user's information
-//                FirebaseUser user = mAuth.getCurrentUser();
-//                Log.i(TAG, String.format("Successfully created account: %s", user.getEmail()));
-//                Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
-//                home(user);
-//              } else {
-//                // If sign in fails, display a message to the user.
-//                Log.w(TAG, "Failed to create account", task.getException());
-//                Toast.makeText(LogInActivity.this, "Authentication failed.",
-//                        Toast.LENGTH_SHORT).show();
-//              }
-//            });
-//  }
-
   private void signIn(String email, String password) {
     mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, task -> {
               if (task.isSuccessful()) {
                 // Sign in success, update UI with the signed-in user's information
-                FirebaseUser user = mAuth.getCurrentUser();
-                assert user != null;
-                Log.i(TAG, String.format("Sign in successful: %s", user.getEmail()));
-                Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                home(user);
+                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+                if (firebaseUser != null) {
+                  Log.i(TAG, String.format("Sign in successful: %s", firebaseUser.getEmail()));
+                  Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                  home(firebaseUser);
+                }
               } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "Failed to sign in", task.getException());
@@ -126,10 +120,34 @@ public class LogInActivity extends Activity implements View.OnClickListener {
             });
   }
 
-  private void home(FirebaseUser user) {
-    // take user to app home screen
-    Intent intent = new Intent(this, HomeActivity.class);
-    intent.putExtra("email", user.getEmail());
-    startActivity(intent);
+  @RequiresApi(api = Build.VERSION_CODES.N)
+  private void createAccount(String email, String password) {
+    mAuth.createUserWithEmailAndPassword(email, password)
+          .addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+              // Sign in success, update UI with the signed-in user's information
+              FirebaseUser firebaseUser = mAuth.getCurrentUser();
+              Log.i(TAG, String.format("Successfully created account: %s", firebaseUser.getEmail()));
+              Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
+              UserRepository.getInstance().addUser(firebaseUser);
+              home(firebaseUser);
+            } else {
+              // If sign in fails, display a message to the user.
+              Log.w(TAG, "Failed to create account", task.getException());
+              Toast.makeText(LogInActivity.this, "Authentication failed.",
+                      Toast.LENGTH_SHORT).show();
+            }
+          });
+  }
+
+  private void home(FirebaseUser firebaseUser) {
+    if (firebaseUser == null) Log.w(TAG, "Error, could not fetch current user");
+    else {
+      // take user to app home screen
+      Log.i(TAG, "Taking user to log in screen");
+      Intent intent = new Intent(this, HomeActivity.class);
+      intent.putExtra("uid", firebaseUser.getUid());
+      startActivity(intent);
+    }
   }
 }

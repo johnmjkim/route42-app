@@ -6,6 +6,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp6442.groupproject.R;
+import com.comp6442.groupproject.repository.UserRepository;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -23,10 +24,11 @@ public class HomeActivity extends AppCompatActivity {
     Intent intent = getIntent();
 
     // receive the value by getStringExtra() method
-    // and key must be same which is send by first activity
-    String username = intent.getStringExtra("email");
+    // key must match
+    String uid = intent.getStringExtra("uid");
+    UserRepository.getInstance().getUser(uid);
 
     TextView txtView = (TextView) findViewById(R.id.usernameHome);
-    txtView.setText(String.format("Hello, %s", username));
+    txtView.setText(String.format("Hello, %s", uid));
   }
 }
