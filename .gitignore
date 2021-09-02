@@ -17,3 +17,4 @@ gradle
 google_maps_api.xml
 /firebase-debug.log
 /ui-debug.log
+/firestore-debug.log
