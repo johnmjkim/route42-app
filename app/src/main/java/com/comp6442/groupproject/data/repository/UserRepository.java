@@ -8,9 +8,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import com.comp6442.groupproject.data.model.User;
-import com.google.firebase.firestore.SetOptions;
 
 public final class UserRepository extends FirestoreRepository<User> {
   private static final String TAG = "UserRepository";

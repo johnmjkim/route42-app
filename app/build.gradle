@@ -44,6 +44,7 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.api-client:google-api-client:1.31.5'
 
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
