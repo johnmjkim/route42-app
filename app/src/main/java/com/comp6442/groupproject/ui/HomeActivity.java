@@ -33,11 +33,11 @@ public class HomeActivity extends AppCompatActivity {
     // get the get Intent object
     Intent intent = getIntent();
 
-    // receive the value by getStringExtra() method
-    // key must match
+    // receive the value by getStringExtra() method - keys must match
     String uid = intent.getStringExtra("uid");
     Task<QuerySnapshot> task = UserRepository.getInstance().getUser(uid);
     Log.i(TAG, uid);
+
     task.addOnCompleteListener(task2 -> {
       QuerySnapshot snapshot = task2.getResult();
       DocumentSnapshot documentSnapshot = snapshot.getDocuments().get(0);
@@ -45,10 +45,11 @@ public class HomeActivity extends AppCompatActivity {
               (String) Objects.requireNonNull(documentSnapshot.get("uid")),
               (String) Objects.requireNonNull(documentSnapshot.get("email"))
       );
+      user.setUserName((String) Objects.requireNonNull(documentSnapshot.get("userName")));
 
-      Log.i(TAG, String.format("User successfully fetched: %s", user.getEmail()));
       TextView txtView = findViewById(R.id.usernameHome);
-      txtView.setText(String.format("Hello, %s", user.getUid()));
+      txtView.setText(String.format("Hello, %s", user.getUserName()));
+      Log.i(TAG, String.format("User successfully fetched: %s", user));
     });
   }
 }

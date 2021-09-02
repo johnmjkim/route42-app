@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import com.comp6442.groupproject.data.model.User;
+import com.google.firebase.firestore.SetOptions;
 
 public final class UserRepository extends FirestoreRepository<User> {
   private static final String TAG = "UserRepository";
@@ -47,5 +48,9 @@ public final class UserRepository extends FirestoreRepository<User> {
 
   public Task<QuerySnapshot> getUser(String uid) {
     return this.collection.whereEqualTo("uid", uid).get();
+  }
+
+  public void updateUser(User user) {
+    collection.document(user.getUid()).set(user, SetOptions.merge());
   }
 }

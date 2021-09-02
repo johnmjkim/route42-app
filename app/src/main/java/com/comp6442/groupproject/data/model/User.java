@@ -8,7 +8,7 @@ public class User {
   @NonNull
   private final String uid;
 
-  private String userName;
+  private String userName = null;
 
   @NonNull
   private String email;
@@ -38,5 +38,10 @@ public class User {
 
   public void setEmail(@NonNull String email) {
     this.email = email;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("User{uid='%s', userName='%s', email='%s'}", uid, userName, email);
   }
 }

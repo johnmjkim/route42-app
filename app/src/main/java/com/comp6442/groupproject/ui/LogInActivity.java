@@ -29,11 +29,14 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.comp6442.groupproject.data.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import com.comp6442.groupproject.data.repository.UserRepository;
 import com.comp6442.groupproject.R;
+
+import java.util.Objects;
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -72,9 +75,15 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
             });
 
     mAuth.signInWithEmailAndPassword("foo@bar.com", "password");
-    FirebaseUser user = mAuth.getCurrentUser();
-    assert user != null;
-    UserRepository.getInstance().addUser(user);
+    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+    assert firebaseUser != null;
+    UserRepository.getInstance().addUser(firebaseUser);
+    User user = new User(
+            Objects.requireNonNull(firebaseUser.getUid()),
+            Objects.requireNonNull(firebaseUser.getEmail())
+    );
+    user.setUserName("test_user");
+    UserRepository.getInstance().updateUser(user);
     mAuth.signOut();
   }
 
