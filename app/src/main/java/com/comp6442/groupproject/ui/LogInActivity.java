@@ -18,6 +18,8 @@ package com.comp6442.groupproject.ui;
  * limitations under the License.
  */
 
+import java.util.Objects;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,17 +28,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.comp6442.groupproject.data.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import com.comp6442.groupproject.data.repository.UserRepository;
 import com.comp6442.groupproject.R;
+import com.comp6442.groupproject.data.model.User;
+import com.comp6442.groupproject.data.repository.UserRepository;
 
-import java.util.Objects;
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -74,17 +80,22 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
               }
             });
 
-    mAuth.signInWithEmailAndPassword("foo@bar.com", "password");
-    FirebaseUser firebaseUser = mAuth.getCurrentUser();
-    assert firebaseUser != null;
-    UserRepository.getInstance().addUser(firebaseUser);
-    User user = new User(
-            Objects.requireNonNull(firebaseUser.getUid()),
-            Objects.requireNonNull(firebaseUser.getEmail())
-    );
-    user.setUserName("test_user");
-    UserRepository.getInstance().updateUser(user);
-    mAuth.signOut();
+    mAuth.signInWithEmailAndPassword("foo@bar.com", "password").addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+      @Override
+      public void onComplete(@NonNull Task<AuthResult> task) {
+        FirebaseUser firebaseUser = Objects.requireNonNull(task.getResult()).getUser();
+        if (firebaseUser != null) {
+          UserRepository.getInstance().addUser(firebaseUser);
+          User user = new User(
+                  Objects.requireNonNull(firebaseUser.getUid()),
+                  Objects.requireNonNull(firebaseUser.getEmail())
+          );
+          user.setUserName("test_user");
+          UserRepository.getInstance().updateUser(user);
+          mAuth.signOut();
+        }
+      }
+    });
   }
 
   @Override

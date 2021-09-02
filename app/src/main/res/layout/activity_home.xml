@@ -8,6 +8,18 @@
         tools:layout_editor_absoluteY="-1dp"
         tools:layout_editor_absoluteX="22dp">
 
+    <Button
+            android:id="@+id/signout"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginBottom="124dp"
+            android:text="@string/action_sign_out"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
             android:id="@+id/usernameHome"
             android:layout_width="226dp"

@@ -21,7 +21,9 @@
             android:selectAllOnFocus="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:minHeight="48dp"
+            android:autofillHints="" />
 
     <EditText
             android:id="@+id/password"
@@ -35,7 +37,9 @@
             android:selectAllOnFocus="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/username" />
+            app:layout_constraintTop_toBottomOf="@+id/username"
+            android:minHeight="48dp"
+            android:autofillHints="" />
 
     <Button
             android:id="@+id/login"
