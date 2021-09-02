@@ -1,23 +1,5 @@
 package com.comp6442.groupproject.ui;
 
-// taken from https://firebase.google.com/docs/auth/android/start#check_current_auth_state
-
-/*
- * Copyright 2021 Google Inc. All Rights Reserved.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import java.util.Objects;
 
 import android.content.Intent;
@@ -141,21 +123,21 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
   @RequiresApi(api = Build.VERSION_CODES.N)
   private void createAccount(String email, String password) {
     mAuth.createUserWithEmailAndPassword(email, password)
-          .addOnCompleteListener(this, task -> {
-            if (task.isSuccessful()) {
-              // Sign in success, update UI with the signed-in user's information
-              FirebaseUser firebaseUser = mAuth.getCurrentUser();
-              Log.i(TAG, String.format("Successfully created account: %s", firebaseUser.getEmail()));
-              Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
-              UserRepository.getInstance().addUser(firebaseUser);
-              home(firebaseUser);
-            } else {
-              // If sign in fails, display a message to the user.
-              Log.w(TAG, "Failed to create account", task.getException());
-              Toast.makeText(LogInActivity.this, "Authentication failed.",
-                      Toast.LENGTH_SHORT).show();
-            }
-          });
+            .addOnCompleteListener(this, task -> {
+              if (task.isSuccessful()) {
+                // Sign in success, update UI with the signed-in user's information
+                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                Log.i(TAG, String.format("Successfully created account: %s", firebaseUser.getEmail()));
+                Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                UserRepository.getInstance().addUser(firebaseUser);
+                home(firebaseUser);
+              } else {
+                // If sign in fails, display a message to the user.
+                Log.w(TAG, "Failed to create account", task.getException());
+                Toast.makeText(LogInActivity.this, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show();
+              }
+            });
   }
 
   private void home(FirebaseUser firebaseUser) {

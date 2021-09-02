@@ -1,6 +1,7 @@
 package com.comp6442.groupproject.data.model;
 
 import androidx.annotation.NonNull;
+
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties

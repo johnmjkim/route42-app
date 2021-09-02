@@ -3,6 +3,7 @@ package com.comp6442.groupproject.data.repository;
 import java.util.Objects;
 
 import android.util.Log;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
