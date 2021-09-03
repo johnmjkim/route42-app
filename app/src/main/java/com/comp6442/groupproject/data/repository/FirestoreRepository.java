@@ -16,7 +16,7 @@ import java.util.Optional;
 public class FirestoreRepository<T> implements IRepository<T> {
   private static final String TAG = "FirestoreRepository";
   protected CollectionReference collection;
-  private Class<T> classType;
+  private final Class<T> classType;
 
   public FirestoreRepository(FirebaseFirestore firestore, String collectionPath, Class<T> classType) {
     this.collection = firestore.collection(collectionPath);

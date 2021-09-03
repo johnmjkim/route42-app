@@ -1,7 +1,5 @@
 package com.comp6442.groupproject.ui;
 
-import java.util.Objects;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,20 +12,21 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
 
   private static final String TAG = "EmailPassword";
-  private FirebaseAuth mAuth;
   EditText ed1, ed2;
   Button b1;
+  private FirebaseAuth mAuth;
 
   @RequiresApi(api = Build.VERSION_CODES.N)
   @Override

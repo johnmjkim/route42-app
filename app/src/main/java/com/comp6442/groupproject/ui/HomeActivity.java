@@ -8,22 +8,21 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
   private static final String TAG = "HomeActivity";
-  private FirebaseAuth mAuth;
   Button b1;
   TextView txtView;
+  private FirebaseAuth mAuth;
   private DocumentReference userDoc;
   private ListenerRegistration registration;
 
@@ -69,7 +68,7 @@ public class HomeActivity extends AppCompatActivity {
       }
 
       String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
-      if (snapshot != null && snapshot.exists()){
+      if (snapshot != null && snapshot.exists()) {
         Log.d(TAG, source + " data: " + snapshot.getData());
 
         User user = new User(
