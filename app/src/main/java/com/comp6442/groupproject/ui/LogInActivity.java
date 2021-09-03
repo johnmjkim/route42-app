@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
 
-  private static final String TAG = "EmailPassword";
+  private static final String TAG = "LogIn";
   EditText ed1, ed2;
   Button b1;
   private FirebaseAuth mAuth;
@@ -108,6 +108,8 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                 Log.w(TAG, "Failed to sign in", task.getException());
                 Toast.makeText(LogInActivity.this, "Sign in failed.",
                         Toast.LENGTH_SHORT).show();
+                ed2.setText(" ");
+                ed2.setText("");
               }
             });
   }
