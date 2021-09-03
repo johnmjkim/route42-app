@@ -11,13 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -62,20 +58,17 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
               }
             });
 
-    mAuth.signInWithEmailAndPassword("foo@bar.com", "password").addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-      @Override
-      public void onComplete(@NonNull Task<AuthResult> task) {
-        FirebaseUser firebaseUser = Objects.requireNonNull(task.getResult()).getUser();
-        if (firebaseUser != null) {
-          UserRepository.getInstance().addUser(firebaseUser);
-          User user = new User(
-                  Objects.requireNonNull(firebaseUser.getUid()),
-                  Objects.requireNonNull(firebaseUser.getEmail())
-          );
-          user.setUserName("test_user");
-          UserRepository.getInstance().updateUser(user);
-          mAuth.signOut();
-        }
+    mAuth.signInWithEmailAndPassword("foo@bar.com", "password").addOnCompleteListener(task -> {
+      FirebaseUser firebaseUser = Objects.requireNonNull(task.getResult()).getUser();
+      if (firebaseUser != null) {
+        UserRepository.getInstance().addUser(firebaseUser);
+        User user = new User(
+                Objects.requireNonNull(firebaseUser.getUid()),
+                Objects.requireNonNull(firebaseUser.getEmail())
+        );
+        user.setUserName("test_user");
+        UserRepository.getInstance().updateUser(user);
+        mAuth.signOut();
       }
     });
   }
