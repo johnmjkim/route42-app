@@ -1,7 +1,5 @@
 package com.comp6442.groupproject.ui;
 
-import java.util.Objects;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,27 +9,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
 
   private static final String TAG = "EmailPassword";
-  private FirebaseAuth mAuth;
   EditText ed1, ed2;
   Button b1;
+  private FirebaseAuth mAuth;
 
   @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
@@ -62,20 +57,17 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
               }
             });
 
-    mAuth.signInWithEmailAndPassword("foo@bar.com", "password").addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-      @Override
-      public void onComplete(@NonNull Task<AuthResult> task) {
-        FirebaseUser firebaseUser = Objects.requireNonNull(task.getResult()).getUser();
-        if (firebaseUser != null) {
-          UserRepository.getInstance().addUser(firebaseUser);
-          User user = new User(
-                  Objects.requireNonNull(firebaseUser.getUid()),
-                  Objects.requireNonNull(firebaseUser.getEmail())
-          );
-          user.setUserName("test_user");
-          UserRepository.getInstance().updateUser(user);
-          mAuth.signOut();
-        }
+    mAuth.signInWithEmailAndPassword("foo@bar.com", "password").addOnCompleteListener(task -> {
+      FirebaseUser firebaseUser = Objects.requireNonNull(task.getResult()).getUser();
+      if (firebaseUser != null) {
+        UserRepository.getInstance().addUser(firebaseUser);
+        User user = new User(
+                Objects.requireNonNull(firebaseUser.getUid()),
+                Objects.requireNonNull(firebaseUser.getEmail())
+        );
+        user.setUserName("test_user");
+        UserRepository.getInstance().updateUser(user);
+        mAuth.signOut();
       }
     });
   }

@@ -1,17 +1,15 @@
 package com.comp6442.groupproject.data.repository;
 
-import java.util.Objects;
-
 import android.util.Log;
 
-import com.google.android.gms.tasks.Task;
+import com.comp6442.groupproject.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
-import com.comp6442.groupproject.data.model.User;
+import java.util.Objects;
 
 public final class UserRepository extends FirestoreRepository<User> {
   private static final String TAG = "UserRepository";
@@ -47,8 +45,8 @@ public final class UserRepository extends FirestoreRepository<User> {
             .addOnFailureListener(e -> Log.w(TAG, "Failed to add user: " + firebaseUser.getUid()));
   }
 
-  public Task<QuerySnapshot> getUser(String uid) {
-    return this.collection.whereEqualTo("uid", uid).get();
+  public DocumentReference getUser(String uid) {
+    return this.collection.document(uid);
   }
 
   public void updateUser(User user) {

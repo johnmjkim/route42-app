@@ -8,22 +8,23 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
   private static final String TAG = "HomeActivity";
-  private FirebaseAuth mAuth;
   Button b1;
+  TextView txtView;
+  private FirebaseAuth mAuth;
+  private DocumentReference userDoc;
+  private ListenerRegistration registration;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class HomeActivity extends AppCompatActivity {
       logOut();
     });
     b1.setEnabled(true);
+    txtView = findViewById(R.id.usernameHome);
   }
 
   @Override
@@ -56,22 +58,37 @@ public class HomeActivity extends AppCompatActivity {
 
     // receive the value by getStringExtra() method - keys must match
     String uid = intent.getStringExtra("uid");
-    Task<QuerySnapshot> task = UserRepository.getInstance().getUser(uid);
+    this.userDoc = UserRepository.getInstance().getUser(uid);
     Log.i(TAG, uid);
 
-    task.addOnCompleteListener(task2 -> {
-      QuerySnapshot snapshot = task2.getResult();
-      DocumentSnapshot documentSnapshot = snapshot.getDocuments().get(0);
-      User user = new User(
-              (String) Objects.requireNonNull(documentSnapshot.get("uid")),
-              (String) Objects.requireNonNull(documentSnapshot.get("email"))
-      );
-      user.setUserName((String) Objects.requireNonNull(documentSnapshot.get("userName")));
+    registration = this.userDoc.addSnapshotListener((snapshot, error) -> {
+      if (error != null) {
+        Log.w(TAG, "Listen failed.", error);
+        return;
+      }
 
-      TextView txtView = findViewById(R.id.usernameHome);
-      txtView.setText(String.format("Hello, %s", user.getUserName()));
-      Log.i(TAG, String.format("User successfully fetched: %s", user));
+      String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
+      if (snapshot != null && snapshot.exists()) {
+        Log.d(TAG, source + " data: " + snapshot.getData());
+
+        User user = new User(
+                (String) Objects.requireNonNull(snapshot.get("uid")),
+                (String) Objects.requireNonNull(snapshot.get("email"))
+        );
+        user.setUserName((String) snapshot.get("userName"));
+
+        txtView.setText(String.format("Hello, %s", user.getUserName()));
+        Log.i(TAG, String.format("User successfully fetched: %s", user));
+      } else {
+        Log.d(TAG, source + " data: null");
+      }
     });
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    registration.remove();
   }
 
   public void logOut() {
