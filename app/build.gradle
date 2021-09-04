@@ -1,14 +1,15 @@
 plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
+    id 'androidx.navigation.safeargs'
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.comp6442.groupproject"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -36,7 +37,6 @@ android {
 }
 
 dependencies {
-    // UI
     implementation 'androidx.annotation:annotation:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
@@ -44,12 +44,38 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.multidex:multidex:2.0.1'
-
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.1'
-    implementation 'com.google.api-client:google-api-client:1.31.5'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.guava:guava:30.1.1-android'
 
+    // Google maps api
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.api-client:google-api-client:1.31.5'
+
+    // UI
+    implementation 'com.google.android.material:material:1.4.0'
+
+    // ----------- Navigation Component ------------
+    def nav_version = "2.3.5"
+
+    // Java language implementation
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
+
+    // Kotlin
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    // Feature module Support
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
+    // Testing Navigation
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+
+    // Jetpack Compose Integration
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha08"
+
+
+    // ----------- Firebase ------------
     // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
 
@@ -59,10 +85,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore:23.0.3'
 
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.1'
-    testImplementation 'junit:junit:4.+'
+    // ----------- Tests ---------------
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
+    testImplementation 'junit:junit:4.+'
 }

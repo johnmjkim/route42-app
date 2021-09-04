@@ -79,7 +79,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     FirebaseUser user = mAuth.getCurrentUser();
 
     if (user != null) {
-      Log.i(TAG, "User already logged in. Taking user to home..");
+      Log.i(TAG, String.format("User already logged in: %s. Taking user to home..", user.getEmail()));
       home(user);
     }
   }
@@ -139,7 +139,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     else {
       // take user to app home screen
       Log.i(TAG, "Taking user to app home screen");
-      Intent intent = new Intent(this, HomeActivity.class);
+      Intent intent = new Intent(this, MainActivity.class);
       intent.putExtra("uid", firebaseUser.getUid());
       startActivity(intent);
     }
