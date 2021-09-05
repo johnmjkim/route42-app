@@ -7,23 +7,21 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.ui.AppBarConfiguration;
 
 import com.comp6442.groupproject.R;
+import com.comp6442.groupproject.ui.fragments.FeedFragment;
+import com.comp6442.groupproject.ui.fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 /* This activity class is not tied to any specific layout except for the bottom navigation bar.
-*  In other words, this class only contains navigation logic for the bottom nav bar.
-* */
-public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
+ *  In other words, this class only contains navigation logic for the bottom nav bar.
+ * */
+public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
   private static final String TAG = "MainActivity";
   private ActionBar toolbar;
   private String uid;
   private BottomNavigationView navBarView;
-  private NavController navController;
-  private AppBarConfiguration appBar;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +34,21 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     if (toolbar != null) toolbar.setTitle(String.format("Hello, %s", uid));
 
     navBarView = findViewById(R.id.bottom_navigation_view);
-    // if moving login activity into this activity as a fragment
-    // navBarView.setVisibility(View.GONE);
-    navBarView.setSelectedItemId(R.id.navigation_profile);
     navBarView.setOnItemSelectedListener(this::onNavigationItemSelected);
-//    NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-//    assert navHostFragment != null;
-//    navController = navHostFragment.getNavController();
+    navBarView.setSelectedItemId(R.id.navigation_profile);
   }
 
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
     Log.d(TAG, "BottomNav Selection: " + item.toString());
+
+    if (uid == null) {
+      try {
+        Log.w(TAG, "uid is null");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
 
     ProfileFragment profile = new ProfileFragment();
     FeedFragment feed = new FeedFragment();

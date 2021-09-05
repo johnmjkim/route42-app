@@ -6,7 +6,7 @@
         app:startDestination="@id/navigation_profile">
     <fragment
             android:id="@+id/navigation_profile"
-            android:name="com.comp6442.groupproject.ui.ProfileFragment"
+            android:name="com.comp6442.groupproject.ui.fragments.ProfileFragment"
             android:label="fragment_profile"
             tools:layout="@layout/fragment_profile">
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
             android:id="@+id/feedFragment"
-            android:name="com.comp6442.groupproject.ui.FeedFragment"
+            android:name="com.comp6442.groupproject.ui.fragments.FeedFragment"
             android:label="fragment_feed"
             tools:layout="@layout/fragment_feed" >
         <action

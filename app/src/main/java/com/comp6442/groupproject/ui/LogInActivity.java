@@ -138,7 +138,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     if (firebaseUser == null) Log.w(TAG, "Error, could not fetch current user");
     else {
       // take user to app home screen
-      Log.i(TAG, "Taking user to app home screen");
+      Log.i(TAG, "Taking user to app home screen " + firebaseUser.getUid());
       Intent intent = new Intent(this, MainActivity.class);
       intent.putExtra("uid", firebaseUser.getUid());
       startActivity(intent);

@@ -1,22 +1,19 @@
-package com.comp6442.groupproject.ui;
+package com.comp6442.groupproject.ui.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.ListenerRegistration;
 
@@ -29,14 +26,12 @@ import java.util.Objects;
  */
 public class FeedFragment extends Fragment {
   private static final String TAG = FeedFragment.class.getCanonicalName();
-  private DocumentReference userDoc;
-  private ListenerRegistration registration;
-  private TextView welcomeMessage;
-
   // TODO: Rename parameter arguments, choose names that match
   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
   private static final String ARG_PARAM1 = "uid";
-
+  private DocumentReference userDoc;
+  private ListenerRegistration registration;
+  private TextView welcomeMessage;
   private String uid;
 
   public FeedFragment() {
@@ -104,6 +99,7 @@ public class FeedFragment extends Fragment {
           user.setUserName((String) snapshot.get("userName"));
 
           Log.i(TAG, String.format("User successfully fetched: %s", user));
+          this.welcomeMessage.setText(String.format("Hello, %s", user.getUserName()));
         } else {
           Log.d(TAG, source + " data: null");
         }
