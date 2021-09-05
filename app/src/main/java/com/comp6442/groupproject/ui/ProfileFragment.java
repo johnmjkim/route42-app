@@ -47,6 +47,7 @@ public class ProfileFragment extends Fragment {
   // TODO: Rename and change types and number of parameters
   public static ProfileFragment newInstance(String param1) {
     ProfileFragment fragment = new ProfileFragment();
+    Log.d(TAG, "created");
     Bundle args = new Bundle();
     args.putString(ARG_PARAM1, param1);
     fragment.setArguments(args);

@@ -43,7 +43,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
     ed1 = findViewById(R.id.username);
     ed2 = findViewById(R.id.password);
-    b1 = findViewById(R.id.login);
+    b1 = findViewById(R.id.login_button);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);
 

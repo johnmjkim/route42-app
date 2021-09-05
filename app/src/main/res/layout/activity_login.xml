@@ -42,7 +42,7 @@
             android:autofillHints="" />
 
     <Button
-            android:id="@+id/login"
+            android:id="@+id/login_button"
             android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -44,6 +44,7 @@ public class FeedFragment extends Fragment {
   }
 
   public static FeedFragment newInstance(String uid) {
+    Log.d(TAG, "New instance created with uid " + uid);
     FeedFragment frag = new FeedFragment();
     Bundle args = new Bundle();
     args.putString(ARG_PARAM1, uid);
@@ -116,6 +117,18 @@ public class FeedFragment extends Fragment {
   }
 
   @Override
+  public void onStart() {
+    super.onStart();
+    if (this.uid != null) Log.d(TAG, this.uid);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Log.d(TAG, "Resumed: " + this.uid);
+  }
+
+  @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putString(ARG_PARAM1, this.uid);
     super.onSaveInstanceState(outState);
@@ -124,6 +137,6 @@ public class FeedFragment extends Fragment {
   @Override
   public void onDestroy() {
     super.onDestroy();
-    registration.remove();
+    if (registration != null) registration.remove();
   }
 }
