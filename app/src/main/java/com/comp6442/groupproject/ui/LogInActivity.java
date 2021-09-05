@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
 
-  private static final String TAG = "EmailPassword";
+  private static final String TAG = "LogIn";
   EditText ed1, ed2;
   Button b1;
   private FirebaseAuth mAuth;
@@ -43,7 +43,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
     ed1 = findViewById(R.id.username);
     ed2 = findViewById(R.id.password);
-    b1 = findViewById(R.id.login);
+    b1 = findViewById(R.id.login_button);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);
 
@@ -79,7 +79,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     FirebaseUser user = mAuth.getCurrentUser();
 
     if (user != null) {
-      Log.i(TAG, "User already logged in. Taking user to home..");
+      Log.i(TAG, String.format("User already logged in: %s. Taking user to home..", user.getEmail()));
       home(user);
     }
   }
@@ -108,6 +108,8 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                 Log.w(TAG, "Failed to sign in", task.getException());
                 Toast.makeText(LogInActivity.this, "Sign in failed.",
                         Toast.LENGTH_SHORT).show();
+                ed2.setText(" ");
+                ed2.setText("");
               }
             });
   }
@@ -136,8 +138,8 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     if (firebaseUser == null) Log.w(TAG, "Error, could not fetch current user");
     else {
       // take user to app home screen
-      Log.i(TAG, "Taking user to app home screen");
-      Intent intent = new Intent(this, HomeActivity.class);
+      Log.i(TAG, "Taking user to app home screen " + firebaseUser.getUid());
+      Intent intent = new Intent(this, MainActivity.class);
       intent.putExtra("uid", firebaseUser.getUid());
       startActivity(intent);
     }
