@@ -1,3 +1,12 @@
+# Changelog
+
+1. Set up initial repository and gradle project.
+2. Add login screen.
+3. Add Firebase User Authentication.
+4. Create User data class and repository class.
+5. Add Firebase Firestore for data storage.
+6. Design change: Shifted to Single Activity architecture.
+
 # Requirements
 
 - Android Gradle Plugin Version 7.0.1
