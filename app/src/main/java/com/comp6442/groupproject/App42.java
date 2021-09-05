@@ -3,8 +3,10 @@ package com.comp6442.groupproject;
 
 import android.app.Application;
 import android.content.res.Configuration;
+import android.util.Log;
 
 public class App42 extends Application {
+  private static final String TAG = "Application";
   //  In many apps, there's no need to work with an application class directly. However, there are a few acceptable uses of a custom application class:
   //
   //  Specialized tasks that need to run before the creation of your first activity
@@ -18,6 +20,7 @@ public class App42 extends Application {
   public void onCreate() {
     super.onCreate();
     // Required initialization logic here!
+    Log.i(TAG, "App started.");
   }
 
   // Called by the system when the device configuration changes while your component is running.
