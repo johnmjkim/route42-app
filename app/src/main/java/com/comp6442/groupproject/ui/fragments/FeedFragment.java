@@ -26,12 +26,10 @@ import java.util.Objects;
  */
 public class FeedFragment extends Fragment {
   private static final String TAG = FeedFragment.class.getCanonicalName();
-  // TODO: Rename parameter arguments, choose names that match
-  // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-  private static final String ARG_PARAM1 = "uid";
+  private TextView welcomeMessage;
   private DocumentReference userDoc;
   private ListenerRegistration registration;
-  private TextView welcomeMessage;
+  private static final String ARG_PARAM1 = "uid";
   private String uid;
 
   public FeedFragment() {
