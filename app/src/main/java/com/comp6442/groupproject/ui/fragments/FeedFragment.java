@@ -26,10 +26,10 @@ import java.util.Objects;
  */
 public class FeedFragment extends Fragment {
   private static final String TAG = FeedFragment.class.getCanonicalName();
+  private static final String ARG_PARAM1 = "uid";
   private TextView welcomeMessage;
   private DocumentReference userDoc;
   private ListenerRegistration registration;
-  private static final String ARG_PARAM1 = "uid";
   private String uid;
 
   public FeedFragment() {

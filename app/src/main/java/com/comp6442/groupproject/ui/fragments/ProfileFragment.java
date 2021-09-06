@@ -64,7 +64,6 @@ public class ProfileFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-
     if (getArguments() != null) {
       this.uid = getArguments().getString(ARG_PARAM1);
     }
