@@ -47,10 +47,6 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.guava:guava:30.1.1-android'
 
-    // Google maps api
-    implementation 'com.google.android.gms:play-services-maps:17.0.1'
-    implementation 'com.google.api-client:google-api-client:1.31.5'
-
     // UI
     implementation 'com.google.android.material:material:1.4.0'
 
