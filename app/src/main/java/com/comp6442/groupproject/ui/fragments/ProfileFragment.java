@@ -2,7 +2,6 @@ package com.comp6442.groupproject.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,16 +23,17 @@ import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.Objects;
 
+import timber.log.Timber;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-  private static final String TAG = ProfileFragment.class.getCanonicalName();
+  private static final String ARG_PARAM1 = "uid";
   private FirebaseAuth mAuth;
   private ListenerRegistration registration;
-  private static final String ARG_PARAM1 = "uid";
   private String uid;
 
   public ProfileFragment() {
@@ -50,7 +50,7 @@ public class ProfileFragment extends Fragment {
   // TODO: Rename and change types and number of parameters
   public static ProfileFragment newInstance(String param1) {
     ProfileFragment fragment = new ProfileFragment();
-    Log.d(TAG, "created with param " + param1);
+    Timber.d("created with param %s", param1);
     Bundle args = new Bundle();
     args.putString(ARG_PARAM1, param1);
     fragment.setArguments(args);
@@ -92,8 +92,8 @@ public class ProfileFragment extends Fragment {
     if (firebaseUser == null) logOut();
 
     if (this.uid != null) {
-      Log.d(TAG, "Received uid: " + this.uid);
-      Log.d(TAG, "Retrieved Firebase user " + firebaseUser.getUid());
+      Timber.d("Received uid: %s", this.uid);
+      Timber.d("Retrieved Firebase user %s", firebaseUser.getUid());
 
       DocumentReference userDocument = UserRepository.getInstance().getUser(this.uid);
       TextView userNameView = view.findViewById(R.id.profile_username);
@@ -102,23 +102,23 @@ public class ProfileFragment extends Fragment {
       userDocument.get().addOnCompleteListener(task -> {
         if (task.isSuccessful()) {
           String userName = task.getResult().getString("userName");
-          Log.d(TAG, "Retrieved user from Firestore: " + userName);
+          Timber.d("Retrieved user from Firestore: %s", userName);
           userNameView.setText(String.format("Username: %s", userName));
         } else {
-          Log.w(TAG, "Could not obtain user from Firestore: " + this.uid);
+          Timber.w("Could not obtain user from Firestore: %s", this.uid);
         }
       });
 
       // attach a listener and update username in realtime
       this.registration = userDocument.addSnapshotListener((snapshot, error) -> {
         if (error != null) {
-          Log.w(TAG, "Listen failed.", error);
+          Timber.w(error);
           return;
         }
 
         String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
         if (snapshot != null && snapshot.exists()) {
-          Log.d(TAG, source + " data: " + snapshot.getData());
+          Timber.d(source + " data: " + snapshot.getData());
 
           User user = new User(
                   (String) Objects.requireNonNull(snapshot.get("uid")),
@@ -126,16 +126,16 @@ public class ProfileFragment extends Fragment {
           );
           user.setUserName((String) snapshot.get("userName"));
 
-          Log.i(TAG, String.format("User successfully fetched: %s", user));
+          Timber.d("User successfully fetched: %s", user);
           userNameView.setText(String.format("Username: %s", user.getUserName()));
         } else {
-          Log.d(TAG, source + " data: null");
+          Timber.w("%s data: null", source);
         }
       });
 
       // when a user is looking at his/her own profile, hide Follow and Message buttons.
       if (firebaseUser.getUid().equals(this.uid)) {
-        Log.d(TAG, "Fetching logged in user's profile. Hiding Follow and Message buttons.");
+        Timber.d("Fetching logged in user's profile. Hiding Follow and Message buttons.");
         view.findViewById(R.id.profile_follow_button).setVisibility(View.INVISIBLE);
         view.findViewById(R.id.profile_message_button).setVisibility(View.INVISIBLE);
       }
@@ -161,7 +161,7 @@ public class ProfileFragment extends Fragment {
 
   public void logOut() {
     if (this.mAuth.getCurrentUser() != null) this.mAuth.signOut();
-    Log.i(TAG, "Taking user to sign-in screen");
+    Timber.i("Taking user to sign-in screen");
     startActivity(new Intent(getActivity(), LogInActivity.class));
   }
 }

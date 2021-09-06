@@ -1,7 +1,5 @@
 package com.comp6442.groupproject.data.repository;
 
-import android.util.Log;
-
 import com.comp6442.groupproject.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -11,8 +9,9 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.Objects;
 
+import timber.log.Timber;
+
 public final class UserRepository extends FirestoreRepository<User> {
-  private static final String TAG = "UserRepository";
   private static UserRepository instance = null;
 
   private UserRepository(FirebaseFirestore firestore) {
@@ -42,7 +41,7 @@ public final class UserRepository extends FirestoreRepository<User> {
     );
     this.collection.document(firebaseUser.getUid())
             .set(user)
-            .addOnFailureListener(e -> Log.w(TAG, "Failed to add user: " + firebaseUser.getUid()));
+            .addOnFailureListener(e -> Timber.w("Failed to add user: " + firebaseUser.getUid()));
   }
 
   public DocumentReference getUser(String uid) {

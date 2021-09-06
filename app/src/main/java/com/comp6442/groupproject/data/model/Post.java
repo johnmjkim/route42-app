@@ -6,9 +6,18 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class Post {
-  @NonNull private final String uid;
-  @NonNull private final String postId;
-  @NonNull private final String userName;
+  @NonNull
+  private final String uid;
+  @NonNull
+  private final String postId;
+  @NonNull
+  private final String userName;
+
+  public Post(@NonNull String uid, @NonNull String postId, @NonNull String userName) {
+    this.uid = uid;
+    this.postId = postId;
+    this.userName = userName;
+  }
 
   @NonNull
   public String getUid() {
@@ -32,11 +41,5 @@ public class Post {
             ", postId='" + postId + '\'' +
             ", userName='" + userName + '\'' +
             '}';
-  }
-
-  public Post(@NonNull String uid, @NonNull String postId, @NonNull String userName) {
-    this.uid = uid;
-    this.postId = postId;
-    this.userName = userName;
   }
 }

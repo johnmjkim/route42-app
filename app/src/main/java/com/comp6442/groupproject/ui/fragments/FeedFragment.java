@@ -1,7 +1,6 @@
 package com.comp6442.groupproject.ui.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,8 @@ import com.comp6442.groupproject.data.PostAdapter;
 import com.comp6442.groupproject.data.model.Post;
 
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 //  import com.bumptech.glide.Glide;
 
@@ -38,7 +39,7 @@ public class FeedFragment extends Fragment {
   }
 
   public static FeedFragment newInstance(String uid) {
-    Log.d(TAG, "New instance created with uid " + uid);
+    Timber.d("New instance created with uid %s", uid);
     FeedFragment frag = new FeedFragment();
     Bundle args = new Bundle();
     args.putString(ARG_PARAM1, uid);
@@ -65,17 +66,17 @@ public class FeedFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    Log.d(TAG, "onViewCreated");
-
     if (savedInstanceState == null) {
+      Timber.d("No previous state to restore from. Checking arguments..");
       Bundle args = getArguments();
       if (args != null) {
         this.uid = args.getString(ARG_PARAM1);
-        Log.d(TAG, "Restored instance state");
+        Timber.d("Received arg: %s", this.uid);
       } else {
-        Log.w(TAG, "Could not obtain uid");
+        Timber.w("Did not receive argument");
       }
     } else {
+      Timber.d("Restoring from previous state: %s", ARG_PARAM1);
       this.uid = savedInstanceState.getString(ARG_PARAM1);
     }
 
@@ -92,33 +93,35 @@ public class FeedFragment extends Fragment {
       recyclerView.setHasFixedSize(true);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(adapter);
-      Log.d(TAG, "PostAdapter bound to RecyclerView");
+      Timber.d("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
     } else {
-      Log.w(TAG, "not signed in");
+      Timber.w("not signed in");
     }
   }
 
   @Override
   public void onStart() {
     super.onStart();
-    if (this.uid != null) Log.d(TAG, this.uid);
+    Timber.d("Started");
+    if (this.uid != null) Timber.d("Feed instance uid = %s", this.uid);
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    Log.d(TAG, "Resumed: " + this.uid);
+    Timber.d("Resumed: %s", this.uid);
   }
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putString(ARG_PARAM1, this.uid);
     super.onSaveInstanceState(outState);
-    Log.d(TAG, "Saving instance state..");
+    Timber.d("Saved instance state");
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
+    Timber.d("Destroying instance");
   }
 }

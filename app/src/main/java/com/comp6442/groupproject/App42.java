@@ -1,9 +1,9 @@
 package com.comp6442.groupproject;
 
-
 import android.app.Application;
 import android.content.res.Configuration;
-import android.util.Log;
+
+import timber.log.Timber;
 
 public class App42 extends Application {
   private static final String TAG = "Application";
@@ -19,8 +19,8 @@ public class App42 extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    // Required initialization logic here!
-    Log.i(TAG, "App started.");
+    // initialize timber in application class
+    Timber.plant(new Timber.DebugTree());
   }
 
   // Called by the system when the device configuration changes while your component is running.

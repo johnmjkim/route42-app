@@ -1,7 +1,6 @@
 package com.comp6442.groupproject.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -16,11 +15,12 @@ import com.comp6442.groupproject.ui.fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import timber.log.Timber;
+
 /* This activity class is not tied to any specific layout except for the bottom navigation bar.
  *  In other words, this class only contains navigation logic for the bottom nav bar.
  * */
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
-  private static final String TAG = "MainActivity";
   private ActionBar toolbar;
   private String uid;
   private BottomNavigationView navBarView;
@@ -45,21 +45,16 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
    * Called when an item in the bottom navigation menu is selected.
    *
    * @param item The selected item
-   *
    * @return true to display the item as the selected item and false if the item should not
-   *         be selected. Consider setting non-selectable items as disabled preemptively to
-   *         make them appear non-interactive.
+   * be selected. Consider setting non-selectable items as disabled preemptively to
+   * make them appear non-interactive.
    */
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-    Log.d(TAG, "BottomNav Selection: " + item.toString());
+    Timber.d("BottomNav Selection: %s", item.toString());
 
     if (uid == null) {
-      try {
-        Log.w(TAG, "uid is null");
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      Timber.w("uid is null");
     }
 
     if (item == lastSelected) return false;
