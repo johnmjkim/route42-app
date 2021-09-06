@@ -65,10 +65,13 @@ public class FeedFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    Log.d(TAG, "onViewCreated");
+
     if (savedInstanceState == null) {
       Bundle args = getArguments();
       if (args != null) {
         this.uid = args.getString(ARG_PARAM1);
+        Log.d(TAG, "Restored instance state");
       } else {
         Log.w(TAG, "Could not obtain uid");
       }
@@ -83,16 +86,15 @@ public class FeedFragment extends Fragment {
       posts.add(new Post("uid2", "postId3", "bar"));
       posts.add(new Post("uid3", "postId4", "baz"));
 
-      // recyclerView = getActivity().findViewById(R.id.recycler_view);
+      adapter = new PostAdapter(posts);
+      layoutManager = new LinearLayoutManager(getActivity());
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setHasFixedSize(true);
-      layoutManager = new LinearLayoutManager(getActivity());
-      adapter = new PostAdapter(posts);
-
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(adapter);
+      Log.d(TAG, "PostAdapter bound to RecyclerView");
     } else {
-      Log.d(TAG, "not signed in");
+      Log.w(TAG, "not signed in");
     }
   }
 
@@ -112,6 +114,7 @@ public class FeedFragment extends Fragment {
   public void onSaveInstanceState(Bundle outState) {
     outState.putString(ARG_PARAM1, this.uid);
     super.onSaveInstanceState(outState);
+    Log.d(TAG, "Saving instance state..");
   }
 
   @Override

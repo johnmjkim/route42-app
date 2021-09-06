@@ -115,4 +115,5 @@
     <string name="follow_button">Follow</string>
     <string name="message_button">Message</string>
     <string name="title_fragment_map">Map</string>
+    <string name="navigation_map">Map</string>
 </resources>

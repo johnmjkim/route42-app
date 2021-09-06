@@ -14,8 +14,8 @@
 
     <com.google.android.material.card.MaterialCardView
             android:id="@+id/post_card"
-            android:layout_width="375dp"
-            android:layout_height="300dp"
+            android:layout_width="wrap_content"
+            android:layout_height="421dp"
             android:minHeight="200dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -25,13 +25,12 @@
             app:cardElevation="5dp"
             app:cardCornerRadius="10dp"
             app:contentPadding="10dp"
-            app:cardUseCompatPadding="true"
-            >
+            app:cardUseCompatPadding="true">
 
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="328dp"
+                android:layout_height="378dp">
 
             <LinearLayout
                     android:orientation="horizontal"
@@ -62,7 +61,7 @@
             <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:src="@tools:sample/backgrounds/scenic[1]"
+                    tools:src="@drawable/route"
                     android:id="@+id/post_route" />
         </LinearLayout>
 

@@ -1,5 +1,7 @@
 package com.comp6442.groupproject.data;
 
+import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 // Create the basic adapter extending from RecyclerView.Adapter
 // Note that we specify the custom ViewHolder which gives us access to our views
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+  private static final String TAG = "PostAdapter";
   private ArrayList<Post> posts;
 
   /**
@@ -29,14 +32,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public TextView textView1, textView2;
     public MaterialCardView materialCardView;
 
-    public void setTextView1(TextView textView1) {
-      this.textView1 = textView1;
-    }
-
     public ViewHolder(View view) {
       super(view);
       // Define click listener for the ViewHolder's View
-
       textView1 = view.findViewById(R.id.post_text1);
       textView2 = view.findViewById(R.id.post_text2);
       userIcon = view.findViewById(R.id.post_user_icon);
@@ -63,10 +61,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     View view = LayoutInflater.from(viewGroup.getContext())
             .inflate(R.layout.post_card, viewGroup, false);
 
+    Log.d(TAG, "PostAdapter created.");
     return new ViewHolder(view);
   }
 
   // Replace the contents of a view (invoked by the layout manager)
+  @SuppressLint("DefaultLocale")
   @Override
   public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
@@ -74,6 +74,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     // contents of the view with that element
     viewHolder.materialCardView.setStrokeWidth(5);
     viewHolder.textView1.setText(posts.get(position).getUserName());
+    viewHolder.textView2.setText(String.format("Sample text for card #%d", position));
+    viewHolder.routeImage.setImageResource(R.drawable.route);
+
+    Log.d(TAG, "OnBindView called");
   }
 
   // Return the size of your dataset (invoked by the layout manager)

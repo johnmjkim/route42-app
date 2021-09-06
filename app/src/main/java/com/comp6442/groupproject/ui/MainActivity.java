@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
       case R.id.navigation_map:
         fragment = new MapFragment();
         toolbar.setTitle(R.string.title_fragment_map);
+        break;
     }
 
     assert fragment != null;
