@@ -13,4 +13,10 @@
             android:enabled="true"
             android:id="@+id/navigation_feed" />
 
+    <item
+            android:title="@string/navigation_feed"
+            android:icon="@drawable/map"
+            android:enabled="true"
+            android:id="@+id/navigation_map" />
+
 </menu>

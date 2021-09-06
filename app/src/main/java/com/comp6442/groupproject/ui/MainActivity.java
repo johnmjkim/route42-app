@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.ui.fragments.FeedFragment;
+import com.comp6442.groupproject.ui.fragments.MapFragment;
 import com.comp6442.groupproject.ui.fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -80,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         fragment = new FeedFragment();
         toolbar.setTitle(R.string.title_fragment_feed);
         break;
+
+      case R.id.navigation_map:
+        fragment = new MapFragment();
+        toolbar.setTitle(R.string.title_fragment_map);
     }
 
     assert fragment != null;

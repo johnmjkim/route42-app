@@ -12,6 +12,9 @@
         <action
                 android:id="@+id/action_profileFragment_to_feedFragment"
                 app:destination="@id/feedFragment" />
+        <action
+                android:id="@+id/action_navigation_profile_to_mapFragment"
+                app:destination="@id/mapFragment" />
     </fragment>
     <fragment
             android:id="@+id/feedFragment"
@@ -21,5 +24,20 @@
         <action
                 android:id="@+id/action_feedFragment_to_profileNavSelection"
                 app:destination="@id/navigation_profile" />
+        <action
+                android:id="@+id/action_feedFragment_to_mapFragment"
+                app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/mapFragment"
+            android:name="com.comp6442.groupproject.ui.fragments.MapFragment"
+            android:label="fragment_map"
+            tools:layout="@layout/fragment_map" >
+        <action
+                android:id="@+id/action_mapFragment_to_navigation_profile"
+                app:destination="@id/navigation_profile" />
+        <action
+                android:id="@+id/action_mapFragment_to_feedFragment"
+                app:destination="@id/feedFragment" />
     </fragment>
 </navigation>
