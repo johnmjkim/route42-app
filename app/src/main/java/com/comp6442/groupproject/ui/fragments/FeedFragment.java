@@ -5,19 +5,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.groupproject.R;
-import com.comp6442.groupproject.data.model.User;
-import com.comp6442.groupproject.data.repository.UserRepository;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.ListenerRegistration;
+import com.comp6442.groupproject.data.model.Post;
+import com.comp6442.groupproject.ui.PostAdapter;
 
-import java.util.Objects;
+import java.util.ArrayList;
+
+//  import com.bumptech.glide.Glide;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,10 +28,10 @@ import java.util.Objects;
 public class FeedFragment extends Fragment {
   private static final String TAG = FeedFragment.class.getCanonicalName();
   private static final String ARG_PARAM1 = "uid";
-  private TextView welcomeMessage;
-  private DocumentReference userDoc;
-  private ListenerRegistration registration;
   private String uid;
+  private RecyclerView recyclerView;
+  private LinearLayoutManager layoutManager;
+  private PostAdapter adapter;
 
   public FeedFragment() {
     // Required empty public constructor
@@ -76,38 +77,23 @@ public class FeedFragment extends Fragment {
     }
 
     if (this.uid != null) {
-      // receive the value by getStringExtra() method - keys must match
-      this.userDoc = UserRepository.getInstance().getUser(this.uid);
-      Log.i(TAG, this.uid);
+      ArrayList<Post> posts = new ArrayList<>();
+      posts.add(new Post("uid1", "postId1", "foo"));
+      posts.add(new Post("uid1", "postId2", "foo"));
+      posts.add(new Post("uid2", "postId3", "bar"));
+      posts.add(new Post("uid3", "postId4", "baz"));
 
-      registration = this.userDoc.addSnapshotListener((snapshot, error) -> {
-        if (error != null) {
-          Log.w(TAG, "Listen failed.", error);
-          return;
-        }
+      // recyclerView = getActivity().findViewById(R.id.recycler_view);
+      recyclerView = view.findViewById(R.id.recycler_view);
+      recyclerView.setHasFixedSize(true);
+      layoutManager = new LinearLayoutManager(getActivity());
+      adapter = new PostAdapter(posts);
 
-        String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
-        if (snapshot != null && snapshot.exists()) {
-          Log.d(TAG, source + " data: " + snapshot.getData());
-
-          User user = new User(
-                  (String) Objects.requireNonNull(snapshot.get("uid")),
-                  (String) Objects.requireNonNull(snapshot.get("email"))
-          );
-          user.setUserName((String) snapshot.get("userName"));
-
-          Log.i(TAG, String.format("User successfully fetched: %s", user));
-          this.welcomeMessage.setText(String.format("Hello, %s", user.getUserName()));
-        } else {
-          Log.d(TAG, source + " data: null");
-        }
-      });
-      welcomeMessage = view.findViewById(R.id.feed_welcome_txt);
-      welcomeMessage.setText(String.format("Hello, %s", this.uid));
+      recyclerView.setLayoutManager(layoutManager);
+      recyclerView.setAdapter(adapter);
     } else {
       Log.d(TAG, "not signed in");
     }
-
   }
 
   @Override
@@ -131,6 +117,5 @@ public class FeedFragment extends Fragment {
   @Override
   public void onDestroy() {
     super.onDestroy();
-    if (registration != null) registration.remove();
   }
 }

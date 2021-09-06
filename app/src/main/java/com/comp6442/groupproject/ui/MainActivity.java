@@ -67,32 +67,29 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     Bundle bundle = new Bundle();
     bundle.putString("uid", uid);
 
-    Fragment fragment;
+    Fragment fragment = null;
 
     switch (item.getItemId()) {
+
       case R.id.navigation_profile:
         fragment = new ProfileFragment();
-        fragment.setArguments(bundle);
         toolbar.setTitle(R.string.title_fragment_profile);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container_view, fragment)
-                .commit();
-        return true;
+        break;
 
       case R.id.navigation_feed:
         fragment = new FeedFragment();
-        fragment.setArguments(bundle);
         toolbar.setTitle(R.string.title_fragment_feed);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container_view, fragment)
-                .commit();
-        return true;
-
-      default:
-        Log.w(TAG, "Unrecognized selection: " + item.toString());
-        return false;
+        break;
     }
+
+    assert fragment != null;
+
+    fragment.setArguments(bundle);
+    getSupportFragmentManager()
+            .beginTransaction()
+            .replace(R.id.fragment_container_view, fragment)
+            .commit();
+
+    return true;
   }
 }

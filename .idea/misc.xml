@@ -21,6 +21,7 @@
         <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.33125" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.45" />
         <entry key="app/src/main/res/layout/fragment_scrolling.xml" value="0.3140625" />
+        <entry key="app/src/main/res/layout/post_card.xml" value="0.5" />
         <entry key="app/src/main/res/layout/post_view.xml" value="0.17254274954062085" />
         <entry key="app/src/main/res/layout/sample_my_view.xml" value="0.5630208333333333" />
         <entry key="app/src/main/res/menu-v21/home.xml" value="0.3145833333333333" />

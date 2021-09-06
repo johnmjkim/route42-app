@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:clipToPadding="false"
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        >
+
+    <com.google.android.material.card.MaterialCardView
+            android:id="@+id/post_card"
+            android:layout_width="375dp"
+            android:layout_height="300dp"
+            android:minHeight="200dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.486"
+            app:cardMaxElevation="1dp"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="10dp"
+            app:contentPadding="10dp"
+            app:cardUseCompatPadding="true"
+            >
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                <ImageView
+                        android:src="@drawable/user"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/post_user_icon" />
+
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="7dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/post_text1"
+                        android:layout_weight="1" />
+
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/post_text2"
+                        android:layout_weight="1" />
+            </LinearLayout>
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:src="@tools:sample/backgrounds/scenic[1]"
+                    android:id="@+id/post_route" />
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</RelativeLayout>
