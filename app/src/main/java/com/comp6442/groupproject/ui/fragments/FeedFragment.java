@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.Post;
-import com.comp6442.groupproject.ui.PostAdapter;
+import com.comp6442.groupproject.data.PostAdapter;
 
 import java.util.ArrayList;
 
