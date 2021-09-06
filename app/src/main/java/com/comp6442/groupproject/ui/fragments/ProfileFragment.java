@@ -14,11 +14,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.comp6442.groupproject.R;
+import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
 import com.comp6442.groupproject.ui.LogInActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,11 +38,10 @@ public class ProfileFragment extends Fragment {
   // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
   private static final String ARG_PARAM1 = "uid";
   private FirebaseAuth mAuth;
-  private Button b1;
-  private TextView userNameTxt, emailTxt;
+  private ListenerRegistration registration;
 
   // TODO: Rename and change types of parameters
-  private String mParam1;
+  private String uid;
 
   public ProfileFragment() {
     // Required empty public constructor
@@ -64,14 +70,14 @@ public class ProfileFragment extends Fragment {
 
 
     if (getArguments() != null) {
-      mParam1 = getArguments().getString(ARG_PARAM1);
+      this.uid = getArguments().getString(ARG_PARAM1);
     }
 
     // Initialize Firebase Auth
     // 10.0.2.2 is the special IP address to connect to the 'localhost' of
     // the host computer from an Android emulator.
-    mAuth = FirebaseAuth.getInstance();
-    mAuth.useEmulator("10.0.2.2", 9099);
+    this.mAuth = FirebaseAuth.getInstance();
+    this.mAuth.useEmulator("10.0.2.2", 9099);
   }
 
   @Override
@@ -85,49 +91,84 @@ public class ProfileFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    // user info
-    userNameTxt = (TextView) view.findViewById(R.id.userName);
-    emailTxt = (TextView) view.findViewById(R.id.email);
-
     if (savedInstanceState != null) {
       //Restore the fragment's state here
-      mParam1 = savedInstanceState.getString("uid");
+      this.uid = savedInstanceState.getString("uid");
     }
 
-    FirebaseUser firebaseUser = mAuth.getCurrentUser();
-    String uid = mParam1;
-    if (uid != null && firebaseUser != null) {
-      Log.d(TAG, "Received uid: " + uid);
+    FirebaseUser firebaseUser = this.mAuth.getCurrentUser();
+    if (firebaseUser == null) logOut();
+
+    if (this.uid != null) {
+      Log.d(TAG, "Received uid: " + this.uid);
       Log.d(TAG, "Retrieved Firebase user " + firebaseUser.getUid());
 
-      DocumentReference userDocument = UserRepository.getInstance().getUser(uid);
+      DocumentReference userDocument = UserRepository.getInstance().getUser(this.uid);
+      TextView userNameView = view.findViewById(R.id.profile_username);
+
+      // insert username to profile
       userDocument.get().addOnCompleteListener(task -> {
         if (task.isSuccessful()) {
           String userName = task.getResult().getString("userName");
           Log.d(TAG, "Retrieved user from Firestore: " + userName);
-          userNameTxt.setText(String.format("Username: %s", userName));
-          emailTxt.setText(String.format("Email: %s", task.getResult().getString("email")));
+          userNameView.setText(String.format("Username: %s", userName));
         } else {
-          Log.w(TAG, "Could not obtain user from Firestore: " + uid);
+          Log.w(TAG, "Could not obtain user from Firestore: " + this.uid);
         }
       });
+
+      // attach a listener and update username in realtime
+      this.registration = userDocument.addSnapshotListener((snapshot, error) -> {
+        if (error != null) {
+          Log.w(TAG, "Listen failed.", error);
+          return;
+        }
+
+        String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
+        if (snapshot != null && snapshot.exists()) {
+          Log.d(TAG, source + " data: " + snapshot.getData());
+
+          User user = new User(
+                  (String) Objects.requireNonNull(snapshot.get("uid")),
+                  (String) Objects.requireNonNull(snapshot.get("email"))
+          );
+          user.setUserName((String) snapshot.get("userName"));
+
+          Log.i(TAG, String.format("User successfully fetched: %s", user));
+          userNameView.setText(String.format("Username: %s", user.getUserName()));
+        } else {
+          Log.d(TAG, source + " data: null");
+        }
+      });
+
+      // when a user is looking at his/her own profile, hide Follow and Message buttons.
+      if (firebaseUser.getUid().equals(this.uid)) {
+        Log.d(TAG, "Fetching logged in user's profile. Hiding Follow and Message buttons.");
+        view.findViewById(R.id.profile_follow_button).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.profile_message_button).setVisibility(View.INVISIBLE);
+      }
+
+      // sign out button
+      Button b1 = view.findViewById(R.id.sign_out_button);
+      b1.setOnClickListener(view1 -> logOut());
+      b1.setEnabled(true);
     }
-
-    // sign out button
-    b1 = view.findViewById(R.id.sign_out_button);
-    b1.setOnClickListener(view1 -> logOut());
-    b1.setEnabled(true);
-
   }
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    outState.putString(ARG_PARAM1, mParam1);
+    outState.putString(ARG_PARAM1, this.uid);
     super.onSaveInstanceState(outState);
   }
 
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    if (registration != null) registration.remove();
+  }
+
   public void logOut() {
-    if (mAuth.getCurrentUser() != null) mAuth.signOut();
+    if (this.mAuth.getCurrentUser() != null) this.mAuth.signOut();
     Log.i(TAG, "Taking user to sign-in screen");
     startActivity(new Intent(getActivity(), LogInActivity.class));
   }

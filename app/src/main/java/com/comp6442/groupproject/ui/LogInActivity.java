@@ -41,8 +41,8 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     // the host computer from an Android emulator.
     mAuth.useEmulator("10.0.2.2", 9099);
 
-    ed1 = findViewById(R.id.username);
-    ed2 = findViewById(R.id.password);
+    ed1 = findViewById(R.id.login_form_email);
+    ed2 = findViewById(R.id.login_form_password);
     b1 = findViewById(R.id.login_button);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);

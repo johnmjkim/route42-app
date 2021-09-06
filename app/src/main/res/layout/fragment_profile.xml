@@ -7,6 +7,87 @@
         tools:context=".ui.fragments.ProfileFragment"
         android:id="@+id/profile_layout">
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Media -->
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:layout_width="114dp"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/user"
+                    android:id="@+id/profile_pic" />
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                <!-- Title, secondary and supporting text -->
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Username"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:id="@+id/profile_username" />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/secondary_text"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:id="@+id/profile_secondary_text" />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/supporting_text"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:id="@+id/profile_supporting_text" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Buttons -->
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/follow_button"
+                    style="?attr/borderlessButtonStyle"
+                    android:id="@+id/profile_follow_button" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/message_button"
+                    style="?attr/borderlessButtonStyle"
+                    android:id="@+id/profile_message_button" />
+        </LinearLayout>
+
+    </LinearLayout>
+
     <Button
             android:id="@+id/sign_out_button"
             android:text="@string/action_sign_out"
@@ -16,42 +97,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="104dp" />
-
-    <TextView
-            android:text="Username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/userName"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="24sp"
-            android:textAlignment="viewStart"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="256dp" />
-
-    <TextView
-            android:text="Email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/email"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="24sp"
-            android:textAlignment="viewStart"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="196dp" />
-
-    <TextView
-            android:text="uid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/uid"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="44dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

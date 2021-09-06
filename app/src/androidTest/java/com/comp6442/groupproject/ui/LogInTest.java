@@ -26,8 +26,8 @@ public class LogInTest {
 
   @Test
   public void logInSucceed() {
-    onView(withId(R.id.username)).perform(typeText("foo@bar.com"), closeSoftKeyboard());
-    onView(withId(R.id.password)).perform(typeText("password"), closeSoftKeyboard());
+    onView(withId(R.id.login_form_email)).perform(typeText("foo@bar.com"), closeSoftKeyboard());
+    onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
     onView(withId(R.id.login_button)).perform(click());
     onView(withId(R.id.sign_out_button)).perform(click());
     onView(withId(R.id.login_button)); // check exists
@@ -35,9 +35,9 @@ public class LogInTest {
 
   @Test
   public void logInFail() {
-    onView(withId(R.id.username)).perform(typeText("fake@fake.com"), closeSoftKeyboard());
-    onView(withId(R.id.password)).perform(typeText("password"), closeSoftKeyboard());
+    onView(withId(R.id.login_form_email)).perform(typeText("fake@fake.com"), closeSoftKeyboard());
+    onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
     onView(withId(R.id.login_button)).perform(click());
-    onView(withId(R.id.password)).check(matches(withText("")));
+    onView(withId(R.id.login_form_password)).check(matches(withText("")));
   }
 }

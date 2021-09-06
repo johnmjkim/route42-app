@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.ui.fragments.FeedFragment;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   private ActionBar toolbar;
   private String uid;
   private BottomNavigationView navBarView;
+  private MenuItem lastSelected = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +36,19 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     if (toolbar != null) toolbar.setTitle(String.format("Hello, %s", uid));
 
     navBarView = findViewById(R.id.bottom_navigation_view);
-    navBarView.setOnItemSelectedListener(this::onNavigationItemSelected);
+    navBarView.setOnItemSelectedListener(this);
     navBarView.setSelectedItemId(R.id.navigation_profile);
   }
 
+  /**
+   * Called when an item in the bottom navigation menu is selected.
+   *
+   * @param item The selected item
+   *
+   * @return true to display the item as the selected item and false if the item should not
+   *         be selected. Consider setting non-selectable items as disabled preemptively to
+   *         make them appear non-interactive.
+   */
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
     Log.d(TAG, "BottomNav Selection: " + item.toString());
@@ -50,27 +61,32 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
       }
     }
 
-    ProfileFragment profile = new ProfileFragment();
-    FeedFragment feed = new FeedFragment();
+    if (item == lastSelected) return false;
+    else lastSelected = item;
+
     Bundle bundle = new Bundle();
     bundle.putString("uid", uid);
 
+    Fragment fragment;
+
     switch (item.getItemId()) {
       case R.id.navigation_profile:
-        profile.setArguments(bundle);
-        toolbar.setTitle("Profile");
+        fragment = new ProfileFragment();
+        fragment.setArguments(bundle);
+        toolbar.setTitle(R.string.title_fragment_profile);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container_view, profile)
+                .replace(R.id.fragment_container_view, fragment)
                 .commit();
         return true;
 
       case R.id.navigation_feed:
-        feed.setArguments(bundle);
-        toolbar.setTitle("Feed");
+        fragment = new FeedFragment();
+        fragment.setArguments(bundle);
+        toolbar.setTitle(R.string.title_fragment_feed);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container_view, feed)
+                .replace(R.id.fragment_container_view, fragment)
                 .commit();
         return true;
 
