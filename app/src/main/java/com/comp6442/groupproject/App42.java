@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import timber.log.Timber;
 
 public class App42 extends Application {
-  private static final String TAG = "Application";
   //  In many apps, there's no need to work with an application class directly. However, there are a few acceptable uses of a custom application class:
   //
   //  Specialized tasks that need to run before the creation of your first activity
