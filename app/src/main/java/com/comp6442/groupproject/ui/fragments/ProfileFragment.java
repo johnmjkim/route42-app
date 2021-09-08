@@ -68,7 +68,7 @@ public class ProfileFragment extends Fragment {
       try {
         this.mAuth.useEmulator("10.0.2.2", 9099);
       } catch (IllegalStateException exc) {
-        Timber.w(exc);
+        Timber.d(exc);
       }
     }
   }
