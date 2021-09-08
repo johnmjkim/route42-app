@@ -13,9 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.PostAdapter;
+import com.comp6442.groupproject.data.model.Activity;
 import com.comp6442.groupproject.data.model.Post;
+import com.comp6442.groupproject.data.model.TsPoint;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -27,7 +32,6 @@ import timber.log.Timber;
  * create an instance of this fragment.
  */
 public class FeedFragment extends Fragment {
-  private static final String TAG = FeedFragment.class.getCanonicalName();
   private static final String ARG_PARAM1 = "uid";
   private String uid;
   private RecyclerView recyclerView;
@@ -82,10 +86,50 @@ public class FeedFragment extends Fragment {
 
     if (this.uid != null) {
       ArrayList<Post> posts = new ArrayList<>();
-      posts.add(new Post("uid1", "postId1", "foo"));
-      posts.add(new Post("uid1", "postId2", "foo"));
-      posts.add(new Post("uid2", "postId3", "bar"));
-      posts.add(new Post("uid3", "postId4", "baz"));
+      List<TsPoint> points = Arrays.asList(
+              new TsPoint(Timestamp.now(), -33.884633, 151.194464),
+              new TsPoint(Timestamp.now(), -33.884889, 151.194453),
+              new TsPoint(Timestamp.now(), -33.884986, 151.194464),
+              new TsPoint(Timestamp.now(), -33.885154, 151.194378),
+              new TsPoint(Timestamp.now(), -33.885371, 151.194288),
+              new TsPoint(Timestamp.now(), -33.885517, 151.194197),
+              new TsPoint(Timestamp.now(), -33.885645, 151.194150),
+              new TsPoint(Timestamp.now(), -33.885826, 151.194059),
+              new TsPoint(Timestamp.now(), -33.885981, 151.194022),
+              new TsPoint(Timestamp.now(), -33.886171, 151.193905),
+              new TsPoint(Timestamp.now(), -33.886343, 151.193809),
+              new TsPoint(Timestamp.now(), -33.886533, 151.193761),
+              new TsPoint(Timestamp.now(), -33.886666, 151.193702),
+              new TsPoint(Timestamp.now(), -33.886644, 151.193657),
+              new TsPoint(Timestamp.now(), -33.887127, 151.193300),
+              new TsPoint(Timestamp.now(), -33.887265, 151.193205),
+              new TsPoint(Timestamp.now(), -33.887477, 151.192983),
+              new TsPoint(Timestamp.now(), -33.887722, 151.192733),
+              new TsPoint(Timestamp.now(), -33.887639, 151.192455),
+              new TsPoint(Timestamp.now(), -33.887542, 151.192149),
+              new TsPoint(Timestamp.now(), -33.887454, 151.191854),
+              new TsPoint(Timestamp.now(), -33.887357, 151.191549),
+              new TsPoint(Timestamp.now(), -33.887283, 151.191243),
+              new TsPoint(Timestamp.now(), -33.886914, 151.191165),
+              new TsPoint(Timestamp.now(), -33.886743, 151.191159),
+              new TsPoint(Timestamp.now(), -33.886517, 151.191182),
+              new TsPoint(Timestamp.now(), -33.886337, 151.191221),
+              new TsPoint(Timestamp.now(), -33.886116, 151.191371),
+              new TsPoint(Timestamp.now(), -33.885844, 151.191393),
+              new TsPoint(Timestamp.now(), -33.885488, 151.191499),
+              new TsPoint(Timestamp.now(), -33.885220, 151.191543),
+              new TsPoint(Timestamp.now(), -33.884902, 151.191927),
+              new TsPoint(Timestamp.now(), -33.884851, 151.192433),
+              new TsPoint(Timestamp.now(), -33.884814, 151.192944),
+              new TsPoint(Timestamp.now(), -33.884741, 151.193389),
+              new TsPoint(Timestamp.now(), -33.884741, 151.194017)
+      );
+      Timestamp endTs = Timestamp.now();
+      Timestamp startTs = new Timestamp(endTs.getSeconds() - 500, endTs.getNanoseconds());
+      posts.add(new Post("postId1", "uid1", "foo", points, Activity.Cycle, startTs, endTs));
+      posts.add(new Post("postId2", "uid1", "foo", points, Activity.Run, startTs, endTs));
+      posts.add(new Post("postId3", "uid2", "bar", points, Activity.Run, startTs, endTs));
+      posts.add(new Post("postId4", "uid3", "baz", points, Activity.Walk, startTs, endTs));
 
       adapter = new PostAdapter(posts);
       layoutManager = new LinearLayoutManager(getActivity());
