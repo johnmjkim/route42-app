@@ -3,7 +3,6 @@ package com.comp6442.groupproject.data.model;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties

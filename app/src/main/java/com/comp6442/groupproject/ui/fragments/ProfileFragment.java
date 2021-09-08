@@ -17,12 +17,8 @@ import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
 import com.comp6442.groupproject.ui.LogInActivity;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.Objects;

@@ -1,13 +1,10 @@
 package com.comp6442.groupproject.ui.fragments;
 
-import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,23 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
-import com.comp6442.groupproject.data.model.Activity;
-import com.comp6442.groupproject.data.model.TsPoint;
-import com.comp6442.groupproject.ui.FirestorePostAdapter;
 import com.comp6442.groupproject.data.model.Post;
-import com.comp6442.groupproject.ui.PostAdapter;
+import com.comp6442.groupproject.ui.FirestorePostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import timber.log.Timber;
 
@@ -48,7 +34,7 @@ public class FeedFragment extends Fragment {
   private FirebaseFirestore firestore;
   private RecyclerView recyclerView;
   private FirestorePostAdapter adapter;
-//  private PostAdapter adapter;
+  //  private PostAdapter adapter;
   private LinearLayoutManager layoutManager;
 
   public FeedFragment() {
