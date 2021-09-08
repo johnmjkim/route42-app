@@ -20,3 +20,4 @@ google_maps_api.xml
 /firestore-debug.log
 api.xml
 gradle.properties
+*.ipynb
