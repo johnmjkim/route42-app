@@ -2,10 +2,14 @@ package com.comp6442.groupproject.data.repository;
 
 import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.data.model.Post;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 
 import java.util.List;
 
@@ -27,7 +31,7 @@ public final class PostRepository extends FirestoreRepository<Post> {
         try {
           firestore.useEmulator("10.0.2.2", 8080);
         } catch (IllegalStateException exc) {
-          Timber.w(exc);
+          Timber.d(exc);
         }
       }
 
@@ -39,6 +43,22 @@ public final class PostRepository extends FirestoreRepository<Post> {
       PostRepository.instance = new PostRepository(firestore);
     }
     return PostRepository.instance;
+  }
+
+  public static Gson getJsonDeserializer() {
+    return new GsonBuilder().registerTypeAdapter(Timestamp.class, (JsonDeserializer<Timestamp>) (json, type, context) -> {
+      String tsString = json.toString();
+      int decimalIdx = (tsString.contains(".")) ? tsString.indexOf(".") : tsString.length();
+      return new Timestamp(
+              Long.parseLong(tsString.substring(0, decimalIdx)),
+              (decimalIdx != tsString.length()) ? Integer.parseInt(tsString.substring(decimalIdx + 1)) : 0
+      );
+    }).registerTypeAdapter(Double.class, (JsonDeserializer<Double>) (json, type, context) -> {
+      return json.getAsDouble();
+    }).registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
+      String str = json.toString();
+      return UserRepository.getInstance().getUser(str);
+    }).create();
   }
 
   public DocumentReference getPost(String postId) {
@@ -60,14 +80,11 @@ public final class PostRepository extends FirestoreRepository<Post> {
       int counter = 0;
       // Get a new write batch
       WriteBatch batch = this.firestore.batch();
+
       while (counter < 500 && idx < posts.size()) {
         Post post = posts.get(idx);
         DocumentReference postRef = this.collection.document(post.getPostId());
         batch.set(postRef, post);
-        // post.getRoute().forEach(point -> {
-        //   DocumentReference pointDoc = postRef.collection("route").document();
-        //   batch.set(pointDoc, point);
-        // });
         counter++;
         idx++;
       }

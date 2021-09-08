@@ -3,6 +3,7 @@ package com.comp6442.groupproject.data.model;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
 
@@ -16,7 +17,7 @@ public class Post {
   private final String postId;
 
   @NonNull
-  private final String uid;
+  private final DocumentReference uid;
 
   @NonNull
   private final String userName;
@@ -43,7 +44,7 @@ public class Post {
   // private Double pace;
   // private String imageUrl;
 
-  public Post(@NonNull String postId, @NonNull String uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs) {
+  public Post(@NonNull String postId, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs) {
     this.postId = postId;
     this.uid = uid;
     this.userName = userName;
@@ -53,12 +54,12 @@ public class Post {
     this.endTs = endTs;
   }
 
-  public Post(@NonNull String uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs) {
+  public Post(@NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs) {
     this(UUID.randomUUID().toString(), uid, userName, route, activity, startTs, endTs);
   }
 
   @NonNull
-  public String getUid() {
+  public DocumentReference getUid() {
     return uid;
   }
 

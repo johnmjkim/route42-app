@@ -2,6 +2,7 @@ package com.comp6442.groupproject.data.model;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
@@ -24,8 +25,8 @@ public class User {
   @Exclude
   private String password = null;
 
-  private List<String> following;
-  private List<String> followers;
+  private List<DocumentReference> following;
+  private List<DocumentReference> followers;
 
   public User(@NonNull String email, @NonNull String userName) {
     this.uid = UUID.randomUUID().toString();
@@ -46,7 +47,7 @@ public class User {
     this.password = password;
   }
 
-  public User(String uid, @NonNull String email, @NonNull String userName, List<String> following, List<String> followers) {
+  public User(String uid, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers) {
     this.uid = uid;
     this.email = email;
     this.userName = userName;
@@ -54,7 +55,7 @@ public class User {
     this.followers = followers;
   }
 
-  public User(String uid, @NonNull String email, @NonNull String userName, List<String> following, List<String> followers, String password) {
+  public User(String uid, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers, String password) {
     this.uid = uid;
     this.email = email;
     this.userName = userName;
@@ -72,8 +73,10 @@ public class User {
             (String) Objects.requireNonNull(data.get("userName"))
     );
 
-    if (data.containsKey("following")) user.setFollowing((List<String>) data.get("following"));
-    if (data.containsKey("followers")) user.setFollowers((List<String>) data.get("followers"));
+    if (data.containsKey("following"))
+      user.setFollowing((List<DocumentReference>) data.get("following"));
+    if (data.containsKey("followers"))
+      user.setFollowers((List<DocumentReference>) data.get("followers"));
     return user;
   }
 
@@ -140,11 +143,11 @@ public class User {
     );
   }
 
-  public List<String> getFollowing() {
+  public List<DocumentReference> getFollowing() {
     return following;
   }
 
-  public User setFollowing(List<String> following) {
+  public User setFollowing(List<DocumentReference> following) {
     return new User(
             this.getUid(),
             this.getEmail(),
@@ -155,11 +158,11 @@ public class User {
     );
   }
 
-  public List<String> getFollowers() {
+  public List<DocumentReference> getFollowers() {
     return followers;
   }
 
-  public User setFollowers(List<String> followers) {
+  public User setFollowers(List<DocumentReference> followers) {
     return new User(
             this.getUid(),
             this.getEmail(),
