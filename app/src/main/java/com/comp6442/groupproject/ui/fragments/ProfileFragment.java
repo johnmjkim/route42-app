@@ -12,16 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
-import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
 import com.comp6442.groupproject.ui.LogInActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.ListenerRegistration;
-
-import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -65,11 +63,14 @@ public class ProfileFragment extends Fragment {
       this.uid = getArguments().getString(ARG_PARAM1);
     }
 
-    // Initialize Firebase Auth
-    // 10.0.2.2 is the special IP address to connect to the 'localhost' of
-    // the host computer from an Android emulator.
     this.mAuth = FirebaseAuth.getInstance();
-    this.mAuth.useEmulator("10.0.2.2", 9099);
+    if (BuildConfig.DEBUG) {
+      try {
+        this.mAuth.useEmulator("10.0.2.2", 9099);
+      } catch (IllegalStateException exc) {
+        Timber.w(exc);
+      }
+    }
   }
 
   @Override
@@ -117,17 +118,10 @@ public class ProfileFragment extends Fragment {
         }
 
         String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
-        if (snapshot != null && snapshot.exists()) {
-          Timber.d(source + " data: " + snapshot.getData());
-
-          User user = new User(
-                  (String) Objects.requireNonNull(snapshot.get("uid")),
-                  (String) Objects.requireNonNull(snapshot.get("email"))
-          );
-          user.setUserName((String) snapshot.get("userName"));
-
-          Timber.d("User successfully fetched: %s", user);
-          userNameView.setText(String.format("Username: %s", user.getUserName()));
+        String userName = (String) snapshot.get("userName");
+        if (userName != null) {
+          Timber.d(source + " data: " + userName);
+          userNameView.setText(String.format("Username: %s", userName));
         } else {
           Timber.w("%s data: null", source);
         }

@@ -12,13 +12,11 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
-import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -36,38 +34,20 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
     // Initialize Firebase Auth
     mAuth = FirebaseAuth.getInstance();
+    if (BuildConfig.DEBUG) {
+      try {
+        mAuth.useEmulator("10.0.2.2", 9099);
+      } catch (IllegalStateException exc) {
+        Timber.w(exc);
+      }
+    }
 
-    // 10.0.2.2 is the special IP address to connect to the 'localhost' of
-    // the host computer from an Android emulator.
-    mAuth.useEmulator("10.0.2.2", 9099);
-
+    // UI
     ed1 = findViewById(R.id.login_form_email);
     ed2 = findViewById(R.id.login_form_password);
     b1 = findViewById(R.id.login_button);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);
-
-    // for testing
-    mAuth.createUserWithEmailAndPassword("foo@bar.com", "password")
-            .addOnCompleteListener(this, task -> {
-              if (task.isSuccessful()) {
-                Timber.d("Created test user.");
-              }
-            });
-
-    mAuth.signInWithEmailAndPassword("foo@bar.com", "password").addOnCompleteListener(task -> {
-      FirebaseUser firebaseUser = Objects.requireNonNull(task.getResult()).getUser();
-      if (firebaseUser != null) {
-        UserRepository.getInstance().addUser(firebaseUser);
-        User user = new User(
-                Objects.requireNonNull(firebaseUser.getUid()),
-                Objects.requireNonNull(firebaseUser.getEmail())
-        );
-        user.setUserName("test_user");
-        UserRepository.getInstance().updateUser(user);
-        mAuth.signOut();
-      }
-    });
   }
 
   @Override
@@ -99,15 +79,15 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
                 if (firebaseUser != null) {
                   Timber.d("Sign in successful: %s", firebaseUser.getEmail());
-                  Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
                   home(firebaseUser);
                 }
               } else {
                 // If sign in fails, display a message to the user.
                 Timber.w(task.getException(), "Failed to sign in");
-                Toast.makeText(LogInActivity.this, "Sign in failed.",
-                        Toast.LENGTH_SHORT).show();
-
+                if (BuildConfig.DEBUG) {
+                  Toast.makeText(LogInActivity.this, "Sign in failed.",
+                          Toast.LENGTH_SHORT).show();
+                }
                 // this is required to clear the password form
                 ed2.setText(" ");
                 ed2.setText("");
@@ -116,7 +96,6 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
   }
 
   @SuppressLint("TimberArgCount")
-  @RequiresApi(api = Build.VERSION_CODES.N)
   private void createAccount(String email, String password) {
     mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, task -> {

@@ -17,8 +17,10 @@ import timber.log.Timber;
 public class FirestoreRepository<T> implements IRepository<T> {
   private final Class<T> classType;
   protected CollectionReference collection;
+  protected FirebaseFirestore firestore;
 
   public FirestoreRepository(FirebaseFirestore firestore, String collectionPath, Class<T> classType) {
+    this.firestore = firestore;
     this.collection = firestore.collection(collectionPath);
     this.classType = classType;
   }
