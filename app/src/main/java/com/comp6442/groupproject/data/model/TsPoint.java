@@ -9,19 +9,17 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class TsPoint {
 
-  @NonNull
-  private final Timestamp ts;
-  @NonNull
-  @Exclude
-  private final Double latitude;
-  @NonNull
-  @Exclude
-  private final Double longitude;
+  private Timestamp ts;
+  private Double latitude;
+  private Double longitude;
 
   public TsPoint(@NonNull Timestamp ts, @NonNull Double latitude, @NonNull Double longitude) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.ts = ts;
+  }
+
+  public TsPoint() {
   }
 
   @NonNull

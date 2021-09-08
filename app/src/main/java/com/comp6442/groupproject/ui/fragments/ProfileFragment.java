@@ -14,12 +14,18 @@ import androidx.fragment.app.Fragment;
 
 import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
+import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
 import com.comp6442.groupproject.ui.LogInActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
+
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -33,6 +39,7 @@ public class ProfileFragment extends Fragment {
   private FirebaseAuth mAuth;
   private ListenerRegistration registration;
   private String uid;
+  private TextView userNameView;
 
   public ProfileFragment() {
     // Required empty public constructor
@@ -84,6 +91,8 @@ public class ProfileFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    userNameView = view.findViewById(R.id.profile_username);
+
     if (savedInstanceState != null) {
       //Restore the fragment's state here
       this.uid = savedInstanceState.getString("uid");
@@ -96,36 +105,15 @@ public class ProfileFragment extends Fragment {
       Timber.d("Received uid: %s", this.uid);
       Timber.d("Retrieved Firebase user %s", firebaseUser.getUid());
 
-      DocumentReference userDocument = UserRepository.getInstance().getUser(this.uid);
-      TextView userNameView = view.findViewById(R.id.profile_username);
-
       // insert username to profile
-      userDocument.get().addOnCompleteListener(task -> {
-        if (task.isSuccessful()) {
-          String userName = task.getResult().getString("userName");
-          Timber.d("Retrieved user from Firestore: %s", userName);
-          userNameView.setText(String.format("Username: %s", userName));
-        } else {
-          Timber.w("Could not obtain user from Firestore: %s", this.uid);
+      String uid = this.uid;
+      UserRepository.getInstance().getUser(uid).get().addOnSuccessListener(snapshot -> {
+        User user = snapshot.toObject(User.class);
+        if (user != null) {
+          userNameView.setText(user.getUserName());
+          Timber.d("Retrieved user from Firestore: %s", user);
         }
-      });
-
-      // attach a listener and update username in realtime
-      this.registration = userDocument.addSnapshotListener((snapshot, error) -> {
-        if (error != null) {
-          Timber.w(error);
-          return;
-        }
-
-        String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
-        String userName = (String) snapshot.get("userName");
-        if (userName != null) {
-          Timber.d(source + " data: " + userName);
-          userNameView.setText(String.format("Username: %s", userName));
-        } else {
-          Timber.w("%s data: null", source);
-        }
-      });
+      }).addOnFailureListener(e -> Timber.w("Could not obtain user from Firestore: %s", uid));
 
       // when a user is looking at his/her own profile, hide Follow and Message buttons.
       if (firebaseUser.getUid().equals(this.uid)) {
@@ -134,17 +122,47 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.profile_message_button).setVisibility(View.INVISIBLE);
       }
 
-      // sign out button
-      Button b1 = view.findViewById(R.id.sign_out_button);
-      b1.setOnClickListener(view1 -> logOut());
-      b1.setEnabled(true);
+      Button signOutButton = view.findViewById(R.id.sign_out_button);
+      signOutButton.setOnClickListener(unused -> logOut());
+      signOutButton.setEnabled(true);
     }
+  }
+
+  private void registerListener() {
+    // attach a listener and update username in realtime
+    this.registration = UserRepository.getInstance().getUser(this.uid).addSnapshotListener((snapshot, error) -> {
+      if (error != null) {
+        Timber.w(error);
+        return;
+      }
+
+      String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
+      String userName = (String) Objects.requireNonNull(snapshot).get("userName");
+      if (userName != null) {
+        Timber.d(source + " data: " + userName);
+        userNameView.setText(String.format("Username: %s", userName));
+      } else {
+        Timber.w("%s data: null", source);
+      }
+    });
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    if (registration != null) registration.remove();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
   }
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    outState.putString(ARG_PARAM1, this.uid);
     super.onSaveInstanceState(outState);
+    outState.putString(ARG_PARAM1, this.uid);
+    if (registration != null) registration.remove();
   }
 
   @Override
@@ -155,6 +173,7 @@ public class ProfileFragment extends Fragment {
 
   public void logOut() {
     if (this.mAuth.getCurrentUser() != null) this.mAuth.signOut();
+    if (registration != null) registration.remove();
     Timber.i("Taking user to sign-in screen");
     startActivity(new Intent(getActivity(), LogInActivity.class));
   }

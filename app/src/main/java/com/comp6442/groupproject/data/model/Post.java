@@ -13,26 +13,19 @@ import java.util.UUID;
 
 @IgnoreExtraProperties
 public class Post {
-  @NonNull
-  private final String postId;
+  private String postId;
 
-  @NonNull
-  private final DocumentReference uid;
+  private DocumentReference uid;
 
-  @NonNull
-  private final String userName;
+  private String userName;
 
-  @NonNull
-  private final List<TsPoint> route;
+  private List<TsPoint> route;
 
-  @NonNull
-  private final Activity activity;
+  private Activity activity;
 
-  @NonNull
-  private final Timestamp startTs;
+  private Timestamp startTs;
 
-  @NonNull
-  private final Timestamp endTs;
+  private Timestamp endTs;
 
   // will be null on emulator
   @ServerTimestamp
@@ -56,6 +49,10 @@ public class Post {
 
   public Post(@NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs) {
     this(UUID.randomUUID().toString(), uid, userName, route, activity, startTs, endTs);
+  }
+
+  public Post() {
+
   }
 
   @NonNull
@@ -86,11 +83,6 @@ public class Post {
   @NonNull
   public Timestamp getEndTs() {
     return endTs;
-  }
-
-  @NonNull
-  public Post clearRoute() {
-    return new Post(getPostId(), getUid(), getUserName(), null, getActivity(), startTs, endTs);
   }
 
   @NonNull

@@ -1,7 +1,7 @@
-<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:clipToPadding="false"
@@ -9,61 +9,89 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        >
+        android:paddingBottom="20dp">
 
     <com.google.android.material.card.MaterialCardView
             android:id="@+id/post_card"
-            android:layout_width="wrap_content"
-            android:layout_height="421dp"
+            android:layout_width="350dp"
+            android:layout_height="440dp"
             android:minHeight="200dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHorizontal_bias="0.486"
             app:cardMaxElevation="1dp"
             app:cardElevation="5dp"
             app:cardCornerRadius="10dp"
             app:contentPadding="10dp"
-            app:cardUseCompatPadding="true">
+            app:cardUseCompatPadding="true"
+            android:foregroundGravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="328dp"
-                android:layout_height="378dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|fill_vertical">
 
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="50dp"
+                    android:gravity="top">
 
                 <ImageView
                         android:src="@drawable/user"
-                        android:layout_width="50dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/post_user_icon" />
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:id="@+id/post_user_icon"
+                        android:baselineAlignBottom="false"
+                        android:layout_gravity="center_vertical" />
 
                 <TextView
-                        android:text="TextView"
-                        android:layout_width="7dp"
+                        android:text="Username"
+                        android:layout_width="85dp"
                         android:layout_height="match_parent"
-                        android:id="@+id/post_text1"
-                        android:layout_weight="1" />
+                        android:id="@+id/post_username"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp" />
 
                 <TextView
-                        android:text="TextView"
+                        android:text="Activity"
+                        android:layout_width="93dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/activity_label"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp" />
+
+                <ImageView
+                        android:id="@+id/activity_icon"
+                        android:src="@drawable/run"
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
-                        android:id="@+id/post_text2"
                         android:layout_weight="1" />
             </LinearLayout>
 
             <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
                     tools:src="@drawable/route"
-                    android:id="@+id/post_route" />
+                    android:id="@+id/post_route"
+                    android:layout_gravity="center" />
+
+            <TextView
+                    android:id="@+id/post_description"
+                    android:text="Activity"
+                    android:textSize="16sp"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    />
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

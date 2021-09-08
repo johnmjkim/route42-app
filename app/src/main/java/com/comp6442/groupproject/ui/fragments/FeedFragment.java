@@ -1,9 +1,13 @@
 package com.comp6442.groupproject.ui.fragments;
 
+import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
+
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,20 +15,27 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
-import com.comp6442.groupproject.data.PostAdapter;
 import com.comp6442.groupproject.data.model.Activity;
-import com.comp6442.groupproject.data.model.Post;
 import com.comp6442.groupproject.data.model.TsPoint;
+import com.comp6442.groupproject.ui.FirestorePostAdapter;
+import com.comp6442.groupproject.data.model.Post;
+import com.comp6442.groupproject.ui.PostAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import timber.log.Timber;
-
-//  import com.bumptech.glide.Glide;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,9 +45,11 @@ import timber.log.Timber;
 public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
   private String uid;
+  private FirebaseFirestore firestore;
   private RecyclerView recyclerView;
+  private FirestorePostAdapter adapter;
+//  private PostAdapter adapter;
   private LinearLayoutManager layoutManager;
-  private PostAdapter adapter;
 
   public FeedFragment() {
     // Required empty public constructor
@@ -66,10 +79,29 @@ public class FeedFragment extends Fragment {
     return inflater.inflate(R.layout.fragment_feed, container, false);
   }
 
+  @SuppressLint("NotifyDataSetChanged")
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    // firestore
+    this.firestore = FirebaseFirestore.getInstance();
+    if (BuildConfig.DEBUG) {
+      try {
+        this.firestore.useEmulator("10.0.2.2", 8080);
+      } catch (IllegalStateException exc) {
+        Timber.d(exc);
+      }
+    }
+
+    // disable caching
+    this.firestore.setFirestoreSettings(
+            new FirebaseFirestoreSettings.Builder()
+                    .setPersistenceEnabled(false)
+                    .build()
+    );
+
+    // restore data
     if (savedInstanceState == null) {
       Timber.d("No previous state to restore from. Checking arguments..");
       Bundle args = getArguments();
@@ -85,58 +117,24 @@ public class FeedFragment extends Fragment {
     }
 
     if (this.uid != null) {
-      ArrayList<Post> posts = new ArrayList<>();
-      List<TsPoint> points = Arrays.asList(
-              new TsPoint(Timestamp.now(), -33.884633, 151.194464),
-              new TsPoint(Timestamp.now(), -33.884889, 151.194453),
-              new TsPoint(Timestamp.now(), -33.884986, 151.194464),
-              new TsPoint(Timestamp.now(), -33.885154, 151.194378),
-              new TsPoint(Timestamp.now(), -33.885371, 151.194288),
-              new TsPoint(Timestamp.now(), -33.885517, 151.194197),
-              new TsPoint(Timestamp.now(), -33.885645, 151.194150),
-              new TsPoint(Timestamp.now(), -33.885826, 151.194059),
-              new TsPoint(Timestamp.now(), -33.885981, 151.194022),
-              new TsPoint(Timestamp.now(), -33.886171, 151.193905),
-              new TsPoint(Timestamp.now(), -33.886343, 151.193809),
-              new TsPoint(Timestamp.now(), -33.886533, 151.193761),
-              new TsPoint(Timestamp.now(), -33.886666, 151.193702),
-              new TsPoint(Timestamp.now(), -33.886644, 151.193657),
-              new TsPoint(Timestamp.now(), -33.887127, 151.193300),
-              new TsPoint(Timestamp.now(), -33.887265, 151.193205),
-              new TsPoint(Timestamp.now(), -33.887477, 151.192983),
-              new TsPoint(Timestamp.now(), -33.887722, 151.192733),
-              new TsPoint(Timestamp.now(), -33.887639, 151.192455),
-              new TsPoint(Timestamp.now(), -33.887542, 151.192149),
-              new TsPoint(Timestamp.now(), -33.887454, 151.191854),
-              new TsPoint(Timestamp.now(), -33.887357, 151.191549),
-              new TsPoint(Timestamp.now(), -33.887283, 151.191243),
-              new TsPoint(Timestamp.now(), -33.886914, 151.191165),
-              new TsPoint(Timestamp.now(), -33.886743, 151.191159),
-              new TsPoint(Timestamp.now(), -33.886517, 151.191182),
-              new TsPoint(Timestamp.now(), -33.886337, 151.191221),
-              new TsPoint(Timestamp.now(), -33.886116, 151.191371),
-              new TsPoint(Timestamp.now(), -33.885844, 151.191393),
-              new TsPoint(Timestamp.now(), -33.885488, 151.191499),
-              new TsPoint(Timestamp.now(), -33.885220, 151.191543),
-              new TsPoint(Timestamp.now(), -33.884902, 151.191927),
-              new TsPoint(Timestamp.now(), -33.884851, 151.192433),
-              new TsPoint(Timestamp.now(), -33.884814, 151.192944),
-              new TsPoint(Timestamp.now(), -33.884741, 151.193389),
-              new TsPoint(Timestamp.now(), -33.884741, 151.194017)
-      );
-      Timestamp endTs = Timestamp.now();
-      Timestamp startTs = new Timestamp(endTs.getSeconds() - 500, endTs.getNanoseconds());
-      posts.add(new Post("postId1", "uid1", "foo", points, Activity.Cycle, startTs, endTs));
-      posts.add(new Post("postId2", "uid1", "foo", points, Activity.Run, startTs, endTs));
-      posts.add(new Post("postId3", "uid2", "bar", points, Activity.Run, startTs, endTs));
-      posts.add(new Post("postId4", "uid3", "baz", points, Activity.Walk, startTs, endTs));
+      Query query = this.firestore.collection("posts")
+              .orderBy("userName")
+              .limit(50);
 
-      adapter = new PostAdapter(posts);
+      FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
+              .setQuery(query, Post.class)
+              .build();
+
+      adapter = new FirestorePostAdapter(posts);
+      adapter.notifyDataSetChanged();
       layoutManager = new LinearLayoutManager(getActivity());
       recyclerView = view.findViewById(R.id.recycler_view);
-      recyclerView.setHasFixedSize(true);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(adapter);
+      adapter.startListening();
+
+      Timber.d("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+      query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
       Timber.d("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
     } else {
       Timber.w("not signed in");

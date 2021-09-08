@@ -1,4 +1,4 @@
-package com.comp6442.groupproject.data;
+package com.comp6442.groupproject.ui;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -36,10 +36,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   // Create new views (invoked by the layout manager)
   @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+  public ViewHolder onCreateViewHolder(ViewGroup viewHolder, int viewType) {
     // Create a new view, which defines the UI of the list item
-    View view = LayoutInflater.from(viewGroup.getContext())
-            .inflate(R.layout.post_card, viewGroup, false);
+    View view = LayoutInflater.from(viewHolder.getContext())
+            .inflate(R.layout.post_card, viewHolder, false);
 
     Timber.d("PostAdapter created.");
     return new ViewHolder(view);
@@ -48,14 +48,29 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   // Replace the contents of a view (invoked by the layout manager)
   @SuppressLint("DefaultLocale")
   @Override
-  public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+  public void onBindViewHolder(ViewHolder viewHolder, final int idx) {
 
     // Get element from your dataset at this position and replace the
     // contents of the view with that element
     viewHolder.materialCardView.setStrokeWidth(5);
-    viewHolder.textView1.setText(posts.get(position).getUserName());
-    viewHolder.textView2.setText(String.format("Sample text for card #%d", position));
+    viewHolder.userNameView.setText(posts.get(idx).getUserName());
+
     viewHolder.routeImage.setImageResource(R.drawable.route);
+    viewHolder.descriptionView.setText("This is a sample text. This is a sample text. This is a sample test.");
+
+    switch (posts.get(idx).getActivity()) {
+      case Run:
+        viewHolder.activityIcon.setImageResource(R.drawable.run);
+        break;
+      case Walk:
+        viewHolder.activityIcon.setImageResource(R.drawable.walk);
+        break;
+      case Cycle:
+        viewHolder.activityIcon.setImageResource(R.drawable.cycle);
+        break;
+      default:
+        throw new IllegalStateException("Unexpected value: " + posts.get(idx).getActivity());
+    }
 
     Timber.d("OnBindView called.");
   }
@@ -71,17 +86,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
    * (custom ViewHolder).
    */
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    public ImageView userIcon, routeImage;
-    public TextView textView1, textView2;
+    public ImageView userIcon, routeImage, activityIcon;
+    public TextView userNameView, activityTextView, descriptionView;
     public MaterialCardView materialCardView;
 
     public ViewHolder(View view) {
       super(view);
       // Define click listener for the ViewHolder's View
-      textView1 = view.findViewById(R.id.post_text1);
-      textView2 = view.findViewById(R.id.post_text2);
       userIcon = view.findViewById(R.id.post_user_icon);
+      activityIcon = view.findViewById(R.id.activity_icon);
       routeImage = view.findViewById(R.id.post_route);
+      userNameView = view.findViewById(R.id.post_username);
+      activityTextView = view.findViewById(R.id.activity_label);
+      descriptionView = view.findViewById(R.id.post_description);
       materialCardView = view.findViewById(R.id.post_card);
     }
   }

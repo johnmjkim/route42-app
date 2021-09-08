@@ -16,7 +16,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "DEBUG", "true")
-        buildConfigField("boolean", "loadData", "true")
+        buildConfigField("boolean", "loadData", "false")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
         buildConfigField("String", "testUser2Email", "\"test@android.com\"")
@@ -78,6 +78,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore:23.0.3'
+
+    // FirebaseUI for Cloud Firestore
+    implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
 
     // ----------- Mapbox ------------
 

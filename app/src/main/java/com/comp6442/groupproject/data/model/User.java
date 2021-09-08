@@ -14,19 +14,21 @@ import java.util.UUID;
 
 @IgnoreExtraProperties
 public class User {
-  private final String uid;
+  private String uid;
 
-  @NonNull
-  private final String email;
+  private String email;
 
-  @NonNull
-  private final String userName;
+  private String userName;
 
   @Exclude
   private String password = null;
 
   private List<DocumentReference> following;
   private List<DocumentReference> followers;
+
+  public User() {
+
+  }
 
   public User(@NonNull String email, @NonNull String userName) {
     this.uid = UUID.randomUUID().toString();
