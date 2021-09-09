@@ -24,7 +24,7 @@
    - To use the Android Emulator, you can create a virtual device and install the emulator by using the Android Virtual Device (AVD) Manager that comes with Android Studio.
 3. Go to [this page](https://docs.mapbox.com/android/maps/guides/install/#configure-credentials) and get two things: Mapbox public access token and secret access token by following the steps under "Configure credentials".
    - public access token: Make a copy of `app/src/main/res/values/api_template.xml` in the same directory and name it `api.xml`. Uncomment `<!--    <string name="mapbox_api_key" translatable="false" templateMergeStrategy="preserve">YOUR_KEY_HERE</string>-->` and paste your key.  
-   - secret access token: Make a copy of `gradle_template.properties` in the same location and name it `gradle.properties`. Uncomment `MAPBOX_SECRET_TOKEN` and enter your secret access token.
+   - secret access token (Downloads:Read scope): Make a copy of `gradle_template.properties` in the same location and name it `gradle.properties`. Uncomment `MAPBOX_SECRET_TOKEN` and enter your secret access token.
 4. Set up Firebase Emulator (see below).
 5. Run `firebase emulators:start` on the project root directory to start the emulators. 
 6. Open the project root directory in Android Studio. It should recognize `build.gradle` files and set up the project for you.

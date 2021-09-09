@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import timber.log.Timber;
+
 public class MapFragment extends Fragment {
   private static final String TAG = "MapFragment";
   private final Random random = new Random();
@@ -52,6 +54,7 @@ public class MapFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    Timber.d("Creating map..");
     mMapView = view.findViewById(R.id.mapView);
     mMapView.onCreate(savedInstanceState);
     mMapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.DARK,
@@ -168,30 +171,35 @@ public class MapFragment extends Fragment {
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     mMapView.onSaveInstanceState(outState);
+    Timber.d("Saving instance state");
   }
 
   @Override
   public void onStart() {
     super.onStart();
     mMapView.onStart();
+    Timber.d("Starting");
   }
 
   @Override
   public void onStop() {
     super.onStop();
     mMapView.onStop();
+    Timber.d("Stopping");
   }
 
   @Override
   public void onResume() {
     super.onResume();
     mMapView.onResume();
+    Timber.d("Resuming");
   }
 
   @Override
   public void onPause() {
     super.onPause();
     mMapView.onPause();
+    Timber.d("Pausing");
   }
 
   @Override
@@ -207,17 +215,20 @@ public class MapFragment extends Fragment {
       lineManager.onDestroy();
     }
     mMapView.onDestroy();
+    Timber.d("Destroying View");
   }
 
   @Override
   public void onDetach() {
     super.onDetach();
     mMapView = null;
+    Timber.d("Detaching");
   }
 
   @Override
   public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
     menu.clear();
+    Timber.d("OptionMenu Created");
   }
 }

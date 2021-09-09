@@ -1,7 +1,6 @@
 package com.comp6442.groupproject.data.repository;
 
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -13,12 +12,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Optional;
 
+import timber.log.Timber;
+
 public class FirestoreRepository<T> implements IRepository<T> {
-  private static final String TAG = "FirestoreRepository";
-  protected CollectionReference collection;
   private final Class<T> classType;
+  protected CollectionReference collection;
+  protected FirebaseFirestore firestore;
 
   public FirestoreRepository(FirebaseFirestore firestore, String collectionPath, Class<T> classType) {
+    this.firestore = firestore;
     this.collection = firestore.collection(collectionPath);
     this.classType = classType;
   }
@@ -37,7 +39,7 @@ public class FirestoreRepository<T> implements IRepository<T> {
       DocumentSnapshot entry = futureEntry.getResult();
       return Optional.ofNullable(entry.toObject(classType));
     } catch (Exception ex) {
-      Log.d(TAG, ex.getMessage());
+      Timber.w(ex);
       return Optional.empty();
     }
   }

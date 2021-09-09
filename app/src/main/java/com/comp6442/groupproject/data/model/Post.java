@@ -2,16 +2,61 @@ package com.comp6442.groupproject.data.model;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @IgnoreExtraProperties
 public class Post {
-  @NonNull private final String uid;
-  @NonNull private final String postId;
-  @NonNull private final String userName;
+  private String postId;
+
+  private DocumentReference uid;
+
+  private String userName;
+
+  private List<TsPoint> route;
+
+  private Activity activity;
+
+  private Timestamp startTs;
+
+  private Timestamp endTs;
+
+  // will be null on emulator
+  @ServerTimestamp
+  private Date postDatetime;
+
+  // TODO
+  // private final List<String> tags;
+  // private Double distance;
+  // private Double pace;
+  // private String imageUrl;
+
+  public Post(@NonNull String postId, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs) {
+    this.postId = postId;
+    this.uid = uid;
+    this.userName = userName;
+    this.route = route;
+    this.activity = activity;
+    this.startTs = startTs;
+    this.endTs = endTs;
+  }
+
+  public Post(@NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs) {
+    this(UUID.randomUUID().toString(), uid, userName, route, activity, startTs, endTs);
+  }
+
+  public Post() {
+
+  }
 
   @NonNull
-  public String getUid() {
+  public DocumentReference getUid() {
     return uid;
   }
 
@@ -25,18 +70,23 @@ public class Post {
     return userName;
   }
 
-  @Override
-  public String toString() {
-    return "Post{" +
-            "uid='" + uid + '\'' +
-            ", postId='" + postId + '\'' +
-            ", userName='" + userName + '\'' +
-            '}';
+  @NonNull
+  public List<TsPoint> getRoute() {
+    return route;
   }
 
-  public Post(@NonNull String uid, @NonNull String postId, @NonNull String userName) {
-    this.uid = uid;
-    this.postId = postId;
-    this.userName = userName;
+  @NonNull
+  public Timestamp getStartTs() {
+    return startTs;
+  }
+
+  @NonNull
+  public Timestamp getEndTs() {
+    return endTs;
+  }
+
+  @NonNull
+  public Activity getActivity() {
+    return activity;
   }
 }

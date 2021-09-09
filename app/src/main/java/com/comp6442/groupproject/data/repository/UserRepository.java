@@ -1,18 +1,25 @@
 package com.comp6442.groupproject.data.repository;
 
-import android.util.Log;
-
+import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.WriteBatch;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import timber.log.Timber;
+
 public final class UserRepository extends FirestoreRepository<User> {
-  private static final String TAG = "UserRepository";
   private static UserRepository instance = null;
 
   private UserRepository(FirebaseFirestore firestore) {
@@ -22,7 +29,13 @@ public final class UserRepository extends FirestoreRepository<User> {
   public static UserRepository getInstance() {
     if (UserRepository.instance == null) {
       FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-      firestore.useEmulator("10.0.2.2", 8080);
+      if (BuildConfig.DEBUG) {
+        try {
+          firestore.useEmulator("10.0.2.2", 8080);
+        } catch (IllegalStateException exc) {
+          Timber.d(exc);
+        }
+      }
 
       FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
               .setPersistenceEnabled(false)
@@ -34,22 +47,109 @@ public final class UserRepository extends FirestoreRepository<User> {
     return UserRepository.instance;
   }
 
-  public void addUser(FirebaseUser firebaseUser) {
-    // add user only if uid does not exist in user collection
-    User user = new User(
-            Objects.requireNonNull(firebaseUser.getUid()),
-            Objects.requireNonNull(firebaseUser.getEmail())
-    );
-    this.collection.document(firebaseUser.getUid())
-            .set(user)
-            .addOnFailureListener(e -> Log.w(TAG, "Failed to add user: " + firebaseUser.getUid()));
+  public static Gson getJsonDeserializer() {
+    return new GsonBuilder().registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
+      String str = json.toString();
+      return UserRepository.getInstance().getUser(str);
+    }).create();
   }
 
   public DocumentReference getUser(String uid) {
     return this.collection.document(uid);
   }
 
-  public void updateUser(User user) {
-    collection.document(user.getUid()).set(user, SetOptions.merge());
+  public void addUser(FirebaseUser firebaseUser) {
+    // add user only if uid does not exist in user collection
+    addUser(new User(
+            Objects.requireNonNull(firebaseUser.getUid()),
+            Objects.requireNonNull(firebaseUser.getEmail())
+    ));
   }
+
+  public void addUser(User user) {
+    // add user only if uid does not exist in user collection
+    this.collection.document(user.getUid())
+            .set(user)
+            .addOnFailureListener(Timber::e);
+  }
+
+  public void addUser(Map<String, Object> map) {
+    // add user only if uid does not exist in user collection
+    if (map.containsKey("uid"))
+      this.collection.document((String) Objects.requireNonNull(map.get("uid")))
+              .set(map)
+              .addOnFailureListener(Timber::e);
+  }
+
+  public void setUser(User user) {
+    // create if not exists
+    this.collection.document(user.getUid())
+            .set(user, SetOptions.merge())
+            .addOnFailureListener(Timber::e);
+  }
+
+  public void setUser(Map<String, Object> map) {
+    // create if not exists
+    if (map.containsKey("uid"))
+      this.collection.document((String) Objects.requireNonNull(map.get("uid")))
+              .set(map, SetOptions.merge())
+              .addOnFailureListener(Timber::e);
+  }
+
+  public void setUsers(List<User> users) {
+    // create if not exists
+    // batch size limit is 500 documents
+    int idx = 0;
+    while (idx < users.size()) {
+      int counter = 0;
+      // Get a new write batch
+      WriteBatch batch = this.firestore.batch();
+
+      while (counter < 400 && idx < users.size()) {
+        User user = users.get(idx);
+        DocumentReference ref = this.collection.document(user.getUid());
+        batch.set(ref, user, SetOptions.merge());
+        counter++;
+        idx++;
+      }
+      // Commit the batch
+      batch.commit().addOnFailureListener(Timber::e)
+              .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
+    }
+  }
+
+  public void count() {
+    collection.get().addOnCompleteListener(task -> {
+      if (task.isSuccessful()) {
+        Timber.i("Total number of users: %d", Objects.requireNonNull(task.getResult()).size());
+      } else {
+        Timber.d("Could not get user count");
+      }
+    });
+  }
+
+  public void follow(String uid, String followReceiverId) {
+    this.collection.document(uid).update("following", FieldValue.arrayUnion(followReceiverId));
+  }
+
+//  TODO: not working
+//  public void followAll(String uid) {
+//    this.collection.get().onSuccessTask(success -> {
+//      if (success != null) {
+//        List<String> following = new ArrayList<>();
+//
+//        success.getDocuments().forEach(document -> {
+//          if (document != null && document.get("uid") != null) following.add(String.format("users/%s", document.get("uid")));
+//        });
+//
+//        this.collection.document(uid)
+//                .update("following", FieldValue.arrayUnion(following))
+//                .addOnSuccessListener(unused -> Timber.d("uid %s now follows all users", uid))
+//                .addOnFailureListener(e -> {
+//                  Timber.e("followAll failed for uid %s", uid);
+//                });
+//      }
+//      return null;
+//    });
+//  }
 }
