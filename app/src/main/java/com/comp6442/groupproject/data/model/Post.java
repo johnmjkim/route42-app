@@ -27,15 +27,28 @@ public class Post {
 
   private Timestamp endTs;
 
+  private List<String> hashtags;
+
   // will be null on emulator
   @ServerTimestamp
   private Date postDatetime;
 
   // TODO
-  // private final List<String> tags;
   // private Double distance;
   // private Double pace;
   // private String imageUrl;
+
+
+  public Post(String postId, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs, @NonNull List<String> hashtags) {
+    this.postId = postId;
+    this.uid = uid;
+    this.userName = userName;
+    this.route = route;
+    this.activity = activity;
+    this.startTs = startTs;
+    this.endTs = endTs;
+    this.hashtags = hashtags;
+  }
 
   public Post(@NonNull String postId, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs) {
     this.postId = postId;
@@ -88,5 +101,13 @@ public class Post {
   @NonNull
   public Activity getActivity() {
     return activity;
+  }
+
+  public List<String> getHashtags() {
+    return hashtags;
+  }
+
+  public Date getPostDatetime() {
+    return postDatetime;
   }
 }

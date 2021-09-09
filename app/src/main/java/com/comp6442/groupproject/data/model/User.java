@@ -7,6 +7,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -15,16 +16,18 @@ import java.util.UUID;
 @IgnoreExtraProperties
 public class User {
   private String uid;
-
   private String email;
-
   private String userName;
+
+  private int isPublic;
+  private String profilePicUrl;
+  private List<DocumentReference> blockedUserIds = new ArrayList<>();
 
   @Exclude
   private String password = null;
 
-  private List<DocumentReference> following;
-  private List<DocumentReference> followers;
+  private List<DocumentReference> following = new ArrayList<>();
+  private List<DocumentReference> followers = new ArrayList<>();
 
   public User() {
 
@@ -66,6 +69,46 @@ public class User {
     this.password = password;
   }
 
+  public User(String uid, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers, String password, int isPublic, String profilePicUrl, List<DocumentReference> blockedUserIds) {
+    this.uid = uid;
+    this.email = email;
+    this.userName = userName;
+    this.following = following;
+    this.followers = followers;
+    this.password = password;
+    this.isPublic = isPublic;
+    this.profilePicUrl = profilePicUrl;
+    this.blockedUserIds = blockedUserIds;
+  }
+
+  public User(String uid, String email, String userName, int isPublic, String profilePicUrl, List<DocumentReference> blockedUserIds, String password, List<DocumentReference> following, List<DocumentReference> followers) {
+    this.uid = uid;
+    this.email = email;
+    this.userName = userName;
+    this.following = following;
+    this.followers = followers;
+    this.password = password;
+    this.isPublic = isPublic;
+    this.profilePicUrl = profilePicUrl;
+    this.blockedUserIds = blockedUserIds;
+  }
+
+  @NonNull
+  @Override
+  public String toString() {
+    return "User{" +
+            "uid='" + uid + '\'' +
+            ", email='" + email + '\'' +
+            ", userName='" + userName + '\'' +
+            ", isPublic=" + isPublic +
+            ", profilePicUrl='" + profilePicUrl + '\'' +
+            ", blockedUserIds=" + blockedUserIds +
+            ", password='" + password + '\'' +
+            ", following=" + following +
+            ", followers=" + followers +
+            '}';
+  }
+
   public static User fromDocumentSnapshot(DocumentSnapshot snapshot) {
     Map<String, Object> data = snapshot.getData();
 
@@ -82,24 +125,40 @@ public class User {
     return user;
   }
 
-  @NonNull
-  @Override
-  public String toString() {
-    return "User{" +
-            "uid='" + uid + '\'' +
-            ", userName='" + userName + '\'' +
-            ", email='" + email + '\'' +
-            ", following=" + following +
-            ", followers=" + followers +
-            '}';
+  public String getUid() {
+    return uid;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public String getUserName() {
+    return userName;
+  }
+
+  public int getIsPublic() {
+    return isPublic;
+  }
+
+  public String getProfilePicUrl() {
+    return profilePicUrl;
+  }
+
+  public List<DocumentReference> getBlockedUserIds() {
+    return blockedUserIds;
   }
 
   public String getPassword() {
     return password;
   }
 
-  public String getUid() {
-    return uid;
+  public List<DocumentReference> getFollowing() {
+    return following;
+  }
+
+  public List<DocumentReference> getFollowers() {
+    return followers;
   }
 
   public User setUid(String uid) {
@@ -109,13 +168,11 @@ public class User {
             this.getUserName(),
             this.getFollowing(),
             this.getFollowers(),
-            this.getPassword()
+            this.getPassword(),
+            this.getIsPublic(),
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
     );
-  }
-
-  @NonNull
-  public String getEmail() {
-    return email;
   }
 
   public User setEmail(@NonNull String email) {
@@ -125,13 +182,11 @@ public class User {
             this.getUserName(),
             this.getFollowing(),
             this.getFollowers(),
-            this.getPassword()
+            this.getPassword(),
+            this.getIsPublic(),
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
     );
-  }
-
-  @NonNull
-  public String getUserName() {
-    return userName;
   }
 
   public User setUserName(String userName) {
@@ -141,12 +196,11 @@ public class User {
             userName,
             this.getFollowing(),
             this.getFollowers(),
-            this.getPassword()
+            this.getPassword(),
+            this.getIsPublic(),
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
     );
-  }
-
-  public List<DocumentReference> getFollowing() {
-    return following;
   }
 
   public User setFollowing(List<DocumentReference> following) {
@@ -156,12 +210,11 @@ public class User {
             this.getUserName(),
             following,
             this.getFollowers(),
-            this.getPassword()
+            this.getPassword(),
+            this.getIsPublic(),
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
     );
-  }
-
-  public List<DocumentReference> getFollowers() {
-    return followers;
   }
 
   public User setFollowers(List<DocumentReference> followers) {
@@ -171,7 +224,24 @@ public class User {
             this.getUserName(),
             this.getFollowing(),
             followers,
-            this.getPassword()
+            this.getPassword(),
+            this.getIsPublic(),
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
+    );
+  }
+
+  public User setPrivacy(int isPublic) {
+    return new User(
+            this.getUid(),
+            this.getEmail(),
+            this.getUserName(),
+            this.getFollowing(),
+            this.getFollowers(),
+            this.getPassword(),
+            isPublic,
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
     );
   }
 }

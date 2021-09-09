@@ -128,6 +128,12 @@ public class FeedFragment extends Fragment {
   }
 
   @Override
+  public void onStop() {
+    super.onStop();
+    adapter.stopListening();
+  }
+
+  @Override
   public void onStart() {
     super.onStart();
     Timber.d("Started");

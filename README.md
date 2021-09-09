@@ -7,6 +7,7 @@
 5. Add Firebase Firestore for data storage.
 6. Design change: Shifted to Single Activity architecture.
 7. Added Post data model, adapter, and material card view, and created map fragment using mapbox.
+8. Add Firebase Cloud Storage for storage of user generated content.
 
 # Requirements
 
