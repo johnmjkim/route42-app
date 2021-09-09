@@ -1,11 +1,6 @@
 package com.comp6442.groupproject.data.repository;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import com.comp6442.groupproject.BuildConfig;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 

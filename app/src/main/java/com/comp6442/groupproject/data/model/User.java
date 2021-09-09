@@ -93,22 +93,6 @@ public class User {
     this.blockedUserIds = blockedUserIds;
   }
 
-  @NonNull
-  @Override
-  public String toString() {
-    return "User{" +
-            "uid='" + uid + '\'' +
-            ", email='" + email + '\'' +
-            ", userName='" + userName + '\'' +
-            ", isPublic=" + isPublic +
-            ", profilePicUrl='" + profilePicUrl + '\'' +
-            ", blockedUserIds=" + blockedUserIds +
-            ", password='" + password + '\'' +
-            ", following=" + following +
-            ", followers=" + followers +
-            '}';
-  }
-
   public static User fromDocumentSnapshot(DocumentSnapshot snapshot) {
     Map<String, Object> data = snapshot.getData();
 
@@ -125,16 +109,74 @@ public class User {
     return user;
   }
 
+  @NonNull
+  @Override
+  public String toString() {
+    return "User{" +
+            "uid='" + uid + '\'' +
+            ", email='" + email + '\'' +
+            ", userName='" + userName + '\'' +
+            ", isPublic=" + isPublic +
+            ", profilePicUrl='" + profilePicUrl + '\'' +
+            ", blockedUserIds=" + blockedUserIds +
+            ", password='" + password + '\'' +
+            ", following=" + following +
+            ", followers=" + followers +
+            '}';
+  }
+
   public String getUid() {
     return uid;
+  }
+
+  public User setUid(String uid) {
+    return new User(
+            uid,
+            this.getEmail(),
+            this.getUserName(),
+            this.getFollowing(),
+            this.getFollowers(),
+            this.getPassword(),
+            this.getIsPublic(),
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
+    );
   }
 
   public String getEmail() {
     return email;
   }
 
+  public User setEmail(@NonNull String email) {
+    return new User(
+            this.getUid(),
+            email,
+            this.getUserName(),
+            this.getFollowing(),
+            this.getFollowers(),
+            this.getPassword(),
+            this.getIsPublic(),
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
+    );
+  }
+
   public String getUserName() {
     return userName;
+  }
+
+  public User setUserName(String userName) {
+    return new User(
+            this.getUid(),
+            this.getEmail(),
+            userName,
+            this.getFollowing(),
+            this.getFollowers(),
+            this.getPassword(),
+            this.getIsPublic(),
+            this.getProfilePicUrl(),
+            this.getBlockedUserIds()
+    );
   }
 
   public int getIsPublic() {
@@ -157,52 +199,6 @@ public class User {
     return following;
   }
 
-  public List<DocumentReference> getFollowers() {
-    return followers;
-  }
-
-  public User setUid(String uid) {
-    return new User(
-            uid,
-            this.getEmail(),
-            this.getUserName(),
-            this.getFollowing(),
-            this.getFollowers(),
-            this.getPassword(),
-            this.getIsPublic(),
-            this.getProfilePicUrl(),
-            this.getBlockedUserIds()
-    );
-  }
-
-  public User setEmail(@NonNull String email) {
-    return new User(
-            this.getUid(),
-            email,
-            this.getUserName(),
-            this.getFollowing(),
-            this.getFollowers(),
-            this.getPassword(),
-            this.getIsPublic(),
-            this.getProfilePicUrl(),
-            this.getBlockedUserIds()
-    );
-  }
-
-  public User setUserName(String userName) {
-    return new User(
-            this.getUid(),
-            this.getEmail(),
-            userName,
-            this.getFollowing(),
-            this.getFollowers(),
-            this.getPassword(),
-            this.getIsPublic(),
-            this.getProfilePicUrl(),
-            this.getBlockedUserIds()
-    );
-  }
-
   public User setFollowing(List<DocumentReference> following) {
     return new User(
             this.getUid(),
@@ -215,6 +211,10 @@ public class User {
             this.getProfilePicUrl(),
             this.getBlockedUserIds()
     );
+  }
+
+  public List<DocumentReference> getFollowers() {
+    return followers;
   }
 
   public User setFollowers(List<DocumentReference> followers) {

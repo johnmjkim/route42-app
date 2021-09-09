@@ -3,7 +3,6 @@ package com.comp6442.groupproject.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,8 @@ import com.comp6442.groupproject.data.repository.FirebaseStorageRepository;
 import com.comp6442.groupproject.data.repository.UserRepository;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.card.MaterialCardView;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import timber.log.Timber;
@@ -62,20 +57,20 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
             .get()
             .addOnFailureListener(Timber::e)
             .addOnSuccessListener(snapshot -> {
-      User user = snapshot.toObject(User.class);
-      if (user != null) {
-        StorageReference ref = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());
+              User user = snapshot.toObject(User.class);
+              if (user != null) {
+                StorageReference ref = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());
 
-        ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-          viewHolder.userIcon.setImageBitmap(bitmap);
-          Timber.i("profile picture set");
-        }).addOnFailureListener(e -> {
-          viewHolder.userIcon.setImageResource(R.drawable.person_photo);
-          Timber.e(e);
-        });
-      }
-    });
+                ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+                  Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                  viewHolder.userIcon.setImageBitmap(bitmap);
+                  Timber.i("profile picture set");
+                }).addOnFailureListener(e -> {
+                  viewHolder.userIcon.setImageResource(R.drawable.person_photo);
+                  Timber.e(e);
+                });
+              }
+            });
 
     // download route image, use stock photo if fail
     StorageReference pathReference = FirebaseStorageRepository.getInstance().get("images/route.png");
@@ -106,6 +101,17 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     Timber.d("OnBindView complete.");
   }
 
+  @Override
+  public void onDataChanged() {
+    //Called each time there is a new query snapshot.
+  }
+
+  @Override
+  public void onError(FirebaseFirestoreException e) {
+    //Handle the error
+    Timber.d(e);
+  }
+
   public static class PostViewHolder extends RecyclerView.ViewHolder {
     public ImageView userIcon, routeImage, activityIcon;
     public TextView userNameView, activityTextView, descriptionView;
@@ -124,16 +130,5 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
 
       materialCardView = view.findViewById(R.id.post_card);
     }
-  }
-
-  @Override
-  public void onDataChanged() {
-    //Called each time there is a new query snapshot.
-  }
-
-  @Override
-  public void onError(FirebaseFirestoreException e) {
-    //Handle the error
-    Timber.d(e);
   }
 }
