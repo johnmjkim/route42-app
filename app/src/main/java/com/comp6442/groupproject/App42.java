@@ -66,8 +66,6 @@ public class App42 extends Application {
     if (BuildConfig.loadData) {
       createFakeUsers();
       createTestUser();
-      if (mAuth.getCurrentUser() == null)
-        mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
       createFakePosts();
     }
 
@@ -158,6 +156,7 @@ public class App42 extends Application {
 
   @RequiresApi(api = Build.VERSION_CODES.O)
   public void createFakePosts() {
+    if (mAuth.getCurrentUser() == null) mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
     InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.posts);
     String jsonString = readTextFile(inputStream);
 
