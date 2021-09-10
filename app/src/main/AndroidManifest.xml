@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.comp6442.groupproject">
+        package="com.comp6442.route42">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-            android:name=".App42"
+            android:name=".Route42App"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -14,7 +15,7 @@
             android:theme="@style/Theme.GroupProject"
             android:usesCleartextTraffic="true">
         <activity
-                android:name=".ui.LogInActivity"
+                android:name=".ui.activity.LogInActivity"
                 android:exported="true"
                 android:label="@string/title_activity_login">
             <intent-filter>
@@ -24,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".ui.MainActivity"
+                android:name=".ui.activity.MainActivity"
                 android:label="@string/title_fragment_feed" />
     </application>
 

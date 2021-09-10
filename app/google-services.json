@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:940852317679:android:00061bd639c8791528ba1a",
+        "mobilesdk_app_id": "1:940852317679:android:baf69f10709d663b28ba1a",
         "android_client_info": {
-          "package_name": "com.comp6442.groupproject"
+          "package_name": "com.comp6442.route42"
         }
       },
       "oauth_client": [

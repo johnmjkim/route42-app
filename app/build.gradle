@@ -8,7 +8,7 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        applicationId "com.comp6442.groupproject"
+        applicationId "com.comp6442.route42"
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
@@ -85,9 +85,13 @@ dependencies {
     // Declare the dependency for the Cloud Storage library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
+
+    // ----------- Glide ------------
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     // ----------- Mapbox ------------
-
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1'
     implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0"
     // Core: Color, text, and networking utility classes.
