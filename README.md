@@ -17,6 +17,8 @@
 
 # Getting Started
 
+> If you are reading this for the first time after the merge, you will need to run `firebase init` again at the project root directory to add new services.
+
 1. Set up the development environment
    - Android Studio is required. If you haven't already done so, download and install it.
    - Add the Google Play services SDK to Android Studio. The Maps SDK for Android is distributed as part of the Google Play services SDK, which you can add through the SDK Manager (in Preferences).
