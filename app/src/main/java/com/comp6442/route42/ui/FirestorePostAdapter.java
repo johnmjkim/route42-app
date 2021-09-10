@@ -1,10 +1,6 @@
 package com.comp6442.route42.ui;
 
 
-import static com.comp6442.route42.data.repository.FirebaseStorageRepository.BUFFER_SIZE;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
@@ -48,35 +46,29 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     // contents of the view with that element
     viewHolder.materialCardView.setStrokeWidth(5);
     viewHolder.userNameView.setText(post.getUserName());
-    viewHolder.descriptionView.setText("This is a sample text. This is a sample text.");
+    // viewHolder.descriptionView.setText("This is a sample text. This is a sample text.");
+    viewHolder.hashtagsTextView.setText(String.join(" ", post.getHashtags()));
 
     // set profile pic
     Timber.i("Fetched post: %s", post);
 
-    FirebaseStorageRepository.getInstance()
-            .get(post.getProfilePicUrl())
-            .getBytes(BUFFER_SIZE)
-            .addOnSuccessListener(bytes -> {
-              Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-              viewHolder.userIcon.setImageBitmap(bitmap);
-              Timber.i("Profile picture fetched");
-            }).addOnFailureListener(e -> {
-              viewHolder.userIcon.setImageResource(R.drawable.person_photo);
-              Timber.d("Could not fetch profile picture: %s", post.getProfilePicUrl());
-              Timber.e(e);
-            });
+    // Get reference to the image file in Cloud Storage, download route image, use stock photo if fail
+    StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(post.getProfilePicUrl());
+    Glide.with(viewHolder.userIcon.getContext())
+            .load(profilePicRef)
+            .placeholder(R.drawable.user)
+            .circleCrop()
+            .into(viewHolder.userIcon);
 
-
-    // download route image, use stock photo if fail
-    StorageReference pathReference = FirebaseStorageRepository.getInstance().get("images/route.png");
-
-    pathReference.getBytes(BUFFER_SIZE).addOnSuccessListener(bytes -> {
-      Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-      viewHolder.routeImage.setImageBitmap(bitmap);
-    }).addOnFailureListener(e -> {
-      viewHolder.routeImage.setImageResource(R.drawable.route);
-      Timber.e(e);
-    });
+    // cache disabled for rendering random images
+    Glide.with(viewHolder.routeImage.getContext())
+            .load("https://source.unsplash.com/random?w=300")
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+            .placeholder(R.drawable.route)
+//            .fitCenter()
+            .centerCrop()
+            .into(viewHolder.routeImage);
 
     // set activity icon
     switch (post.getActivity()) {
@@ -99,6 +91,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
   @Override
   public void onDataChanged() {
     //Called each time there is a new query snapshot.
+    Timber.i("breadcrumb");
   }
 
   @Override
@@ -109,19 +102,19 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
 
   public static class PostViewHolder extends RecyclerView.ViewHolder {
     public ImageView userIcon, routeImage, activityIcon;
-    public TextView userNameView, activityTextView, descriptionView;
+    public TextView userNameView, hashtagsTextView, descriptionView;
     public MaterialCardView materialCardView;
 
     public PostViewHolder(View view) {
       super(view);
       // Define click listener for the ViewHolder's View
-      userIcon = view.findViewById(R.id.post_user_icon);
-      routeImage = view.findViewById(R.id.post_route);
-      activityIcon = view.findViewById(R.id.activity_icon);
+      userIcon = view.findViewById(R.id.card_profile_pic);
+      routeImage = view.findViewById(R.id.card_main_image);
+      activityIcon = view.findViewById(R.id.card_activity_icon);
 
-      userNameView = view.findViewById(R.id.post_username);
-      activityTextView = view.findViewById(R.id.activity_label);
-      descriptionView = view.findViewById(R.id.post_description);
+      userNameView = view.findViewById(R.id.card_username);
+      hashtagsTextView = view.findViewById(R.id.card_hashtags);
+      descriptionView = view.findViewById(R.id.card_description);
 
       materialCardView = view.findViewById(R.id.post_card);
     }

@@ -25,6 +25,8 @@ public class Post extends Model {
   @ServerTimestamp
   private Date postDatetime; // will be null on emulator
   private String profilePicUrl;
+
+  // private String postDescription;
   // private String imageUrl;
   // private Double distance;
   // private Double pace;
