@@ -128,9 +128,9 @@ public final class UserRepository extends FirestoreRepository<User> {
     });
   }
 
-  public void follow(String uid, String followReceiverId) {
-    this.collection.document(uid).update("following", FieldValue.arrayUnion(followReceiverId));
-  }
+//  public void follow(String uid, String followReceiverId) {
+//    this.collection.document(uid).update("following", FieldValue.arrayUnion(followReceiverId));
+//  }
 
 //  TODO: not working
 //  public void followAll(String uid) {

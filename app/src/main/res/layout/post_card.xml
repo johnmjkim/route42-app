@@ -40,13 +40,33 @@
                     android:layout_height="50dp"
                     android:gravity="top">
 
-                <ImageView
-                        android:src="@drawable/user"
+                <androidx.cardview.widget.CardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:id="@+id/post_user_icon"
-                        android:baselineAlignBottom="false"
-                        android:layout_gravity="center_vertical" />
+                        app:cardCornerRadius="250dp"
+                        app:cardBackgroundColor="@color/white"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5dp">
+
+                    <androidx.cardview.widget.CardView
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            app:cardCornerRadius="250dp">
+
+                        <ImageView
+                                android:id="@+id/post_user_icon"
+                                android:src="@drawable/user"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_vertical"
+                                android:baselineAlignBottom="false"
+                                android:scaleType="centerCrop" />
+
+
+                    </androidx.cardview.widget.CardView>
+
+                </androidx.cardview.widget.CardView>
 
                 <TextView
                         android:text="Username"
@@ -54,22 +74,22 @@
                         android:layout_height="match_parent"
                         android:id="@+id/post_username"
                         android:layout_weight="1"
-                        android:gravity="center_vertical"
+                        android:gravity="center"
                         android:textSize="16sp" />
 
                 <TextView
                         android:text="Activity"
-                        android:layout_width="93dp"
+                        android:layout_width="88dp"
                         android:layout_height="match_parent"
                         android:id="@+id/activity_label"
                         android:layout_weight="1"
-                        android:gravity="center_vertical"
+                        android:gravity="center"
                         android:textSize="16sp" />
 
                 <ImageView
                         android:id="@+id/activity_icon"
                         android:src="@drawable/run"
-                        android:layout_width="50dp"
+                        android:layout_width="30dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1" />
             </LinearLayout>
@@ -79,7 +99,8 @@
                     android:layout_height="300dp"
                     tools:src="@drawable/route"
                     android:id="@+id/post_route"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:cropToPadding="false" />
 
             <TextView
                     android:id="@+id/post_description"

@@ -82,6 +82,10 @@ dependencies {
     // FirebaseUI for Cloud Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
 
+    // Declare the dependency for the Cloud Storage library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-storage'
+
     // ----------- Mapbox ------------
 
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1'

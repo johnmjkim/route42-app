@@ -1,4 +1,4 @@
-package com.comp6442.groupproject.ui.fragments;
+package com.comp6442.groupproject.ui.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
