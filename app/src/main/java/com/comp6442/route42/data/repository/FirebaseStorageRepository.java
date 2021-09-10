@@ -36,7 +36,6 @@ public class FirebaseStorageRepository {
   public StorageReference get(String path) {
     String url = String.format("gs://%s/%s", bucketUrl, path);
     Timber.i(url);
-    StorageReference storageRef = storage.getReferenceFromUrl(url);
-    return storageRef;
+    return storage.getReferenceFromUrl(url);
   }
 }
