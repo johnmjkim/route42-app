@@ -1,11 +1,8 @@
 package com.comp6442.route42.data.repository;
 
-import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
@@ -21,27 +18,13 @@ import timber.log.Timber;
 public final class UserRepository extends FirestoreRepository<User> {
   private static UserRepository instance = null;
 
-  private UserRepository(FirebaseFirestore firestore) {
-    super(firestore, "users", User.class);
+  private UserRepository() {
+    super("users", User.class);
   }
 
   public static UserRepository getInstance() {
     if (UserRepository.instance == null) {
-      FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-      if (BuildConfig.DEBUG) {
-        try {
-          firestore.useEmulator("10.0.2.2", 8080);
-        } catch (IllegalStateException exc) {
-          Timber.d(exc);
-        }
-      }
-
-      FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-              .setPersistenceEnabled(false)
-              .build();
-
-      firestore.setFirestoreSettings(settings);
-      UserRepository.instance = new UserRepository(firestore);
+      UserRepository.instance = new UserRepository();
     }
     return UserRepository.instance;
   }
@@ -87,7 +70,7 @@ public final class UserRepository extends FirestoreRepository<User> {
     while (idx < users.size()) {
       int counter = 0;
       // Get a new write batch
-      WriteBatch batch = this.firestore.batch();
+      WriteBatch batch = firestore.batch();
 
       while (counter < super.batchSizeLimit && idx < users.size()) {
         User user = users.get(idx);
@@ -124,7 +107,7 @@ public final class UserRepository extends FirestoreRepository<User> {
     while (idx < users.size()) {
       int counter = 0;
       // Get a new write batch
-      WriteBatch batch = this.firestore.batch();
+      WriteBatch batch = firestore.batch();
 
       while (counter < super.batchSizeLimit && idx < users.size()) {
         User user = users.get(idx);

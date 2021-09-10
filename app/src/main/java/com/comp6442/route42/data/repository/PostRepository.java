@@ -1,13 +1,10 @@
 package com.comp6442.route42.data.repository;
 
-import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -23,29 +20,13 @@ import timber.log.Timber;
 public class PostRepository extends FirestoreRepository<Post> {
   private static PostRepository instance = null;
 
-  private PostRepository(FirebaseFirestore firestore) {
-    super(firestore, "posts", Post.class);
+  private PostRepository() {
+    super("posts", Post.class);
   }
 
   public static PostRepository getInstance() {
     if (PostRepository.instance == null) {
-      FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-
-      if (BuildConfig.DEBUG) {
-        try {
-          firestore.useEmulator("10.0.2.2", 8080);
-        } catch (IllegalStateException exc) {
-          Timber.d(exc);
-        }
-      }
-
-      // disable caching, always pull server data
-      FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-              .setPersistenceEnabled(false)
-              .build();
-
-      firestore.setFirestoreSettings(settings);
-      PostRepository.instance = new PostRepository(firestore);
+      PostRepository.instance = new PostRepository();
     }
     return PostRepository.instance;
   }
@@ -99,7 +80,7 @@ public class PostRepository extends FirestoreRepository<Post> {
     while (idx < posts.size()) {
       int counter = 0;
       // Get a new write batch
-      WriteBatch batch = this.firestore.batch();
+      WriteBatch batch = firestore.batch();
 
       while (counter < 500 && idx < posts.size()) {
         Post post = posts.get(idx);
@@ -118,7 +99,7 @@ public class PostRepository extends FirestoreRepository<Post> {
     int idx = 0;
     while (idx < posts.size()) {
       int counter = 0;
-      WriteBatch batch = this.firestore.batch();
+      WriteBatch batch = firestore.batch();
 
       while (counter < 500 && idx < posts.size()) {
         Post post = posts.get(idx);
