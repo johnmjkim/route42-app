@@ -12,13 +12,13 @@ public class TsPoint {
   private Double latitude;
   private Double longitude;
 
+  public TsPoint() {
+  }
+
   public TsPoint(@NonNull Timestamp ts, @NonNull Double latitude, @NonNull Double longitude) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.ts = ts;
-  }
-
-  public TsPoint() {
   }
 
   @NonNull

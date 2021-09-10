@@ -91,32 +91,26 @@ public class Route42App extends Application {
     User testUser = new User(null, BuildConfig.testUserEmail, "test_user", BuildConfig.testUserPassword);
     mAuth.createUserWithEmailAndPassword(testUser.getEmail(), testUser.getPassword())
             .addOnSuccessListener(unused -> {
-              Timber.d("Created test user.");
-            });
-
-    mAuth.signInWithEmailAndPassword(testUser.getEmail(), testUser.getPassword())
-            .addOnSuccessListener(authResult -> {
+              Timber.i("Created test user.");
+            }).addOnSuccessListener(authResult -> {
               FirebaseUser firebaseUser = authResult.getUser();
               if (firebaseUser != null) {
-                UserRepository.getInstance().createOne(firebaseUser);
-                UserRepository.getInstance().setOne(
-                        testUser.updateUid(firebaseUser.getUid())
-                );
+                testUser.setId(firebaseUser.getUid());
+                UserRepository.getInstance().setOne(testUser);
                 mAuth.signOut();
                 Timber.i("Insert to Firestore complete: test user");
               }
             });
 
     // add test user 2
-    User testUser2 = new User(null, BuildConfig.testUser2Email, "test_user", BuildConfig.testUserPassword);
+    User testUser2 = new User(null, BuildConfig.testUser2Email, "test_user2", BuildConfig.testUserPassword);
     mAuth.createUserWithEmailAndPassword(testUser2.getEmail(), testUser2.getPassword())
             .addOnSuccessListener(authResult -> {
               FirebaseUser firebaseUser = authResult.getUser();
               if (firebaseUser != null) {
                 UserRepository.getInstance().createOne(firebaseUser);
-                UserRepository.getInstance().setOne(
-                        testUser2.updateUid(firebaseUser.getUid())
-                );
+                testUser2.setId(firebaseUser.getUid());
+                UserRepository.getInstance().setOne(testUser2);
                 mAuth.signOut();
                 Timber.i("Insert to Firestore complete: test user 2");
               }
