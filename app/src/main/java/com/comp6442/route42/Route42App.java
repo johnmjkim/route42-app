@@ -153,6 +153,7 @@ public class Route42App extends Application {
   public void createFakePosts() {
     if (mAuth.getCurrentUser() == null)
       mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
+
     InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.posts);
     String jsonString = readTextFile(inputStream);
 
