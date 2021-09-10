@@ -1,4 +1,4 @@
-package com.comp6442.groupproject.ui.fragments;
+package com.comp6442.groupproject.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -9,12 +9,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
+import com.comp6442.groupproject.data.UserViewModel;
 import com.comp6442.groupproject.data.model.Post;
+import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.ui.FirestorePostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,9 +35,10 @@ public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
   private String uid;
   private FirebaseFirestore firestore;
+  private UserViewModel viewModel;
+
   private RecyclerView recyclerView;
   private FirestorePostAdapter adapter;
-  //  private PostAdapter adapter;
   private LinearLayoutManager layoutManager;
 
   public FeedFragment() {
@@ -103,9 +107,14 @@ public class FeedFragment extends Fragment {
     }
 
     if (this.uid != null) {
-      Query query = this.firestore.collection("posts")
-              .orderBy("userName")
-              .limit(50);
+      viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+      User user = viewModel.getLiveUser().getValue();
+
+      assert user != null;
+
+      Query query = firestore.collection("posts")
+              .whereNotIn("uid", user.getBlockedBy())
+              .whereEqualTo("isPublic", 1).limit(20);
 
       FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
               .setQuery(query, Post.class)
@@ -119,11 +128,11 @@ public class FeedFragment extends Fragment {
       recyclerView.setAdapter(adapter);
       adapter.startListening();
 
-      Timber.d("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+      Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
       query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
-      Timber.d("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+
     } else {
-      Timber.w("not signed in");
+      Timber.e("not signed in");
     }
   }
 

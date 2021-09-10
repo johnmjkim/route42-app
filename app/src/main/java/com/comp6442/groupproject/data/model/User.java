@@ -18,16 +18,12 @@ public class User {
   private String uid;
   private String email;
   private String userName;
-
   private int isPublic;
   private String profilePicUrl;
-  private List<DocumentReference> blockedUserIds = new ArrayList<>();
-
-  @Exclude
-  private String password = null;
-
+  private List<DocumentReference> blockedBy = new ArrayList<>();
   private List<DocumentReference> following = new ArrayList<>();
   private List<DocumentReference> followers = new ArrayList<>();
+  @Exclude private String password = null;
 
   public User() {
 
@@ -52,24 +48,7 @@ public class User {
     this.password = password;
   }
 
-  public User(String uid, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers) {
-    this.uid = uid;
-    this.email = email;
-    this.userName = userName;
-    this.following = following;
-    this.followers = followers;
-  }
-
-  public User(String uid, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers, String password) {
-    this.uid = uid;
-    this.email = email;
-    this.userName = userName;
-    this.following = following;
-    this.followers = followers;
-    this.password = password;
-  }
-
-  public User(String uid, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers, String password, int isPublic, String profilePicUrl, List<DocumentReference> blockedUserIds) {
+  public User(String uid, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers, String password, int isPublic, String profilePicUrl, List<DocumentReference> blockedBy) {
     this.uid = uid;
     this.email = email;
     this.userName = userName;
@@ -78,19 +57,7 @@ public class User {
     this.password = password;
     this.isPublic = isPublic;
     this.profilePicUrl = profilePicUrl;
-    this.blockedUserIds = blockedUserIds;
-  }
-
-  public User(String uid, String email, String userName, int isPublic, String profilePicUrl, List<DocumentReference> blockedUserIds, String password, List<DocumentReference> following, List<DocumentReference> followers) {
-    this.uid = uid;
-    this.email = email;
-    this.userName = userName;
-    this.following = following;
-    this.followers = followers;
-    this.password = password;
-    this.isPublic = isPublic;
-    this.profilePicUrl = profilePicUrl;
-    this.blockedUserIds = blockedUserIds;
+    this.blockedBy = blockedBy;
   }
 
   public static User fromDocumentSnapshot(DocumentSnapshot snapshot) {
@@ -118,7 +85,7 @@ public class User {
             ", userName='" + userName + '\'' +
             ", isPublic=" + isPublic +
             ", profilePicUrl='" + profilePicUrl + '\'' +
-            ", blockedUserIds=" + blockedUserIds +
+            ", blockedBy=" + blockedBy +
             ", password='" + password + '\'' +
             ", following=" + following +
             ", followers=" + followers +
@@ -139,7 +106,7 @@ public class User {
             this.getPassword(),
             this.getIsPublic(),
             this.getProfilePicUrl(),
-            this.getBlockedUserIds()
+            this.getBlockedBy()
     );
   }
 
@@ -157,7 +124,7 @@ public class User {
             this.getPassword(),
             this.getIsPublic(),
             this.getProfilePicUrl(),
-            this.getBlockedUserIds()
+            this.getBlockedBy()
     );
   }
 
@@ -175,7 +142,7 @@ public class User {
             this.getPassword(),
             this.getIsPublic(),
             this.getProfilePicUrl(),
-            this.getBlockedUserIds()
+            this.getBlockedBy()
     );
   }
 
@@ -187,8 +154,8 @@ public class User {
     return profilePicUrl;
   }
 
-  public List<DocumentReference> getBlockedUserIds() {
-    return blockedUserIds;
+  public List<DocumentReference> getBlockedBy() {
+    return blockedBy;
   }
 
   public String getPassword() {
@@ -209,7 +176,7 @@ public class User {
             this.getPassword(),
             this.getIsPublic(),
             this.getProfilePicUrl(),
-            this.getBlockedUserIds()
+            this.getBlockedBy()
     );
   }
 
@@ -227,7 +194,7 @@ public class User {
             this.getPassword(),
             this.getIsPublic(),
             this.getProfilePicUrl(),
-            this.getBlockedUserIds()
+            this.getBlockedBy()
     );
   }
 
@@ -241,7 +208,7 @@ public class User {
             this.getPassword(),
             isPublic,
             this.getProfilePicUrl(),
-            this.getBlockedUserIds()
+            this.getBlockedBy()
     );
   }
 }
