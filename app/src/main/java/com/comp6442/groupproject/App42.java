@@ -4,10 +4,10 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.comp6442.groupproject.data.FirebaseAuthLiveData;
 import com.comp6442.groupproject.data.model.Post;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.PostRepository;
@@ -36,28 +36,17 @@ public class App42 extends Application {
   //  Note that you should never store mutable shared data inside the Application object since that data might disappear or become invalid at any time. Instead, store any mutable shared data using persistence strategies such as files, SharedPreferences or SQLite.
 
   // Called when the application is starting, before any other application objects have been created.
-  // Overriding this method is totally optional!
   @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
   public void onCreate() {
     super.onCreate();
 
-    // initialize timber in application class
-    Timber.plant(new Timber.DebugTree());
+    // initialize Timber logger in application class
+    Timber.plant(new CustomLogger());
 
-    // Initialize Firebase Auth
-    mAuth = FirebaseAuth.getInstance();
+    mAuth = FirebaseAuthLiveData.getInstance().getAuth();
 
     if (BuildConfig.DEBUG) {
-      try {
-        // 10.0.2.2 is the special IP address to connect to the 'localhost' of
-        // the host computer from an Android emulator.
-        mAuth.useEmulator("10.0.2.2", 9099);
-      } catch (IllegalStateException exc) {
-        Timber.d(exc);
-      }
-
-      Toast.makeText(App42.this, "Data loaded.", Toast.LENGTH_SHORT).show();
       Timber.i("Application starting on DEBUG mode");
     } else {
       Timber.i("Application starting");
@@ -91,6 +80,12 @@ public class App42 extends Application {
     super.onLowMemory();
   }
 
+  @Override
+  public void onTerminate() {
+    super.onTerminate();
+    mAuth.signOut();
+  }
+
   public void createTestUser() {
     // create test user and add to firebase and firestore
     User testUser = new User(null, BuildConfig.testUserEmail, "test_user", BuildConfig.testUserPassword);
@@ -105,7 +100,7 @@ public class App42 extends Application {
               if (firebaseUser != null) {
                 UserRepository.getInstance().addUser(firebaseUser);
                 UserRepository.getInstance().setUser(
-                        testUser.setUid(firebaseUser.getUid())
+                        testUser.updateUid(firebaseUser.getUid())
                 );
                 mAuth.signOut();
                 Timber.i("Insert to Firestore complete: test user");
@@ -120,7 +115,7 @@ public class App42 extends Application {
               if (firebaseUser != null) {
                 UserRepository.getInstance().addUser(firebaseUser);
                 UserRepository.getInstance().setUser(
-                        testUser2.setUid(firebaseUser.getUid())
+                        testUser2.updateUid(firebaseUser.getUid())
                 );
                 mAuth.signOut();
                 Timber.i("Insert to Firestore complete: test user 2");
@@ -163,11 +158,5 @@ public class App42 extends Application {
     Gson gson = PostRepository.getJsonDeserializer();
     List<Post> posts = Arrays.asList(gson.fromJson(jsonString, (Type) Post[].class));
     PostRepository.getInstance().addPosts(posts);
-  }
-
-  @Override
-  public void onTerminate() {
-    super.onTerminate();
-    mAuth.signOut();
   }
 }
