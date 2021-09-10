@@ -8,7 +8,7 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        applicationId "com.comp6442.groupproject"
+        applicationId "com.comp6442.route42"
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
