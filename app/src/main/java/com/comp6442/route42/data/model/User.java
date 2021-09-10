@@ -14,7 +14,7 @@ import java.util.UUID;
 public class User extends Model {
   private String email;
   private String userName;
-  private int isPublic;
+  private int isPublic = 1;
   private String profilePicUrl;
   private List<DocumentReference> blockedBy = new ArrayList<>();
   private List<DocumentReference> following = new ArrayList<>();
@@ -25,6 +25,7 @@ public class User extends Model {
 
   }
 
+  /* Assign a random UUID */
   public User(@NonNull String email, @NonNull String userName) {
     this(UUID.randomUUID().toString(), email, userName);
   }
@@ -135,89 +136,5 @@ public class User extends Model {
 
   public void setPassword(String password) {
     this.password = password;
-  }
-
-  public User updateUid(String uid) {
-    return new User(
-            uid,
-            this.getEmail(),
-            this.getUserName(),
-            this.getFollowing(),
-            this.getFollowers(),
-            this.getPassword(),
-            this.getIsPublic(),
-            this.getProfilePicUrl(),
-            this.getBlockedBy()
-    );
-  }
-
-  public User updateEmail(@NonNull String email) {
-    return new User(
-            this.getId(),
-            email,
-            this.getUserName(),
-            this.getFollowing(),
-            this.getFollowers(),
-            this.getPassword(),
-            this.getIsPublic(),
-            this.getProfilePicUrl(),
-            this.getBlockedBy()
-    );
-  }
-
-  public User updateUserName(String userName) {
-    return new User(
-            this.getId(),
-            this.getEmail(),
-            userName,
-            this.getFollowing(),
-            this.getFollowers(),
-            this.getPassword(),
-            this.getIsPublic(),
-            this.getProfilePicUrl(),
-            this.getBlockedBy()
-    );
-  }
-
-  public User updateFollowing(List<DocumentReference> following) {
-    return new User(
-            this.getId(),
-            this.getEmail(),
-            this.getUserName(),
-            following,
-            this.getFollowers(),
-            this.getPassword(),
-            this.getIsPublic(),
-            this.getProfilePicUrl(),
-            this.getBlockedBy()
-    );
-  }
-
-  public User updateFollowers(List<DocumentReference> followers) {
-    return new User(
-            this.getId(),
-            this.getEmail(),
-            this.getUserName(),
-            this.getFollowing(),
-            followers,
-            this.getPassword(),
-            this.getIsPublic(),
-            this.getProfilePicUrl(),
-            this.getBlockedBy()
-    );
-  }
-
-  public User updatePrivacy(int isPublic) {
-    return new User(
-            this.getId(),
-            this.getEmail(),
-            this.getUserName(),
-            this.getFollowing(),
-            this.getFollowers(),
-            this.getPassword(),
-            isPublic,
-            this.getProfilePicUrl(),
-            this.getBlockedBy()
-    );
   }
 }

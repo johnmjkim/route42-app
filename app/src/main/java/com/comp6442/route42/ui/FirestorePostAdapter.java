@@ -1,6 +1,8 @@
 package com.comp6442.route42.ui;
 
 
+import static com.comp6442.route42.data.repository.FirebaseStorageRepository.BUFFER_SIZE;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -14,9 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Post;
-import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
-import com.comp6442.route42.data.repository.UserRepository;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
@@ -50,38 +50,27 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     viewHolder.userNameView.setText(post.getUserName());
     viewHolder.descriptionView.setText("This is a sample text. This is a sample text.");
 
-    final long ONE_MEGABYTE = 1024 * 1024;
-
     // set profile pic
-    UserRepository.getInstance()
-            .getOne(post.getUid().getId())
-            .get()
-            .addOnFailureListener(error -> {
-              Timber.w("Could not obtain profile picture for user: %s", post.getUid());
-              Timber.e(error);
-            })
-            .addOnSuccessListener(snapshot -> {
+    Timber.i("Fetched post: %s", post);
 
-              User user = snapshot.toObject(User.class);
-              if (user != null) {
-                FirebaseStorageRepository.getInstance()
-                        .get(user.getProfilePicUrl())
-                        .getBytes(ONE_MEGABYTE)
-                        .addOnSuccessListener(bytes -> {
-                          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                          viewHolder.userIcon.setImageBitmap(bitmap);
-                          Timber.i("profile picture set");
-                        }).addOnFailureListener(e -> {
-                  viewHolder.userIcon.setImageResource(R.drawable.person_photo);
-                  Timber.w("Profile picture not found: %s", user);
-                  Timber.e(e);
-                });
-              }
+    FirebaseStorageRepository.getInstance()
+            .get(post.getProfilePicUrl())
+            .getBytes(BUFFER_SIZE)
+            .addOnSuccessListener(bytes -> {
+              Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+              viewHolder.userIcon.setImageBitmap(bitmap);
+              Timber.i("Profile picture fetched");
+            }).addOnFailureListener(e -> {
+              viewHolder.userIcon.setImageResource(R.drawable.person_photo);
+              Timber.d("Could not fetch profile picture: %s", post.getProfilePicUrl());
+              Timber.e(e);
             });
+
 
     // download route image, use stock photo if fail
     StorageReference pathReference = FirebaseStorageRepository.getInstance().get("images/route.png");
-    pathReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+
+    pathReference.getBytes(BUFFER_SIZE).addOnSuccessListener(bytes -> {
       Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
       viewHolder.routeImage.setImageBitmap(bitmap);
     }).addOnFailureListener(e -> {

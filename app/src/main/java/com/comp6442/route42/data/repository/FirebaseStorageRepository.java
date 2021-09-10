@@ -11,6 +11,7 @@ public class FirebaseStorageRepository {
   private static FirebaseStorageRepository instance = null;
   private static FirebaseStorage storage = null;
   private static String bucketUrl = null;
+  public static final long BUFFER_SIZE = 1024 * 1024 * 5; // 5MB
 
   private FirebaseStorageRepository(FirebaseStorage storage) {
     FirebaseStorageRepository.storage = storage;
@@ -27,7 +28,7 @@ public class FirebaseStorageRepository {
         }
       }
       FirebaseStorageRepository.instance = new FirebaseStorageRepository(storage);
-      FirebaseStorageRepository.bucketUrl = FirebaseApp.getInstance().getOptions().getStorageBucket() + "/";
+      FirebaseStorageRepository.bucketUrl = FirebaseApp.getInstance().getOptions().getStorageBucket();
     }
     return FirebaseStorageRepository.instance;
   }
