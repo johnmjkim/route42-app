@@ -43,7 +43,7 @@
                     android:gravity="top">
                 <ImageView
                         android:id="@+id/card_profile_pic"
-                        android:src="@drawable/user"
+                        android:src="@drawable/unknown_user"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center_vertical"

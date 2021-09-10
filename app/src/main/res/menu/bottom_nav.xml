@@ -3,7 +3,7 @@
 
     <item
             android:title="@string/navigation_profile"
-            android:icon="@drawable/user"
+            android:icon="@drawable/unknown_user"
             android:enabled="true"
             android:id="@+id/navigation_profile" />
     <item
