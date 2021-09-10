@@ -13,7 +13,7 @@
 
 - Android Gradle Plugin Version 7.0.1
 - Gradle version 7.0.2
-- Emulator: Pixel 4 API 30
+- Android Emulator: Pixel 4 API 30
 
 # Getting Started
 
