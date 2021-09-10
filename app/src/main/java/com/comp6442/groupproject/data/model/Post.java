@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.UUID;
 
 @IgnoreExtraProperties
-public class Post {
-  private String postId;
+public class Post extends Model {
   private DocumentReference uid;
   private String userName;
   private int isPublic;
-  private List<TsPoint> route = new ArrayList<>();;
+  private List<TsPoint> route = new ArrayList<>();
   private Activity activity;
   private Timestamp startTs;
   private Timestamp endTs;
-  private List<String> hashtags = new ArrayList<>();;
-  @ServerTimestamp private Date postDatetime; // will be null on emulator
+  private List<String> hashtags = new ArrayList<>();
+  @ServerTimestamp
+  private Date postDatetime; // will be null on emulator
 
   // TODO
   // private Double distance;
@@ -38,8 +38,8 @@ public class Post {
     this(UUID.randomUUID().toString(), uid, userName, route, activity, startTs, endTs, isPublic);
   }
 
-  public Post(@NonNull String postId, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs, @NonNull int isPublic) {
-    this.postId = postId;
+  public Post(@NonNull String id, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs, @NonNull int isPublic) {
+    this.id = id;
     this.uid = uid;
     this.userName = userName;
     this.route = route;
@@ -49,8 +49,8 @@ public class Post {
     this.isPublic = isPublic;
   }
 
-  public Post(String postId, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs, @NonNull int isPublic, @NonNull List<String> hashtags) {
-    this(postId, uid, userName, route, activity, startTs, endTs, isPublic);
+  public Post(String id, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs, @NonNull int isPublic, @NonNull List<String> hashtags) {
+    this(id, uid, userName, route, activity, startTs, endTs, isPublic);
     setHashtags(hashtags);
   }
 
@@ -59,9 +59,17 @@ public class Post {
     return uid;
   }
 
+  public void setUid(DocumentReference uid) {
+    this.uid = uid;
+  }
+
   @NonNull
-  public String getPostId() {
-    return postId;
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   @NonNull
@@ -69,9 +77,17 @@ public class Post {
     return userName;
   }
 
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
+
   @NonNull
   public List<TsPoint> getRoute() {
     return route;
+  }
+
+  public void setRoute(List<TsPoint> route) {
+    this.route = route;
   }
 
   @NonNull
@@ -79,9 +95,17 @@ public class Post {
     return startTs;
   }
 
+  public void setStartTs(Timestamp startTs) {
+    this.startTs = startTs;
+  }
+
   @NonNull
   public Timestamp getEndTs() {
     return endTs;
+  }
+
+  public void setEndTs(Timestamp endTs) {
+    this.endTs = endTs;
   }
 
   @NonNull
@@ -89,8 +113,16 @@ public class Post {
     return activity;
   }
 
+  public void setActivity(Activity activity) {
+    this.activity = activity;
+  }
+
   public List<String> getHashtags() {
     return hashtags;
+  }
+
+  public void setHashtags(List<String> hashtags) {
+    this.hashtags = hashtags;
   }
 
   @NonNull
@@ -98,40 +130,8 @@ public class Post {
     return isPublic;
   }
 
-  public void setPostId(String postId) {
-    this.postId = postId;
-  }
-
-  public void setUid(DocumentReference uid) {
-    this.uid = uid;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
   public void setIsPublic(int isPublic) {
     this.isPublic = isPublic;
-  }
-
-  public void setRoute(List<TsPoint> route) {
-    this.route = route;
-  }
-
-  public void setActivity(Activity activity) {
-    this.activity = activity;
-  }
-
-  public void setStartTs(Timestamp startTs) {
-    this.startTs = startTs;
-  }
-
-  public void setEndTs(Timestamp endTs) {
-    this.endTs = endTs;
-  }
-
-  public void setHashtags(List<String> hashtags) {
-    this.hashtags = hashtags;
   }
 
   public void setPostDatetime(Date postDatetime) {
@@ -141,7 +141,7 @@ public class Post {
   @Override
   public String toString() {
     return "Post{" +
-            "postId='" + postId + '\'' +
+            "postId='" + id + '\'' +
             ", uid=" + uid +
             ", userName='" + userName + '\'' +
             ", isPublic=" + isPublic +
@@ -152,5 +152,9 @@ public class Post {
             ", hashtags=" + hashtags +
             ", postDatetime=" + postDatetime +
             '}';
+  }
+
+  public enum Activity {
+    Walk, Run, Cycle
   }
 }

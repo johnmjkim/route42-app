@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,7 +20,7 @@ import java.util.List;
 
 import timber.log.Timber;
 
-public final class PostRepository extends FirestoreRepository<Post> {
+public class PostRepository extends FirestoreRepository<Post> {
   private static PostRepository instance = null;
 
   private PostRepository(FirebaseFirestore firestore) {
@@ -28,7 +29,6 @@ public final class PostRepository extends FirestoreRepository<Post> {
 
   public static PostRepository getInstance() {
     if (PostRepository.instance == null) {
-      // TODO check if emulator is already running
       FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
       if (BuildConfig.DEBUG) {
@@ -62,15 +62,15 @@ public final class PostRepository extends FirestoreRepository<Post> {
       return json.getAsDouble();
     }).registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
       String str = json.toString();
-      return UserRepository.getInstance().getUser(str);
+      return UserRepository.getInstance().getOne(str);
     }).create();
   }
 
-  public DocumentReference getPost(String postId) {
+  public DocumentReference getOne(String postId) {
     return this.collection.document(postId);
   }
 
-  public Task<QuerySnapshot> getPosts(String uid) {
+  public Task<QuerySnapshot> getMany(String uid) {
     return this.collection.whereEqualTo("uid", uid).get();
   }
 
@@ -85,15 +85,15 @@ public final class PostRepository extends FirestoreRepository<Post> {
     }
   }
 
-  public void addPost(Post post) {
+  public void createOne(Post post) {
     // add post only if id does not exist in collection
-    this.collection.document(post.getPostId())
+    this.collection.document(post.getId())
             .set(post)
             .addOnSuccessListener(unused -> Timber.i("Insert succeeded: %s", post.toString()))
             .addOnFailureListener(Timber::e);
   }
 
-  public void addPosts(List<Post> posts) {
+  public void createMany(List<Post> posts) {
     // batch size limit is 500 documents
     int idx = 0;
     while (idx < posts.size()) {
@@ -103,7 +103,7 @@ public final class PostRepository extends FirestoreRepository<Post> {
 
       while (counter < 500 && idx < posts.size()) {
         Post post = posts.get(idx);
-        DocumentReference postRef = this.collection.document(post.getPostId());
+        DocumentReference postRef = this.collection.document(post.getId());
         batch.set(postRef, post);
         counter++;
         idx++;
@@ -111,6 +111,26 @@ public final class PostRepository extends FirestoreRepository<Post> {
       // Commit the batch
       batch.commit().addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch write complete: posts"));
+    }
+  }
+
+  public void setMany(List<Post> posts) {
+    int idx = 0;
+    while (idx < posts.size()) {
+      int counter = 0;
+      WriteBatch batch = this.firestore.batch();
+
+      while (counter < 500 && idx < posts.size()) {
+        Post post = posts.get(idx);
+        DocumentReference postRef = this.collection.document(post.getId());
+        batch.set(postRef, post, SetOptions.merge());
+
+        counter++;
+        idx++;
+      }
+      // Commit the batch
+      batch.commit().addOnFailureListener(Timber::e)
+              .addOnSuccessListener(task -> Timber.i("Batch set complete: posts"));
     }
   }
 }

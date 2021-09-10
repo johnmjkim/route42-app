@@ -3,19 +3,15 @@ package com.comp6442.groupproject.data.model;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 @IgnoreExtraProperties
-public class User {
-  private String uid;
+public class User extends Model {
   private String email;
   private String userName;
   private int isPublic;
@@ -33,19 +29,19 @@ public class User {
     this(UUID.randomUUID().toString(), email, userName);
   }
 
-  public User(String uid, @NonNull String email, @NonNull String userName) {
-    setUid(uid);
+  public User(String id, @NonNull String email, @NonNull String userName) {
+    setId(id);
     setEmail(email);
     setUserName(userName);
   }
 
-  public User(String uid, @NonNull String email, @NonNull String userName, String password) {
-    this(uid, email, userName);
+  public User(String id, @NonNull String email, @NonNull String userName, String password) {
+    this(id, email, userName);
     setPassword(password);
   }
 
-  public User(String uid, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers, String password, int isPublic, String profilePicUrl, List<DocumentReference> blockedBy) {
-    this(uid, email, userName, password);
+  public User(String id, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers, String password, int isPublic, String profilePicUrl, List<DocumentReference> blockedBy) {
+    this(id, email, userName, password);
     setFollowing(following);
     setFollowers(followers);
     setIsPublic(isPublic);
@@ -57,7 +53,7 @@ public class User {
   @Override
   public String toString() {
     return "User{" +
-            "uid='" + uid + '\'' +
+            "uid='" + id + '\'' +
             ", email='" + email + '\'' +
             ", userName='" + userName + '\'' +
             ", isPublic=" + isPublic +
@@ -69,8 +65,8 @@ public class User {
             '}';
   }
 
-  public String getUid() {
-    return uid;
+  public String getId() {
+    return id;
   }
 
   public String getEmail() {
@@ -105,8 +101,8 @@ public class User {
     return password;
   }
 
-  public void setUid(String uid) {
-    this.uid = uid;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setEmail(String email) {
@@ -157,7 +153,7 @@ public class User {
 
   public User updateEmail(@NonNull String email) {
     return new User(
-            this.getUid(),
+            this.getId(),
             email,
             this.getUserName(),
             this.getFollowing(),
@@ -171,7 +167,7 @@ public class User {
 
   public User updateUserName(String userName) {
     return new User(
-            this.getUid(),
+            this.getId(),
             this.getEmail(),
             userName,
             this.getFollowing(),
@@ -185,7 +181,7 @@ public class User {
 
   public User updateFollowing(List<DocumentReference> following) {
     return new User(
-            this.getUid(),
+            this.getId(),
             this.getEmail(),
             this.getUserName(),
             following,
@@ -199,7 +195,7 @@ public class User {
 
   public User updateFollowers(List<DocumentReference> followers) {
     return new User(
-            this.getUid(),
+            this.getId(),
             this.getEmail(),
             this.getUserName(),
             this.getFollowing(),
@@ -213,7 +209,7 @@ public class User {
 
   public User updatePrivacy(int isPublic) {
     return new User(
-            this.getUid(),
+            this.getId(),
             this.getEmail(),
             this.getUserName(),
             this.getFollowing(),

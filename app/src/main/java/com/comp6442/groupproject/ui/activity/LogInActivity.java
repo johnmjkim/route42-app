@@ -1,4 +1,4 @@
-package com.comp6442.groupproject.ui;
+package com.comp6442.groupproject.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -98,7 +98,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                 FirebaseUser firebaseUser = mAuth.getCurrentUser();
                 Timber.i("Successfully created account: %s", Objects.requireNonNull(firebaseUser).getEmail());
                 Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                UserRepository.getInstance().addUser(firebaseUser);
+                UserRepository.getInstance().createOne(firebaseUser);
                 home(firebaseUser);
               } else {
                 // If sign in fails, display a message to the user.

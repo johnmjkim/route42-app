@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.Post;
 import com.comp6442.groupproject.data.model.User;
@@ -54,7 +53,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
 
     // set profile pic
     UserRepository.getInstance()
-            .getUser(post.getUid().getId())
+            .getOne(post.getUid().getId())
             .get()
             .addOnFailureListener(error -> {
               Timber.w("Could not obtain profile picture for user: %s", post.getUid());
@@ -72,10 +71,10 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
                           viewHolder.userIcon.setImageBitmap(bitmap);
                           Timber.i("profile picture set");
                         }).addOnFailureListener(e -> {
-                          viewHolder.userIcon.setImageResource(R.drawable.person_photo);
-                          Timber.w("Profile picture not found: %s", user);
-                          Timber.e(e);
-                        });
+                  viewHolder.userIcon.setImageResource(R.drawable.person_photo);
+                  Timber.w("Profile picture not found: %s", user);
+                  Timber.e(e);
+                });
               }
             });
 

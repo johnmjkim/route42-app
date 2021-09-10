@@ -17,7 +17,7 @@ import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.FirebaseAuthLiveData;
 import com.comp6442.groupproject.data.UserViewModel;
 import com.comp6442.groupproject.data.model.User;
-import com.comp6442.groupproject.ui.LogInActivity;
+import com.comp6442.groupproject.ui.activity.LogInActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -29,8 +29,8 @@ import timber.log.Timber;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-  private FirebaseAuth mAuth;
   private static final String ARG_PARAM1 = "uid";
+  private FirebaseAuth mAuth;
   private String uid;
   private UserViewModel viewModel;
   private User user;
@@ -130,10 +130,10 @@ public class ProfileFragment extends Fragment {
   }
 
   /* When your activity is no longer visible to the user, it has entered the Stopped state,
-  *  and the system invokes the onStop() callback. This may occur, for example,
-  *  when a newly launched activity covers the entire screen. The system may also call onStop()
-  *  when the activity has finished running, and is about to be terminated.
-  * */
+   *  and the system invokes the onStop() callback. This may occur, for example,
+   *  when a newly launched activity covers the entire screen. The system may also call onStop()
+   *  when the activity has finished running, and is about to be terminated.
+   * */
   @Override
   public void onStop() {
     super.onStop();

@@ -12,7 +12,7 @@ import com.comp6442.groupproject.data.model.Post;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.PostRepository;
 import com.comp6442.groupproject.data.repository.UserRepository;
-import com.comp6442.groupproject.ui.LogInActivity;
+import com.comp6442.groupproject.ui.activity.LogInActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
@@ -98,8 +98,8 @@ public class App42 extends Application {
             .addOnSuccessListener(authResult -> {
               FirebaseUser firebaseUser = authResult.getUser();
               if (firebaseUser != null) {
-                UserRepository.getInstance().addUser(firebaseUser);
-                UserRepository.getInstance().setUser(
+                UserRepository.getInstance().createOne(firebaseUser);
+                UserRepository.getInstance().setOne(
                         testUser.updateUid(firebaseUser.getUid())
                 );
                 mAuth.signOut();
@@ -113,8 +113,8 @@ public class App42 extends Application {
             .addOnSuccessListener(authResult -> {
               FirebaseUser firebaseUser = authResult.getUser();
               if (firebaseUser != null) {
-                UserRepository.getInstance().addUser(firebaseUser);
-                UserRepository.getInstance().setUser(
+                UserRepository.getInstance().createOne(firebaseUser);
+                UserRepository.getInstance().setOne(
                         testUser2.updateUid(firebaseUser.getUid())
                 );
                 mAuth.signOut();
@@ -130,7 +130,7 @@ public class App42 extends Application {
 
     Gson gson = UserRepository.getJsonDeserializer();
     List<User> usersList = Arrays.asList(gson.fromJson(jsonString, (Type) User[].class));
-    UserRepository.getInstance().setUsers(usersList);
+    UserRepository.getInstance().setMany(usersList);
     Timber.i("Insert to Firestore complete: fake users");
   }
 
@@ -151,12 +151,13 @@ public class App42 extends Application {
 
   @RequiresApi(api = Build.VERSION_CODES.O)
   public void createFakePosts() {
-    if (mAuth.getCurrentUser() == null) mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
+    if (mAuth.getCurrentUser() == null)
+      mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
     InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.posts);
     String jsonString = readTextFile(inputStream);
 
     Gson gson = PostRepository.getJsonDeserializer();
     List<Post> posts = Arrays.asList(gson.fromJson(jsonString, (Type) Post[].class));
-    PostRepository.getInstance().addPosts(posts);
+    PostRepository.getInstance().createMany(posts);
   }
 }

@@ -2,7 +2,6 @@ package com.comp6442.groupproject.data.repository;
 
 import com.comp6442.groupproject.BuildConfig;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
