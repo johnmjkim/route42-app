@@ -17,7 +17,7 @@ import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.FirebaseAuthLiveData;
 import com.comp6442.groupproject.data.UserViewModel;
 import com.comp6442.groupproject.data.model.User;
-import com.comp6442.groupproject.ui.LogInActivity;
+import com.comp6442.groupproject.ui.activity.LogInActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
