@@ -131,29 +131,4 @@ public final class UserRepository extends FirestoreRepository<User> {
       }
     });
   }
-
-//  public void follow(String uid, String followReceiverId) {
-//    this.collection.document(uid).update("following", FieldValue.arrayUnion(followReceiverId));
-//  }
-
-//  TODO: not working
-//  public void followAll(String uid) {
-//    this.collection.get().onSuccessTask(success -> {
-//      if (success != null) {
-//        List<String> following = new ArrayList<>();
-//
-//        success.getDocuments().forEach(document -> {
-//          if (document != null && document.get("uid") != null) following.add(String.format("users/%s", document.get("uid")));
-//        });
-//
-//        this.collection.document(uid)
-//                .update("following", FieldValue.arrayUnion(following))
-//                .addOnSuccessListener(unused -> Timber.d("uid %s now follows all users", uid))
-//                .addOnFailureListener(e -> {
-//                  Timber.e("followAll failed for uid %s", uid);
-//                });
-//      }
-//      return null;
-//    });
-//  }
 }
