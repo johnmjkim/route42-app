@@ -47,7 +47,8 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     viewHolder.materialCardView.setStrokeWidth(5);
     viewHolder.userNameView.setText(post.getUserName());
     // viewHolder.descriptionView.setText("This is a sample text. This is a sample text.");
-    viewHolder.hashtagsTextView.setText(String.join(" ", post.getHashtags()));
+    if (post.getHashtags().size() > 0)
+      viewHolder.hashtagsTextView.setText(String.join(" ", post.getHashtags()));
 
     // set profile pic
     Timber.i("Fetched post: %s", post);
@@ -95,7 +96,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
   }
 
   @Override
-  public void onError(FirebaseFirestoreException e) {
+  public void onError(@NonNull FirebaseFirestoreException e) {
     //Handle the error
     Timber.d(e);
   }
