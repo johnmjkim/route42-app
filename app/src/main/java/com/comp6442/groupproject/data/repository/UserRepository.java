@@ -4,7 +4,6 @@ import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
@@ -50,30 +49,30 @@ public final class UserRepository extends FirestoreRepository<User> {
   public static Gson getJsonDeserializer() {
     return new GsonBuilder().registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
       String str = json.toString();
-      return UserRepository.getInstance().getUser(str);
+      return UserRepository.getInstance().getOne(str);
     }).create();
   }
 
-  public DocumentReference getUser(String uid) {
+  public DocumentReference getOne(String uid) {
     return this.collection.document(uid);
   }
 
-  public void addUser(FirebaseUser firebaseUser) {
+  public void createOne(FirebaseUser firebaseUser) {
     // add user only if uid does not exist in user collection
-    addUser(new User(
+    createOne(new User(
             Objects.requireNonNull(firebaseUser.getUid()),
             Objects.requireNonNull(firebaseUser.getEmail())
     ));
   }
 
-  public void addUser(User user) {
+  public void createOne(User user) {
     // add user only if uid does not exist in user collection
-    this.collection.document(user.getUid())
+    this.collection.document(user.getId())
             .set(user)
             .addOnFailureListener(Timber::e);
   }
 
-  public void addUser(Map<String, Object> map) {
+  public void createOne(Map<String, Object> map) {
     // add user only if uid does not exist in user collection
     if (map.containsKey("uid"))
       this.collection.document((String) Objects.requireNonNull(map.get("uid")))
@@ -81,22 +80,7 @@ public final class UserRepository extends FirestoreRepository<User> {
               .addOnFailureListener(Timber::e);
   }
 
-  public void setUser(User user) {
-    // create if not exists
-    this.collection.document(user.getUid())
-            .set(user, SetOptions.merge())
-            .addOnFailureListener(Timber::e);
-  }
-
-  public void setUser(Map<String, Object> map) {
-    // create if not exists
-    if (map.containsKey("uid"))
-      this.collection.document((String) Objects.requireNonNull(map.get("uid")))
-              .set(map, SetOptions.merge())
-              .addOnFailureListener(Timber::e);
-  }
-
-  public void setUsers(List<User> users) {
+  public void createMany(List<User> users) {
     // create if not exists
     // batch size limit is 500 documents
     int idx = 0;
@@ -105,9 +89,46 @@ public final class UserRepository extends FirestoreRepository<User> {
       // Get a new write batch
       WriteBatch batch = this.firestore.batch();
 
-      while (counter < 400 && idx < users.size()) {
+      while (counter < super.batchSizeLimit && idx < users.size()) {
         User user = users.get(idx);
-        DocumentReference ref = this.collection.document(user.getUid());
+        DocumentReference ref = this.collection.document(user.getId());
+        batch.set(ref, user, SetOptions.merge());
+        counter++;
+        idx++;
+      }
+      // Commit the batch
+      batch.commit().addOnFailureListener(Timber::e)
+              .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
+    }
+  }
+
+  public void setOne(User user) {
+    // create if not exists
+    this.collection.document(user.getId())
+            .set(user, SetOptions.merge())
+            .addOnFailureListener(Timber::e);
+  }
+
+  public void setOne(Map<String, Object> map) {
+    // create if not exists
+    if (map.containsKey("uid"))
+      this.collection.document((String) Objects.requireNonNull(map.get("uid")))
+              .set(map, SetOptions.merge())
+              .addOnFailureListener(Timber::e);
+  }
+
+  public void setMany(List<User> users) {
+    // create if not exists
+    // batch size limit is 500 documents
+    int idx = 0;
+    while (idx < users.size()) {
+      int counter = 0;
+      // Get a new write batch
+      WriteBatch batch = this.firestore.batch();
+
+      while (counter < super.batchSizeLimit && idx < users.size()) {
+        User user = users.get(idx);
+        DocumentReference ref = this.collection.document(user.getId());
         batch.set(ref, user, SetOptions.merge());
         counter++;
         idx++;

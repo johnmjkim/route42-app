@@ -1,4 +1,4 @@
-package com.comp6442.groupproject.ui;
+package com.comp6442.groupproject.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,12 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavGraph;
-import androidx.navigation.fragment.NavHostFragment;
 
-import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.FirebaseAuthLiveData;
 import com.comp6442.groupproject.data.UserViewModel;
@@ -22,11 +18,8 @@ import com.comp6442.groupproject.data.repository.UserRepository;
 import com.comp6442.groupproject.ui.fragment.FeedFragment;
 import com.comp6442.groupproject.ui.fragment.MapFragment;
 import com.comp6442.groupproject.ui.fragment.ProfileFragment;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import timber.log.Timber;
 
@@ -60,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // When the owner activity is finished, the framework calls the ViewModel objects's onCleared() method so that it can clean up resources.
     viewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
-    UserRepository.getInstance().getUser(uid).get()
+    UserRepository.getInstance().getOne(uid).get()
             .addOnSuccessListener(snapshot -> {
               User user = snapshot.toObject(User.class);
               viewModel.setLiveUser(user);
