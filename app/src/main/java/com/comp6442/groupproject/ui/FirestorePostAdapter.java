@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.model.Post;
 import com.comp6442.groupproject.data.model.User;
@@ -55,20 +56,26 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     UserRepository.getInstance()
             .getUser(post.getUid().getId())
             .get()
-            .addOnFailureListener(Timber::e)
+            .addOnFailureListener(error -> {
+              Timber.w("Could not obtain profile picture for user: %s", post.getUid());
+              Timber.e(error);
+            })
             .addOnSuccessListener(snapshot -> {
+
               User user = snapshot.toObject(User.class);
               if (user != null) {
-                StorageReference ref = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());
-
-                ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-                  Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                  viewHolder.userIcon.setImageBitmap(bitmap);
-                  Timber.i("profile picture set");
-                }).addOnFailureListener(e -> {
-                  viewHolder.userIcon.setImageResource(R.drawable.person_photo);
-                  Timber.e(e);
-                });
+                FirebaseStorageRepository.getInstance()
+                        .get(user.getProfilePicUrl())
+                        .getBytes(ONE_MEGABYTE)
+                        .addOnSuccessListener(bytes -> {
+                          Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                          viewHolder.userIcon.setImageBitmap(bitmap);
+                          Timber.i("profile picture set");
+                        }).addOnFailureListener(e -> {
+                          viewHolder.userIcon.setImageResource(R.drawable.person_photo);
+                          Timber.w("Profile picture not found: %s", user);
+                          Timber.e(e);
+                        });
               }
             });
 
@@ -78,10 +85,9 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
       viewHolder.routeImage.setImageBitmap(bitmap);
     }).addOnFailureListener(e -> {
-      Timber.e(e);
       viewHolder.routeImage.setImageResource(R.drawable.route);
+      Timber.e(e);
     });
-
 
     // set activity icon
     switch (post.getActivity()) {

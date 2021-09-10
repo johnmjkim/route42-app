@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
+import com.comp6442.groupproject.data.FirebaseAuthLiveData;
 import com.comp6442.groupproject.data.UserViewModel;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.UserRepository;
@@ -37,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   private BottomNavigationView navBarView;
   private MenuItem lastSelected = null;
   private String uid;
-  private FirebaseAuth mAuth;
   private UserViewModel viewModel;
   // private NavHostFragment
   // private NavGraph
@@ -77,17 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
    */
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-    // Initialize Firebase Auth
-    mAuth = FirebaseAuth.getInstance();
-    if (BuildConfig.DEBUG) {
-      try {
-        mAuth.useEmulator("10.0.2.2", 9099);
-      } catch (IllegalStateException exc) {
-        Timber.d(exc);
-      }
-    }
-
-    if (mAuth.getCurrentUser() == null || this.uid == null) {
+    if (FirebaseAuthLiveData.getInstance().getAuth().getCurrentUser() == null || this.uid == null) {
       Timber.i("User is not authenticated. Taking user back to log in screen.");
       startActivity(new Intent(this, LogInActivity.class));
     }

@@ -14,16 +14,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
+import com.comp6442.groupproject.data.FirebaseAuthLiveData;
 import com.comp6442.groupproject.data.repository.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 import timber.log.Timber;
 
 
 public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
-  EditText ed1, ed2;
-  Button b1;
+  private EditText ed1, ed2;
+  private Button b1;
   private FirebaseAuth mAuth;
 
   @RequiresApi(api = Build.VERSION_CODES.N)
@@ -31,16 +34,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
-
-    // Initialize Firebase Auth
-    mAuth = FirebaseAuth.getInstance();
-    if (BuildConfig.DEBUG) {
-      try {
-        mAuth.useEmulator("10.0.2.2", 9099);
-      } catch (IllegalStateException exc) {
-        Timber.d(exc);
-      }
-    }
+    mAuth = FirebaseAuthLiveData.getInstance().getAuth();
 
     // UI
     ed1 = findViewById(R.id.login_form_email);
@@ -102,7 +96,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
               if (task.isSuccessful()) {
                 // Sign in success, update UI with the signed-in user's information
                 FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                Timber.i("Successfully created account: %s", firebaseUser.getEmail());
+                Timber.i("Successfully created account: %s", Objects.requireNonNull(firebaseUser).getEmail());
                 Toast.makeText(LogInActivity.this, "Success", Toast.LENGTH_SHORT).show();
                 UserRepository.getInstance().addUser(firebaseUser);
                 home(firebaseUser);

@@ -1,6 +1,5 @@
 package com.comp6442.groupproject.ui.fragment;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +12,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.comp6442.groupproject.BuildConfig;
 import com.comp6442.groupproject.R;
 import com.comp6442.groupproject.data.UserViewModel;
 import com.comp6442.groupproject.data.model.Post;
 import com.comp6442.groupproject.data.model.User;
+import com.comp6442.groupproject.data.repository.PostRepository;
 import com.comp6442.groupproject.ui.FirestorePostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 
 import timber.log.Timber;
@@ -34,9 +31,7 @@ import timber.log.Timber;
 public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
   private String uid;
-  private FirebaseFirestore firestore;
   private UserViewModel viewModel;
-
   private RecyclerView recyclerView;
   private FirestorePostAdapter adapter;
   private LinearLayoutManager layoutManager;
@@ -45,21 +40,23 @@ public class FeedFragment extends Fragment {
     // Required empty public constructor
   }
 
-  public static FeedFragment newInstance(String uid) {
-    Timber.d("New instance created with uid %s", uid);
-    FeedFragment frag = new FeedFragment();
+  public static FeedFragment newInstance(String param1) {
+    Timber.i("New instance created with param %s", param1);
+    FeedFragment fragment = new FeedFragment();
     Bundle args = new Bundle();
-    args.putString(ARG_PARAM1, uid);
-    frag.setArguments(args);
-    return frag;
+    args.putString(ARG_PARAM1, param1);
+    fragment.setArguments(args);
+    return fragment;
   }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
     if (getArguments() != null) {
-      uid = getArguments().getString(ARG_PARAM1);
+      this.uid = getArguments().getString(ARG_PARAM1);
     }
+    Timber.i("onCreate called with uid %s", uid);
   }
 
   @Override
@@ -69,41 +66,15 @@ public class FeedFragment extends Fragment {
     return inflater.inflate(R.layout.fragment_feed, container, false);
   }
 
-  @SuppressLint("NotifyDataSetChanged")
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    Timber.d("breadcrumb");
 
-    // firestore
-    this.firestore = FirebaseFirestore.getInstance();
-    if (BuildConfig.DEBUG) {
-      try {
-        this.firestore.useEmulator("10.0.2.2", 8080);
-      } catch (IllegalStateException exc) {
-        Timber.d(exc);
-      }
-    }
-
-    // disable caching
-    this.firestore.setFirestoreSettings(
-            new FirebaseFirestoreSettings.Builder()
-                    .setPersistenceEnabled(false)
-                    .build()
-    );
-
-    // restore data
-    if (savedInstanceState == null) {
-      Timber.d("No previous state to restore from. Checking arguments..");
-      Bundle args = getArguments();
-      if (args != null) {
-        this.uid = args.getString(ARG_PARAM1);
-        Timber.d("Received arg: %s", this.uid);
-      } else {
-        Timber.w("Did not receive argument");
-      }
-    } else {
-      Timber.d("Restoring from previous state: %s", ARG_PARAM1);
-      this.uid = savedInstanceState.getString(ARG_PARAM1);
+    if (savedInstanceState != null) {
+      //Restore the fragment's state here
+      Timber.i("Restoring fragment state");
+      this.uid = savedInstanceState.getString("uid");
     }
 
     if (this.uid != null) {
@@ -112,10 +83,7 @@ public class FeedFragment extends Fragment {
 
       assert user != null;
 
-      Query query = firestore.collection("posts")
-              .whereNotIn("uid", user.getBlockedBy())
-              .whereEqualTo("isPublic", 1).limit(20);
-
+      Query query = PostRepository.getInstance().getVisiblePosts(user, 20);
       FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
               .setQuery(query, Post.class)
               .build();
@@ -137,34 +105,42 @@ public class FeedFragment extends Fragment {
   }
 
   @Override
-  public void onStop() {
-    super.onStop();
-    adapter.stopListening();
+  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    super.onViewStateRestored(savedInstanceState);
+    Timber.d("breadcrumb");
   }
 
   @Override
   public void onStart() {
     super.onStart();
-    Timber.d("Started");
-    if (this.uid != null) Timber.d("Feed instance uid = %s", this.uid);
+    Timber.d("breadcrumb");
+    if (this.uid != null) Timber.i("Starting feed for uid = %s", this.uid);
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
-    Timber.d("Resumed: %s", this.uid);
+  public void onStop() {
+    super.onStop();
+    Timber.d("breadcrumb");
+    adapter.stopListening();
   }
 
   @Override
-  public void onSaveInstanceState(Bundle outState) {
-    outState.putString(ARG_PARAM1, this.uid);
+  public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
-    Timber.d("Saved instance state");
+    outState.putString(ARG_PARAM1, this.uid);
+    Timber.i("Saved instance state");
   }
 
   @Override
-  public void onDestroy() {
-    super.onDestroy();
-    Timber.d("Destroying instance");
+  public void onDestroyView() {
+    super.onDestroyView();
+    Timber.d("breadcrumb");
+  }
+
+  /* onDetach() is always called after any Lifecycle state changes. */
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    Timber.d("breadcrumb");
   }
 }
