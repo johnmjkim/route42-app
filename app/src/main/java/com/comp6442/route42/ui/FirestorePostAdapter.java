@@ -1,6 +1,8 @@
 package com.comp6442.route42.ui;
 
 
+import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -15,6 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
+import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
@@ -25,6 +30,7 @@ import timber.log.Timber;
 
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
 public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, FirestorePostAdapter.PostViewHolder> {
+  private Context context;
 
   public FirestorePostAdapter(@NonNull FirestoreRecyclerOptions<Post> options) {
     super(options);
@@ -46,6 +52,20 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     // contents of the view with that element
     viewHolder.materialCardView.setStrokeWidth(5);
     viewHolder.userNameView.setText(post.getUserName());
+
+    // Add listener and navigate to the user's profile on click
+    viewHolder.userNameView.setOnClickListener(view -> {
+      Fragment fragment = new ProfileFragment();
+      Bundle bundle = new Bundle();
+
+      bundle.putString("uid", post.getUid().getId());
+      fragment.setArguments(bundle);
+      ((AppCompatActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+              .beginTransaction()
+              .replace(R.id.fragment_container_view, fragment)
+              .commit();
+    });
+
     // viewHolder.descriptionView.setText("This is a sample text. This is a sample text.");
     if (post.getHashtags().size() > 0)
       viewHolder.hashtagsTextView.setText(String.join(" ", post.getHashtags()));
@@ -57,7 +77,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(post.getProfilePicUrl());
     Glide.with(viewHolder.userIcon.getContext())
             .load(profilePicRef)
-            .placeholder(R.drawable.user)
+            .placeholder(R.drawable.unknown_user)
             .circleCrop()
             .into(viewHolder.userIcon);
 
@@ -67,7 +87,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .placeholder(R.drawable.route)
-//            .fitCenter()
+            // .fitCenter()
             .centerCrop()
             .into(viewHolder.routeImage);
 
