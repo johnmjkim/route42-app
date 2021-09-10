@@ -12,7 +12,7 @@ import com.comp6442.groupproject.data.model.Post;
 import com.comp6442.groupproject.data.model.User;
 import com.comp6442.groupproject.data.repository.PostRepository;
 import com.comp6442.groupproject.data.repository.UserRepository;
-import com.comp6442.groupproject.ui.LogInActivity;
+import com.comp6442.groupproject.ui.activity.LogInActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
