@@ -69,7 +69,6 @@ public final class UserRepository extends FirestoreRepository<User> {
     // batch size limit is 500 documents
     int idx = 0;
     while (idx < users.size()) {
-
       int counter = 0;
       // Get a new write batch
       WriteBatch batch = firestore.batch();
@@ -81,7 +80,6 @@ public final class UserRepository extends FirestoreRepository<User> {
         counter++;
         idx++;
       }
-
       // Commit the batch
       batch.commit().addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
