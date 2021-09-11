@@ -32,17 +32,15 @@ public class UserViewModel extends ViewModel {
     }
 
     public void setLiveUser(User user) {
-        Timber.i("HELLO from liveuser");
         this.liveUser.setValue(user);
+        Timber.i("User is live: %s", user);
     }
 
     public void loadLiveUser(String uid) {
-        UserRepository.getInstance().getOne(uid).get()
-        .addOnSuccessListener(snapshot -> {
+        UserRepository.getInstance().getOne(uid).get().addOnSuccessListener(snapshot -> {
             User user = snapshot.toObject(User.class);
             setLiveUser(user);
             Timber.i("UserVM : loaded live user : %s", user);
-
         }).addOnFailureListener(Timber::e);
     }
 
