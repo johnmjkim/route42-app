@@ -3,6 +3,7 @@ package com.comp6442.route42.data.repository;
 import com.comp6442.route42.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
@@ -120,6 +121,13 @@ public final class UserRepository extends FirestoreRepository<User> {
       batch.commit().addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
     }
+  }
+
+  public void follow(String followGiverId, String followReceiverId) {
+    DocumentReference followGiver = this.collection.document(followGiverId);
+    DocumentReference followReceiver = this.collection.document(followReceiverId);
+    followGiver.update("following", FieldValue.arrayUnion(followReceiver));
+    followReceiver.update("following", FieldValue.arrayUnion(followGiver));
   }
 
   public void count() {
