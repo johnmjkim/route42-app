@@ -8,6 +8,9 @@
 6. Design change: Shifted to Single Activity architecture.
 7. Added Post data model, adapter, and material card view, and created map fragment using mapbox.
 8. Add Firebase Cloud Storage for storage of user generated content.
+9. Add Glide for image rendering and caching on Feed.
+10. Add Profile screen (tap on username in the feed to navigate to the profile).
+11. Add like functionality.
 
 # Requirements
 
