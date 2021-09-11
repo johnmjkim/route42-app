@@ -53,9 +53,11 @@ public class Route42App extends Application {
     }
 
     if (BuildConfig.loadData) {
+      Timber.i("Loading sample data");
       createFakeUsers();
       createTestUser();
       createFakePosts();
+      Timber.i("Loaded sample data");
     }
 
     // sign out and take user to log in screen
@@ -87,45 +89,36 @@ public class Route42App extends Application {
   }
 
   public void createTestUser() {
+    Timber.i("Creating test user.");
+
     // create test user and add to firebase and firestore
     User testUser = new User(null, BuildConfig.testUserEmail, "test_user", BuildConfig.testUserPassword);
     mAuth.createUserWithEmailAndPassword(testUser.getEmail(), testUser.getPassword())
-            .addOnSuccessListener(unused -> {
-              Timber.i("Created test user.");
-            }).addOnSuccessListener(authResult -> {
-              FirebaseUser firebaseUser = authResult.getUser();
-              if (firebaseUser != null) {
-                testUser.setId(firebaseUser.getUid());
-                UserRepository.getInstance().setOne(testUser);
-                mAuth.signOut();
-                Timber.i("Insert to Firestore complete: test user");
-              }
-            });
+          .addOnSuccessListener(authResult -> {
+                FirebaseUser firebaseUser = authResult.getUser();
 
-    // add test user 2
-    User testUser2 = new User(null, BuildConfig.testUser2Email, "test_user2", BuildConfig.testUserPassword);
-    mAuth.createUserWithEmailAndPassword(testUser2.getEmail(), testUser2.getPassword())
-            .addOnSuccessListener(authResult -> {
-              FirebaseUser firebaseUser = authResult.getUser();
-              if (firebaseUser != null) {
-                UserRepository.getInstance().createOne(firebaseUser);
-                testUser2.setId(firebaseUser.getUid());
-                UserRepository.getInstance().setOne(testUser2);
-                mAuth.signOut();
-                Timber.i("Insert to Firestore complete: test user 2");
-              }
-            });
+                if (firebaseUser != null) {
+                  testUser.setId(firebaseUser.getUid());
+                  UserRepository.getInstance().setOne(testUser);
+                  Timber.i("Created test user.");
+                  mAuth.signOut();
+                }
+          }).addOnFailureListener(error -> {
+            Timber.w("Could not create test_user in Firebase Auth");
+            // Timber.e(error);
+          });
   }
 
   @RequiresApi(api = Build.VERSION_CODES.N)
   public void createFakeUsers() {
+    Timber.i("Creating fake users.");
     InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.users);
     String jsonString = readTextFile(inputStream);
 
     Gson gson = UserRepository.getJsonDeserializer();
     List<User> usersList = Arrays.asList(gson.fromJson(jsonString, (Type) User[].class));
     UserRepository.getInstance().setMany(usersList);
-    Timber.i("Insert to Firestore complete: fake users");
+    Timber.i("Created fake users.");
   }
 
   public String readTextFile(InputStream inputStream) {
@@ -145,6 +138,7 @@ public class Route42App extends Application {
 
   @RequiresApi(api = Build.VERSION_CODES.O)
   public void createFakePosts() {
+    Timber.i("Creating fake posts.");
     if (mAuth.getCurrentUser() == null)
       mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
 
@@ -154,5 +148,6 @@ public class Route42App extends Application {
     Gson gson = PostRepository.getJsonDeserializer();
     List<Post> posts = Arrays.asList(gson.fromJson(jsonString, (Type) Post[].class));
     PostRepository.getInstance().createMany(posts);
+    Timber.i("Created fake posts.");
   }
 }

@@ -69,6 +69,7 @@ public final class UserRepository extends FirestoreRepository<User> {
     // batch size limit is 500 documents
     int idx = 0;
     while (idx < users.size()) {
+
       int counter = 0;
       // Get a new write batch
       WriteBatch batch = firestore.batch();
@@ -80,6 +81,7 @@ public final class UserRepository extends FirestoreRepository<User> {
         counter++;
         idx++;
       }
+
       // Commit the batch
       batch.commit().addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
@@ -123,11 +125,41 @@ public final class UserRepository extends FirestoreRepository<User> {
     }
   }
 
-  public void follow(String followGiverId, String followReceiverId) {
-    DocumentReference followGiver = this.collection.document(followGiverId);
+  /**
+   * followActorId follows followReceiverId
+   * @param followActorId
+   * @param followReceiverId
+   */
+  public void follow(String followActorId, String followReceiverId) {
+    DocumentReference followActor = this.collection.document(followActorId);
     DocumentReference followReceiver = this.collection.document(followReceiverId);
-    followGiver.update("following", FieldValue.arrayUnion(followReceiver));
-    followReceiver.update("following", FieldValue.arrayUnion(followGiver));
+    followActor.update("following", FieldValue.arrayUnion(followReceiver));
+    followReceiver.update("followers", FieldValue.arrayUnion(followActor));
+  }
+
+  /**
+   * unfollowActorId unfollows unfollowReceiverId
+   * @param unfollowActorId
+   * @param unfollowReceiverId
+   */
+  public void unfollow(String unfollowActorId, String unfollowReceiverId) {
+    DocumentReference unfollowActor = this.collection.document(unfollowActorId);
+    DocumentReference unfollowReceiver = this.collection.document(unfollowReceiverId);
+    unfollowActor.update("following", FieldValue.arrayRemove(unfollowReceiver));
+    unfollowReceiver.update("followers", FieldValue.arrayRemove(unfollowActor));
+  }
+
+  public void block(String blockerUid, String beingBlockedUid) {
+    DocumentReference blocker = this.collection.document(blockerUid);
+    this.collection.document(beingBlockedUid).update("blockedBy", FieldValue.arrayUnion(blocker));
+
+    // automatically unfollow
+    unfollow(blockerUid, beingBlockedUid);
+  }
+
+  public void unblock(String unblockerUid, String beingUnblockedUid) {
+    DocumentReference blocker = this.collection.document(unblockerUid);
+    this.collection.document(beingUnblockedUid).update("blockedBy", FieldValue.arrayRemove(blocker));
   }
 
   public void count() {

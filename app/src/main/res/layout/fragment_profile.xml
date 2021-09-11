@@ -137,6 +137,14 @@
                     android:text="@string/message_button"
                     style="?attr/borderlessButtonStyle"
                     android:id="@+id/profile_message_button" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/block_button"
+                    style="?attr/borderlessButtonStyle"
+                    android:id="@+id/profile_block_button" />
         </LinearLayout>
 
     </LinearLayout>

@@ -10,7 +10,7 @@
 8. Add Firebase Cloud Storage for storage of user generated content.
 9. Add Glide for image rendering and caching on Feed.
 10. Add Profile screen (tap on username in the feed to navigate to the profile).
-11. Add like functionality.
+11. Add follow & block functionality.
 
 # Requirements
 
