@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -60,7 +60,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
 
       bundle.putString("uid", post.getUid().getId());
       fragment.setArguments(bundle);
-      ((AppCompatActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+      ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
               .beginTransaction()
               .replace(R.id.fragment_container_view, fragment)
               .commit();

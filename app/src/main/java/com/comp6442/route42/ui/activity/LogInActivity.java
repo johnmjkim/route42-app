@@ -68,7 +68,6 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, task -> {
               if (task.isSuccessful()) {
-                // Sign in success, update UI with the signed-in user's information
                 FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
                 if (firebaseUser != null) {
@@ -76,7 +75,6 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                   home(firebaseUser);
                 }
               } else {
-                // If sign in fails, display a message to the user.
                 Timber.w(task.getException(), "Failed to sign in");
                 if (BuildConfig.DEBUG) {
                   Toast.makeText(LogInActivity.this, "Sign in failed.",
