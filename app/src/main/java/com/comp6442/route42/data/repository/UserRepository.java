@@ -127,7 +127,7 @@ public final class UserRepository extends FirestoreRepository<User> {
     DocumentReference followGiver = this.collection.document(followGiverId);
     DocumentReference followReceiver = this.collection.document(followReceiverId);
     followGiver.update("following", FieldValue.arrayUnion(followReceiver));
-    followReceiver.update("following", FieldValue.arrayUnion(followGiver));
+    followReceiver.update("followers", FieldValue.arrayUnion(followGiver));
   }
 
   public void count() {

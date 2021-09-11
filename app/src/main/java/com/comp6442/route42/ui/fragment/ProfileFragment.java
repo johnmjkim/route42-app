@@ -110,29 +110,18 @@ public class ProfileFragment extends Fragment {
           setFollowerCount(profileUser, view);
           setFollowingCount(profileUser, view);
           setFollowButton(profileUser, view);
-          assert profileUser != null && profileUser.getUserName() != null;
+          assert profileUser.getUserName() != null;
           userNameView.setText(profileUser.getUserName());
           User liveUser = viewModel.getLiveUser().getValue();
           // when a user is looking at his/her own profile, hide Follow and Message buttons.
-          if(liveUser.getId() == null ) {          // for Development only
-            if(profileUser.getId() == null) {
-              view.findViewById(R.id.profile_follow_button).setVisibility(View.INVISIBLE);
-              view.findViewById(R.id.profile_message_button).setVisibility(View.INVISIBLE);
-            } else {
-              view.findViewById(R.id.profile_follow_button).setVisibility(View.VISIBLE);
-              view.findViewById(R.id.profile_message_button).setVisibility(View.VISIBLE);
-            }
-          } else {
-            if(  liveUser.getId().equals(profileUser.getId()) ) {
-              view.findViewById(R.id.profile_follow_button).setVisibility(View.INVISIBLE);
-              view.findViewById(R.id.profile_message_button).setVisibility(View.INVISIBLE);
-            }else {
-              view.findViewById(R.id.profile_follow_button).setVisibility(View.VISIBLE);
-              view.findViewById(R.id.profile_message_button).setVisibility(View.VISIBLE);
-            }
+          assert liveUser.getId() != null;
+          int visibility = View.VISIBLE;
+          if( liveUser.getId().equals(profileUser.getId()) ) {
+              visibility = View.INVISIBLE;
           }
-
-        }
+          view.findViewById(R.id.profile_follow_button).setVisibility(visibility);
+          view.findViewById(R.id.profile_message_button).setVisibility(visibility);
+        };
       };
       viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
 
@@ -248,13 +237,15 @@ public class ProfileFragment extends Fragment {
     followButton.setOnClickListener(
             view1 -> {
                   // update following and followers
-                  UserRepository.getInstance().follow(FirebaseAuthLiveData.getInstance().getAuth().getUid(), user.getId());
+                  String authID = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+                  Timber.i("authID " + authID);
+                  UserRepository.getInstance().follow( authID, user.getId());
                   // update UI
                   TextView followerCountView = view.findViewById(R.id.profile_primary_text);
                   Integer count = Integer.valueOf(followerCountView.getText().toString());
                   followerCountView.setText(String.valueOf(count + 1));
                   followButton.setEnabled(false);
-                  Timber.i("Like event recorded: %s -> %s", FirebaseAuthLiveData.getInstance().getAuth().getUid(), user.getId());
+                  Timber.i("Like event recorded: %s -> %s",authID, user.getId());
             }
     );
   }
