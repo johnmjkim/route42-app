@@ -21,7 +21,6 @@ public class UserViewModel extends ViewModel {
     private final MutableLiveData<User> liveUser = new MutableLiveData<>();
     // user whose profile is loaded
     private MutableLiveData<User> profileUser = new MutableLiveData<>();
-
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -39,18 +38,32 @@ public class UserViewModel extends ViewModel {
 
     public void loadLiveUser(String uid) {
         UserRepository.getInstance().getOne(uid).get()
-                .addOnSuccessListener(snapshot -> {
-                    User user = snapshot.toObject(User.class);
-                    setLiveUser(user);
-                    Timber.i("UserVM : loaded live user : %s", user);
+        .addOnSuccessListener(snapshot -> {
+            User user = snapshot.toObject(User.class);
+            setLiveUser(user);
+            Timber.i("UserVM : loaded live user : %s", user);
 
-                }).addOnFailureListener(Timber::e);
+        }).addOnFailureListener(Timber::e);
     }
 
     /**
      * syncs this viewModel data with corresponding Firebase document
      */
-    public ListenerRegistration addSnapshotListener(String uid) {
+    public ListenerRegistration addSnapshotListenerToProfileUser(String uid) {
+        DocumentReference docPath = UserRepository.getInstance().getOne(uid);
+        return docPath.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error == null) {
+                    setProfileUser(value.toObject(User.class));
+                    Timber.i("added snapshot listener to uid: " + uid);
+                    return;
+                }
+                Timber.e(error);
+            }
+        });
+    }
+    public ListenerRegistration addSnapshotListenerToLiveUser(String uid) {
         DocumentReference docPath = UserRepository.getInstance().getOne(uid);
         return docPath.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -64,7 +77,6 @@ public class UserViewModel extends ViewModel {
             }
         });
     }
-
     public LiveData<User> getProfileUser() {
         return profileUser;
     }

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // When the owner activity is finished, the framework calls the ViewModel objects's onCleared() method so that it can clean up resources.
     UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
     viewModel.loadLiveUser(uid);
-    viewModel.addSnapshotListener(uid);
+    viewModel.addSnapshotListenerToLiveUser(uid);
     MainActivity self = this;
 
     // bottom navigation

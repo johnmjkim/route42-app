@@ -106,7 +106,7 @@ public class ProfileFragment extends Fragment {
       Timber.i(this.uid);
       // user already loaded since MainActivity is created
       viewModel.loadProfileUser(this.uid);
-      firebaseListenerRegs.add(viewModel.addSnapshotListener(this.uid));
+      firebaseListenerRegs.add(viewModel.addSnapshotListenerToProfileUser(this.uid));
       final Observer<User> userObserver = new Observer<User>() {
         @Override
         public void onChanged(User profileUser) {
