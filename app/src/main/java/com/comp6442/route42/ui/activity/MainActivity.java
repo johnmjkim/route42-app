@@ -8,13 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
+
 import com.comp6442.route42.data.model.User;
-import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.fragment.FeedFragment;
 import com.comp6442.route42.ui.fragment.MapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   private BottomNavigationView navBarView;
   private MenuItem lastSelected = null;
   private String uid;
-  private UserViewModel viewModel;
   // private NavHostFragment
   // private NavGraph
 
@@ -41,23 +41,27 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     setContentView(R.layout.activity_main);
     uid = getIntent().getStringExtra("uid");
 
-    // bottom navigation
-    toolbar = getSupportActionBar();
-    navBarView = findViewById(R.id.bottom_navigation_view);
-    navBarView.setOnItemSelectedListener(this);
-    navBarView.setSelectedItemId(R.id.navigation_profile);
-
     // Create a ViewModel the first time the system calls an activity's onCreate() method.
     // Re-created activities receive the same MyViewModel instance created by the first activity.
     // If the activity is re-created, it receives the same MyViewModel instance that was created by the first activity.
     // When the owner activity is finished, the framework calls the ViewModel objects's onCleared() method so that it can clean up resources.
-    viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+    UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+    viewModel.loadLiveUser(uid);
+    MainActivity self = this;
+    final Observer<User> liveUserObserver = new Observer<User>() {
+      @Override
+      public void onChanged(User liveUser) {
+        // bottom navigation
+        toolbar = getSupportActionBar();
+        navBarView = findViewById(R.id.bottom_navigation_view);
+        navBarView.setOnItemSelectedListener(self);
+        navBarView.setSelectedItemId(R.id.navigation_profile);
+      }
+    };
+    viewModel.getLiveUser().observe(this, liveUserObserver);
 
-    UserRepository.getInstance().getOne(uid).get()
-            .addOnSuccessListener(snapshot -> {
-              User user = snapshot.toObject(User.class);
-              viewModel.setLiveUser(user);
-            }).addOnFailureListener(Timber::e);
+
+
   }
 
   /**
