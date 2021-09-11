@@ -102,7 +102,7 @@ public class ProfileFragment extends Fragment {
       if (this.uid.contains("\"")) this.uid = this.uid.replaceAll("^\"|\"$", "");
       Timber.i(this.uid);
 
-      // set user and profile name
+      // set user and fill in username, follower count
       UserRepository.getInstance().getOne(uid).get()
               .addOnSuccessListener(snapshot -> {
                 if (snapshot.exists()) {
@@ -112,12 +112,16 @@ public class ProfileFragment extends Fragment {
                   setUser(user);
                   setProfilePic(user, view);
                   setFollowerCount(user, view);
+                  setFollowingCount(user, view);
+                  setFollowButton(user, view);
                   Timber.i(user.toString());
                 }
               }).addOnFailureListener(Timber::e);
 
       // when a user is looking at his/her own profile, hide Follow and Message buttons.
       FirebaseUser firebaseUser = mAuth.getCurrentUser();
+      Timber.i("Firebase current uid: %s\tThis.uid: %s", firebaseUser.getUid(), this.uid);
+
       if (firebaseUser != null && firebaseUser.getUid().equals(this.uid)) {
         Timber.i("Fetching logged in user's profile. Hiding Follow and Message buttons.");
         // ideally, delete these parts entirely to expand the view
@@ -200,18 +204,60 @@ public class ProfileFragment extends Fragment {
   private void setProfilePic(User user, View view) {
     // insert image into profile pic view
     StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());
-    ImageView profilePic = view.findViewById(R.id.profile_picture);
 
-    Glide.with(profilePic.getContext())
-            .load(profilePicRef)
-            .placeholder(R.drawable.person_photo)
-            .circleCrop()
-            .into(profilePic);
+    profilePicRef.getDownloadUrl().addOnCompleteListener(task -> {
+      ImageView profilePic = view.findViewById(R.id.profile_picture);
+      Glide.with(profilePic.getContext())
+              .load(profilePicRef)
+              .placeholder(R.drawable.person_photo)
+              .circleCrop()
+              .into(profilePic);
+    }).addOnFailureListener(error -> {
+      Timber.w("Could not fetch profile pic");
+    });
   }
 
   private void setFollowerCount(User user, View view) {
-    TextView followerCount = view.findViewById(R.id.profile_follower_count);
-    followerCount.setText(String.format("%d Followers", user.getFollowers().size()));
+    TextView followerCountView = view.findViewById(R.id.profile_primary_text);
+    try {
+      followerCountView.setText(String.valueOf(user.getFollowers().size()));
+      Timber.i("Set follower count");
+    } catch (Exception exc) {
+      Timber.w("Could not set follower count");
+      Timber.e(exc);
+    }
+  }
+
+  private void setFollowingCount(User user, View view) {
+    TextView followingCountView = view.findViewById(R.id.profile_secondary_text);
+    try {
+      followingCountView.setText(String.valueOf(user.getFollowing().size()));
+      Timber.i("Set follow count");
+    } catch (Exception exc) {
+      Timber.w("Could not set follow count");
+      Timber.e(exc);
+    }
+  }
+
+  private void setFollowButton(User user, View view) {
+    // TODO: disable and mark button as pressed if user already followed the user
+    Button followButton = view.findViewById(R.id.profile_follow_button);
+
+    // here, check if user has already followed this user
+    // need to separate this.uid and this.user? or use mAuth.getCurrentUser()?
+
+    followButton.setOnClickListener(
+            view1 -> {
+                  // update following and followers
+                  UserRepository.getInstance().follow(FirebaseAuthLiveData.getInstance().getAuth().getUid(), user.getId());
+                  // update UI
+                  TextView followerCountView = view.findViewById(R.id.profile_primary_text);
+                  Integer count = Integer.valueOf(followerCountView.getText().toString());
+                  followerCountView.setText(String.valueOf(count + 1));
+                  followButton.setEnabled(false);
+                  Timber.i("Like event recorded: %s -> %s", FirebaseAuthLiveData.getInstance().getAuth().getUid(), user.getId());
+            }
+    );
   }
 
   public void logOut() {
