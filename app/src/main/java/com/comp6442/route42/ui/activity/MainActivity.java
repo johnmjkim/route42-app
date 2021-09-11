@@ -21,6 +21,10 @@ import com.comp6442.route42.ui.fragment.MapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.firestore.ListenerRegistration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   private String uid;
   // private NavHostFragment
   // private NavGraph
+  private List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -47,19 +52,14 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // When the owner activity is finished, the framework calls the ViewModel objects's onCleared() method so that it can clean up resources.
     UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
     viewModel.loadLiveUser(uid);
+    viewModel.addSnapshotListener(uid);
     MainActivity self = this;
-    final Observer<User> liveUserObserver = new Observer<User>() {
-      @Override
-      public void onChanged(User liveUser) {
-        // bottom navigation
-        toolbar = getSupportActionBar();
-        navBarView = findViewById(R.id.bottom_navigation_view);
-        navBarView.setOnItemSelectedListener(self);
-        navBarView.setSelectedItemId(R.id.navigation_profile);
-      }
-    };
-    viewModel.getLiveUser().observe(this, liveUserObserver);
 
+    // bottom navigation
+    toolbar = getSupportActionBar();
+    navBarView = findViewById(R.id.bottom_navigation_view);
+    navBarView.setOnItemSelectedListener(self);
+    navBarView.setSelectedItemId(R.id.navigation_profile);
 
 
   }
@@ -112,5 +112,12 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             .commit();
 
     return true;
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    //detach listeners when Activity destroyed
+    firebaseListenerRegs.forEach(reg -> {reg.remove();});
   }
 }

@@ -24,7 +24,11 @@ import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -39,7 +43,7 @@ public class ProfileFragment extends Fragment {
   private String uid;
   private UserViewModel viewModel;
   private TextView userNameView;
-
+  private List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
   public ProfileFragment() {
     // Required empty public constructor
   }
@@ -86,7 +90,7 @@ public class ProfileFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     Timber.d("breadcrumb");
-    viewModel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+    viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
     userNameView = view.findViewById(R.id.profile_username);
 
     if (savedInstanceState != null) {
@@ -102,7 +106,7 @@ public class ProfileFragment extends Fragment {
       Timber.i(this.uid);
       // user already loaded since MainActivity is created
       viewModel.loadProfileUser(this.uid);
-      // observes the
+      firebaseListenerRegs.add(viewModel.addSnapshotListener(this.uid));
       final Observer<User> userObserver = new Observer<User>() {
         @Override
         public void onChanged(User profileUser) {
@@ -121,8 +125,9 @@ public class ProfileFragment extends Fragment {
           }
           view.findViewById(R.id.profile_follow_button).setVisibility(visibility);
           view.findViewById(R.id.profile_message_button).setVisibility(visibility);
-        };
+        }
       };
+      //observe viewModel for changes for realtime UI updates
       viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
 
     }
@@ -238,11 +243,10 @@ public class ProfileFragment extends Fragment {
             view1 -> {
                   // update following and followers
                   String authID = FirebaseAuthLiveData.getInstance().getAuth().getUid();
-                  Timber.i("authID " + authID);
                   UserRepository.getInstance().follow( authID, user.getId());
                   // update UI
                   TextView followerCountView = view.findViewById(R.id.profile_primary_text);
-                  Integer count = Integer.valueOf(followerCountView.getText().toString());
+                  int count = Integer.valueOf(followerCountView.getText().toString());
                   followerCountView.setText(String.valueOf(count + 1));
                   followButton.setEnabled(false);
                   Timber.i("Like event recorded: %s -> %s",authID, user.getId());
@@ -254,5 +258,12 @@ public class ProfileFragment extends Fragment {
     if (mAuth.getCurrentUser() != null) mAuth.signOut();
     Timber.i("Taking user to sign-in screen");
     startActivity(new Intent(getActivity(), LogInActivity.class));
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    //detach listeners when Activity destroyed
+    firebaseListenerRegs.forEach(reg -> {reg.remove();});
   }
 }

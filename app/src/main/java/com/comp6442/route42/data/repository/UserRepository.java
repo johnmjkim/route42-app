@@ -2,6 +2,7 @@ package com.comp6442.route42.data.repository;
 
 import com.comp6442.route42.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.SetOptions;
@@ -22,7 +23,7 @@ public final class UserRepository extends FirestoreRepository<User> {
   private UserRepository() {
     super("users", User.class);
   }
-
+  public CollectionReference getCollectionRef() { return this.collection; }
   public static UserRepository getInstance() {
     if (UserRepository.instance == null) {
       UserRepository.instance = new UserRepository();
