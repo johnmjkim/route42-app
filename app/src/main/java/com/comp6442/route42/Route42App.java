@@ -36,7 +36,7 @@ import timber.log.Timber;
  * SharedPreferences or SQLite.
  */
 public class Route42App extends Application {
-  private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+  private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
   private FirebaseAuth mAuth;
 
   // Called when the application is starting, before any other application objects have been created.
