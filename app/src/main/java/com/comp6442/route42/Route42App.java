@@ -5,31 +5,18 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.comp6442.route42.data.FirebaseAuthLiveData;
-import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
-import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
 import com.comp6442.route42.utils.CustomLogger;
 import com.comp6442.route42.utils.DemoTask;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -49,8 +36,8 @@ import timber.log.Timber;
  * SharedPreferences or SQLite.
  */
 public class Route42App extends Application {
-  private FirebaseAuth mAuth;
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+  private FirebaseAuth mAuth;
 
   // Called when the application is starting, before any other application objects have been created.
   @RequiresApi(api = Build.VERSION_CODES.N)

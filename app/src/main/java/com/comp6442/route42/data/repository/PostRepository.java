@@ -57,6 +57,7 @@ public class PostRepository extends FirestoreRepository<Post> {
 
   /**
    * Get posts by users that did not block the current user, and are public.
+   *
    * @param user
    * @param limit
    * @return

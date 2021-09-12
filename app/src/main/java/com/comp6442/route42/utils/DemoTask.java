@@ -1,9 +1,6 @@
 package com.comp6442.route42.utils;
 
 import android.content.Context;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 
 import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
@@ -13,19 +10,12 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +27,6 @@ public class DemoTask implements Runnable {
   private final boolean DEMO;
   private final FirebaseAuth mAuth;
   private final String collectionName;
-  private final FirebaseFirestore firestore;
   private final Context demoContext;
   private int idx = 0;
   private Gson gson;
@@ -55,20 +44,6 @@ public class DemoTask implements Runnable {
     this.DEBUG = debug;
     this.DEMO = demo;
     this.mAuth = FirebaseAuthLiveData.getInstance().getAuth();
-    this.firestore = FirebaseFirestore.getInstance();
-
-    if (DEBUG) {
-      try {
-        firestore.useEmulator("10.0.2.2", 8080);
-      } catch (IllegalStateException exc) {
-        Timber.d(exc);
-      }
-    }
-
-    FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-            .setPersistenceEnabled(false)
-            .build();
-    firestore.setFirestoreSettings(settings);
 
     switch (collectionName) {
       case "users":
@@ -118,7 +93,7 @@ public class DemoTask implements Runnable {
     Timber.i("Created users.");
   }
 
-  private void createPosts(){
+  private void createPosts() {
     if (!DEMO) PostRepository.getInstance().createMany(postList);
     else {
       createPostsMiniBatch(
@@ -130,7 +105,7 @@ public class DemoTask implements Runnable {
   }
 
   public void createPostsMiniBatch(int batchSize, int limit) {
-    Timber.i("Creating posts %d - %d", idx, Math.min(postList.size(), idx+BuildConfig.batchSize));
+    Timber.i("Creating posts %d - %d", idx, Math.min(postList.size(), idx + BuildConfig.batchSize));
 
     int prevIdx = idx;
     idx += batchSize;

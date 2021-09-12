@@ -39,12 +39,12 @@ import timber.log.Timber;
  */
 public class ProfileFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
+  private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
   private FirebaseAuth mAuth;
   private String uid;
   private UserViewModel viewModel;
   private TextView userNameView, followerCountView, followingCountView;
   private Button blockButton, followButton;
-  private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
 
   public ProfileFragment() {
     // Required empty public constructor
@@ -282,14 +282,14 @@ public class ProfileFragment extends Fragment {
       } else {
         followButton.setOnClickListener(
                 view1 -> {
-                      // update following and followers
-                      UserRepository.getInstance().follow(loggedInUserUid, user.getId());
+                  // update following and followers
+                  UserRepository.getInstance().follow(loggedInUserUid, user.getId());
 
-                      // update UI
-                      int count = Integer.parseInt(followerCountView.getText().toString());
-                      followerCountView.setText(String.valueOf(count + 1));
-                      followButton.setEnabled(false);
-                      Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
+                  // update UI
+                  int count = Integer.parseInt(followerCountView.getText().toString());
+                  followerCountView.setText(String.valueOf(count + 1));
+                  followButton.setEnabled(false);
+                  Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
                 }
         );
       }
@@ -323,7 +323,8 @@ public class ProfileFragment extends Fragment {
                 blockButton.setEnabled(false);
 
                 // update button label and enabled status if needed
-                if (followButton.getText().toString().equals("Unfollow")) followButton.setText("Follow");
+                if (followButton.getText().toString().equals("Unfollow"))
+                  followButton.setText("Follow");
                 if (!followButton.isEnabled()) followButton.setEnabled(false);
 
                 // update follower count

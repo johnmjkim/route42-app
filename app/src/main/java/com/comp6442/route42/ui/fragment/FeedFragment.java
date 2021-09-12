@@ -19,7 +19,6 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.FirestorePostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.Query;
 
 import timber.log.Timber;
