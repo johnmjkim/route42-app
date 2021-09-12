@@ -112,7 +112,11 @@ public class Route42App extends Application {
                         BuildConfig.demoPostLimit
                 );
 
-                executor.scheduleAtFixedRate(livePostTask, 5, BuildConfig.intervalLengthInSeconds, TimeUnit.SECONDS);
+                executor.scheduleAtFixedRate(livePostTask,
+                        10,
+                        BuildConfig.intervalLengthInSeconds,
+                        TimeUnit.SECONDS
+                );
                 executor.shutdown();
               }
             });

@@ -103,7 +103,6 @@ public class DemoTask implements Runnable {
             }).addOnSuccessListener(unused -> {
               Timber.i("Signed in as test user");
 
-
               switch (collectionName) {
                 case "users":
                   createUsers();
@@ -126,7 +125,6 @@ public class DemoTask implements Runnable {
 
   private void createPosts(){
     Timber.i("Creating posts.");
-    assert mAuth.getCurrentUser() != null;
 
     if (!DEMO) PostRepository.getInstance().createMany(postList);
     else {
@@ -154,10 +152,9 @@ public class DemoTask implements Runnable {
     }
 
     // Commit the batch
-    livePosts.commit().addOnFailureListener(Timber::e)
-            .addOnSuccessListener(unused -> {
-              Timber.i("Demo Batch write complete: %d posts", batchSize);
-            });
+    livePosts.commit()
+            .addOnFailureListener(Timber::e)
+            .addOnSuccessListener(unused -> Timber.i("Demo Batch write complete: %d posts", batchSize));
   }
 
   public String readTextFile(InputStream inputStream) {
