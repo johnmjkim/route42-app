@@ -154,6 +154,7 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.profile_message_button).setVisibility(visibility);
         view.findViewById(R.id.profile_block_button).setVisibility(visibility);
       };
+      viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
     } else {
       Timber.w("uid is null");
     }
