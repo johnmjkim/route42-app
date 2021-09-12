@@ -19,6 +19,7 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.FirestorePostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.Query;
 
 import timber.log.Timber;
@@ -90,10 +91,22 @@ public class FeedFragment extends Fragment {
 
       adapter = new FirestorePostAdapter(posts);
       adapter.notifyDataSetChanged();
+
       layoutManager = new LinearLayoutManager(getActivity());
+      layoutManager.setReverseLayout(false);
+      layoutManager.setStackFromEnd(false);
+
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(adapter);
+      recyclerView.setHasFixedSize(false);
+
+      recyclerView.addOnLayoutChangeListener((changedView, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+        if (oldBottom < bottom) {
+          recyclerView.postDelayed(() -> recyclerView.smoothScrollToPosition(0), 100);
+        }
+        Timber.i("breadcrumb %d %d", bottom, oldBottom);
+      });
       adapter.startListening();
 
       Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());

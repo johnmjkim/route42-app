@@ -23,7 +23,7 @@ public class Post extends Model {
   private Timestamp endTs;
   private List<String> hashtags = new ArrayList<>();
   @ServerTimestamp
-  private Date postDatetime; // will be null on emulator
+  private Date postDatetime;
   private String profilePicUrl;
 
   // private String postDescription;

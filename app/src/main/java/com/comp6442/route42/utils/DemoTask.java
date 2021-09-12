@@ -17,6 +17,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 
@@ -37,7 +38,6 @@ public class DemoTask implements Runnable {
   private final FirebaseAuth mAuth;
   private final String collectionName;
   private final FirebaseFirestore firestore;
-  private final CollectionReference collection;
   private final Context demoContext;
   private int idx = 0;
   private Gson gson;
@@ -69,8 +69,6 @@ public class DemoTask implements Runnable {
             .setPersistenceEnabled(false)
             .build();
     firestore.setFirestoreSettings(settings);
-    this.collection = firestore.collection(this.collectionName);
-
 
     switch (collectionName) {
       case "users":
@@ -79,7 +77,6 @@ public class DemoTask implements Runnable {
         userList = Arrays.asList(gson.fromJson(jsonString, (Type) User[].class));
         break;
       case "posts":
-        Timber.i("Creating posts.");
         gson = PostRepository.getJsonDeserializer();
         jsonString = readTextFile(
                 demoContext.getResources().openRawResource(R.raw.posts)
@@ -89,43 +86,39 @@ public class DemoTask implements Runnable {
         break;
     }
 
-    Timber.i("Initialized demo task with collection: %s", collectionName);
+    Timber.i("Initialized demo task with collection: %s parameters: DEBUG=%s DEMO=%s",
+            collectionName,
+            BuildConfig.DEBUG,
+            BuildConfig.DEMO);
   }
 
   @Override
   public void run() {
-    Timber.i("Starting task with parameters: collection=%s DEBUG=%s DEMO=%s", collectionName, BuildConfig.DEBUG, BuildConfig.DEMO);
+    if (this.mAuth.getCurrentUser() == null) {
+      Timber.i("Signed in as test user");
+      this.mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
+    }
+    if (this.mAuth.getCurrentUser() == null) Timber.w("not signed in");
+    else {
+      switch (collectionName) {
+        case "users":
+          createUsers();
+          break;
+        case "posts":
+          createPosts();
+          break;
+      }
 
-    this.mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword)
-            .addOnFailureListener(error -> {
-              Timber.w("Could not sign in as test user");
-              Timber.e(error);
-            }).addOnSuccessListener(unused -> {
-              Timber.i("Signed in as test user");
-
-              switch (collectionName) {
-                case "users":
-                  createUsers();
-                  break;
-                case "posts":
-                  createPosts();
-                  break;
-              }
-              Timber.i("Task completed.");
-            }
-    );
+      Timber.d("Task completed.");
+    }
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.N)
   private void createUsers() {
-    Timber.i("Creating users.");
     UserRepository.getInstance().setMany(userList);
     Timber.i("Created users.");
   }
 
   private void createPosts(){
-    Timber.i("Creating posts.");
-
     if (!DEMO) PostRepository.getInstance().createMany(postList);
     else {
       createPostsMiniBatch(
@@ -137,24 +130,16 @@ public class DemoTask implements Runnable {
   }
 
   public void createPostsMiniBatch(int batchSize, int limit) {
-    // Get a new write batch
-    WriteBatch livePosts = this.firestore.batch();
+    Timber.i("Creating posts %d - %d", idx, Math.min(postList.size(), idx+BuildConfig.batchSize));
 
-    // insert n posts (buffered)
     int prevIdx = idx;
-    while (idx < limit && idx - prevIdx < batchSize) {
-      Post post = postList.get(idx);
-      DocumentReference postRef = this.collection.document(post.getId());
-      livePosts.set(postRef, post);
-
-      Timber.d("%d : %s", idx, post);
-      idx++;
+    idx += batchSize;
+    if (idx + batchSize < limit) {
+      PostRepository.getInstance().setMany(postList.subList(prevIdx, idx));
+    } else {
+      Thread.currentThread().interrupt();
+      Timber.i("Completed demo.");
     }
-
-    // Commit the batch
-    livePosts.commit()
-            .addOnFailureListener(Timber::e)
-            .addOnSuccessListener(unused -> Timber.i("Demo Batch write complete: %d posts", batchSize));
   }
 
   public String readTextFile(InputStream inputStream) {

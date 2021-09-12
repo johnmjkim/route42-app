@@ -64,11 +64,17 @@ public class PostRepository extends FirestoreRepository<Post> {
   public Query getVisiblePosts(User user, int limit) {
     if (user.getBlockedBy().size() > 0) {
       Timber.i("breadcrumb");
-      return this.collection.whereNotIn("uid", user.getBlockedBy())
-              .whereEqualTo("isPublic", 1).limit(limit);
+      // TODO: temporarily removed filter on isBlockedBy since unblock button is inside each profile
+      return this.collection
+              .whereEqualTo("isPublic", 1)
+              .orderBy("postDatetime", Query.Direction.DESCENDING)
+              .limit(limit);
     } else {
       Timber.i("breadcrumb");
-      return this.collection.whereEqualTo("isPublic", 1).limit(limit);
+      return this.collection
+              .whereEqualTo("isPublic", 1)
+              .orderBy("postDatetime", Query.Direction.DESCENDING)
+              .limit(limit);
     }
   }
 

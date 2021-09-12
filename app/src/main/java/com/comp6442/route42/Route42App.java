@@ -50,6 +50,7 @@ import timber.log.Timber;
  */
 public class Route42App extends Application {
   private FirebaseAuth mAuth;
+  private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
   // Called when the application is starting, before any other application objects have been created.
   @RequiresApi(api = Build.VERSION_CODES.N)
@@ -100,7 +101,6 @@ public class Route42App extends Application {
               if (BuildConfig.loadData) {
                 Timber.i("Loading sample data");
 
-                ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
                 DemoTask insertUsers = new DemoTask(this, "users", BuildConfig.DEBUG);
                 DemoTask livePostTask = new DemoTask(this, "posts", BuildConfig.DEBUG, BuildConfig.DEMO);
 
@@ -112,12 +112,12 @@ public class Route42App extends Application {
                         BuildConfig.demoPostLimit
                 );
 
-                executor.scheduleAtFixedRate(livePostTask,
-                        10,
+                executor.scheduleAtFixedRate(
+                        livePostTask,
+                        2,
                         BuildConfig.intervalLengthInSeconds,
                         TimeUnit.SECONDS
                 );
-                executor.shutdown();
               }
             });
 
@@ -147,5 +147,6 @@ public class Route42App extends Application {
   public void onTerminate() {
     super.onTerminate();
     mAuth.signOut();
+    if (!executor.isTerminated()) executor.shutdownNow();
   }
 }
