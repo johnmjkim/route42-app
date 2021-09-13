@@ -120,14 +120,14 @@ public class Route42App extends Application {
                 DemoTask insertUsers = new DemoTask(this, "users", BuildConfig.DEBUG);
                 DemoTask livePostTask = new DemoTask(this, "posts", BuildConfig.DEBUG, BuildConfig.DEMO);
 
-                executor.execute(insertUsers);
-
-                Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
+                // temporary, will remove this when DemoTask is broken up
+                if (BuildConfig.DEMO) Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
                         BuildConfig.batchSize,
                         BuildConfig.intervalLengthInSeconds,
                         BuildConfig.demoPostLimit
                 );
 
+                executor.execute(insertUsers);
                 executor.scheduleAtFixedRate(
                         livePostTask,
                         2,

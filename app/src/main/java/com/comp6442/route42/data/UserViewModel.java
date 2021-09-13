@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.UserRepository;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import timber.log.Timber;
@@ -28,10 +30,18 @@ public class UserViewModel extends ViewModel {
   }
 
   public void loadLiveUser(String uid) {
-    UserRepository.getInstance().getOne(uid).get().addOnSuccessListener(snapshot -> {
+    Task<DocumentSnapshot> task = UserRepository.getInstance().getOne(uid).get();
+    task.addOnSuccessListener(snapshot -> {
+      String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
       User user = snapshot.toObject(User.class);
-      setLiveUser(user);
-      Timber.i("User is live: %s", user);
+
+      // only react to server-side changes in the document snapshot
+      if (source.equals("Server")) {
+        setLiveUser(user);
+        Timber.i("UserVM : loaded profile user : %s", user);
+      } else {
+        Timber.w("Snapshot Change observed: Source=%s data=%s", source, user);
+      }
     }).addOnFailureListener(Timber::e);
   }
 
@@ -61,6 +71,7 @@ public class UserViewModel extends ViewModel {
       Timber.e(error);
     });
   }
+
 
   public LiveData<User> getProfileUser() {
     return profileUser;

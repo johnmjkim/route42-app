@@ -57,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     navBarView = findViewById(R.id.bottom_navigation_view);
     navBarView.setOnItemSelectedListener(self);
     navBarView.setSelectedItemId(R.id.navigation_profile);
-
-
   }
 
   /**
