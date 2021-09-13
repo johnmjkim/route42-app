@@ -5,6 +5,7 @@ import com.comp6442.route42.data.model.UserLike;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -68,6 +69,28 @@ public  class UserLikeRepository   {
         }
 
     }
+    public void setMany(List<UserLike> items) {
+        // batch size limit is 500 documents
+        int idx = 0;
+        while (idx < items.size()) {
+            int counter = 0;
+            // Get a new write batch
+            WriteBatch batch = firestore.batch();
+
+            while (counter < 500 && idx < items.size()) {
+                UserLike userLike = items.get(idx);
+                batch.set(firestore.collection("posts").document(userLike.postId).collection("userLikes").document(userLike.uid), userLike.getObject()
+                , SetOptions.merge());
+                counter++;
+                idx++;
+            }
+            // Commit the batch
+            batch.commit().addOnFailureListener(Timber::e)
+                    .addOnSuccessListener(task -> Timber.i("Batch write complete: userLikes"));
+        }
+
+    }
+
     public List<UserLike> deserializeJSON(InputStream inputStream) {
         JsonObject jsonObject = JsonParser.parseReader(new JsonReader(new InputStreamReader(inputStream))).getAsJsonObject();
         Set<String> postIds = jsonObject.keySet();
@@ -79,8 +102,5 @@ public  class UserLikeRepository   {
               });
         });
         return userLikesList;
-    }
-    void setMany(List<UserLike> items) {
-
     }
 }
