@@ -6,7 +6,7 @@
         tools:context=".ui.fragment.ProfileFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp">
+        android:padding="15dp">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -122,32 +122,38 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
+            <com.google.android.material.switchmaterial.SwitchMaterial
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/follow_button"
                     style="?attr/borderlessButtonStyle"
-                    android:id="@+id/profile_follow_button" />
+                    android:checked="false"
+                    android:id="@+id/profile_follow_switch"
+                    android:textSize="12sp" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/block_button"
+                    style="?attr/borderlessButtonStyle"
+                    android:checked="false"
+                    android:id="@+id/profile_block_switch"
+                    android:textSize="12sp" />
 
             <com.google.android.material.button.MaterialButton
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/message_button"
-                    style="?attr/borderlessButtonStyle"
-                    android:id="@+id/profile_message_button" />
-
-            <com.google.android.material.button.MaterialButton
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/block_button"
-                    style="?attr/borderlessButtonStyle"
-                    android:id="@+id/profile_block_button" />
+                    style="?attr/borderRound"
+                    android:id="@+id/profile_message_button"
+                    android:textSize="12sp" />
         </LinearLayout>
 
     </LinearLayout>
+
 
     <Button
             android:id="@+id/sign_out_button"
