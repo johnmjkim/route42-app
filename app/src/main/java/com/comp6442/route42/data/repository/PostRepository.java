@@ -55,6 +55,12 @@ public class PostRepository extends FirestoreRepository<Post> {
     return this.collection.whereEqualTo("uid", uid).get();
   }
 
+  /**
+   * Get posts by users that did not block the current user, and are public.
+   * @param user
+   * @param limit
+   * @return
+   */
   public Query getVisiblePosts(User user, int limit) {
     if (user.getBlockedBy().size() > 0) {
       Timber.i("breadcrumb");

@@ -3,6 +3,7 @@ package com.comp6442.route42.data.repository;
 import com.comp6442.route42.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
@@ -120,6 +121,43 @@ public final class UserRepository extends FirestoreRepository<User> {
       batch.commit().addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
     }
+  }
+
+  /**
+   * followActorId follows followReceiverId
+   * @param followActorId
+   * @param followReceiverId
+   */
+  public void follow(String followActorId, String followReceiverId) {
+    DocumentReference followActor = this.collection.document(followActorId);
+    DocumentReference followReceiver = this.collection.document(followReceiverId);
+    followActor.update("following", FieldValue.arrayUnion(followReceiver));
+    followReceiver.update("followers", FieldValue.arrayUnion(followActor));
+  }
+
+  /**
+   * unfollowActorId unfollows unfollowReceiverId
+   * @param unfollowActorId
+   * @param unfollowReceiverId
+   */
+  public void unfollow(String unfollowActorId, String unfollowReceiverId) {
+    DocumentReference unfollowActor = this.collection.document(unfollowActorId);
+    DocumentReference unfollowReceiver = this.collection.document(unfollowReceiverId);
+    unfollowActor.update("following", FieldValue.arrayRemove(unfollowReceiver));
+    unfollowReceiver.update("followers", FieldValue.arrayRemove(unfollowActor));
+  }
+
+  public void block(String blockerUid, String beingBlockedUid) {
+    DocumentReference blocker = this.collection.document(blockerUid);
+    this.collection.document(beingBlockedUid).update("blockedBy", FieldValue.arrayUnion(blocker));
+
+    // automatically unfollow
+    unfollow(blockerUid, beingBlockedUid);
+  }
+
+  public void unblock(String unblockerUid, String beingUnblockedUid) {
+    DocumentReference blocker = this.collection.document(unblockerUid);
+    this.collection.document(beingUnblockedUid).update("blockedBy", FieldValue.arrayRemove(blocker));
   }
 
   public void count() {

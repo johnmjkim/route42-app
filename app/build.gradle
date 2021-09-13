@@ -19,7 +19,6 @@ android {
         buildConfigField("boolean", "loadData", "true")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
-        buildConfigField("String", "testUser2Email", "\"test@android.com\"")
     }
 
     buildTypes {

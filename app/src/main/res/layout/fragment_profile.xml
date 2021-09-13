@@ -6,7 +6,7 @@
         tools:context=".ui.fragment.ProfileFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp">
+        android:padding="20dp">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -24,53 +24,94 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <androidx.cardview.widget.CardView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    app:cardCornerRadius="250dp"
-                    android:layout_gravity="center">
-
-                <ImageView
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        android:src="@drawable/person_photo"
-                        android:scaleType="centerCrop"
-                        android:layout_gravity="center"
-                        android:id="@+id/profile_picture" />
-
-            </androidx.cardview.widget.CardView>
+            <ImageView
+                    android:id="@+id/profile_picture"
+                    android:src="@drawable/person_photo"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center_vertical"
+                    android:baselineAlignBottom="false" />
 
             <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:padding="16dp">
 
                 <!-- Title, secondary and supporting text -->
                 <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
                         android:text="Username"
                         android:textAppearance="?attr/textAppearanceHeadline6"
-                        android:id="@+id/profile_username" />
+                        android:id="@+id/profile_username"
+                        android:textSize="28sp" />
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/secondary_text"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:id="@+id/profile_follower_count" />
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/supporting_text"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textColor="?android:attr/textColorSecondary"
-                        android:id="@+id/profile_supporting_text" />
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="10dp">
+
+                        <TextView
+                                android:text="Followers"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:id="@+id/textView"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:textSize="16sp" />
+
+                        <TextView
+                                android:text="Following"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:id="@+id/textView2"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="10dp">
+
+                        <TextView
+                                android:id="@+id/profile_primary_text"
+                                android:layout_height="0dp"
+                                android:layout_width="match_parent"
+                                android:layout_marginTop="0dp"
+                                android:layout_weight="1"
+                                android:text="0"
+                                android:textAppearance="?attr/textAppearanceBody2"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:gravity="center_vertical"
+                                android:textSize="16sp" />
+
+                        <TextView
+                                android:id="@+id/profile_secondary_text"
+                                android:layout_height="0dp"
+                                android:layout_width="match_parent"
+                                android:layout_marginTop="0dp"
+                                android:layout_weight="1"
+                                android:text="0"
+                                android:textAppearance="?attr/textAppearanceBody2"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:gravity="center_vertical"
+                                android:textSize="16sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
@@ -96,6 +137,14 @@
                     android:text="@string/message_button"
                     style="?attr/borderlessButtonStyle"
                     android:id="@+id/profile_message_button" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/block_button"
+                    style="?attr/borderlessButtonStyle"
+                    android:id="@+id/profile_block_button" />
         </LinearLayout>
 
     </LinearLayout>
@@ -108,6 +157,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="104dp" />
+            android:layout_marginBottom="80dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
