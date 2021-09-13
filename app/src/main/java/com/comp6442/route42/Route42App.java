@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.User;
@@ -46,6 +47,7 @@ public class Route42App extends Application {
   public void onCreate() {
     super.onCreate();
     mAuth = FirebaseAuthLiveData.getInstance().getAuth();
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
     // initialize Timber logger in application class
     Timber.plant(new CustomLogger());
