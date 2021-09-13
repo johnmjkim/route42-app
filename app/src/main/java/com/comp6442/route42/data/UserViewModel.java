@@ -78,8 +78,4 @@ public class UserViewModel extends ViewModel {
               Timber.i("UserVM : loaded profile user : %s", user);
             }).addOnFailureListener(Timber::e);
   }
-
-  public void unfollow(){
-
-  }
 }
