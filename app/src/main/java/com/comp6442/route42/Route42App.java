@@ -12,7 +12,8 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
 import com.comp6442.route42.utils.CustomLogger;
-import com.comp6442.route42.utils.DemoTask;
+import com.comp6442.route42.utils.TaskCreatePosts;
+import com.comp6442.route42.utils.TaskCreateUsers;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -99,7 +100,6 @@ public class Route42App extends Application {
     mAuth.createUserWithEmailAndPassword(testUser.getEmail(), testUser.getPassword())
             .addOnCompleteListener(task -> {
               if (task.isSuccessful()) {
-
                 AuthResult authResult = task.getResult();
                 assert authResult != null;
                 FirebaseUser firebaseUser = authResult.getUser();
@@ -109,32 +109,39 @@ public class Route42App extends Application {
                 UserRepository.getInstance().setOne(testUser);
 
                 Timber.i("Created test user in Firebase Auth.");
+
+                insertData();
               } else {
                 Timber.w("Could not create test user in Firebase Auth");
                 Timber.e(task.getException());
               }
-
-              if (BuildConfig.loadData) {
-                Timber.i("Loading sample data");
-
-                DemoTask insertUsers = new DemoTask(this, "users", BuildConfig.DEBUG);
-                DemoTask livePostTask = new DemoTask(this, "posts", BuildConfig.DEBUG, BuildConfig.DEMO);
-
-                // temporary, will remove this when DemoTask is broken up
-                if (BuildConfig.DEMO) Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
-                        BuildConfig.batchSize,
-                        BuildConfig.intervalLengthInSeconds,
-                        BuildConfig.demoPostLimit
-                );
-
-                executor.execute(insertUsers);
-                executor.scheduleAtFixedRate(
-                        livePostTask,
-                        2,
-                        BuildConfig.intervalLengthInSeconds,
-                        TimeUnit.SECONDS
-                );
-              }
             });
+  }
+
+  private void insertData() {
+    if (BuildConfig.loadData) {
+      Timber.i("Loading sample data");
+
+      TaskCreateUsers insertUsers = new TaskCreateUsers(this, BuildConfig.DEBUG);
+      TaskCreatePosts livePostTask = new TaskCreatePosts(this, BuildConfig.DEBUG, BuildConfig.DEMO);
+
+      executor.execute(insertUsers);
+
+      if (!BuildConfig.DEMO) executor.schedule(livePostTask, 5, TimeUnit.SECONDS);
+      else {
+        // temporary, will remove this when DemoTask is broken up
+        Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
+                BuildConfig.batchSize,
+                BuildConfig.intervalLengthInSeconds,
+                BuildConfig.demoPostLimit
+        );
+        executor.scheduleAtFixedRate(
+                livePostTask,
+                2,
+                BuildConfig.intervalLengthInSeconds,
+                TimeUnit.SECONDS
+        );
+      }
+    }
   }
 }

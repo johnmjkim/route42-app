@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "DEBUG", "true")
         buildConfigField("boolean", "loadData", "true")
-        buildConfigField("boolean", "DEMO", "false")
+        buildConfigField("boolean", "DEMO", "true")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
 
