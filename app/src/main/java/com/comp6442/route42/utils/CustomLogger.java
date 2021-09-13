@@ -1,4 +1,6 @@
-package com.comp6442.route42;
+package com.comp6442.route42.utils;
+
+import java.time.LocalDateTime;
 
 import timber.log.Timber;
 
@@ -8,9 +10,11 @@ import timber.log.Timber;
 public class CustomLogger extends Timber.DebugTree {
   @Override
   protected String createStackElementTag(StackTraceElement element) {
-    return String.format("%s.%s:%s",
+    return String.format("[%s] [%s.%s:%s] [%s]",
+            LocalDateTime.now(),
             super.createStackElementTag(element),
             element.getMethodName(),
-            element.getLineNumber());
+            element.getLineNumber(),
+            Thread.currentThread().getName());
   }
 }

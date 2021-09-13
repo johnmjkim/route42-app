@@ -118,6 +118,8 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       default:
         throw new IllegalStateException("Unexpected value: " + post.getActivity());
     }
+
+    Timber.d("OnBindView complete.");
   }
 
 
@@ -204,6 +206,5 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       likeCountTextView = view.findViewById(R.id.like_count_text);
       materialCardView = view.findViewById(R.id.post_card);
     }
-
   }
 }

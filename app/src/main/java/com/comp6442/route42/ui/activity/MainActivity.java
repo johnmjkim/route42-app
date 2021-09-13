@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   private String uid;
   // private NavHostFragment
   // private NavGraph
-  private List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
+  private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
   UserViewModel userViewModel ;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     navBarView = findViewById(R.id.bottom_navigation_view);
     navBarView.setOnItemSelectedListener(self);
     navBarView.setSelectedItemId(R.id.navigation_profile);
-
-
   }
 
   /**
@@ -118,6 +116,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   protected void onDestroy() {
     super.onDestroy();
     //detach listeners when Activity destroyed
-    firebaseListenerRegs.forEach(reg -> {reg.remove();});
+    firebaseListenerRegs.forEach(ListenerRegistration::remove);
   }
 }

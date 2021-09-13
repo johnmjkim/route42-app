@@ -91,11 +91,22 @@ public class FeedFragment extends Fragment {
       adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
 //      adapter.notifyDataSetChanged();
       layoutManager = new LinearLayoutManager(getActivity());
+      layoutManager.setReverseLayout(false);
+      layoutManager.setStackFromEnd(false);
+
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(adapter);
       String userId = viewModel.getLiveUser().getValue().getId();
 
+      recyclerView.setHasFixedSize(false);
+
+//      recyclerView.addOnLayoutChangeListener((changedView, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+//        if (oldBottom < bottom) {
+//          recyclerView.postDelayed(() -> recyclerView.smoothScrollToPosition(0), 100);
+//        }
+//        Timber.i("breadcrumb %d %d", bottom, oldBottom);
+//      });
       adapter.startListening();
 
       Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
@@ -109,7 +120,6 @@ public class FeedFragment extends Fragment {
   @Override
   public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
     super.onViewStateRestored(savedInstanceState);
-
     Timber.d("breadcrumb");
   }
 
@@ -146,5 +156,4 @@ public class FeedFragment extends Fragment {
     super.onDetach();
     Timber.d("breadcrumb");
   }
-
 }
