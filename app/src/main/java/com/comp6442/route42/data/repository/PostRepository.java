@@ -4,6 +4,7 @@ import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -79,7 +80,14 @@ public class PostRepository extends FirestoreRepository<Post> {
             .addOnSuccessListener(unused -> Timber.i("Insert succeeded: %s", post.toString()))
             .addOnFailureListener(Timber::e);
   }
-
+  public void like(Post post) {
+    this.collection.document(post.getId())
+    .update("likeCount", post.getLikeCount()+1);
+  }
+  public void unlike(Post post) {
+    this.collection.document(post.getId())
+            .update("likeCount", post.getLikeCount()-1);
+  }
   public void createMany(List<Post> posts) {
     // batch size limit is 500 documents
     int idx = 0;

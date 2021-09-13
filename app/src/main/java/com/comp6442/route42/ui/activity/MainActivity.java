@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   // private NavHostFragment
   // private NavGraph
   private List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
-
+  UserViewModel userViewModel ;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // Re-created activities receive the same MyViewModel instance created by the first activity.
     // If the activity is re-created, it receives the same MyViewModel instance that was created by the first activity.
     // When the owner activity is finished, the framework calls the ViewModel objects's onCleared() method so that it can clean up resources.
-    UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-    viewModel.loadLiveUser(uid);
-    viewModel.addSnapshotListenerToLiveUser(uid);
+    userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+    userViewModel.addSnapshotListenerToLiveUser(uid);
+
     MainActivity self = this;
 
     // bottom navigation

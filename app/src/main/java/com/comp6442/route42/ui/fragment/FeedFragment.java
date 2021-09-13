@@ -88,12 +88,14 @@ public class FeedFragment extends Fragment {
               .setQuery(query, Post.class)
               .build();
 
-      adapter = new FirestorePostAdapter(posts);
-      adapter.notifyDataSetChanged();
+      adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+//      adapter.notifyDataSetChanged();
       layoutManager = new LinearLayoutManager(getActivity());
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(adapter);
+      String userId = viewModel.getLiveUser().getValue().getId();
+
       adapter.startListening();
 
       Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
@@ -107,6 +109,7 @@ public class FeedFragment extends Fragment {
   @Override
   public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
     super.onViewStateRestored(savedInstanceState);
+
     Timber.d("breadcrumb");
   }
 
@@ -143,4 +146,5 @@ public class FeedFragment extends Fragment {
     super.onDetach();
     Timber.d("breadcrumb");
   }
+
 }

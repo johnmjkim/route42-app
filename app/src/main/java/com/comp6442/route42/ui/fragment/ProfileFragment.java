@@ -93,6 +93,7 @@ public class ProfileFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     Timber.d("breadcrumb");
 
+    // set view variables
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
     userNameView = view.findViewById(R.id.profile_username);
     blockButton = view.findViewById(R.id.profile_block_button);
@@ -150,9 +151,9 @@ public class ProfileFragment extends Fragment {
 
         // hide follow, message, block buttons if looking at self's profile
         // TODO: delete these parts entirely to expand the view
-        view.findViewById(R.id.profile_follow_button).setVisibility(visibility);
+        followButton.setVisibility(visibility);
         view.findViewById(R.id.profile_message_button).setVisibility(visibility);
-        view.findViewById(R.id.profile_block_button).setVisibility(visibility);
+        blockButton.setVisibility(visibility);
       };
       viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
     } else {

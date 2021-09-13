@@ -10,9 +10,12 @@ import androidx.annotation.RequiresApi;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
+import com.comp6442.route42.data.model.UserLike;
 import com.comp6442.route42.data.repository.PostRepository;
+import com.comp6442.route42.data.repository.UserLikeRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
+import com.comp6442.route42.ui.activity.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
@@ -59,12 +62,19 @@ public class Route42App extends Application {
       createFakePosts();
       Timber.i("Loaded sample data");
     }
+    if(BuildConfig.skipLogin) {
+      Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(intent);
 
-    // sign out and take user to log in screen
-    if (mAuth.getCurrentUser() != null) mAuth.signOut();
-    Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
+    } else{
+      // sign out and take user to log in screen
+      if (mAuth.getCurrentUser() != null) mAuth.signOut();
+      Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(intent);
+    }
+
   }
 
   // Called by the system when the device configuration changes while your component is running.
@@ -149,5 +159,10 @@ public class Route42App extends Application {
     List<Post> posts = Arrays.asList(gson.fromJson(jsonString, (Type) Post[].class));
     PostRepository.getInstance().createMany(posts);
     Timber.i("Created fake posts.");
+
+    InputStream inputStream2 = getApplicationContext().getResources().openRawResource(R.raw.user_likes);
+    List<UserLike> userLikesList = UserLikeRepository.getInstance().deserializeJSON(inputStream2);
+    UserLikeRepository.getInstance().createMany(userLikesList);
+    Timber.i("Created fake UserLike on posts");
   }
 }
