@@ -49,16 +49,45 @@ public class Route42App extends Application {
     // initialize Timber logger in application class
     Timber.plant(new CustomLogger());
 
-
     if (BuildConfig.DEBUG) {
       Timber.i("Application starting on DEBUG mode");
     } else {
       Timber.i("Application starting");
     }
 
+    // create test user, sign out and take user to log in screen
+    createTestUser();
+    if (mAuth.getCurrentUser() != null) mAuth.signOut();
+    Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(intent);
+  }
+
+  // Called by the system when the device configuration changes while your component is running.
+  // Overriding this method is totally optional!
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+  }
+
+  // This is called when the overall system is running low on memory,
+  // and would like actively running processes to tighten their belts.
+  // Overriding this method is totally optional!
+  @Override
+  public void onLowMemory() {
+    super.onLowMemory();
+  }
+
+  @Override
+  public void onTerminate() {
+    super.onTerminate();
+    mAuth.signOut();
+    if (!executor.isTerminated()) executor.shutdownNow();
+  }
+
+  public void createTestUser() {
     // create test user, and launch executor task if needed for demo / loadData
     Timber.i("Creating test user.");
-
     User testUser = new User(
             null,
             BuildConfig.testUserEmail,
@@ -107,33 +136,5 @@ public class Route42App extends Application {
                 );
               }
             });
-
-    // sign out and take user to log in screen
-    if (mAuth.getCurrentUser() != null) mAuth.signOut();
-    Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-  }
-
-  // Called by the system when the device configuration changes while your component is running.
-  // Overriding this method is totally optional!
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-  }
-
-  // This is called when the overall system is running low on memory,
-  // and would like actively running processes to tighten their belts.
-  // Overriding this method is totally optional!
-  @Override
-  public void onLowMemory() {
-    super.onLowMemory();
-  }
-
-  @Override
-  public void onTerminate() {
-    super.onTerminate();
-    mAuth.signOut();
-    if (!executor.isTerminated()) executor.shutdownNow();
   }
 }

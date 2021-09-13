@@ -266,10 +266,6 @@ public class ProfileFragment extends Fragment {
               view1 -> {
                 // update following and followers
                 UserRepository.getInstance().unfollow(loggedInUserUid, user.getId());
-
-                // update UI
-                int count = Integer.parseInt(followerCountView.getText().toString());
-                followerCountView.setText(String.valueOf(count - 1));
                 followButton.setEnabled(false);
                 Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
               }
@@ -282,12 +278,7 @@ public class ProfileFragment extends Fragment {
       } else {
         followButton.setOnClickListener(
                 view1 -> {
-                  // update following and followers
                   UserRepository.getInstance().follow(loggedInUserUid, user.getId());
-
-                  // update UI
-                  int count = Integer.parseInt(followerCountView.getText().toString());
-                  followerCountView.setText(String.valueOf(count + 1));
                   followButton.setEnabled(false);
                   Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
                 }

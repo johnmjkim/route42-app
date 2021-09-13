@@ -83,7 +83,6 @@ public class DemoTask implements Runnable {
           createPosts();
           break;
       }
-
       Timber.d("Task completed.");
     }
   }
@@ -98,7 +97,7 @@ public class DemoTask implements Runnable {
     else {
       createPostsMiniBatch(
               BuildConfig.batchSize,
-              Math.max(postList.size(), BuildConfig.demoPostLimit)
+              Math.min(postList.size(), BuildConfig.demoPostLimit)
       );
     }
     Timber.i("Created posts.");
