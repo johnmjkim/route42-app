@@ -26,6 +26,11 @@ public class Post extends Model {
   private Date postDatetime;
   private String profilePicUrl;
 
+
+
+
+  private int likeCount;
+
   // private String postDescription;
   // private String imageUrl;
   // private Double distance;
@@ -40,7 +45,7 @@ public class Post extends Model {
     this(UUID.randomUUID().toString(), uid, userName, route, activity, startTs, endTs, isPublic, hashtags, profilePicUrl);
   }
 
-  public Post(@NonNull String id, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs, @NonNull int isPublic, List<String> hashtags, String profilePicUrl) {
+  public Post(@NonNull String id, @NonNull DocumentReference uid, @NonNull String userName, @NonNull List<TsPoint> route, @NonNull Activity activity, @NonNull Timestamp startTs, @NonNull Timestamp endTs,  int isPublic, List<String> hashtags, String profilePicUrl) {
     this.id = id;
     this.uid = uid;
     this.userName = userName;
@@ -51,23 +56,6 @@ public class Post extends Model {
     this.isPublic = isPublic;
     this.hashtags = hashtags;
     this.profilePicUrl = profilePicUrl;
-  }
-
-  @Override
-  public String toString() {
-    return "Post{" +
-            "id='" + id + '\'' +
-            ", uid=" + uid +
-            ", userName='" + userName + '\'' +
-            ", isPublic=" + isPublic +
-            ", route=" + route +
-            ", activity=" + activity +
-            ", startTs=" + startTs +
-            ", endTs=" + endTs +
-            ", hashtags=" + hashtags +
-            ", postDatetime=" + postDatetime +
-            ", profilePicUrl='" + profilePicUrl + '\'' +
-            '}';
   }
 
   public DocumentReference getUid() {
@@ -150,7 +138,27 @@ public class Post extends Model {
     this.profilePicUrl = profilePicUrl;
   }
 
+  public int getLikeCount() {
+    return likeCount;
+  }
+
   public enum Activity {
     Walk, Run, Cycle
+  }
+  @Override
+  public String toString() {
+    return "Post{" +
+            "uid=" + uid +
+            ", userName='" + userName + '\'' +
+            ", isPublic=" + isPublic +
+            ", route=" + route +
+            ", activity=" + activity +
+            ", startTs=" + startTs +
+            ", endTs=" + endTs +
+            ", hashtags=" + hashtags +
+            ", postDatetime=" + postDatetime +
+            ", profilePicUrl='" + profilePicUrl + '\'' +
+            ", likeCount=" + likeCount +
+            '}';
   }
 }

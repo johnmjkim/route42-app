@@ -6,15 +6,21 @@ import android.content.res.Configuration;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp6442.route42.data.FirebaseAuthLiveData;
+import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
+import com.comp6442.route42.data.model.UserLike;
+import com.comp6442.route42.data.repository.PostRepository;
+import com.comp6442.route42.data.repository.UserLikeRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
 import com.comp6442.route42.utils.CustomLogger;
 import com.comp6442.route42.utils.TaskCreatePosts;
 import com.comp6442.route42.utils.TaskCreateUsers;
 import com.google.firebase.auth.AuthResult;
+import com.comp6442.route42.ui.activity.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -46,6 +52,7 @@ public class Route42App extends Application {
   public void onCreate() {
     super.onCreate();
     mAuth = FirebaseAuthLiveData.getInstance().getAuth();
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
     // initialize Timber logger in application class
     Timber.plant(new CustomLogger());
@@ -55,14 +62,20 @@ public class Route42App extends Application {
     } else {
       Timber.i("Application starting");
     }
-
     // create test user, sign out and take user to log in screen
     createTestUser();
-    if (mAuth.getCurrentUser() != null) mAuth.signOut();
-    Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
+    Intent intent;
+    if(BuildConfig.skipLogin) {
+       intent = new Intent(getApplicationContext(), MainActivity.class);
+    } else {
+      // sign out and take user to log in screen
+      if (mAuth.getCurrentUser() != null) mAuth.signOut();
+      intent = new Intent(getApplicationContext(), LogInActivity.class);
+    }
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
   }
+
 
   // Called by the system when the device configuration changes while your component is running.
   // Overriding this method is totally optional!

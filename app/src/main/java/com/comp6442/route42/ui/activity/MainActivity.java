@@ -8,11 +8,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
+
+import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.ui.fragment.FeedFragment;
 import com.comp6442.route42.ui.fragment.MapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   // private NavHostFragment
   // private NavGraph
   private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
-
+  UserViewModel userViewModel ;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -47,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // Re-created activities receive the same MyViewModel instance created by the first activity.
     // If the activity is re-created, it receives the same MyViewModel instance that was created by the first activity.
     // When the owner activity is finished, the framework calls the ViewModel objects's onCleared() method so that it can clean up resources.
-    UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-    viewModel.loadLiveUser(uid);
-    viewModel.addSnapshotListenerToLiveUser(uid);
+    userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+    userViewModel.addSnapshotListenerToLiveUser(uid);
+
     MainActivity self = this;
 
     // bottom navigation

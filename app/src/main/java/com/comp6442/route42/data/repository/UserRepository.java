@@ -1,9 +1,14 @@
 package com.comp6442.route42.data.repository;
 
+import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.User;
+import com.comp6442.route42.data.model.UserLike;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
@@ -124,7 +129,7 @@ public final class UserRepository extends FirestoreRepository<User> {
   }
 
   /**
-   * followActorId follows followReceiverId
+   * followActor follows followReceiver
    *
    * @param followActorId
    * @param followReceiverId
@@ -137,7 +142,7 @@ public final class UserRepository extends FirestoreRepository<User> {
   }
 
   /**
-   * unfollowActorId unfollows unfollowReceiverId
+   * unfollowActor unfollows unfollowReceiver
    *
    * @param unfollowActorId
    * @param unfollowReceiverId
@@ -171,4 +176,6 @@ public final class UserRepository extends FirestoreRepository<User> {
       }
     });
   }
+
+
 }
