@@ -90,6 +90,7 @@ public class ProfileFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     Timber.d("breadcrumb");
 
+    // set view variables
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
     userNameView = view.findViewById(R.id.profile_username);
     blockSwitch = view.findViewById(R.id.profile_block_switch);

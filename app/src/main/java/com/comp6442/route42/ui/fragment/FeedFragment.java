@@ -88,9 +88,8 @@ public class FeedFragment extends Fragment {
               .setQuery(query, Post.class)
               .build();
 
-      adapter = new FirestorePostAdapter(posts);
-      adapter.notifyDataSetChanged();
-
+      adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+//      adapter.notifyDataSetChanged();
       layoutManager = new LinearLayoutManager(getActivity());
       layoutManager.setReverseLayout(false);
       layoutManager.setStackFromEnd(false);
@@ -98,6 +97,8 @@ public class FeedFragment extends Fragment {
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(adapter);
+      String userId = viewModel.getLiveUser().getValue().getId();
+
       recyclerView.setHasFixedSize(false);
 
 //      recyclerView.addOnLayoutChangeListener((changedView, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {

@@ -4,13 +4,25 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../../layout/custom_preview.xml" value="0.5958333333333333" />
+        <entry key="app/src/main/res/drawable-v24/home.xml" value="0.24479166666666666" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.24479166666666666" />
+        <entry key="app/src/main/res/drawable-v24/thumb_up.xml" value="0.2046875" />
+        <entry key="app/src/main/res/drawable-v24/thumb_up_outline.xml" value="0.2046875" />
+        <entry key="app/src/main/res/drawable-v24/unknown_user.xml" value="0.2140625" />
+        <entry key="app/src/main/res/drawable-v24/user.xml" value="0.24479166666666666" />
+        <entry key="app/src/main/res/drawable/ic_search_black_24dp.xml" value="0.2046875" />
+        <entry key="app/src/main/res/drawable/map.xml" value="0.2046875" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_feed.xml" value="0.41334569045412417" />
+        <entry key="app/src/main/res/layout/post_card.xml" value="0.5" />
+        <entry key="app/src/main/res/menu/bottom_nav.xml" value="0.22864583333333333" />
         <entry key="app/src/main/res/drawable-v24/home.xml" value="0.33489583333333334" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.33489583333333334" />
         <entry key="app/src/main/res/drawable-v24/user.xml" value="0.3515625" />
         <entry key="app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.3515625" />
         <entry key="app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.3515625" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.33489583333333334" />
-        <entry key="app/src/main/res/drawable/map.xml" value="0.33125" />
         <entry key="app/src/main/res/drawable/route_background.xml" value="0.5833333333333334" />
         <entry key="app/src/main/res/layout-w1240dp/activity_login.xml" value="0.21171770972037285" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.2577736833656249" />
@@ -22,9 +34,9 @@
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.5765625" />
         <entry key="app/src/main/res/layout/fragment_map.xml" value="0.3140625" />
         <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.33125" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.45" />
         <entry key="app/src/main/res/layout/fragment_scrolling.xml" value="0.3140625" />
-        <entry key="app/src/main/res/layout/post_card.xml" value="0.39735224526925605" />
+        <entry key="app/src/main/res/layout/post_card.xml" value="0.5" />
         <entry key="app/src/main/res/layout/post_view.xml" value="0.17254274954062085" />
         <entry key="app/src/main/res/layout/sample_my_view.xml" value="0.5630208333333333" />
         <entry key="app/src/main/res/menu-v21/home.xml" value="0.3145833333333333" />
@@ -41,5 +53,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.5545927209705372" />
+      </ProjectState>
+    </option>
   </component>
 </project>

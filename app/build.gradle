@@ -16,6 +16,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "DEBUG", "true")
+        buildConfigField("boolean", "skipLogin", "true")
         buildConfigField("boolean", "loadData", "true")
         buildConfigField("boolean", "DEMO", "true")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
