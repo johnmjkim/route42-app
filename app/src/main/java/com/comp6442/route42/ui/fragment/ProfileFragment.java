@@ -32,19 +32,14 @@ import java.util.List;
 
 import timber.log.Timber;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProfileFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
+  private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
   private FirebaseAuth mAuth;
   private String uid;
   private UserViewModel viewModel;
   private TextView userNameView, followerCountView, followingCountView;
   private Button blockButton, followButton;
-  private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
 
   public ProfileFragment() {
     // Required empty public constructor
@@ -108,53 +103,17 @@ public class ProfileFragment extends Fragment {
 
     if (this.uid != null) {
       // TODO: find out where double quotes entered uid
-      Timber.i("Received uid: %s", this.uid);
+      // Timber.i("Received uid: %s", this.uid);
       if (this.uid.contains("\"")) this.uid = this.uid.replaceAll("^\"|\"$", "");
       Timber.i("Cleaned uid: %s", this.uid);
 
-      // initialize profile user and add registration
+      // create observer to update the profile UI on change to the `ProfileUser`
+      final Observer<User> userObserver = profileUser -> renderProfile(profileUser, view);
+
+      // initialize profileUser, observe change to the profileUser data, and get a registration
       viewModel.loadProfileUser(this.uid);
-      firebaseListenerRegs.add(viewModel.addSnapshotListenerToProfileUser(this.uid));
-
-      final Observer<User> userObserver = profileUser -> {
-
-        uid = profileUser.getId();
-
-        // fill in user info
-        userNameView.setText(profileUser.getUserName());
-        setProfilePic(profileUser, view);
-        setFollowerCount(profileUser);
-        setFollowingCount(profileUser);
-        setFollowButton(profileUser, view);
-        setBlockButton(profileUser, view);
-
-        User liveUser = viewModel.getLiveUser().getValue();
-        assert liveUser != null && liveUser.getId() != null;
-        Timber.i("Firebase current uid: %s\t\tthis.uid: %s", liveUser.getId(), uid);
-        Timber.i("Current User variable: %s", liveUser);
-
-        // when a user is looking at his/her own profile, hide Follow and Message buttons.
-        Button signOutButton = view.findViewById(R.id.sign_out_button);
-        int visibility;
-        if (liveUser.getId().equals(profileUser.getId())) {
-          Timber.i("Viewing self's profile. Hiding Follow and Message buttons.");
-          visibility = View.INVISIBLE;
-          // show sign out button if looking at self profile
-          signOutButton.setOnClickListener(unused -> logOut());
-          signOutButton.setEnabled(true);
-        } else {
-          visibility = View.VISIBLE;
-          signOutButton.setVisibility(View.INVISIBLE);
-          signOutButton.setEnabled(false);
-        }
-
-        // hide follow, message, block buttons if looking at self's profile
-        // TODO: delete these parts entirely to expand the view
-        view.findViewById(R.id.profile_follow_button).setVisibility(visibility);
-        view.findViewById(R.id.profile_message_button).setVisibility(visibility);
-        view.findViewById(R.id.profile_block_button).setVisibility(visibility);
-      };
       viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
+      firebaseListenerRegs.add(viewModel.addSnapshotListenerToProfileUser(this.uid));
     } else {
       Timber.w("uid is null");
     }
@@ -266,10 +225,6 @@ public class ProfileFragment extends Fragment {
               view1 -> {
                 // update following and followers
                 UserRepository.getInstance().unfollow(loggedInUserUid, user.getId());
-
-                // update UI
-                int count = Integer.parseInt(followerCountView.getText().toString());
-                followerCountView.setText(String.valueOf(count - 1));
                 followButton.setEnabled(false);
                 Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
               }
@@ -282,14 +237,9 @@ public class ProfileFragment extends Fragment {
       } else {
         followButton.setOnClickListener(
                 view1 -> {
-                      // update following and followers
-                      UserRepository.getInstance().follow(loggedInUserUid, user.getId());
-
-                      // update UI
-                      int count = Integer.parseInt(followerCountView.getText().toString());
-                      followerCountView.setText(String.valueOf(count + 1));
-                      followButton.setEnabled(false);
-                      Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
+                  UserRepository.getInstance().follow(loggedInUserUid, user.getId());
+                  followButton.setEnabled(false);
+                  Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
                 }
         );
       }
@@ -323,7 +273,8 @@ public class ProfileFragment extends Fragment {
                 blockButton.setEnabled(false);
 
                 // update button label and enabled status if needed
-                if (followButton.getText().toString().equals("Unfollow")) followButton.setText("Follow");
+                if (followButton.getText().toString().equals("Unfollow"))
+                  followButton.setText("Follow");
                 if (!followButton.isEnabled()) followButton.setEnabled(false);
 
                 // update follower count
@@ -347,5 +298,49 @@ public class ProfileFragment extends Fragment {
     super.onDestroy();
     //detach listeners when Activity destroyed
     firebaseListenerRegs.forEach(ListenerRegistration::remove);
+  }
+
+  public void renderProfile(User profileUser, View view) {
+    if (profileUser == null) {
+      Timber.i("profileUser is null, this.uid=%s", ProfileFragment.this.uid);
+      return;
+    }
+
+    uid = profileUser.getId();
+
+    // fill in user info
+    userNameView.setText(profileUser.getUserName());
+    ProfileFragment.this.setProfilePic(profileUser, view);
+    ProfileFragment.this.setFollowerCount(profileUser);
+    ProfileFragment.this.setFollowingCount(profileUser);
+    ProfileFragment.this.setFollowButton(profileUser, view);
+    ProfileFragment.this.setBlockButton(profileUser, view);
+
+    User liveUser = viewModel.getLiveUser().getValue();
+    assert liveUser != null && liveUser.getId() != null;
+    Timber.i("Firebase current uid: %s\t\tthis.uid: %s", liveUser.getId(), uid);
+    Timber.i("Current User variable: %s", liveUser);
+
+    Button signOutButton = view.findViewById(R.id.sign_out_button);
+    int visibility;
+
+    // if a user is looking at his/her own profile, hide Follow and Message buttons.
+    if (liveUser.getId().equals(profileUser.getId())) {
+      Timber.i("Viewing self's profile. Hiding Follow and Message buttons.");
+      visibility = View.INVISIBLE;
+      // show sign out button if looking at self profile
+      signOutButton.setOnClickListener(unused -> ProfileFragment.this.logOut());
+      signOutButton.setEnabled(true);
+    } else {
+      visibility = View.VISIBLE;
+      signOutButton.setVisibility(View.INVISIBLE);
+      signOutButton.setEnabled(false);
+    }
+
+    // hide follow, message, block buttons if looking at self's profile
+    // TODO: delete these parts entirely to expand the view
+    view.findViewById(R.id.profile_follow_button).setVisibility(visibility);
+    view.findViewById(R.id.profile_message_button).setVisibility(visibility);
+    view.findViewById(R.id.profile_block_button).setVisibility(visibility);
   }
 }

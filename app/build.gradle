@@ -17,8 +17,13 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "DEBUG", "true")
         buildConfigField("boolean", "loadData", "true")
+        buildConfigField("boolean", "DEMO", "true")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
+
+        buildConfigField("int", "batchSize", "1")
+        buildConfigField("int", "intervalLengthInSeconds", "4")
+        buildConfigField("int", "demoPostLimit", "120")
     }
 
     buildTypes {
@@ -108,6 +113,8 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
     testImplementation 'junit:junit:4.+'
+
+    implementation "androidx.profileinstaller:profileinstaller:1.1.0-alpha04"
 }
 
 configurations.all {

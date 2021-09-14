@@ -19,7 +19,8 @@ public class User extends Model {
   private List<DocumentReference> blockedBy = new ArrayList<>();
   private List<DocumentReference> following = new ArrayList<>();
   private List<DocumentReference> followers = new ArrayList<>();
-  @Exclude private String password = null;
+  @Exclude
+  private String password = null;
 
   public User() {
 
@@ -70,68 +71,68 @@ public class User extends Model {
     return id;
   }
 
-  public String getEmail() {
-    return email;
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public int getIsPublic() {
-    return isPublic;
-  }
-
-  public String getProfilePicUrl() {
-    return profilePicUrl;
-  }
-
-  public List<DocumentReference> getBlockedBy() {
-    return blockedBy;
-  }
-
-  public List<DocumentReference> getFollowing() {
-    return following;
-  }
-
-  public List<DocumentReference> getFollowers() {
-    return followers;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getEmail() {
+    return email;
   }
 
   public void setEmail(String email) {
     this.email = email;
   }
 
+  public String getUserName() {
+    return userName;
+  }
+
   public void setUserName(String userName) {
     this.userName = userName;
+  }
+
+  public int getIsPublic() {
+    return isPublic;
   }
 
   public void setIsPublic(int isPublic) {
     this.isPublic = isPublic;
   }
 
+  public String getProfilePicUrl() {
+    return profilePicUrl;
+  }
+
   public void setProfilePicUrl(String profilePicUrl) {
     this.profilePicUrl = profilePicUrl;
+  }
+
+  public List<DocumentReference> getBlockedBy() {
+    return blockedBy;
   }
 
   public void setBlockedBy(List<DocumentReference> blockedBy) {
     this.blockedBy = blockedBy;
   }
 
+  public List<DocumentReference> getFollowing() {
+    return following;
+  }
+
   public void setFollowing(List<DocumentReference> following) {
     this.following = following;
   }
 
+  public List<DocumentReference> getFollowers() {
+    return followers;
+  }
+
   public void setFollowers(List<DocumentReference> followers) {
     this.followers = followers;
+  }
+
+  public String getPassword() {
+    return password;
   }
 
   public void setPassword(String password) {

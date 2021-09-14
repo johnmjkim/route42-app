@@ -23,7 +23,7 @@ public class Post extends Model {
   private Timestamp endTs;
   private List<String> hashtags = new ArrayList<>();
   @ServerTimestamp
-  private Date postDatetime; // will be null on emulator
+  private Date postDatetime;
   private String profilePicUrl;
 
   // private String postDescription;
@@ -74,76 +74,76 @@ public class Post extends Model {
     return uid;
   }
 
-  public String getUserName() {
-    return userName;
-  }
-
-  public int getIsPublic() {
-    return isPublic;
-  }
-
-  public List<TsPoint> getRoute() {
-    return route;
-  }
-
-  public Activity getActivity() {
-    return activity;
-  }
-
-  public Timestamp getStartTs() {
-    return startTs;
-  }
-
-  public Timestamp getEndTs() {
-    return endTs;
-  }
-
-  public List<String> getHashtags() {
-    return hashtags;
-  }
-
-  public Date getPostDatetime() {
-    return postDatetime;
-  }
-
-  public String getProfilePicUrl() {
-    return profilePicUrl;
-  }
-
   public void setUid(DocumentReference uid) {
     this.uid = uid;
+  }
+
+  public String getUserName() {
+    return userName;
   }
 
   public void setUserName(String userName) {
     this.userName = userName;
   }
 
+  public int getIsPublic() {
+    return isPublic;
+  }
+
   public void setIsPublic(int isPublic) {
     this.isPublic = isPublic;
+  }
+
+  public List<TsPoint> getRoute() {
+    return route;
   }
 
   public void setRoute(List<TsPoint> route) {
     this.route = route;
   }
 
+  public Activity getActivity() {
+    return activity;
+  }
+
   public void setActivity(Activity activity) {
     this.activity = activity;
+  }
+
+  public Timestamp getStartTs() {
+    return startTs;
   }
 
   public void setStartTs(Timestamp startTs) {
     this.startTs = startTs;
   }
 
+  public Timestamp getEndTs() {
+    return endTs;
+  }
+
   public void setEndTs(Timestamp endTs) {
     this.endTs = endTs;
+  }
+
+  public List<String> getHashtags() {
+    return hashtags;
   }
 
   public void setHashtags(List<String> hashtags) {
     this.hashtags = hashtags;
   }
 
+  public Date getPostDatetime() {
+    return postDatetime;
+  }
+
   public void setPostDatetime(Date postDatetime) {
     this.postDatetime = postDatetime;
+  }
+
+  public String getProfilePicUrl() {
+    return profilePicUrl;
   }
 
   public void setProfilePicUrl(String profilePicUrl) {

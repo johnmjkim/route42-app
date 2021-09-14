@@ -112,7 +112,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
   @Override
   public void onDataChanged() {
     //Called each time there is a new query snapshot.
-    Timber.i("breadcrumb");
+    Timber.d("breadcrumb");
   }
 
   @Override

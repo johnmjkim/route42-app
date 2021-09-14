@@ -8,10 +8,10 @@ import com.google.firebase.storage.StorageReference;
 import timber.log.Timber;
 
 public class FirebaseStorageRepository {
+  public static final long BUFFER_SIZE = 1024 * 1024 * 5; // 5MB
   private static FirebaseStorageRepository instance = null;
   private static FirebaseStorage storage = null;
   private static String bucketUrl = null;
-  public static final long BUFFER_SIZE = 1024 * 1024 * 5; // 5MB
 
   private FirebaseStorageRepository(FirebaseStorage storage) {
     FirebaseStorageRepository.storage = storage;

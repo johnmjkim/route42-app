@@ -11,6 +11,8 @@
 9. Add Glide for image rendering and caching on Feed.
 10. Add Profile screen (tap on username in the feed to navigate to the profile).
 11. Add follow & block functionality.
+12. Newsfeed complete - dynamically updates by inserting new posts into the beginning of the recyclerview. 
+13. Add demo mode using ScheduledExecutorService.
 
 # Requirements
 
