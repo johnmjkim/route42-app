@@ -104,22 +104,21 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
   }
 
   private void setLikeButtons(Post post, PostViewHolder viewHolder, boolean postIsLiked) {
-    View.OnClickListener likeListener = view -> {
+    viewHolder.like.setOnClickListener(view -> {
       PostRepository.getInstance().like(post);
       UserLikeRepository.getInstance().createOne(new UserLike(post.getId(), loggedInUID));
       viewHolder.like.setVisibility(View.GONE);
       viewHolder.unlike.setVisibility(View.VISIBLE);
       Timber.i("Liked");
-    };
-    View.OnClickListener unlikeListener = view -> {
+    });
+
+    viewHolder.unlike.setOnClickListener(view -> {
       PostRepository.getInstance().unlike(post);
       UserLikeRepository.getInstance().deleteOne(new UserLike(post.getId(), loggedInUID));
       viewHolder.unlike.setVisibility(View.GONE);
       viewHolder.like.setVisibility(View.VISIBLE);
       Timber.i("UnLiked");
-    };
-    viewHolder.unlike.setOnClickListener(unlikeListener);
-    viewHolder.like.setOnClickListener(likeListener);
+    });
 
     if (postIsLiked) {
       viewHolder.like.setVisibility(View.GONE);
@@ -148,7 +147,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       fragment.setArguments(bundle);
       ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
               .beginTransaction()
-              .replace(R.id.fragment_container_view, fragment)
+              .add(R.id.fragment_container_view, fragment)
               .commit();
     });
   }
