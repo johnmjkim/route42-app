@@ -78,7 +78,7 @@ public class FeedFragment extends Fragment {
     }
 
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-    if (this.uid != null && viewModel != null) {
+    if (this.uid != null && viewModel.getLiveUser() != null) {
       User user = viewModel.getLiveUser().getValue();
 
       assert user != null;
