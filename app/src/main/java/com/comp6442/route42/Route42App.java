@@ -65,8 +65,11 @@ public class Route42App extends Application {
     // create test user, sign out and take user to log in screen
     createTestUser();
     Intent intent;
-    if(BuildConfig.skipLogin) {
-       intent = new Intent(getApplicationContext(), MainActivity.class);
+    if(BuildConfig.DEBUG && BuildConfig.skipLogin) {
+      // sign in as test user
+      mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
+      intent = new Intent(getApplicationContext(), MainActivity.class);
+      intent.putExtra("uid", mAuth.getUid());
     } else {
       // sign out and take user to log in screen
       if (mAuth.getCurrentUser() != null) mAuth.signOut();
