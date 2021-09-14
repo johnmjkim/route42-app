@@ -54,7 +54,40 @@
                         android:text="Username"
                         android:textSize="20sp"
                         android:gravity="left|center_vertical"
-                        android:layout_marginStart="10dp" />
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp" />
+
+                <RelativeLayout
+                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:gravity="center_vertical">
+
+                    <ImageView
+                            android:id="@+id/like_button"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            app:srcCompat="@drawable/thumb_up_outline" />
+
+                    <ImageView
+                            android:id="@+id/unlike_button"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            app:srcCompat="@drawable/thumb_up"
+                            android:layout_alignTop="@id/like_button"
+                            android:layout_alignLeft="@id/like_button"
+                            app:layout_constraintTop_toTopOf="@+id/like_button" />
+
+                </RelativeLayout>
+
+                <TextView
+                        android:id="@+id/like_count_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:layout_marginStart="5dp"
+                        android:textSize="20dp"
+                        android:gravity="center_vertical"
+                        android:layout_marginEnd="20dp" />
 
             </LinearLayout>
 
@@ -86,8 +119,11 @@
                 <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="bottom">
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
 
                     <TextView
                             android:id="@+id/card_hashtags"
@@ -96,45 +132,10 @@
                             android:layout_weight="0"
                             android:gravity="bottom|center"
                             android:text="#route42"
-                            android:textSize="14sp"
+                            android:textSize="12sp"
                             android:foregroundGravity="bottom"
                             android:layout_marginBottom="3sp" />
 
-                    <LinearLayout
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="24sp">
-
-                        <RelativeLayout
-                                android:layout_height="match_parent"
-                                android:layout_width="wrap_content">
-
-                            <ImageView
-                                    android:id="@+id/like_button"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    app:srcCompat="@drawable/thumb_up_outline" />
-
-                            <ImageView
-                                    android:id="@+id/unlike_button"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignTop="@id/like_button"
-                                    android:layout_alignLeft="@id/like_button"
-                                    app:layout_constraintTop_toTopOf="@+id/like_button"
-                                    app:srcCompat="@drawable/thumb_up" />
-
-                        </RelativeLayout>
-
-                        <TextView
-                                android:id="@+id/like_count_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:text="0"
-                                android:layout_marginStart="5sp"
-                                android:textSize="16sp"
-                                android:gravity="top" />
-                    </LinearLayout>
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
