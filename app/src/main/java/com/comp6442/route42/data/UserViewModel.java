@@ -61,15 +61,17 @@ public class UserViewModel extends ViewModel {
   }
 
   public ListenerRegistration addSnapshotListenerToLiveUser(String uid) {
-    DocumentReference docPath = UserRepository.getInstance().getOne(uid);
-    return docPath.addSnapshotListener((value, error) -> {
-      if (error == null) {
-        setLiveUser(value.toObject(User.class));
-        Timber.i("added snapshot listener to uid: %s", uid);
-        return;
-      }
-      Timber.e(error);
-    });
+    if (uid != null) {
+      DocumentReference docPath = UserRepository.getInstance().getOne(uid);
+      return docPath.addSnapshotListener((value, error) -> {
+        if (error == null) {
+          setLiveUser(value.toObject(User.class));
+          Timber.i("added snapshot listener to uid: %s", uid);
+          return;
+        }
+        Timber.e(error);
+      });
+    } else return null; // TODO fix, don't return null
   }
 
 
