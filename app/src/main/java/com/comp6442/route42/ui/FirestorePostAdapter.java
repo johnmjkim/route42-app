@@ -97,7 +97,6 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     setUserNameView(post, viewHolder);
     setLikeCountTextView(post, viewHolder);
 
-    viewHolder.materialCardView.setStrokeWidth(5);
     viewHolder.userNameView.setText(post.getUserName());
 
     // viewHolder.descriptionView.setText("This is a sample text. This is a sample text.");
