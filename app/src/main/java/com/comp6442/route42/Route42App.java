@@ -48,7 +48,6 @@ public class Route42App extends Application {
   // Called when the application is starting, before any other application objects have been created.
   @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
-
   public void onCreate() {
     super.onCreate();
     mAuth = FirebaseAuthLiveData.getInstance().getAuth();
@@ -156,93 +155,4 @@ public class Route42App extends Application {
       }
     }
   }
-
-//  public void createTestUser() {
-//    // create test user, and launch executor task if needed for demo / loadData
-//    Timber.i("Creating test user.");
-//    User testUser = new User(
-//            null,
-//            BuildConfig.testUserEmail,
-//            "test_user",
-//            BuildConfig.testUserPassword
-//    );
-//
-//    Timber.i("Creating test user in Firebase Auth.");
-//    mAuth.createUserWithEmailAndPassword(testUser.getEmail(), testUser.getPassword())
-//            .addOnCompleteListener(task -> {
-//              if (task.isSuccessful()) {
-//                AuthResult authResult = task.getResult();
-//                assert authResult != null;
-//                FirebaseUser firebaseUser = authResult.getUser();
-//                assert firebaseUser != null;
-//
-//                testUser.setId(firebaseUser.getUid());
-//                UserRepository.getInstance().setOne(testUser);
-//
-//                Timber.i("Created test user in Firebase Auth.");
-//
-//                insertData();
-//              } else {
-//                Timber.w("Could not create test user in Firebase Auth");
-//                Timber.e(task.getException());
-//              }
-//            });
-//  }
-
-//  private void insertData() {
-//    if (BuildConfig.loadData) {
-//      Timber.i("Loading sample data");
-//
-//      TaskCreateUsers insertUsers = new TaskCreateUsers(this, BuildConfig.DEBUG);
-//      TaskCreatePosts livePostTask = new TaskCreatePosts(this, BuildConfig.DEBUG, BuildConfig.DEMO);
-//
-//      executor.execute(insertUsers);
-//
-//      if (!BuildConfig.DEMO) executor.schedule(livePostTask, 5, TimeUnit.SECONDS);
-//      else {
-//        // temporary, will remove this when DemoTask is broken up
-//        Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
-//                BuildConfig.batchSize,
-//                BuildConfig.intervalLengthInSeconds,
-//                BuildConfig.demoPostLimit
-//        );
-//        executor.scheduleAtFixedRate(
-//                livePostTask,
-//                2,
-//                BuildConfig.intervalLengthInSeconds,
-//                TimeUnit.SECONDS
-//        );
-//      }
-//    }
-//    byte[] buf = new byte[1024];
-//    int len;
-//    try {
-//      while ((len = inputStream.read(buf)) != -1) outputStream.write(buf, 0, len);
-//      outputStream.close();
-//      inputStream.close();
-//    } catch (IOException e) {
-//      Timber.w(e);
-//    }
-//    return outputStream.toString();
-//  }
-
-//  @RequiresApi(api = Build.VERSION_CODES.O)
-//  public void createFakePosts() {
-//    Timber.i("Creating fake posts.");
-//    if (mAuth.getCurrentUser() == null)
-//      mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
-//
-//    InputStream inputStream = getApplicationContext().getResources().openRawResource(R.raw.posts);
-//    String jsonString = readTextFile(inputStream);
-//
-//    Gson gson = PostRepository.getJsonDeserializer();
-//    List<Post> posts = Arrays.asList(gson.fromJson(jsonString, (Type) Post[].class));
-//    PostRepository.getInstance().createMany(posts);
-//    Timber.i("Created fake posts.");
-//
-//    InputStream inputStream2 = getApplicationContext().getResources().openRawResource(R.raw.user_likes);
-//    List<UserLike> userLikesList = UserLikeRepository.getInstance().deserializeJSON(inputStream2);
-//    UserLikeRepository.getInstance().createMany(userLikesList);
-//    Timber.i("Created fake UserLike on posts");
-//  }
 }

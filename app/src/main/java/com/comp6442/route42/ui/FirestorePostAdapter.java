@@ -37,7 +37,7 @@ import timber.log.Timber;
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
 public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, FirestorePostAdapter.PostViewHolder> {
   private Context context;
-  private String loggedInUID;
+  private final String loggedInUID;
   public FirestorePostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
     super(options);
     this.loggedInUID = loggedInUID;

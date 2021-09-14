@@ -26,22 +26,7 @@ public class Post extends Model {
   private Date postDatetime;
   private String profilePicUrl;
 
-  @Override
-  public String toString() {
-    return "Post{" +
-            "uid=" + uid +
-            ", userName='" + userName + '\'' +
-            ", isPublic=" + isPublic +
-            ", route=" + route +
-            ", activity=" + activity +
-            ", startTs=" + startTs +
-            ", endTs=" + endTs +
-            ", hashtags=" + hashtags +
-            ", postDatetime=" + postDatetime +
-            ", profilePicUrl='" + profilePicUrl + '\'' +
-            ", likeCount=" + likeCount +
-            '}';
-  }
+
 
 
   private int likeCount;
@@ -159,5 +144,21 @@ public class Post extends Model {
 
   public enum Activity {
     Walk, Run, Cycle
+  }
+  @Override
+  public String toString() {
+    return "Post{" +
+            "uid=" + uid +
+            ", userName='" + userName + '\'' +
+            ", isPublic=" + isPublic +
+            ", route=" + route +
+            ", activity=" + activity +
+            ", startTs=" + startTs +
+            ", endTs=" + endTs +
+            ", hashtags=" + hashtags +
+            ", postDatetime=" + postDatetime +
+            ", profilePicUrl='" + profilePicUrl + '\'' +
+            ", likeCount=" + likeCount +
+            '}';
   }
 }
