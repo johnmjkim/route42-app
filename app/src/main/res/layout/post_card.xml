@@ -1,17 +1,16 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:clipToPadding="false"
-    android:gravity="center">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:clipToPadding="false"
+        android:gravity="center">
 
     <com.google.android.material.card.MaterialCardView
             android:id="@+id/post_card"
             android:layout_width="350dp"
-            android:layout_height="550dp"
+            android:layout_height="600dp"
             android:minHeight="200dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp"
@@ -44,24 +43,19 @@
                         android:layout_height="50dp"
                         android:layout_gravity="center_vertical"
                         android:baselineAlignBottom="false"
-                        android:src="@drawable/unknown_user" />
+                        android:src="@drawable/unknown_user"
+                        android:layout_marginLeft="3dp" />
 
                 <TextView
                         android:id="@+id/card_username"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center"
                         android:text="Username"
-                        android:textSize="16sp" />
+                        android:textSize="20sp"
+                        android:gravity="left|center_vertical"
+                        android:layout_marginStart="10dp" />
 
-                <ImageView
-                        android:id="@+id/card_activity_icon"
-                        android:layout_width="50dp"
-                        android:layout_height="55dp"
-                        android:layout_gravity="center_vertical"
-                        android:baselineAlignBottom="false"
-                        android:src="@drawable/run" />
             </LinearLayout>
 
             <ImageView
@@ -75,57 +69,73 @@
             <TextView
                     android:id="@+id/card_description"
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="top"
                     android:layout_marginTop="5dp"
-                    android:layout_weight="1"
-                    android:text="This is a description. This is a description. This is a description."
-                    android:textSize="14sp" />
-
-            <TextView
-                    android:id="@+id/card_hashtags"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
                     android:layout_weight="0"
-                    android:gravity="center"
-                    android:text="#route42"
-                    android:textSize="11sp" />
+                    android:text="This is a description. This is a description. This is a description."
+                    android:textSize="15sp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/linearLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="61dp">
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp">
 
-                <ImageView
-                        android:id="@+id/unlike_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="280dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/like_button"
-                        app:srcCompat="@drawable/thumb_up" />
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom">
 
-                <ImageView
-                        android:id="@+id/like_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="280dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/like_count_text"
-                        app:srcCompat="@drawable/thumb_up_outline" />
+                    <TextView
+                            android:id="@+id/card_hashtags"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_weight="0"
+                            android:gravity="bottom|center"
+                            android:text="#route42"
+                            android:textSize="14sp"
+                            android:foregroundGravity="bottom"
+                            android:layout_marginBottom="3sp" />
 
-                <TextView
-                        android:id="@+id/like_count_text"
-                        android:layout_width="169dp"
-                        android:layout_height="51dp"
-                        android:layout_marginBottom="4dp"
-                        android:text="0 likes"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.27"
-                        app:layout_constraintStart_toStartOf="parent" />
+                    <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="24sp">
+
+                        <RelativeLayout
+                                android:layout_height="match_parent"
+                                android:layout_width="wrap_content">
+
+                            <ImageView
+                                    android:id="@+id/like_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    app:srcCompat="@drawable/thumb_up_outline" />
+
+                            <ImageView
+                                    android:id="@+id/unlike_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignTop="@id/like_button"
+                                    android:layout_alignLeft="@id/like_button"
+                                    app:layout_constraintTop_toTopOf="@+id/like_button"
+                                    app:srcCompat="@drawable/thumb_up" />
+
+                        </RelativeLayout>
+
+                        <TextView
+                                android:id="@+id/like_count_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="0"
+                                android:layout_marginStart="5sp"
+                                android:textSize="16sp"
+                                android:gravity="top" />
+                    </LinearLayout>
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
