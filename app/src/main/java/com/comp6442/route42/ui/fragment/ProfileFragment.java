@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +22,8 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.StorageReference;
@@ -39,7 +40,8 @@ public class ProfileFragment extends Fragment {
   private String uid;
   private UserViewModel viewModel;
   private TextView userNameView, followerCountView, followingCountView;
-  private Button blockButton, followButton;
+  private SwitchMaterial blockSwitch, followSwitch;
+  private MaterialButton messageButton, signOutButton;
 
   public ProfileFragment() {
     // Required empty public constructor
@@ -90,8 +92,10 @@ public class ProfileFragment extends Fragment {
 
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
     userNameView = view.findViewById(R.id.profile_username);
-    blockButton = view.findViewById(R.id.profile_block_button);
-    followButton = view.findViewById(R.id.profile_follow_button);
+    blockSwitch = view.findViewById(R.id.profile_block_switch);
+    followSwitch = view.findViewById(R.id.profile_follow_switch);
+    messageButton = view.findViewById(R.id.profile_message_button);
+    signOutButton = view.findViewById(R.id.sign_out_button);
     followerCountView = view.findViewById(R.id.profile_primary_text);
     followingCountView = view.findViewById(R.id.profile_secondary_text);
 
@@ -177,19 +181,19 @@ public class ProfileFragment extends Fragment {
   }
 
   private void setProfilePic(User user, View view) {
-    // insert image into profile pic view
-    StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());
+    if (user.getProfilePicUrl() != null) {
+      // insert image into profile pic view
+      StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());
 
-    profilePicRef.getDownloadUrl().addOnCompleteListener(task -> {
-      ImageView profilePic = view.findViewById(R.id.profile_picture);
-
-      Glide.with(profilePic.getContext())
-              .load(profilePicRef)
-              .placeholder(R.drawable.person_photo)
-              .circleCrop()
-              .into(profilePic);
-
-    }).addOnFailureListener(error -> Timber.w("Could not fetch profile pic"));
+      profilePicRef.getDownloadUrl().addOnCompleteListener(task -> {
+        ImageView profilePic = view.findViewById(R.id.profile_picture);
+        Glide.with(profilePic.getContext())
+                .load(profilePicRef)
+                .placeholder(R.drawable.person_photo)
+                .circleCrop()
+                .into(profilePic);
+      });
+    }
   }
 
   private void setFollowerCount(User user) {
@@ -212,79 +216,56 @@ public class ProfileFragment extends Fragment {
     }
   }
 
-  private void setFollowButton(User user, View view) {
+  private void setFollowSwitch(User user) {
     assert this.uid != null && user.getId() != null;
 
     String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
-    followerCountView = view.findViewById(R.id.profile_primary_text);
 
-    if (user.getFollowers().stream().anyMatch(follower -> follower.getId().equals(loggedInUserUid))) {
-      // `loggedInUserUid` already follows `user`
-      followButton.setText("Unfollow");
-      followButton.setOnClickListener(
-              view1 -> {
-                // update following and followers
-                UserRepository.getInstance().unfollow(loggedInUserUid, user.getId());
-                followButton.setEnabled(false);
-                Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
-              }
-      );
-    } else {
-      // `loggedInUserUid` does not follow `user`
-      if (user.getBlockedBy().stream().anyMatch(userRef -> userRef.getId().equals(loggedInUserUid))) {
-        // `loggedInUserUid` has blocked `user`, so disable follow button
-        followButton.setEnabled(false);
+    // check if loggedInUser already follows profileUser
+    followSwitch.setChecked(
+            user.getFollowers().stream().anyMatch(
+                    follower -> follower.getId().equals(loggedInUserUid)));
+
+    followSwitch.setOnCheckedChangeListener((compoundButton, isOn) -> {
+      if(isOn) {
+        // follow action triggers unblock
+        Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
+        UserRepository.getInstance().follow(loggedInUserUid, user.getId());
       } else {
-        followButton.setOnClickListener(
-                view1 -> {
-                  UserRepository.getInstance().follow(loggedInUserUid, user.getId());
-                  followButton.setEnabled(false);
-                  Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
-                }
-        );
+        Timber.i("UnFollow event recorded: %s -> %s", loggedInUserUid, user.getId());
+        UserRepository.getInstance().unfollow(loggedInUserUid, user.getId());
       }
-    }
+    });
+
   }
 
-  private void setBlockButton(User user, View view) {
+  private void setBlockSwitch(User user) {
     assert this.uid != null && user.getId() != null;
 
     String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
-    blockButton = view.findViewById(R.id.profile_block_button);
 
-    if (user.getBlockedBy().stream().anyMatch(blocker -> blocker.getId().equals(loggedInUserUid))) {
-      // `loggedInUserUid` already blocked `user`
-      blockButton.setText("Unblock");
-      blockButton.setOnClickListener(
-              view1 -> {
-                UserRepository.getInstance().unblock(loggedInUserUid, user.getId());
-                blockButton.setEnabled(false);
-                Timber.i("Unblock event recorded: %s -> %s", loggedInUserUid, user.getId());
-              }
-      );
-    } else {
-      // not blocked by `user`
-      blockButton.setOnClickListener(
-              view1 -> {
-                // block user, and unfollow if following
-                UserRepository.getInstance().block(loggedInUserUid, user.getId());
+    // check if loggedInUser already blocked profileUser
+    blockSwitch.setChecked(
+            user.getBlockedBy().stream().anyMatch(
+                    blocker -> blocker.getId().equals(loggedInUserUid)));
 
-                // disable block button when it's pressed
-                blockButton.setEnabled(false);
-
-                // update button label and enabled status if needed
-                if (followButton.getText().toString().equals("Unfollow"))
-                  followButton.setText("Follow");
-                if (!followButton.isEnabled()) followButton.setEnabled(false);
-
-                // update follower count
-                int count = Integer.parseInt(followerCountView.getText().toString());
-                followerCountView.setText(String.valueOf(count - 1));
-
-                Timber.i("Block event recorded: %s -> %s", loggedInUserUid, user.getId());
-              }
-      );
-    }
+    blockSwitch.setOnCheckedChangeListener((compoundButton, isOn) -> {
+      if (isOn) {
+        // .block(loggedInUserUid, user.getId()) is automatically followed by unfollow (if following before blocking)
+        Timber.i("Block event recorded: %s -> %s", loggedInUserUid, user.getId());
+        UserRepository.getInstance().block(loggedInUserUid, user.getId());
+        if (followSwitch.isChecked()) {
+          followSwitch.setOnCheckedChangeListener(null);
+          followSwitch.setChecked(false);
+          setFollowSwitch(user);
+        }
+        followSwitch.setEnabled(false);
+      } else {
+        Timber.i("Unblock event recorded: %s -> %s", loggedInUserUid, user.getId());
+        UserRepository.getInstance().unblock(loggedInUserUid, user.getId());
+        followSwitch.setEnabled(true);
+      }
+    });
   }
 
   public void logOut() {
@@ -310,37 +291,36 @@ public class ProfileFragment extends Fragment {
 
     // fill in user info
     userNameView.setText(profileUser.getUserName());
-    ProfileFragment.this.setProfilePic(profileUser, view);
-    ProfileFragment.this.setFollowerCount(profileUser);
-    ProfileFragment.this.setFollowingCount(profileUser);
-    ProfileFragment.this.setFollowButton(profileUser, view);
-    ProfileFragment.this.setBlockButton(profileUser, view);
+    setProfilePic(profileUser, view);
+    setFollowerCount(profileUser);
+    setFollowingCount(profileUser);
+    setFollowSwitch(profileUser);
+    setBlockSwitch(profileUser);
 
     User liveUser = viewModel.getLiveUser().getValue();
     assert liveUser != null && liveUser.getId() != null;
     Timber.i("Firebase current uid: %s\t\tthis.uid: %s", liveUser.getId(), uid);
-    Timber.i("Current User variable: %s", liveUser);
+    Timber.i("Current LiveUser: %s", liveUser);
+    Timber.i("Current ProfileUser: %s", viewModel.getProfileUser().getValue());
 
-    Button signOutButton = view.findViewById(R.id.sign_out_button);
     int visibility;
 
     // if a user is looking at his/her own profile, hide Follow and Message buttons.
+    // TODO: delete these parts entirely instead of setting to invisible
     if (liveUser.getId().equals(profileUser.getId())) {
       Timber.i("Viewing self's profile. Hiding Follow and Message buttons.");
       visibility = View.INVISIBLE;
-      // show sign out button if looking at self profile
-      signOutButton.setOnClickListener(unused -> ProfileFragment.this.logOut());
       signOutButton.setEnabled(true);
+      signOutButton.setOnClickListener(unused -> ProfileFragment.this.logOut());
+      signOutButton.setVisibility(View.VISIBLE);
     } else {
       visibility = View.VISIBLE;
-      signOutButton.setVisibility(View.INVISIBLE);
       signOutButton.setEnabled(false);
+      signOutButton.setVisibility(View.INVISIBLE);
     }
 
-    // hide follow, message, block buttons if looking at self's profile
-    // TODO: delete these parts entirely to expand the view
-    view.findViewById(R.id.profile_follow_button).setVisibility(visibility);
-    view.findViewById(R.id.profile_message_button).setVisibility(visibility);
-    view.findViewById(R.id.profile_block_button).setVisibility(visibility);
+    followSwitch.setVisibility(visibility);
+    blockSwitch.setVisibility(visibility);
+    messageButton.setVisibility(visibility);
   }
 }

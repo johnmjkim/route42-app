@@ -124,7 +124,7 @@ public final class UserRepository extends FirestoreRepository<User> {
   }
 
   /**
-   * followActorId follows followReceiverId
+   * followActor follows followReceiver
    *
    * @param followActorId
    * @param followReceiverId
@@ -137,7 +137,7 @@ public final class UserRepository extends FirestoreRepository<User> {
   }
 
   /**
-   * unfollowActorId unfollows unfollowReceiverId
+   * unfollowActor unfollows unfollowReceiver
    *
    * @param unfollowActorId
    * @param unfollowReceiverId
