@@ -25,11 +25,7 @@ public class Post extends Model {
   @ServerTimestamp
   private Date postDatetime;
   private String profilePicUrl;
-
-
-
-
-  private int likeCount;
+  private int likeCount = 0;
 
   // private String postDescription;
   // private String imageUrl;
@@ -145,6 +141,7 @@ public class Post extends Model {
   public enum Activity {
     Walk, Run, Cycle
   }
+
   @Override
   public String toString() {
     return "Post{" +

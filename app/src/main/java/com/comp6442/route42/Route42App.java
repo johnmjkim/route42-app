@@ -9,11 +9,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.comp6442.route42.data.FirebaseAuthLiveData;
-import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
-import com.comp6442.route42.data.model.UserLike;
-import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.data.repository.UserLikeRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
 import com.comp6442.route42.utils.CustomLogger;
@@ -78,7 +74,6 @@ public class Route42App extends Application {
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
   }
-
 
   // Called by the system when the device configuration changes while your component is running.
   // Overriding this method is totally optional!

@@ -1,9 +1,6 @@
 package com.comp6442.route42.ui;
 
 
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +17,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Post;
-import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.model.UserLike;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
@@ -36,8 +32,8 @@ import timber.log.Timber;
 
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
 public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, FirestorePostAdapter.PostViewHolder> {
-  private Context context;
   private final String loggedInUID;
+
   public FirestorePostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
     super(options);
     this.loggedInUID = loggedInUID;
@@ -91,60 +87,38 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     //Handle the error
     Timber.d(e);
   }
+
   private void setViewBehavior(Post post, PostViewHolder viewHolder) {
     Timber.i("breadcrumb");
     // Add listener and navigate to the user's profile on click
     setUserNameView(post, viewHolder);
     setLikeCountTextView(post, viewHolder);
 
-    viewHolder.materialCardView.setStrokeWidth(5);
     viewHolder.userNameView.setText(post.getUserName());
 
-    // viewHolder.descriptionView.setText("This is a sample text. This is a sample text.");
+    viewHolder.descriptionView.setText("This is a sample text. This is a sample text.");
     if (post.getHashtags().size() > 0)
       viewHolder.hashtagsTextView.setText(String.join(" ", post.getHashtags()));
-
-    // set activity icon
-    switch (post.getActivity()) {
-      case Run:
-        viewHolder.activityIcon.setImageResource(R.drawable.run);
-        break;
-      case Walk:
-        viewHolder.activityIcon.setImageResource(R.drawable.walk);
-        break;
-      case Cycle:
-        viewHolder.activityIcon.setImageResource(R.drawable.cycle);
-        break;
-      default:
-        throw new IllegalStateException("Unexpected value: " + post.getActivity());
-    }
 
     Timber.d("OnBindView complete.");
   }
 
-
   private void setLikeButtons(Post post, PostViewHolder viewHolder, boolean postIsLiked) {
-    View.OnClickListener likeListener = new View.OnClickListener() {
-      public void onClick(View view) {
-        PostRepository.getInstance().like(post);
-        UserLikeRepository.getInstance().createOne(new UserLike(post.getId(), loggedInUID));
-        Timber.i("Liked");
-        viewHolder.like.setVisibility(View.GONE);
-        viewHolder.unlike.setVisibility(View.VISIBLE);
-      }
-    };
-    View.OnClickListener unlikeListener = new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Timber.i("UnLiked");
-        PostRepository.getInstance().unlike(post);
-        UserLikeRepository.getInstance().deleteOne(new UserLike(post.getId(), loggedInUID));
-        viewHolder.unlike.setVisibility(View.GONE);
-        viewHolder.like.setVisibility(View.VISIBLE);
-      }
-    };
-    viewHolder.unlike.setOnClickListener(unlikeListener);
-    viewHolder.like.setOnClickListener(likeListener);
+    viewHolder.like.setOnClickListener(view -> {
+      PostRepository.getInstance().like(post);
+      UserLikeRepository.getInstance().createOne(new UserLike(post.getId(), loggedInUID));
+      viewHolder.like.setVisibility(View.GONE);
+      viewHolder.unlike.setVisibility(View.VISIBLE);
+      Timber.i("Liked");
+    });
+
+    viewHolder.unlike.setOnClickListener(view -> {
+      PostRepository.getInstance().unlike(post);
+      UserLikeRepository.getInstance().deleteOne(new UserLike(post.getId(), loggedInUID));
+      viewHolder.unlike.setVisibility(View.GONE);
+      viewHolder.like.setVisibility(View.VISIBLE);
+      Timber.i("UnLiked");
+    });
 
     if (postIsLiked) {
       viewHolder.like.setVisibility(View.GONE);
@@ -152,24 +126,16 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     } else {
       viewHolder.unlike.setVisibility(View.GONE);
       viewHolder.like.setVisibility(View.VISIBLE);
-
     }
   }
 
-
-  private void setLikeCountTextView(Post post, PostViewHolder viewHolder ) {
+  private void setLikeCountTextView(Post post, PostViewHolder viewHolder) {
     int count = post.getLikeCount();
-
-     UserLikeRepository.getInstance().exists( post.getId(), loggedInUID).addOnSuccessListener( documentSnapshot -> {
-       String text =  "";
-       if(count >1) {
-         text += count + " likes";
-       } else if (count ==1) {
-         text += count + " like";
-       }
-       viewHolder.likeCountTextView.setText(text);
-       setLikeButtons( post, viewHolder, documentSnapshot.exists());
-     } );
+    UserLikeRepository.getInstance().exists(post.getId(), loggedInUID)
+            .addOnSuccessListener(documentSnapshot -> {
+              viewHolder.likeCountTextView.setText(String.valueOf(count));
+              setLikeButtons(post, viewHolder, documentSnapshot.exists());
+            });
   }
 
   private void setUserNameView(Post post, PostViewHolder viewHolder) {
@@ -181,13 +147,13 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       fragment.setArguments(bundle);
       ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
               .beginTransaction()
-              .replace(R.id.fragment_container_view, fragment)
+              .add(R.id.fragment_container_view, fragment)
               .commit();
     });
   }
 
   public static class PostViewHolder extends RecyclerView.ViewHolder {
-    public ImageView userIcon, routeImage, activityIcon, like, unlike;
+    public ImageView userIcon, routeImage, like, unlike;
     public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView;
     public MaterialCardView materialCardView;
 
@@ -196,7 +162,6 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       // Define click listener for the ViewHolder's View
       userIcon = view.findViewById(R.id.card_profile_pic);
       routeImage = view.findViewById(R.id.card_main_image);
-      activityIcon = view.findViewById(R.id.card_activity_icon);
       like = view.findViewById(R.id.like_button);
       unlike = view.findViewById(R.id.unlike_button);
 
