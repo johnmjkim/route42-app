@@ -18,7 +18,7 @@ public final class FirebaseAuthLiveData extends LiveData<FirebaseAuth> {
   public static FirebaseAuthLiveData getInstance() {
     if (FirebaseAuthLiveData.instance == null) {
       FirebaseAuth mAuth = FirebaseAuth.getInstance();
-      if (BuildConfig.DEBUG) {
+      if (BuildConfig.EMULATOR) {
         try {
           // 10.0.2.2 is the special IP address to connect to the 'localhost' of
           // the host computer from an Android emulator.

@@ -76,7 +76,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                 }
               } else {
                 Timber.w(task.getException(), "Failed to sign in");
-                if (BuildConfig.DEBUG) {
+                if (BuildConfig.EMULATOR) {
                   Toast.makeText(LogInActivity.this, "Sign in failed.",
                           Toast.LENGTH_SHORT).show();
                 }

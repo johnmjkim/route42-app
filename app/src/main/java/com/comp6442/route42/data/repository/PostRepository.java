@@ -1,11 +1,12 @@
 package com.comp6442.route42.data.repository;
 
+import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -65,14 +66,14 @@ public class PostRepository extends FirestoreRepository<Post> {
    */
   public Query getVisiblePosts(User user, int limit) {
     if (user.getBlockedBy().size() > 0) {
-      Timber.i("breadcrumb");
+      Timber.d("breadcrumb");
       // TODO: temporarily removed filter on isBlockedBy since unblock button is inside each profile
       return this.collection
               .whereEqualTo("isPublic", 1)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
     } else {
-      Timber.i("breadcrumb");
+      Timber.d("breadcrumb");
       return this.collection
               .whereEqualTo("isPublic", 1)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
@@ -87,31 +88,48 @@ public class PostRepository extends FirestoreRepository<Post> {
             .addOnSuccessListener(unused -> Timber.i("Insert succeeded: %s", post.toString()))
             .addOnFailureListener(Timber::e);
   }
-  public void like(Post post) {
-    this.collection.document(post.getId())
-    .update("likeCount", post.getLikeCount()+1);
+
+  public void like(Post post, String uid) {
+    WriteBatch batch = firestore.batch();
+    DocumentReference docRef = this.collection.document(post.getId());
+    DocumentReference userRef = UserRepository.getInstance().getOne(uid);
+
+    docRef.update("likeCount", FieldValue.increment(1));
+    docRef.update("likedBy", FieldValue.arrayUnion(userRef));
+    batch.commit()
+            .addOnFailureListener(Timber::e)
+            .addOnSuccessListener(task -> Timber.i("Like event recorded: %s -> %s", uid, post));
   }
-  public void unlike(Post post) {
-    this.collection.document(post.getId())
-            .update("likeCount", post.getLikeCount()-1);
+
+  public void unlike(Post post, String uid) {
+    WriteBatch batch = firestore.batch();
+    DocumentReference docRef = this.collection.document(post.getId());
+    DocumentReference userRef = UserRepository.getInstance().getOne(uid);
+
+    docRef.update("likeCount", FieldValue.increment(-1));
+    docRef.update("likedBy", FieldValue.arrayRemove(userRef));
+    batch.commit()
+            .addOnFailureListener(Timber::e)
+            .addOnSuccessListener(task -> Timber.i("Unlike event recorded: %s -> %s", uid, post));
   }
+
   public void createMany(List<Post> posts) {
     // batch size limit is 500 documents
     int idx = 0;
     while (idx < posts.size()) {
       int counter = 0;
-      // Get a new write batch
       WriteBatch batch = firestore.batch();
 
-      while (counter < 500 && idx < posts.size()) {
+      while (counter < BuildConfig.FIRESTORE_BATCH_SIZE && idx < posts.size()) {
         Post post = posts.get(idx);
         DocumentReference postRef = this.collection.document(post.getId());
         batch.set(postRef, post);
         counter++;
         idx++;
       }
-      // Commit the batch
-      batch.commit().addOnFailureListener(Timber::e)
+
+      batch.commit()
+              .addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch write complete: posts"));
     }
   }
@@ -122,16 +140,16 @@ public class PostRepository extends FirestoreRepository<Post> {
       int counter = 0;
       WriteBatch batch = firestore.batch();
 
-      while (counter < 500 && idx < posts.size()) {
+      while (counter < BuildConfig.FIRESTORE_BATCH_SIZE && idx < posts.size()) {
         Post post = posts.get(idx);
         DocumentReference postRef = this.collection.document(post.getId());
         batch.set(postRef, post, SetOptions.merge());
-
         counter++;
         idx++;
       }
-      // Commit the batch
-      batch.commit().addOnFailureListener(Timber::e)
+
+      batch.commit()
+              .addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch set complete: posts"));
     }
   }

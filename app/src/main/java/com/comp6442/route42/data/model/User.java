@@ -8,7 +8,6 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @IgnoreExtraProperties
 public class User extends Model {
@@ -28,7 +27,9 @@ public class User extends Model {
 
   /* Assign a random UUID */
   public User(@NonNull String email, @NonNull String userName) {
-    this(UUID.randomUUID().toString(), email, userName);
+    super();
+    setEmail(email);
+    setUserName(userName);
   }
 
   public User(String id, @NonNull String email, @NonNull String userName) {

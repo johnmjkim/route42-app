@@ -14,7 +14,6 @@ import timber.log.Timber;
 public abstract class FirestoreRepository<T extends Model> extends Repository<T> {
   protected static FirebaseFirestore firestore;
   protected CollectionReference collection;
-  protected int batchSizeLimit = 500;
 
   public FirestoreRepository(String collectionPath, Class<T> cType) {
     this.classType = cType;
@@ -22,7 +21,7 @@ public abstract class FirestoreRepository<T extends Model> extends Repository<T>
     if (firestore == null) {
       firestore = FirebaseFirestore.getInstance();
 
-      if (BuildConfig.DEBUG) {
+      if (BuildConfig.EMULATOR) {
         try {
           firestore.useEmulator("10.0.2.2", 8080);
         } catch (IllegalStateException exc) {

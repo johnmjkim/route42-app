@@ -53,7 +53,7 @@ public class Route42App extends Application {
     // initialize Timber logger in application class
     Timber.plant(new CustomLogger());
 
-    if (BuildConfig.DEBUG) {
+    if (BuildConfig.EMULATOR) {
       Timber.i("Application starting on DEBUG mode");
     } else {
       Timber.i("Application starting");
@@ -61,7 +61,7 @@ public class Route42App extends Application {
     // create test user, sign out and take user to log in screen
     createTestUser();
     Intent intent;
-    if(BuildConfig.DEBUG && BuildConfig.skipLogin) {
+    if(BuildConfig.EMULATOR && BuildConfig.skipLogin) {
       // sign in as test user
       mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
       intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -106,6 +106,7 @@ public class Route42App extends Application {
             "test_user",
             BuildConfig.testUserPassword
     );
+    testUser.setProfilePicUrl("https://images.unsplash.com/photo-1512327605305-64e5ce63b346?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200");
 
     Timber.i("Creating test user in Firebase Auth.");
     mAuth.createUserWithEmailAndPassword(testUser.getEmail(), testUser.getPassword())
@@ -133,8 +134,8 @@ public class Route42App extends Application {
     if (BuildConfig.loadData) {
       Timber.i("Loading sample data");
 
-      TaskCreateUsers insertUsers = new TaskCreateUsers(this, BuildConfig.DEBUG);
-      TaskCreatePosts livePostTask = new TaskCreatePosts(this, BuildConfig.DEBUG, BuildConfig.DEMO);
+      TaskCreateUsers insertUsers = new TaskCreateUsers(this, BuildConfig.EMULATOR);
+      TaskCreatePosts livePostTask = new TaskCreatePosts(this, BuildConfig.EMULATOR, BuildConfig.DEMO);
 
       executor.execute(insertUsers);
 
