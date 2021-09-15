@@ -13,7 +13,7 @@ import java.util.List;
 
 import timber.log.Timber;
 
-public class TaskCreateUsers extends DataTask {
+public class TaskCreateUsers extends DataTask<User> {
   private final List<User> userList;
 
   public TaskCreateUsers(Context context, boolean debug) {

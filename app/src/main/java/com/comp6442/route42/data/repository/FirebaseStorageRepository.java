@@ -20,7 +20,7 @@ public class FirebaseStorageRepository {
   public static FirebaseStorageRepository getInstance() {
     if (FirebaseStorageRepository.instance == null) {
       FirebaseStorage storage = FirebaseStorage.getInstance();
-      if (BuildConfig.DEBUG) {
+      if (BuildConfig.EMULATOR) {
         try {
           storage.useEmulator("10.0.2.2", 9199);
         } catch (IllegalStateException exc) {

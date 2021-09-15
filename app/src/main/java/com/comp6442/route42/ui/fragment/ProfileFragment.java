@@ -11,10 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
@@ -125,11 +127,6 @@ public class ProfileFragment extends Fragment {
   }
 
   @Override
-  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-    super.onViewStateRestored(savedInstanceState);
-  }
-
-  @Override
   public void onStart() {
     super.onStart();
     Timber.d("breadcrumb");
@@ -182,18 +179,29 @@ public class ProfileFragment extends Fragment {
   }
 
   private void setProfilePic(User user, View view) {
+    ImageView profilePic = view.findViewById(R.id.profile_picture);
+    Timber.i(user.toString());
     if (user.getProfilePicUrl() != null) {
-      // insert image into profile pic view
-      StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());
-
-      profilePicRef.getDownloadUrl().addOnCompleteListener(task -> {
-        ImageView profilePic = view.findViewById(R.id.profile_picture);
+      if (user.getProfilePicUrl().startsWith("http")) {
         Glide.with(profilePic.getContext())
-                .load(profilePicRef)
-                .placeholder(R.drawable.person_photo)
+                .load(user.getProfilePicUrl())
+                .placeholder(R.drawable.unknown_user)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(false)
                 .circleCrop()
                 .into(profilePic);
-      });
+      } else {
+        // Get reference to the image file in Cloud Storage, download route image, use stock photo if fail
+        StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());
+
+        Glide.with(profilePic.getContext())
+                .load(profilePicRef)
+                .placeholder(R.drawable.unknown_user)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(false)
+                .circleCrop()
+                .into(profilePic);
+      }
     }
   }
 
@@ -237,7 +245,6 @@ public class ProfileFragment extends Fragment {
         UserRepository.getInstance().unfollow(loggedInUserUid, user.getId());
       }
     });
-
   }
 
   private void setBlockSwitch(User user) {

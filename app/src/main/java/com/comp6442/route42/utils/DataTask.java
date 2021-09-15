@@ -37,7 +37,7 @@ public abstract class DataTask<T extends Model> implements Runnable {
 
     Timber.i("Initialized demo task with collection: %s parameters: DEBUG=%s DEMO=%s",
             collectionName,
-            BuildConfig.DEBUG,
+            BuildConfig.EMULATOR,
             BuildConfig.DEMO);
   }
 

@@ -2,13 +2,9 @@ package com.comp6442.route42.data.repository;
 
 import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.User;
-import com.comp6442.route42.data.model.UserLike;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
@@ -16,7 +12,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import timber.log.Timber;
@@ -61,32 +56,24 @@ public final class UserRepository extends FirestoreRepository<User> {
             .addOnFailureListener(Timber::e);
   }
 
-  public void createOne(Map<String, Object> map) {
-    // add user only if uid does not exist in user collection
-    if (map.containsKey("uid"))
-      this.collection.document((String) Objects.requireNonNull(map.get("uid")))
-              .set(map)
-              .addOnFailureListener(Timber::e);
-  }
-
   public void createMany(List<User> users) {
     // create if not exists
-    // batch size limit is 500 documents
     int idx = 0;
     while (idx < users.size()) {
       int counter = 0;
       // Get a new write batch
       WriteBatch batch = firestore.batch();
 
-      while (counter < super.batchSizeLimit && idx < users.size()) {
+      while (counter < BuildConfig.FIRESTORE_BATCH_SIZE && idx < users.size()) {
         User user = users.get(idx);
         DocumentReference ref = this.collection.document(user.getId());
-        batch.set(ref, user, SetOptions.merge());
+        batch.set(ref, user);
         counter++;
         idx++;
       }
       // Commit the batch
-      batch.commit().addOnFailureListener(Timber::e)
+      batch.commit()
+              .addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
     }
   }
@@ -98,14 +85,6 @@ public final class UserRepository extends FirestoreRepository<User> {
             .addOnFailureListener(Timber::e);
   }
 
-  public void setOne(Map<String, Object> map) {
-    // create if not exists
-    if (map.containsKey("uid"))
-      this.collection.document((String) Objects.requireNonNull(map.get("uid")))
-              .set(map, SetOptions.merge())
-              .addOnFailureListener(Timber::e);
-  }
-
   public void setMany(List<User> users) {
     // create if not exists
     // batch size limit is 500 documents
@@ -115,7 +94,7 @@ public final class UserRepository extends FirestoreRepository<User> {
       // Get a new write batch
       WriteBatch batch = firestore.batch();
 
-      while (counter < super.batchSizeLimit && idx < users.size()) {
+      while (counter < BuildConfig.FIRESTORE_BATCH_SIZE && idx < users.size()) {
         User user = users.get(idx);
         DocumentReference ref = this.collection.document(user.getId());
         batch.set(ref, user, SetOptions.merge());
@@ -123,7 +102,8 @@ public final class UserRepository extends FirestoreRepository<User> {
         idx++;
       }
       // Commit the batch
-      batch.commit().addOnFailureListener(Timber::e)
+      batch.commit()
+              .addOnFailureListener(Timber::e)
               .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
     }
   }
