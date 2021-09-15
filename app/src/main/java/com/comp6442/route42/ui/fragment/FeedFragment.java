@@ -1,6 +1,7 @@
 package com.comp6442.route42.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,8 +97,6 @@ public class FeedFragment extends Fragment {
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(adapter);
-      String userId = viewModel.getLiveUser().getValue().getId();
-
       recyclerView.setHasFixedSize(false);
 
 //      recyclerView.addOnLayoutChangeListener((changedView, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
@@ -119,7 +118,11 @@ public class FeedFragment extends Fragment {
   @Override
   public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
     super.onViewStateRestored(savedInstanceState);
-    Timber.d("breadcrumb");
+    if (savedInstanceState != null) {
+      Parcelable state = savedInstanceState.getParcelable("KeyForLayoutManagerState");
+      layoutManager.onRestoreInstanceState(state);
+      Timber.d("View state restored");
+    }
   }
 
   @Override
@@ -140,6 +143,9 @@ public class FeedFragment extends Fragment {
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putString(ARG_PARAM1, this.uid);
+    if (layoutManager != null) {
+      outState.putParcelable("KeyForLayoutManagerState", layoutManager.onSaveInstanceState());
+    }
     Timber.i("Saved instance state");
   }
 
