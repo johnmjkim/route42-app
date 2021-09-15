@@ -9,13 +9,13 @@ public abstract class Repository<T extends Model> {
 
   abstract void createOne(T item);
 
-  abstract Object getOne(String id);
+//  abstract Object getOne(String id);
 
-  // abstract void setOne(T item);
+//  abstract void setOne(T item);
 
-  abstract void createMany(List<T> items);
+  // abstract void createMany(List<T> items);
 
   // abstract Object getMany(String id);
 
-  abstract void setMany(List<T> items);
+  // abstract void setMany(List<T> items);
 }
