@@ -60,10 +60,12 @@ dependencies {
     implementation 'com.google.guava:guava:30.1.1-android'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.google.code.gson:gson:2.8.8'
-    implementation "com.xwray:groupie:2.9.0"
+    // implementation "com.xwray:groupie:2.9.0"
+    implementation 'com.firebase:geofire-android-common:3.1.0'
 
     // UI
     implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     // ----------- Navigation Component ------------
     def nav_version = "2.3.5"

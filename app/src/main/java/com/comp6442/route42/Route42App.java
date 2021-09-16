@@ -58,6 +58,7 @@ public class Route42App extends Application {
     } else {
       Timber.i("Application starting");
     }
+
     // create test user, sign out and take user to log in screen
     createTestUser();
     Intent intent;
@@ -71,6 +72,7 @@ public class Route42App extends Application {
       if (mAuth.getCurrentUser() != null) mAuth.signOut();
       intent = new Intent(getApplicationContext(), LogInActivity.class);
     }
+
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
   }
@@ -121,12 +123,11 @@ public class Route42App extends Application {
                 UserRepository.getInstance().setOne(testUser);
 
                 Timber.i("Created test user in Firebase Auth.");
-
-                insertData();
               } else {
                 Timber.w("Could not create test user in Firebase Auth");
                 Timber.e(task.getException());
               }
+              if (BuildConfig.loadData) insertData();
             });
   }
 
@@ -141,7 +142,6 @@ public class Route42App extends Application {
 
       if (!BuildConfig.DEMO) executor.schedule(livePostTask, 5, TimeUnit.SECONDS);
       else {
-        // temporary, will remove this when DemoTask is broken up
         Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
                 BuildConfig.batchSize,
                 BuildConfig.intervalLengthInSeconds,

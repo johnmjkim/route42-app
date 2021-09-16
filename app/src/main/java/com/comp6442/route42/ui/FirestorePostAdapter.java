@@ -170,12 +170,10 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
 
     public PostViewHolder(View view) {
       super(view);
-      // Define click listener for the ViewHolder's View
       userIcon = view.findViewById(R.id.card_profile_pic);
       imageView = view.findViewById(R.id.card_main_image);
       like = view.findViewById(R.id.like_button);
       unlike = view.findViewById(R.id.unlike_button);
-
       userNameView = view.findViewById(R.id.card_username);
       hashtagsTextView = view.findViewById(R.id.card_hashtags);
       descriptionView = view.findViewById(R.id.card_description);
