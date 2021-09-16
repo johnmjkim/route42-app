@@ -13,6 +13,9 @@
 11. Add follow & block functionality.
 12. Newsfeed complete - dynamically updates by inserting new posts into the beginning of the recyclerview. 
 13. Add demo mode using ScheduledExecutorService.
+14. Switch to Material Dark UI
+15. Removed Activity and Athletic related attributes, including Route, from Post.
+16. Optimized fragment transaction from FeedFragment to ProfileFragment by using `add` instead of `replace` and `.addToBackStack`.
 
 # Requirements
 

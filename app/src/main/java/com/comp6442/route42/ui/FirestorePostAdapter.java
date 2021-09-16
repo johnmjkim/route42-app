@@ -158,6 +158,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
               .beginTransaction()
               .add(R.id.fragment_container_view, fragment)
+              .addToBackStack(this.getClass().getCanonicalName())
               .commit();
     });
   }
