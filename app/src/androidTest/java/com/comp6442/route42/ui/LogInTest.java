@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.comp6442.route42.R;
+import com.comp6442.route42.ui.activity.LogInActivity;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest

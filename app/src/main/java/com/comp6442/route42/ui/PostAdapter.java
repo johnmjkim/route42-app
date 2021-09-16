@@ -176,7 +176,6 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
     public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
     public MaterialCardView materialCardView;
 
-
     public PostViewHolder(View view) {
       super(view);
       // Define click listener for the ViewHolder's View
