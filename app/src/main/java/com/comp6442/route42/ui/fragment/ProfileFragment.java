@@ -106,7 +106,7 @@ public class ProfileFragment extends Fragment {
     if (savedInstanceState != null) {
       //Restore the fragment's state here
       this.uid = savedInstanceState.getString("uid");
-      Timber.i("Restoring fragment state for uid: %s", this.uid);
+      Timber.d("Restoring fragment state for uid: %s", this.uid);
     }
 
     if (this.uid != null) {
@@ -117,10 +117,10 @@ public class ProfileFragment extends Fragment {
 
       // create observer to update the profile UI on change to the `ProfileUser`
       final Observer<User> userObserver = updatedProfileUser -> {
-//        Timber.i("O:: in the callback for observer");
-        if(updatedProfileUser == null) return;
+        Timber.i("userObserver notified: %s", updatedProfileUser);
+        if (updatedProfileUser == null) return;
         User currentProfileUser = this.viewModel.getProfileUser().getValue();
-        if( currentProfileUser.getId().equals(updatedProfileUser.getId())) {
+        if (currentProfileUser.getId().equals(updatedProfileUser.getId())) {
           renderProfile(updatedProfileUser, view);
         }
       };
@@ -268,6 +268,7 @@ public class ProfileFragment extends Fragment {
     assert this.uid != null && user.getId() != null;
 
     String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+    followSwitch.setOnCheckedChangeListener(null);
 
     // check if loggedInUser already follows profileUser
     followSwitch.setChecked(
@@ -275,7 +276,7 @@ public class ProfileFragment extends Fragment {
                     follower -> follower.getId().equals(loggedInUserUid)));
 
     followSwitch.setOnCheckedChangeListener((compoundButton, isOn) -> {
-      if(isOn) {
+      if (isOn) {
         // follow action triggers unblock
         Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
         UserRepository.getInstance().follow(loggedInUserUid, user.getId());
@@ -290,11 +291,16 @@ public class ProfileFragment extends Fragment {
     assert this.uid != null && user.getId() != null;
 
     String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+    blockSwitch.setOnCheckedChangeListener(null);
 
     // check if loggedInUser already blocked profileUser
     blockSwitch.setChecked(
             user.getBlockedBy().stream().anyMatch(
                     blocker -> blocker.getId().equals(loggedInUserUid)));
+
+    if (blockSwitch.isChecked()) {
+      followSwitch.setEnabled(false);
+    }
 
     blockSwitch.setOnCheckedChangeListener((compoundButton, isOn) -> {
       if (isOn) {

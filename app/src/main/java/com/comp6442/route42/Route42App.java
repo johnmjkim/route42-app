@@ -12,11 +12,11 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
+import com.comp6442.route42.ui.activity.MainActivity;
 import com.comp6442.route42.utils.CustomLogger;
 import com.comp6442.route42.utils.TaskCreatePosts;
 import com.comp6442.route42.utils.TaskCreateUsers;
 import com.google.firebase.auth.AuthResult;
-import com.comp6442.route42.ui.activity.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -61,7 +61,7 @@ public class Route42App extends Application {
     // create test user, sign out and take user to log in screen
     createTestUser();
     Intent intent;
-    if(BuildConfig.EMULATOR && BuildConfig.skipLogin) {
+    if (BuildConfig.EMULATOR && BuildConfig.skipLogin) {
       // sign in as test user
       mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
       intent = new Intent(getApplicationContext(), MainActivity.class);
