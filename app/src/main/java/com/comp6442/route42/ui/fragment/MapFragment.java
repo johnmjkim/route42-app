@@ -43,6 +43,8 @@ import java.util.Random;
 import timber.log.Timber;
 
 public class MapFragment extends Fragment {
+  private static final String ARG_PARAM1 = "points";
+
   private Mapbox mapbox;
   private MapView mMapView;
   private CircleManager circleManager;
@@ -131,7 +133,7 @@ public class MapFragment extends Fragment {
                             });
 
                             if (matchingDocs != null && matchingDocs.size() > 0) {
-//                              List<LatLng> points = new ArrayList<>();
+                              List<LatLng> points = new ArrayList<>();
                               List<CircleOptions> circleOptionsList = new ArrayList<>();
 
                               for (DocumentSnapshot matchingDoc : matchingDocs) {
@@ -140,7 +142,7 @@ public class MapFragment extends Fragment {
                                           matchingDoc.getDouble("latitude"),
                                           matchingDoc.getDouble("longitude")
                                   );
-//                                  points.add(point);
+                                  points.add(point);
                                   
                                   CircleOptions options = new CircleOptions()
                                           .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
@@ -154,7 +156,7 @@ public class MapFragment extends Fragment {
                               circleManager.create(circleOptionsList);
                               mapboxMap.setCameraPosition(new CameraPosition.Builder()
                                       .target(userLocation)
-                                      // .zoom(calculateDistance(points.get(0), points.get(points.size() - 1)))
+                                      .zoom(calculateDistance(points.get(0), points.get(points.size() - 1)))
                                       .build());
                             }
                           }

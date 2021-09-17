@@ -105,7 +105,7 @@ public class ProfileFragment extends Fragment {
 
     if (savedInstanceState != null) {
       //Restore the fragment's state here
-      this.uid = savedInstanceState.getString("uid");
+      this.uid = savedInstanceState.getString(ARG_PARAM1);
       Timber.d("Restoring fragment state for uid: %s", this.uid);
     }
 
