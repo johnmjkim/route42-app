@@ -1,9 +1,5 @@
 package com.comp6442.route42.ui.fragment;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -12,8 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.comp6442.route42.R;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,7 +21,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,7 +36,7 @@ public class MapsFragment extends Fragment implements LocationListener {
   private SupportMapFragment mapFragment;
 
 
-  private OnMapReadyCallback callback = new OnMapReadyCallback() {
+  private final OnMapReadyCallback callback = new OnMapReadyCallback() {
 
     /**
      * Manipulates the map once available.

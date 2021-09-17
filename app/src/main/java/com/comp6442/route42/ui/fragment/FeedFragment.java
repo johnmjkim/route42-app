@@ -24,8 +24,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.Query;
 
-import java.util.GregorianCalendar;
-
 import timber.log.Timber;
 
 /**
@@ -129,7 +127,7 @@ public class FeedFragment extends Fragment {
               // scrolling down
               searchView.animate().translationY(-searchView.getHeight()).setDuration(1000);
               bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000);
-            } else{
+            } else {
               // account for margin between top of screen and search bar
               searchView.animate().translationY(8).setDuration(1000);
               bottomNavView.animate().translationY(0).setDuration(1000);

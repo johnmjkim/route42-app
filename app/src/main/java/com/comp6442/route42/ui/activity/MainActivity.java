@@ -30,16 +30,14 @@ import timber.log.Timber;
  *  In other words, this class only contains navigation logic for the bottom nav bar.
  * */
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
-  private BottomNavigationView bottomNav;
-  private ActionBar toolbar;
-  //  private NavController navController;
-  //  private FragmentContainerView fragmentContainerView;
-
-  private MenuItem lastSelected = null;
-  private String uid;
-
   private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
   UserViewModel userViewModel;
+  //  private NavController navController;
+  //  private FragmentContainerView fragmentContainerView;
+  private BottomNavigationView bottomNav;
+  private ActionBar toolbar;
+  private MenuItem lastSelected = null;
+  private String uid;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +80,16 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     decorView.setSystemUiVisibility(
             // immersive mode full screen
             View.SYSTEM_UI_FLAG_IMMERSIVE
-            | View.SYSTEM_UI_FLAG_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            // Set the content to appear under the system bars so that the
-            // content doesn't resize when the system bars hide and show.
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
 //            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 //            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            // Hide the nav bar and status bar
-            // force back button to appear
-            | View.SYSTEM_UI_FLAG_VISIBLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    // force back button to appear
+                    | View.SYSTEM_UI_FLAG_VISIBLE
     );
   }
 

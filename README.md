@@ -21,6 +21,7 @@
 19. Added location name to post data.
 20. Implemented hide-on-scroll
 21. Got rid of mapbox stuff and switched to google maps in MapFragment. Now, MapFragment takes lon and lat as an input draws a line between two coordinates.
+22. Added lon, lat, locationName to each posts. Added location name to Post Card. Now you can click on the name of the location to see it on the map with respect to your current location.
 
 # Requirements
 
