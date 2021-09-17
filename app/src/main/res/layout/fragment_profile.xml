@@ -27,7 +27,7 @@
 
             <ImageView
                     android:id="@+id/profile_picture"
-                    android:src="@drawable/person_photo"
+                    android:src="@drawable/unknown_user"
                     android:layout_width="130dp"
                     android:layout_height="130dp"
                     android:layout_gravity="center_vertical"

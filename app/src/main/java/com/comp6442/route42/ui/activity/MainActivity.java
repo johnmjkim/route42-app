@@ -8,14 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
 
-import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.ui.fragment.FeedFragment;
 import com.comp6442.route42.ui.fragment.MapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
@@ -32,12 +30,14 @@ import timber.log.Timber;
  *  In other words, this class only contains navigation logic for the bottom nav bar.
  * */
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
+  private BottomNavigationView bottomNav;
   private ActionBar toolbar;
-  private BottomNavigationView navBarView;
+  // private NavController navController;
+  // private FragmentContainerView fragmentContainerView;
+
   private MenuItem lastSelected = null;
   private String uid;
-  // private NavHostFragment
-  // private NavGraph
+
   private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
   UserViewModel userViewModel ;
   @Override
@@ -53,11 +53,16 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     userViewModel.addSnapshotListenerToLiveUser(uid);
 
-    // bottom navigation
     toolbar = getSupportActionBar();
-    navBarView = findViewById(R.id.bottom_navigation_view);
-    navBarView.setOnItemSelectedListener(this);
-    navBarView.setSelectedItemId(R.id.navigation_profile);
+
+    // bottom navigation
+    bottomNav = findViewById(R.id.bottom_navigation_view);
+    bottomNav.setOnItemSelectedListener(this);
+    bottomNav.setSelectedItemId(R.id.navigation_profile);
+
+    // navController = Navigation.findNavController(this, R.id.fragment_container_view);
+    // NavigationUI.setupWithNavController(bottomNav, navController);
+    // fragmentContainerView = findViewById(R.id.fragment_container_view);
   }
 
   /**
