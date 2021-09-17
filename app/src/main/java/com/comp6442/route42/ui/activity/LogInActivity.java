@@ -33,6 +33,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+//    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     setContentView(R.layout.activity_login);
     mAuth = FirebaseAuthLiveData.getInstance().getAuth();
 
@@ -42,6 +43,8 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     b1 = findViewById(R.id.login_button);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);
+//    ActionBar toolbar = getSupportActionBar();
+//    toolbar.hide();
   }
 
   @Override

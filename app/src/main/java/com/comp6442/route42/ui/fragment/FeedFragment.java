@@ -21,6 +21,7 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.PostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.Query;
 
 import timber.log.Timber;
@@ -35,6 +36,8 @@ public class FeedFragment extends Fragment {
   private String uid;
   private UserViewModel viewModel;
   private RecyclerView recyclerView;
+  private SearchView searchView;
+  private BottomNavigationView bottomNavView;
   private PostAdapter adapter;
   private LinearLayoutManager layoutManager;
 
@@ -110,35 +113,59 @@ public class FeedFragment extends Fragment {
 
       Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
       query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
+
+      // hide search view on scroll
+      bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+      searchView = view.findViewById(R.id.search_view);
+      recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+          super.onScrolled(recyclerView, dx, dy);
+
+          if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
+            if (dy > 0) {
+              // scrolling down
+              searchView.animate().translationY(-searchView.getHeight()).setDuration(1000);
+              bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000);
+            } else{
+              // account for margin between top of screen and search bar
+              searchView.animate().translationY(8).setDuration(1000);
+              bottomNavView.animate().translationY(0).setDuration(1000);
+            }
+          }
+        }
+
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+          super.onScrollStateChanged(recyclerView, newState);
+        }
+      });
+
+      // search
       SearchView searchView = (SearchView) view.findViewById(R.id.search_view);
       searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
         @Override
         public boolean onQueryTextSubmit(String s) {
-
           return false;
         }
 
-
         @Override
         public boolean onQueryTextChange(String s) {
-
           Query query;
-          if(s.length()==0||s==null){
-            query = PostRepository.getInstance().getVisiblePosts(user,20);
-          }
-          else {
+          if (s.length() == 0 || s == null) {
+            query = PostRepository.getInstance().getVisiblePosts(user, 20);
+          } else {
             query = PostRepository.getInstance().getSearchedPosts(user, s, 20);
           }
           FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
                   .setQuery(query, Post.class)
                   .build();
-          adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+          adapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
           recyclerView.setAdapter(adapter);
           adapter.startListening();
           Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
           query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
-
 
           return true;
         }
