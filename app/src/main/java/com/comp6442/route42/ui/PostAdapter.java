@@ -20,6 +20,7 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
+import com.comp6442.route42.ui.fragment.MapsFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -30,10 +31,10 @@ import com.google.firebase.storage.StorageReference;
 import timber.log.Timber;
 
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
-public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, FirestorePostAdapter.PostViewHolder> {
+public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.PostViewHolder> {
   private final String loggedInUID;
 
-  public FirestorePostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
+  public PostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
     super(options);
     this.loggedInUID = loggedInUID;
   }
