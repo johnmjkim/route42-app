@@ -139,6 +139,7 @@ public class FeedFragment extends Fragment {
           Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
           query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
 
+
           return true;
         }
       });
