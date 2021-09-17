@@ -80,6 +80,22 @@ public class PostRepository extends FirestoreRepository<Post> {
               .limit(limit);
     }
   }
+  public Query getSearchedPosts(User user, String name,int limit) {
+    if (user.getBlockedBy().size() > 0) {
+      Timber.i("breadcrumb");
+      return this.collection
+              .whereGreaterThanOrEqualTo("userName", name)
+              .whereLessThanOrEqualTo("userName", name+"\uF7FF")
+              .limit(limit);
+    } else {
+      Timber.i("breadcrumb");
+      return this.collection
+              .whereGreaterThanOrEqualTo("userName", name)
+              .whereLessThanOrEqualTo("userName", name+"\uF7FF")
+              .limit(limit);
+    }
+  }
+
 
   public void createOne(Post post) {
     // add post only if id does not exist in collection
