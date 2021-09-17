@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     switch (item.getItemId()) {
       case R.id.navigation_profile:
         fragment = new ProfileFragment();
+        userViewModel.setProfileUser(userViewModel.getLiveUser().getValue());
         toolbar.setTitle(R.string.title_fragment_profile);
         break;
       case R.id.navigation_feed:

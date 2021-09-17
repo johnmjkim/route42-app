@@ -115,10 +115,16 @@ public class ProfileFragment extends Fragment {
       Timber.i("Cleaned uid: %s", this.uid);
 
       // create observer to update the profile UI on change to the `ProfileUser`
-      final Observer<User> userObserver = profileUser -> renderProfile(profileUser, view);
+      final Observer<User> userObserver = updatedProfileUser -> {
+//        Timber.i("O:: in the callback for observer");
+        if(updatedProfileUser == null) return;
+        User currentProfileUser = this.viewModel.getProfileUser().getValue();
+        if( currentProfileUser.getId().equals(updatedProfileUser.getId())) {
+          renderProfile(updatedProfileUser, view);
+        }
+      };
 
       // initialize profileUser, observe change to the profileUser data, and get a registration
-      viewModel.loadProfileUser(this.uid);
       viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
       firebaseListenerRegs.add(viewModel.addSnapshotListenerToProfileUser(this.uid));
     } else {
@@ -287,6 +293,7 @@ public class ProfileFragment extends Fragment {
     super.onDestroy();
     //detach listeners when Activity destroyed
     firebaseListenerRegs.forEach(ListenerRegistration::remove);
+    Timber.i(String.valueOf(firebaseListenerRegs.size()));
   }
 
   public void renderProfile(User profileUser, View view) {
