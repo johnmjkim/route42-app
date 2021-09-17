@@ -30,10 +30,10 @@ import com.google.firebase.storage.StorageReference;
 import timber.log.Timber;
 
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
-public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, FirestorePostAdapter.PostViewHolder> {
+public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.PostViewHolder> {
   private final String loggedInUID;
 
-  public FirestorePostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
+  public PostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
     super(options);
     this.loggedInUID = loggedInUID;
   }
@@ -105,6 +105,14 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     viewHolder.userNameView.setText(post.getUserName());
     viewHolder.descriptionView.setText(post.getPostDescription());
 
+    // TODO: show mapfragment onclick listener
+    if (post.getLocationName() != null) viewHolder.locationTextView.setText(post.getLocationName());
+    else {
+      viewHolder.locationTextView.setText(" ");
+      viewHolder.locationTextView.setText("");
+      viewHolder.locationPin.setVisibility(View.INVISIBLE);
+    }
+
     if (post.getHashtags().size() > 0)
       viewHolder.hashtagsTextView.setText(String.join(" ", post.getHashtags()));
 
@@ -164,9 +172,10 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
   }
 
   public static class PostViewHolder extends RecyclerView.ViewHolder {
-    public ImageView userIcon, imageView, like, unlike;
-    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView;
+    public ImageView userIcon, imageView, like, unlike, locationPin;
+    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
     public MaterialCardView materialCardView;
+
 
     public PostViewHolder(View view) {
       super(view);
@@ -176,11 +185,13 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       like = view.findViewById(R.id.like_button);
       unlike = view.findViewById(R.id.unlike_button);
 
+      materialCardView = view.findViewById(R.id.post_card);
       userNameView = view.findViewById(R.id.card_username);
       hashtagsTextView = view.findViewById(R.id.card_hashtags);
       descriptionView = view.findViewById(R.id.card_description);
       likeCountTextView = view.findViewById(R.id.like_count_text);
-      materialCardView = view.findViewById(R.id.post_card);
+      locationTextView = view.findViewById(R.id.location);
+      locationPin = view.findViewById(R.id.pin);
     }
   }
 }

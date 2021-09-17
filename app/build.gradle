@@ -16,7 +16,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "EMULATOR", "true")
-        buildConfigField("boolean", "loadData", "true")
+        buildConfigField("boolean", "loadData", "false")
         buildConfigField("boolean", "skipLogin", "false")
         buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
@@ -26,7 +26,7 @@ android {
         buildConfigField("boolean", "DEMO", "false")
         buildConfigField("int", "batchSize", "1")
         buildConfigField("int", "intervalLengthInSeconds", "4")
-        buildConfigField("int", "demoPostLimit", "120")
+        buildConfigField("int", "demoPostLimit", "500") // also controls how many posts are inserted when loadData is true
     }
 
     buildTypes {

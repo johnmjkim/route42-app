@@ -45,8 +45,7 @@ public class TaskCreatePosts extends DataTask<Post> {
   private void createPosts() {
     if (!DEMO) {
       PostRepository.getInstance().createMany(postList);
-    }
-    else {
+    } else {
       createPostsMiniBatch(
               BuildConfig.batchSize,
               Math.min(postList.size(), BuildConfig.demoPostLimit)

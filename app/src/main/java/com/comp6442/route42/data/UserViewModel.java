@@ -79,7 +79,7 @@ public class UserViewModel extends ViewModel {
     return profileUser;
   }
 
-  private void setProfileUser(User user) {
+  public void setProfileUser(User user) {
     this.profileUser.setValue(user);
   }
 
