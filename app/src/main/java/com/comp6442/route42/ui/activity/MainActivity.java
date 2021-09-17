@@ -15,6 +15,7 @@ import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.ui.fragment.FeedFragment;
+import com.comp6442.route42.ui.fragment.MapsFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         toolbar.setTitle(R.string.title_fragment_feed);
         break;
       case R.id.navigation_map:
-        fragment = new MapFragment();
+        fragment = new MapsFragment();
         toolbar.setTitle(R.string.title_fragment_map);
         break;
     }
