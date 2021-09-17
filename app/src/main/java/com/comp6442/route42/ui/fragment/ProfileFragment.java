@@ -92,8 +92,9 @@ public class ProfileFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     Timber.d("breadcrumb");
 
-    // set view variables
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+
+    // set view variables
     userNameView = view.findViewById(R.id.profile_username);
     blockSwitch = view.findViewById(R.id.profile_block_switch);
     followSwitch = view.findViewById(R.id.profile_follow_switch);
@@ -118,9 +119,28 @@ public class ProfileFragment extends Fragment {
       final Observer<User> userObserver = profileUser -> renderProfile(profileUser, view);
 
       // initialize profileUser, observe change to the profileUser data, and get a registration
+      // TODO: issue: ProfileUser not being updated using this.uid, still returns previously set uid
+
+      // when using this method below, the above
+//      UserRepository.getInstance().getOne(this.uid).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//        @Override
+//        public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException error) {
+//          if(error != null) {
+//            Timber.w("Could not load profile user");
+//            Timber.e(error);
+//          }
+//
+//          if (snapshot != null && snapshot.exists()) {
+//            User user = snapshot.toObject(User.class);
+//            renderProfile(user, view);
+//          }
+//        }
+//      });
+
       viewModel.loadProfileUser(this.uid);
       viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
       firebaseListenerRegs.add(viewModel.addSnapshotListenerToProfileUser(this.uid));
+
     } else {
       Timber.w("uid is null");
     }
@@ -208,6 +228,22 @@ public class ProfileFragment extends Fragment {
   private void setFollowerCount(User user) {
     try {
       followerCountView.setText(String.valueOf(user.getFollowers().size()));
+      followerCountView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new UserListFragment();
+          Bundle bundle = new Bundle();
+
+          bundle.putString("uid", user.getId());
+          bundle.putString("fieldName", "followers");
+          fragment.setArguments(bundle);
+          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
       Timber.i("Set follower count");
     } catch (Exception exc) {
       Timber.w("Could not set follower count");
@@ -218,6 +254,22 @@ public class ProfileFragment extends Fragment {
   private void setFollowingCount(User user) {
     try {
       followingCountView.setText(String.valueOf(user.getFollowing().size()));
+      followingCountView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new UserListFragment();
+          Bundle bundle = new Bundle();
+
+          bundle.putString("uid", user.getId());
+          bundle.putString("fieldName", "following");
+          fragment.setArguments(bundle);
+          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
       Timber.i("Set follow count");
     } catch (Exception exc) {
       Timber.w("Could not set follow count");
