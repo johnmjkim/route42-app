@@ -4,26 +4,38 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.comp6442.route42.R;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import timber.log.Timber;
 
-public class MapsFragment extends Fragment {
+public class MapsFragment extends Fragment implements LocationListener {
   private static final String ARG_PARAM1 = "lat";
   private static final String ARG_PARAM2 = "lon";
   private Double lat, lon;
   private LatLng userLocation, imageLocation;
+
+  private SupportMapFragment mapFragment;
 
 
   private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -39,13 +51,30 @@ public class MapsFragment extends Fragment {
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-      LatLng sydney = new LatLng(-34, 151);
       userLocation = new LatLng(-33.872789d, 151.205554d);
       imageLocation = new LatLng(lat, lon);
 
+      LatLngBounds.Builder builder = new LatLngBounds.Builder();
+      builder.include(userLocation);
+      builder.include(imageLocation);
+      LatLngBounds bounds = builder.build();
+      int padding = 50; // offset from edges of the map in pixels
+      CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+      googleMap.setBuildingsEnabled(true);
+      googleMap.addMarker(new MarkerOptions().position(userLocation).title("User"));
+      googleMap.addMarker(new MarkerOptions().position(imageLocation).title("Location of Image"));
+      googleMap.addPolyline(new PolylineOptions().add(userLocation, imageLocation).width(5).color(Color.RED));
+      googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+
       Timber.i("Creating map. User location: (lat, lon) = %f, %f", imageLocation.latitude, imageLocation.longitude);
-      googleMap.addMarker(new MarkerOptions().position(imageLocation).title("Marker in Sydney"));
-      googleMap.moveCamera(CameraUpdateFactory.newLatLng(imageLocation));
+      Handler handler = new Handler();
+      handler.postDelayed(new Runnable() {
+        public void run() {
+          googleMap.animateCamera(cameraUpdate);
+//          googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(imageLocation, 15.0f));
+        }
+      }, 1000);
     }
   };
 
@@ -81,7 +110,11 @@ public class MapsFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+    mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+
+    // reveal bottom nav if hidden
+    BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+    bottomNavView.animate().translationY(0).setDuration(250);
 
     if (savedInstanceState != null) {
       //Restore the fragment state
@@ -93,5 +126,28 @@ public class MapsFragment extends Fragment {
     if (mapFragment != null) {
       mapFragment.getMapAsync(callback);
     }
+  }
+
+  @Override
+  public void onLocationChanged(@NonNull Location location) {
+    Timber.i(location.toString());
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    mapFragment.onPause();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    mapFragment.onResume();
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    mapFragment.onDestroyView();
   }
 }

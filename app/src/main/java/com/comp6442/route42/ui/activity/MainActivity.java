@@ -32,8 +32,8 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
   private BottomNavigationView bottomNav;
   private ActionBar toolbar;
-  // private NavController navController;
-  // private FragmentContainerView fragmentContainerView;
+  //  private NavController navController;
+  //  private FragmentContainerView fragmentContainerView;
 
   private MenuItem lastSelected = null;
   private String uid;
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     bottomNav.setOnItemSelectedListener(this);
     bottomNav.setSelectedItemId(R.id.navigation_profile);
 
-    // navController = Navigation.findNavController(this, R.id.fragment_container_view);
     // NavigationUI.setupWithNavController(bottomNav, navController);
     // fragmentContainerView = findViewById(R.id.fragment_container_view);
   }
@@ -81,15 +80,19 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // Enables fullscreen
     View decorView = getWindow().getDecorView();
     decorView.setSystemUiVisibility(
+            // immersive mode full screen
             View.SYSTEM_UI_FLAG_IMMERSIVE
-                    // Set the content to appear under the system bars so that the
-                    // content doesn't resize when the system bars hide and show.
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    // Hide the nav bar and status bar
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            // Set the content to appear under the system bars so that the
+            // content doesn't resize when the system bars hide and show.
+//            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            // Hide the nav bar and status bar
+            // force back button to appear
+            | View.SYSTEM_UI_FLAG_VISIBLE
+    );
   }
 
   // Shows the system bars by removing all the flags

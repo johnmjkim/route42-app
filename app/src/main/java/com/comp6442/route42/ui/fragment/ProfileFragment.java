@@ -24,6 +24,7 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
@@ -91,6 +92,9 @@ public class ProfileFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     Timber.d("breadcrumb");
+
+    BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+    bottomNavView.animate().translationY(0).setDuration(250);
 
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 

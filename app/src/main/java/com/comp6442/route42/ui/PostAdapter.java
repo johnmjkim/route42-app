@@ -24,6 +24,7 @@ import com.comp6442.route42.ui.fragment.MapsFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.StorageReference;
@@ -109,6 +110,28 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
     if (post.getHashtags().size() > 0)
       viewHolder.hashtagsTextView.setText(String.join(" ", post.getHashtags()));
 
+    if (post.getLocationName() != null) {
+      viewHolder.locationTextView.setText(post.getLocationName());
+      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new MapsFragment();
+          Bundle bundle = new Bundle();
+          bundle.putDouble("lat", post.getLatitude());
+          bundle.putDouble("lon", post.getLongitude());
+          fragment.setArguments(bundle);
+          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
+    } else {
+      viewHolder.locationTextView.setText(" ");
+      viewHolder.locationTextView.setText("");
+    }
+
     Timber.d("OnBindView complete.");
   }
 
@@ -153,7 +176,6 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
     viewHolder.userNameView.setOnClickListener(view -> {
       Fragment fragment = new ProfileFragment();
       Bundle bundle = new Bundle();
-
       bundle.putString("uid", post.getUid().getId());
       fragment.setArguments(bundle);
       ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
