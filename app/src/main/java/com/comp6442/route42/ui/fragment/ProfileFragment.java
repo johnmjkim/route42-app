@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -126,6 +125,7 @@ public class ProfileFragment extends Fragment {
       };
 
       // initialize profileUser, observe change to the profileUser data, and get a registration
+      viewModel.loadProfileUser(this.uid);
       viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
       firebaseListenerRegs.add(viewModel.addSnapshotListenerToProfileUser(this.uid));
     } else {
