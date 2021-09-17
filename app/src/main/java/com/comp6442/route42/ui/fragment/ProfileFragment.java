@@ -43,7 +43,7 @@ public class ProfileFragment extends Fragment {
   private UserViewModel viewModel;
   private TextView userNameView, followerCountView, followingCountView;
   private SwitchMaterial blockSwitch, followSwitch;
-  private MaterialButton messageButton, signOutButton;
+  private MaterialButton messageButton, signOutButton, settingsButton;
 
   public ProfileFragment() {
     // Required empty public constructor
@@ -100,6 +100,7 @@ public class ProfileFragment extends Fragment {
     followSwitch = view.findViewById(R.id.profile_follow_switch);
     messageButton = view.findViewById(R.id.profile_message_button);
     signOutButton = view.findViewById(R.id.sign_out_button);
+    settingsButton = view.findViewById(R.id.settings_button);
     followerCountView = view.findViewById(R.id.profile_primary_text);
     followingCountView = view.findViewById(R.id.profile_secondary_text);
 
@@ -357,20 +358,29 @@ public class ProfileFragment extends Fragment {
     Timber.i("Current LiveUser: %s", liveUser);
     Timber.i("Current ProfileUser: %s", viewModel.getProfileUser().getValue());
 
-    int visibility;
-
     // if a user is looking at his/her own profile, hide Follow and Message buttons.
     // TODO: delete these parts entirely instead of setting to invisible
+    int visibility;
+
     if (liveUser.getId().equals(profileUser.getId())) {
       Timber.i("Viewing self's profile. Hiding Follow and Message buttons.");
       visibility = View.INVISIBLE;
       signOutButton.setEnabled(true);
       signOutButton.setOnClickListener(unused -> ProfileFragment.this.logOut());
       signOutButton.setVisibility(View.VISIBLE);
+      settingsButton.setVisibility(View.VISIBLE);
+      settingsButton.setOnClickListener(unused -> {
+        ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container_view, new OptionsFragment())
+                .addToBackStack(null)
+                .commit();
+      });
     } else {
       visibility = View.VISIBLE;
       signOutButton.setEnabled(false);
       signOutButton.setVisibility(View.INVISIBLE);
+      settingsButton.setVisibility(View.INVISIBLE);
     }
 
     followSwitch.setVisibility(visibility);
