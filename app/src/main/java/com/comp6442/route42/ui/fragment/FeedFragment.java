@@ -18,7 +18,7 @@ import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.FirestorePostAdapter;
+import com.comp6442.route42.ui.PostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.Query;
 
@@ -34,7 +34,7 @@ public class FeedFragment extends Fragment {
   private String uid;
   private UserViewModel viewModel;
   private RecyclerView recyclerView;
-  private FirestorePostAdapter adapter;
+  private PostAdapter adapter;
   private LinearLayoutManager layoutManager;
 
   public FeedFragment() {
@@ -78,17 +78,17 @@ public class FeedFragment extends Fragment {
     }
 
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-    if (this.uid != null && viewModel != null) {
+    if (this.uid != null) {
       User user = viewModel.getLiveUser().getValue();
 
       assert user != null;
 
       Query query = PostRepository.getInstance().getVisiblePosts(user, 20);
-      FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
+      FirestoreRecyclerOptions<Post> postsOptions = new FirestoreRecyclerOptions.Builder<Post>()
               .setQuery(query, Post.class)
               .build();
 
-      adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+      adapter = new PostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
 //      adapter.notifyDataSetChanged();
       layoutManager = new LinearLayoutManager(getActivity());
       layoutManager.setReverseLayout(false);
@@ -111,7 +111,7 @@ public class FeedFragment extends Fragment {
       query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
 
     } else {
-      Timber.e("not signed in");
+      Timber.e("uid is null");
     }
   }
 

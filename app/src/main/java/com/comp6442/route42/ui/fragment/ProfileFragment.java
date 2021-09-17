@@ -92,8 +92,9 @@ public class ProfileFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     Timber.d("breadcrumb");
 
-    // set view variables
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+
+    // set view variables
     userNameView = view.findViewById(R.id.profile_username);
     blockSwitch = view.findViewById(R.id.profile_block_switch);
     followSwitch = view.findViewById(R.id.profile_follow_switch);
@@ -214,6 +215,22 @@ public class ProfileFragment extends Fragment {
   private void setFollowerCount(User user) {
     try {
       followerCountView.setText(String.valueOf(user.getFollowers().size()));
+      followerCountView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new UserListFragment();
+          Bundle bundle = new Bundle();
+
+          bundle.putString("uid", user.getId());
+          bundle.putString("fieldName", "followers");
+          fragment.setArguments(bundle);
+          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
       Timber.i("Set follower count");
     } catch (Exception exc) {
       Timber.w("Could not set follower count");
@@ -224,6 +241,22 @@ public class ProfileFragment extends Fragment {
   private void setFollowingCount(User user) {
     try {
       followingCountView.setText(String.valueOf(user.getFollowing().size()));
+      followingCountView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new UserListFragment();
+          Bundle bundle = new Bundle();
+
+          bundle.putString("uid", user.getId());
+          bundle.putString("fieldName", "following");
+          fragment.setArguments(bundle);
+          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
       Timber.i("Set follow count");
     } catch (Exception exc) {
       Timber.w("Could not set follow count");
@@ -293,7 +326,6 @@ public class ProfileFragment extends Fragment {
     super.onDestroy();
     //detach listeners when Activity destroyed
     firebaseListenerRegs.forEach(ListenerRegistration::remove);
-    Timber.i(String.valueOf(firebaseListenerRegs.size()));
   }
 
   public void renderProfile(User profileUser, View view) {

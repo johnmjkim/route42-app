@@ -15,9 +15,9 @@ public class User extends Model {
   private String userName;
   private int isPublic = 1;
   private String profilePicUrl;
-  private List<DocumentReference> blockedBy = new ArrayList<>();
   private List<DocumentReference> following = new ArrayList<>();
   private List<DocumentReference> followers = new ArrayList<>();
+  private List<DocumentReference> blockedBy = new ArrayList<>();
   @Exclude
   private String password = null;
 

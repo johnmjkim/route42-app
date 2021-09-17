@@ -53,12 +53,10 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     userViewModel.addSnapshotListenerToLiveUser(uid);
 
-    MainActivity self = this;
-
     // bottom navigation
     toolbar = getSupportActionBar();
     navBarView = findViewById(R.id.bottom_navigation_view);
-    navBarView.setOnItemSelectedListener(self);
+    navBarView.setOnItemSelectedListener(this);
     navBarView.setSelectedItemId(R.id.navigation_profile);
   }
 
