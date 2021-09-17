@@ -159,7 +159,7 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
       ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
               .beginTransaction()
               .add(R.id.fragment_container_view, fragment)
-              .addToBackStack(null)
+              .addToBackStack(this.getClass().getCanonicalName())
               .commit();
     });
   }
@@ -171,7 +171,6 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
 
     public PostViewHolder(View view) {
       super(view);
-      // Define click listener for the ViewHolder's View
       userIcon = view.findViewById(R.id.card_profile_pic);
       imageView = view.findViewById(R.id.card_main_image);
       like = view.findViewById(R.id.like_button);
