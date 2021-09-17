@@ -20,7 +20,6 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.MapsFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -31,10 +30,10 @@ import com.google.firebase.storage.StorageReference;
 import timber.log.Timber;
 
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
-public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.PostViewHolder> {
+public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, FirestorePostAdapter.PostViewHolder> {
   private final String loggedInUID;
 
-  public PostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
+  public FirestorePostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
     super(options);
     this.loggedInUID = loggedInUID;
   }
@@ -186,7 +185,7 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
       ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
               .beginTransaction()
               .add(R.id.fragment_container_view, fragment)
-              .addToBackStack(null)
+              .addToBackStack(this.getClass().getCanonicalName())
               .commit();
     });
   }
@@ -198,7 +197,6 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
 
     public PostViewHolder(View view) {
       super(view);
-      // Define click listener for the ViewHolder's View
       userIcon = view.findViewById(R.id.card_profile_pic);
       imageView = view.findViewById(R.id.card_main_image);
       like = view.findViewById(R.id.like_button);
