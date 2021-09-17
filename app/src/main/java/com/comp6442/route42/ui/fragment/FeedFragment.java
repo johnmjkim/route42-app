@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -109,7 +110,39 @@ public class FeedFragment extends Fragment {
 
       Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
       query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
+      SearchView searchView = (SearchView) view.findViewById(R.id.search_view);
+      searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+        @Override
+        public boolean onQueryTextSubmit(String s) {
+
+          return false;
+        }
+
+
+        @Override
+        public boolean onQueryTextChange(String s) {
+
+          Query query;
+          if(s.length()==0||s==null){
+            query = PostRepository.getInstance().getVisiblePosts(user,20);
+          }
+          else {
+            query = PostRepository.getInstance().getSearchedPosts(user, s, 20);
+          }
+          FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
+                  .setQuery(query, Post.class)
+                  .build();
+          adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+          recyclerView.setAdapter(adapter);
+          adapter.startListening();
+          Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+          query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
+
+
+          return true;
+        }
+      });
     } else {
       Timber.e("not signed in");
     }
