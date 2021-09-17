@@ -15,7 +15,6 @@ import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.ui.fragment.FeedFragment;
-import com.comp6442.route42.ui.fragment.MapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;

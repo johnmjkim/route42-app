@@ -1,8 +1,6 @@
 package com.comp6442.route42.ui.fragment;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,7 +30,6 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.annotation.CircleManager;
 import com.mapbox.mapboxsdk.plugins.annotation.CircleOptions;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.utils.ColorUtils;
 
 import java.util.List;
@@ -104,7 +101,7 @@ public class PhotoLocationFragment extends Fragment implements OnMapReadyCallbac
             imageLocation.getLatitude(),
             imageLocation.getLongitude());
 
-    mapView = view.findViewById(R.id.mapView);
+    mapView = view.findViewById(R.id.fragment_map);
     mapView.onCreate(savedInstanceState);
     mapView.getMapAsync(mapboxMap ->
             mapboxMap.setStyle(

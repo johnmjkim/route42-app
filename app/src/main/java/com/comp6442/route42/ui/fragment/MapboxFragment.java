@@ -19,8 +19,6 @@ import com.comp6442.route42.data.repository.PostRepository;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -32,17 +30,15 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.annotation.CircleManager;
 import com.mapbox.mapboxsdk.plugins.annotation.CircleOptions;
-import com.mapbox.mapboxsdk.plugins.annotation.LineOptions;
 import com.mapbox.mapboxsdk.utils.ColorUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import timber.log.Timber;
 
-public class MapFragment extends Fragment {
+public class MapboxFragment extends Fragment {
   private static final String ARG_PARAM1 = "points";
 
   private Mapbox mapbox;
@@ -54,7 +50,7 @@ public class MapFragment extends Fragment {
 
   private FusedLocationProviderClient fusedLocationClient;
 
-  public MapFragment() {
+  public MapboxFragment() {
     // Required empty public constructor
   }
 
@@ -107,7 +103,7 @@ public class MapFragment extends Fragment {
 
                 // matchingDocs contains the results
                 Timber.i("Found %d documents within %f", matchingDocs.size(), radiusInM);
-                mMapView = view.findViewById(R.id.mapView);
+//                mMapView = view.findViewById(R.id.map);
                 mMapView.onCreate(savedInstanceState);
                 mMapView.getMapAsync(mapboxMap -> mapboxMap.setStyle(Style.DARK,
                         style -> {
@@ -143,7 +139,7 @@ public class MapFragment extends Fragment {
                                           matchingDoc.getDouble("longitude")
                                   );
                                   points.add(point);
-                                  
+
                                   CircleOptions options = new CircleOptions()
                                           .withLatLng(new LatLng(point.getLatitude(), point.getLongitude()))
                                           .withCircleColor(ColorUtils.colorToRgbaString(Color.rgb(0, 255, 204)))
