@@ -19,6 +19,7 @@
 17. Add basic search bar and function in FeedFragment. Will add two aspects(1.update prefect search(like in sql),2. add hashtag and context search)
 18. Add the ability to show list of following / followed users.
 19. Added location name to post data.
+20. Implement hide-on-scroll
 
 # Requirements
 
