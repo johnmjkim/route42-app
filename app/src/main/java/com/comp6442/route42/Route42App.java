@@ -60,7 +60,8 @@ public class Route42App extends Application {
     }
 
     // create test user, sign out and take user to log in screen
-    createTestUser();
+    if (BuildConfig.loadData) createTestUser();
+
     Intent intent;
     if (BuildConfig.EMULATOR && BuildConfig.skipLogin) {
       // sign in as test user
