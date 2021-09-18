@@ -177,6 +177,8 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
       Fragment fragment = new ProfileFragment();
       Bundle bundle = new Bundle();
       bundle.putString("uid", post.getUid().getId());
+
+      Timber.i("Taking user to Profile: %s", post.getUid().get());
       fragment.setArguments(bundle);
       ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
               .beginTransaction()
