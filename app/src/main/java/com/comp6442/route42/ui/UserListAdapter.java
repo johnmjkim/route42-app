@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,11 +19,7 @@ import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
@@ -33,7 +28,7 @@ import timber.log.Timber;
 
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHolder> {
-  private List<User> users;
+  private final List<User> users;
 
   public UserListAdapter(List<User> users) {
     this.users = users;

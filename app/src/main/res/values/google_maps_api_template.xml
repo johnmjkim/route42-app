@@ -9,8 +9,8 @@
     Once you have your key (it starts with "pk"), uncomment and replace the "mapbox_api_key"
     string in this file.
     -->
-<!--    <string name="mapbox_api_key" translatable="false" templateMergeStrategy="preserve">YOUR_KEY_HERE</string>-->
+    <!--    <string name="mapbox_api_key" translatable="false" templateMergeStrategy="preserve">YOUR_KEY_HERE</string>-->
 
-<!--    https://developers.google.com/maps/documentation/android-sdk/get-api-key-->
-<!--    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">YOUR_KEY_HERE</string>-->
+    <!--    https://developers.google.com/maps/documentation/android-sdk/get-api-key-->
+    <!--    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">YOUR_KEY_HERE</string>-->
 </resources>

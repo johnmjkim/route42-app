@@ -142,7 +142,7 @@ public class FeedFragment extends Fragment {
       });
 
       // search
-      SearchView searchView = (SearchView) view.findViewById(R.id.search_view);
+      SearchView searchView = view.findViewById(R.id.search_view);
       searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
         @Override
@@ -153,7 +153,7 @@ public class FeedFragment extends Fragment {
         @Override
         public boolean onQueryTextChange(String s) {
           Query query;
-          if (s.length() == 0 || s == null) {
+          if (s.length() == 0) {
             query = PostRepository.getInstance().getVisiblePosts(user, 20);
           } else {
             query = PostRepository.getInstance().getSearchedPosts(user, s, 20);

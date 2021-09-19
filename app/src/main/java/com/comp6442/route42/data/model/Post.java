@@ -18,7 +18,8 @@ public class Post extends Model {
   private String userName;
   private int isPublic;
   private String profilePicUrl;
-  @ServerTimestamp private Date postDatetime;
+  @ServerTimestamp
+  private Date postDatetime;
   private String postDescription = "";
   private String locationName;
   private Double latitude;

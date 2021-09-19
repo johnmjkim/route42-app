@@ -1,7 +1,6 @@
 package com.comp6442.route42.ui.fragment;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,22 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.UserViewModel;
-import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
-import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
-import com.comp6442.route42.ui.PostAdapter;
 import com.comp6442.route42.ui.UserListAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.SuccessContinuation;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import timber.log.Timber;
@@ -44,8 +33,8 @@ import timber.log.Timber;
  */
 public class UserListFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
-  private String uid;
   private static final String ARG_PARAM2 = "fieldName";
+  private String uid;
   private String fieldName;
 
   private UserViewModel viewModel;
@@ -94,7 +83,7 @@ public class UserListFragment extends Fragment {
     }
 
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-    
+
     if (this.uid != null) {
       viewModel.loadProfileUser(uid);
       User user = viewModel.getProfileUser().getValue();
@@ -118,30 +107,30 @@ public class UserListFragment extends Fragment {
 
         List<DocumentReference> finalUsersRef = usersRef;
         usersRef.forEach(userRef -> {
-                String id = userRef.getId();
-                if (id.contains("\"")) id = id.replaceAll("^\"|\"$", "");
-                Timber.i("ID=%s",id);
-                UserRepository.getInstance().getOne(id).get().addOnSuccessListener(
-                        snapshot1 -> {
-                          if (snapshot1.exists()) {
-                            Timber.i(snapshot1.toObject(User.class).toString());
-                            users.add(snapshot1.toObject(User.class));
-                          }
+          String id = userRef.getId();
+          if (id.contains("\"")) id = id.replaceAll("^\"|\"$", "");
+          Timber.i("ID=%s", id);
+          UserRepository.getInstance().getOne(id).get().addOnSuccessListener(
+                  snapshot1 -> {
+                    if (snapshot1.exists()) {
+                      Timber.i(snapshot1.toObject(User.class).toString());
+                      users.add(snapshot1.toObject(User.class));
+                    }
 
-                          if (users.size() == finalUsersRef.size()) {
-                            UserListAdapter adapter = new UserListAdapter(users);
-                            layoutManager = new LinearLayoutManager(getActivity());
-                            layoutManager.setReverseLayout(false);
-                            layoutManager.setStackFromEnd(false);
+                    if (users.size() == finalUsersRef.size()) {
+                      UserListAdapter adapter = new UserListAdapter(users);
+                      layoutManager = new LinearLayoutManager(getActivity());
+                      layoutManager.setReverseLayout(false);
+                      layoutManager.setStackFromEnd(false);
 
-                            recyclerView = view.findViewById(R.id.recycler_view_user);
-                            recyclerView.setLayoutManager(layoutManager);
-                            recyclerView.setAdapter(adapter);
-                            recyclerView.setHasFixedSize(false);
-                            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.HORIZONTAL));
-                            Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
-                          }
-                        });
+                      recyclerView = view.findViewById(R.id.recycler_view_user);
+                      recyclerView.setLayoutManager(layoutManager);
+                      recyclerView.setAdapter(adapter);
+                      recyclerView.setHasFixedSize(false);
+                      recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.HORIZONTAL));
+                      Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+                    }
+                  });
         });
 
       }

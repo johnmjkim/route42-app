@@ -20,12 +20,12 @@ import java.util.Random;
 import timber.log.Timber;
 
 public class MapFragment extends Fragment {
+  private final Random random = new Random();
+  private final List<DocumentSnapshot> matchingDocs = new ArrayList<>();
   private Mapbox mapbox;
   private MapView mMapView;
   private CircleManager circleManager;
   private LatLng userLocation;
-  private final Random random = new Random();
-  private final List<DocumentSnapshot> matchingDocs = new ArrayList<>();
 
 //  private FusedLocationProviderClient fusedLocationClient;
 //

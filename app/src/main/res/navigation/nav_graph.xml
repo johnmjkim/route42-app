@@ -20,7 +20,7 @@
             android:id="@+id/feedFragment"
             android:name="com.comp6442.route42.ui.fragment.FeedFragment"
             android:label="fragment_feed"
-            tools:layout="@layout/fragment_feed" >
+            tools:layout="@layout/fragment_feed">
         <action
                 android:id="@+id/action_feedFragment_to_profileNavSelection"
                 app:destination="@id/navigation_profile" />
@@ -32,7 +32,7 @@
             android:id="@+id/mapFragment"
             android:name="com.comp6442.route42.ui.fragment.MapsFragment"
             android:label="fragment_map"
-            tools:layout="@layout/fragment_maps" >
+            tools:layout="@layout/fragment_maps">
         <action
                 android:id="@+id/action_mapFragment_to_navigation_profile"
                 app:destination="@id/navigation_profile" />
