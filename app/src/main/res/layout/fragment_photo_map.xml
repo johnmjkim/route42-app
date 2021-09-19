@@ -3,6 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/map_fragment"
-        tools:context=".ui.fragment.MapsFragment"
+        tools:context=".ui.fragment.PhotoMapFragment"
         android:name="com.google.android.gms.maps.SupportMapFragment" />

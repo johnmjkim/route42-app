@@ -20,7 +20,7 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.MapsFragment;
+import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -114,7 +114,7 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
       viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          Fragment fragment = new MapsFragment();
+          Fragment fragment = new PhotoMapFragment();
           Bundle bundle = new Bundle();
           bundle.putDouble("lat", post.getLatitude());
           bundle.putDouble("lon", post.getLongitude());

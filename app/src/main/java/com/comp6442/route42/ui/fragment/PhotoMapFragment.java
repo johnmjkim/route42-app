@@ -31,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
@@ -39,7 +40,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import timber.log.Timber;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback {
+public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
   private static final String ARG_PARAM1 = "lat";
   private static final String ARG_PARAM2 = "lon";
   private Double lat, lon;
@@ -52,9 +53,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
   private boolean locationPermissionGranted = false;
   private ActivityResultLauncher<String> requestPermissionLauncher;
 
-  public static MapsFragment newInstance(Double param1, Double param2) {
+  public static PhotoMapFragment newInstance(Double param1, Double param2) {
     Timber.i("New instance created with param (%f, %f)", param1, param2);
-    MapsFragment fragment = new MapsFragment();
+    PhotoMapFragment fragment = new PhotoMapFragment();
+
     Bundle args = new Bundle();
     args.putDouble(ARG_PARAM1, param1);
     args.putDouble(ARG_PARAM2, param2);
@@ -81,7 +83,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_maps, container, false);
+    View view = inflater.inflate(R.layout.fragment_photo_map, container, false);
     init();
     getLocationPermission();
     return view;
@@ -205,6 +207,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     final int GRANTED = PackageManager.PERMISSION_GRANTED;
 
     imageLocation = new LatLng(lat, lon);
+    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
     googleMap.addMarker(new MarkerOptions().position(imageLocation).title("Image"));
 
     if (FINE_LOCATION_PERMISSION == GRANTED && currentLocation != null) {
