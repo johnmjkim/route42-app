@@ -59,13 +59,18 @@ public class MapsFragment extends Fragment implements LocationListener {
       int padding = 50; // offset from edges of the map in pixels
       CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
-      googleMap.setBuildingsEnabled(true);
+      // googleMap.setBuildingsEnabled(true);
       googleMap.addMarker(new MarkerOptions().position(userLocation).title("User"));
       googleMap.addMarker(new MarkerOptions().position(imageLocation).title("Location of Image"));
       googleMap.addPolyline(new PolylineOptions().add(userLocation, imageLocation).width(5).color(Color.RED));
       googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
 
-      Timber.i("Creating map. User location: (lat, lon) = %f, %f", imageLocation.latitude, imageLocation.longitude);
+      Timber.i("Creating map. User location: (%f, %f) Image location: (%f, %f), (lat, lon)",
+              userLocation.latitude,
+              userLocation.longitude,
+              imageLocation.latitude,
+              imageLocation.longitude);
+
       Handler handler = new Handler();
       handler.postDelayed(new Runnable() {
         public void run() {

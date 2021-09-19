@@ -2,7 +2,6 @@ package com.comp6442.route42;
 
 import android.app.Application;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -42,7 +41,6 @@ public class Route42App extends Application {
   private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
   private FirebaseAuth mAuth;
 
-  // Called when the application is starting, before any other application objects have been created.
   @RequiresApi(api = Build.VERSION_CODES.N)
   @Override
   public void onCreate() {
@@ -59,38 +57,25 @@ public class Route42App extends Application {
       Timber.i("Application starting");
     }
 
-    // create test user, sign out and take user to log in screen
-    if (BuildConfig.loadData) createTestUser();
-
-    Intent intent;
-    if (BuildConfig.EMULATOR && BuildConfig.skipLogin) {
-      // sign in as test user
-      mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword);
-      intent = new Intent(getApplicationContext(), MainActivity.class);
-      intent.putExtra("uid", mAuth.getUid());
-    } else {
-      // sign out and take user to log in screen
-      if (mAuth.getCurrentUser() != null) mAuth.signOut();
-      intent = new Intent(getApplicationContext(), LogInActivity.class);
+    // create test user
+    if (BuildConfig.loadData) {
+      createTestUser();
     }
 
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-  }
-
-  // Called by the system when the device configuration changes while your component is running.
-  // Overriding this method is totally optional!
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-  }
-
-  // This is called when the overall system is running low on memory,
-  // and would like actively running processes to tighten their belts.
-  // Overriding this method is totally optional!
-  @Override
-  public void onLowMemory() {
-    super.onLowMemory();
+    if (BuildConfig.skipLogin) {
+      mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword)
+              .addOnSuccessListener(authResult -> {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("uid", mAuth.getUid());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+              });
+    } else {
+      if (mAuth.getCurrentUser() != null) mAuth.signOut();
+      Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(intent);
+    }
   }
 
   @Override
@@ -100,8 +85,10 @@ public class Route42App extends Application {
     if (!executor.isTerminated()) executor.shutdownNow();
   }
 
+  /**
+   * Create test user, and insert sample data if loadData flag is set to true
+   */
   public void createTestUser() {
-    // create test user, and launch executor task if needed for demo / loadData
     Timber.i("Creating test user.");
     User testUser = new User(
             null,
@@ -124,11 +111,10 @@ public class Route42App extends Application {
                 UserRepository.getInstance().setOne(testUser);
 
                 Timber.i("Created test user in Firebase Auth.");
+                if (BuildConfig.loadData) insertData();
               } else {
-                Timber.w("Could not create test user in Firebase Auth");
-                Timber.e(task.getException());
+                Timber.w("Failed to create test user in Firebase Auth");
               }
-              if (BuildConfig.loadData) insertData();
             });
   }
 
