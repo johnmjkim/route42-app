@@ -16,6 +16,12 @@
 14. Switch to Material Dark UI
 15. Removed Activity and Athletic related attributes, including Route, from Post.
 16. Optimized fragment transaction from FeedFragment to ProfileFragment by using `add` instead of `replace` and `.addToBackStack`.
+17. Add basic search bar and function in FeedFragment. Will add two aspects(1.update prefect search(like in sql),2. add hashtag and context search)
+18. Add the ability to show list of following / followed users.
+19. Added lon, lat, locationName to each posts. Added location name to Post Card. 
+20. Implemented hide-on-scroll
+21. Got rid of mapbox stuff and switched to google maps in MapFragment. Now, MapFragment takes lon and lat as an input draws a line between two coordinates.
+22. Now you can click on the name of the location to see it on the map with respect to your current location.
 
 # Requirements
 

@@ -3,21 +3,19 @@ package com.comp6442.route42.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
-
-import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.ui.fragment.FeedFragment;
-import com.comp6442.route42.ui.fragment.MapFragment;
+import com.comp6442.route42.ui.fragment.MapsFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -32,17 +30,20 @@ import timber.log.Timber;
  *  In other words, this class only contains navigation logic for the bottom nav bar.
  * */
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
+  private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
+  UserViewModel userViewModel;
+  //  private NavController navController;
+  //  private FragmentContainerView fragmentContainerView;
+  private BottomNavigationView bottomNav;
   private ActionBar toolbar;
-  private BottomNavigationView navBarView;
   private MenuItem lastSelected = null;
   private String uid;
-  // private NavHostFragment
-  // private NavGraph
-  private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
-  UserViewModel userViewModel ;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+            | View.SYSTEM_UI_FLAG_FULLSCREEN);
     setContentView(R.layout.activity_main);
     uid = getIntent().getStringExtra("uid");
 
@@ -53,13 +54,52 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     userViewModel.addSnapshotListenerToLiveUser(uid);
 
-    MainActivity self = this;
+    toolbar = getSupportActionBar();
+    toolbar.hide();
 
     // bottom navigation
-    toolbar = getSupportActionBar();
-    navBarView = findViewById(R.id.bottom_navigation_view);
-    navBarView.setOnItemSelectedListener(self);
-    navBarView.setSelectedItemId(R.id.navigation_profile);
+    bottomNav = findViewById(R.id.bottom_navigation_view);
+    bottomNav.setOnItemSelectedListener(this);
+    bottomNav.setSelectedItemId(R.id.navigation_profile);
+
+    // NavigationUI.setupWithNavController(bottomNav, navController);
+    // fragmentContainerView = findViewById(R.id.fragment_container_view);
+  }
+
+  @Override
+  public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    if (hasFocus) {
+      hideSystemUI();
+    }
+  }
+
+  private void hideSystemUI() {
+    // Enables fullscreen
+    View decorView = getWindow().getDecorView();
+    decorView.setSystemUiVisibility(
+            // immersive mode full screen
+            View.SYSTEM_UI_FLAG_IMMERSIVE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+//            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    // force back button to appear
+                    | View.SYSTEM_UI_FLAG_VISIBLE
+    );
+  }
+
+  // Shows the system bars by removing all the flags
+  // except for the ones that make the content appear under the system bars.
+  private void showSystemUI() {
+    View decorView = getWindow().getDecorView();
+    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
   }
 
   /**
@@ -89,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     switch (item.getItemId()) {
       case R.id.navigation_profile:
         fragment = new ProfileFragment();
+        userViewModel.setProfileUser(userViewModel.getLiveUser().getValue());
         toolbar.setTitle(R.string.title_fragment_profile);
         break;
       case R.id.navigation_feed:
@@ -96,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         toolbar.setTitle(R.string.title_fragment_feed);
         break;
       case R.id.navigation_map:
-        fragment = new MapFragment();
+        fragment = new MapsFragment();
         toolbar.setTitle(R.string.title_fragment_map);
         break;
     }

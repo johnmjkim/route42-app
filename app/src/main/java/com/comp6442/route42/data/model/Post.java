@@ -1,5 +1,9 @@
 package com.comp6442.route42.data.model;
 
+import androidx.annotation.NonNull;
+
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
@@ -14,11 +18,13 @@ public class Post extends Model {
   private String userName;
   private int isPublic;
   private String profilePicUrl;
-  @ServerTimestamp private Date postDatetime;
+  @ServerTimestamp
+  private Date postDatetime;
   private String postDescription = "";
   private String locationName;
   private Double latitude;
   private Double longitude;
+  private String geohash = "";
   private List<String> hashtags = new ArrayList<>();
 
   private int likeCount = 0;
@@ -43,6 +49,7 @@ public class Post extends Model {
     this.likeCount = likeCount;
     this.imageUrl = imageUrl;
     this.likedBy = likedBy;
+    setGeohash();
   }
 
   public Post(DocumentReference uid, String userName, int isPublic, String profilePicUrl, Date postDatetime, String postDescription, String locationName, Double latitude, Double longitude, List<String> hashtags, int likeCount, String imageUrl, List<DocumentReference> likedBy) {
@@ -60,6 +67,7 @@ public class Post extends Model {
     this.likeCount = likeCount;
     this.imageUrl = imageUrl;
     this.likedBy = likedBy;
+    setGeohash();
   }
 
   public DocumentReference getUid() {
@@ -114,6 +122,10 @@ public class Post extends Model {
     return likedBy;
   }
 
+  public String getGeohash() {
+    return geohash;
+  }
+
   public void setUid(DocumentReference uid) {
     this.uid = uid;
   }
@@ -144,10 +156,12 @@ public class Post extends Model {
 
   public void setLatitude(Double latitude) {
     this.latitude = latitude;
+    if (this.latitude != null && this.longitude != null) setGeohash();
   }
 
   public void setLongitude(Double longitude) {
     this.longitude = longitude;
+    if (this.latitude != null && this.longitude != null) setGeohash();
   }
 
   public void setHashtags(List<String> hashtags) {
@@ -166,6 +180,15 @@ public class Post extends Model {
     this.likedBy = likedBy;
   }
 
+  public void setGeohash(String geohash) {
+    this.geohash = geohash;
+  }
+
+  public void setGeohash() {
+    this.geohash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(latitude, longitude));
+  }
+
+  @NonNull
   @Override
   public String toString() {
     return "Post{" +
@@ -176,13 +199,14 @@ public class Post extends Model {
             ", profilePicUrl='" + profilePicUrl + '\'' +
             ", postDatetime=" + postDatetime +
             ", postDescription='" + postDescription + '\'' +
+            ", imageUrl='" + imageUrl + '\'' +
+            ", hashtags=" + hashtags +
+            ", likeCount=" + likeCount +
+            ", likedBy=" + likedBy +
             ", locationName='" + locationName + '\'' +
             ", latitude=" + latitude +
             ", longitude=" + longitude +
-            ", hashtags=" + hashtags +
-            ", likeCount=" + likeCount +
-            ", imageUrl='" + imageUrl + '\'' +
-            ", likedBy=" + likedBy +
+            ", geohash=" + geohash +
             '}';
   }
 }

@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Widget.Theme.GroupProject.MyView" parent="">
+    <style name="Widget.Theme.GroupProject.MyView" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:background">@color/gray_400</item>
         <item name="exampleColor">@color/light_blue_400</item>
     </style>

@@ -23,8 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:minHeight="48dp"
-            android:autofillHints="Email"
-            />
+            android:autofillHints="Email" />
 
     <EditText
             android:id="@+id/login_form_password"
@@ -40,8 +39,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_form_email"
             android:minHeight="48dp"
-            android:autofillHints="password"
-            />
+            android:autofillHints="password" />
 
     <Button
             android:id="@+id/login_button"

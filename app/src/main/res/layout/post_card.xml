@@ -134,7 +134,31 @@
                             android:text="#route42"
                             android:textSize="12sp"
                             android:foregroundGravity="bottom"
-                            android:layout_marginBottom="3sp" />
+                            android:layout_marginBottom="6dp" />
+
+                    <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0"
+                            android:gravity="bottom|center">
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/pin_drop"
+                                android:id="@+id/pin"
+                                android:layout_weight="0" />
+
+                        <TextView
+                                android:id="@+id/location"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0"
+                                android:text="Sydney Town Hall"
+                                android:textSize="12sp"
+                                android:gravity="bottom" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>

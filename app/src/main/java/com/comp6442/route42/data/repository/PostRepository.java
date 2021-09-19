@@ -3,6 +3,9 @@ package com.comp6442.route42.data.repository;
 import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQueryBounds;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
@@ -15,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -79,6 +83,49 @@ public class PostRepository extends FirestoreRepository<Post> {
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
     }
+  }
+
+  /**
+   * The character \uf8ff used in the query is a very high code point in the Unicode range
+   * (it is a Private Usage Area [PUA] code).
+   * Because it is after most regular characters in Unicode, the query matches all values that start with queryText.
+   */
+  public Query searchByNamePrefix(User user, String name, int limit) {
+    // TODO: temporarily removed filter on isBlockedBy since unblock button is inside each profile
+    Timber.i("Searching for posts matching %s", name);
+    if (user.getBlockedBy().size() == 0) {
+      Timber.d("breadcrumb");
+      return this.collection
+              .whereGreaterThanOrEqualTo("userName", name)
+              .whereLessThanOrEqualTo("userName", name+"\uF7FF")
+              .limit(limit);
+    } else {
+      Timber.d("breadcrumb");
+      return this.collection
+              .whereGreaterThanOrEqualTo("userName", name)
+              .whereLessThanOrEqualTo("userName", name+"\uF7FF")
+              .limit(limit);
+    }
+  }
+
+  public List<Task<QuerySnapshot>> getPostsWithinRadius(GeoLocation location, double radiusInM) {
+    // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
+    // a separate query for each pair. There can be up to 9 pairs of bounds
+    // depending on overlap, but in most cases there are 4.
+    List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(location, radiusInM);
+    final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+
+    // todo - only select followed / followers?
+    for (GeoQueryBounds b : bounds) {
+      Query query = this.collection
+              .orderBy("geohash")
+              .startAt(b.startHash)
+              .endAt(b.endHash)
+              .whereEqualTo("isPublic", 1);
+
+      tasks.add(query.get());
+    }
+    return tasks;
   }
 
   public void createOne(Post post) {

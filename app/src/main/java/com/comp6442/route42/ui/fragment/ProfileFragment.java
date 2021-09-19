@@ -24,6 +24,7 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
@@ -92,8 +93,12 @@ public class ProfileFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     Timber.d("breadcrumb");
 
-    // set view variables
+    BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+    bottomNavView.animate().translationY(0).setDuration(250);
+
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+
+    // set view variables
     userNameView = view.findViewById(R.id.profile_username);
     blockSwitch = view.findViewById(R.id.profile_block_switch);
     followSwitch = view.findViewById(R.id.profile_follow_switch);
@@ -104,8 +109,8 @@ public class ProfileFragment extends Fragment {
 
     if (savedInstanceState != null) {
       //Restore the fragment's state here
-      this.uid = savedInstanceState.getString("uid");
-      Timber.i("Restoring fragment state for uid: %s", this.uid);
+      this.uid = savedInstanceState.getString(ARG_PARAM1);
+      Timber.d("Restoring fragment state for uid: %s", this.uid);
     }
 
     if (this.uid != null) {
@@ -115,7 +120,14 @@ public class ProfileFragment extends Fragment {
       Timber.i("Cleaned uid: %s", this.uid);
 
       // create observer to update the profile UI on change to the `ProfileUser`
-      final Observer<User> userObserver = profileUser -> renderProfile(profileUser, view);
+      final Observer<User> userObserver = updatedProfileUser -> {
+        Timber.i("userObserver notified: %s", updatedProfileUser);
+        if (updatedProfileUser == null) return;
+        User currentProfileUser = this.viewModel.getProfileUser().getValue();
+        if (currentProfileUser.getId().equals(updatedProfileUser.getId())) {
+          renderProfile(updatedProfileUser, view);
+        }
+      };
 
       // initialize profileUser, observe change to the profileUser data, and get a registration
       viewModel.loadProfileUser(this.uid);
@@ -208,6 +220,22 @@ public class ProfileFragment extends Fragment {
   private void setFollowerCount(User user) {
     try {
       followerCountView.setText(String.valueOf(user.getFollowers().size()));
+      followerCountView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new UserListFragment();
+          Bundle bundle = new Bundle();
+
+          bundle.putString("uid", user.getId());
+          bundle.putString("fieldName", "followers");
+          fragment.setArguments(bundle);
+          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
       Timber.i("Set follower count");
     } catch (Exception exc) {
       Timber.w("Could not set follower count");
@@ -218,6 +246,22 @@ public class ProfileFragment extends Fragment {
   private void setFollowingCount(User user) {
     try {
       followingCountView.setText(String.valueOf(user.getFollowing().size()));
+      followingCountView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new UserListFragment();
+          Bundle bundle = new Bundle();
+
+          bundle.putString("uid", user.getId());
+          bundle.putString("fieldName", "following");
+          fragment.setArguments(bundle);
+          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
       Timber.i("Set follow count");
     } catch (Exception exc) {
       Timber.w("Could not set follow count");
@@ -229,6 +273,7 @@ public class ProfileFragment extends Fragment {
     assert this.uid != null && user.getId() != null;
 
     String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+    followSwitch.setOnCheckedChangeListener(null);
 
     // check if loggedInUser already follows profileUser
     followSwitch.setChecked(
@@ -236,7 +281,7 @@ public class ProfileFragment extends Fragment {
                     follower -> follower.getId().equals(loggedInUserUid)));
 
     followSwitch.setOnCheckedChangeListener((compoundButton, isOn) -> {
-      if(isOn) {
+      if (isOn) {
         // follow action triggers unblock
         Timber.i("Follow event recorded: %s -> %s", loggedInUserUid, user.getId());
         UserRepository.getInstance().follow(loggedInUserUid, user.getId());
@@ -251,11 +296,16 @@ public class ProfileFragment extends Fragment {
     assert this.uid != null && user.getId() != null;
 
     String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+    blockSwitch.setOnCheckedChangeListener(null);
 
     // check if loggedInUser already blocked profileUser
     blockSwitch.setChecked(
             user.getBlockedBy().stream().anyMatch(
                     blocker -> blocker.getId().equals(loggedInUserUid)));
+
+    if (blockSwitch.isChecked()) {
+      followSwitch.setEnabled(false);
+    }
 
     blockSwitch.setOnCheckedChangeListener((compoundButton, isOn) -> {
       if (isOn) {
