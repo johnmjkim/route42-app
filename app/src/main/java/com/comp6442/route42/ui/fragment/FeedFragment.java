@@ -2,6 +2,7 @@ package com.comp6442.route42.ui.fragment;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,10 +154,10 @@ public class FeedFragment extends Fragment {
         @Override
         public boolean onQueryTextChange(String s) {
           Query query;
-          if (s.length() == 0) {
+          if (TextUtils.isEmpty(s)) {
             query = PostRepository.getInstance().getVisiblePosts(user, 20);
           } else {
-            query = PostRepository.getInstance().getSearchedPosts(user, s, 20);
+            query = PostRepository.getInstance().searchByNamePrefix(user, s, 20);
           }
           FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
                   .setQuery(query, Post.class)
@@ -164,7 +165,7 @@ public class FeedFragment extends Fragment {
           adapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
           recyclerView.setAdapter(adapter);
           adapter.startListening();
-          Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+          Timber.i("PostAdapter bound to RecyclerView with size %d for query: %s", adapter.getItemCount(), s);
           query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
 
           return true;

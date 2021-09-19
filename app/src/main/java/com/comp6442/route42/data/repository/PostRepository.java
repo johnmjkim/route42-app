@@ -84,22 +84,29 @@ public class PostRepository extends FirestoreRepository<Post> {
               .limit(limit);
     }
   }
-  public Query getSearchedPosts(User user, String name,int limit) {
-    if (user.getBlockedBy().size() > 0) {
-      Timber.i("breadcrumb");
+
+  /**
+   * The character \uf8ff used in the query is a very high code point in the Unicode range
+   * (it is a Private Usage Area [PUA] code).
+   * Because it is after most regular characters in Unicode, the query matches all values that start with queryText.
+   */
+  public Query searchByNamePrefix(User user, String name, int limit) {
+    // TODO: temporarily removed filter on isBlockedBy since unblock button is inside each profile
+    Timber.i("Searching for posts matching %s", name);
+    if (user.getBlockedBy().size() == 0) {
+      Timber.d("breadcrumb");
       return this.collection
               .whereGreaterThanOrEqualTo("userName", name)
               .whereLessThanOrEqualTo("userName", name+"\uF7FF")
               .limit(limit);
     } else {
-      Timber.i("breadcrumb");
+      Timber.d("breadcrumb");
       return this.collection
               .whereGreaterThanOrEqualTo("userName", name)
               .whereLessThanOrEqualTo("userName", name+"\uF7FF")
               .limit(limit);
     }
   }
-
 
   public List<Task<QuerySnapshot>> getPostsWithinRadius(GeoLocation location, double radiusInM) {
     // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
