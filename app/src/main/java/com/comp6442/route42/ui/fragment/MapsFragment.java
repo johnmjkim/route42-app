@@ -43,7 +43,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
   private static final String ARG_PARAM1 = "lat";
   private static final String ARG_PARAM2 = "lon";
   private Double lat, lon;
-  private Location currentLocation;
+  private Location currentLocation = null;
   private LatLng userLocation;
   private LatLng imageLocation;
   private SupportMapFragment mapFragment;
@@ -181,63 +181,67 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
   public void onMapReady(@NonNull GoogleMap googleMap) {
     this.googleMap = googleMap;
 
-    if (locationPermissionGranted) {
-      if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-              != PackageManager.PERMISSION_GRANTED) {
-        return;
-      }
+    Snackbar snackbar = Snackbar.make(
+            mapFragment.requireView(),
+            "Please enable location access.",
+            Snackbar.LENGTH_INDEFINITE
+    );
+    snackbar.setAction("REFRESH", view -> initializeMap());
 
-      Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Please enable location access.", Snackbar.LENGTH_INDEFINITE);
-      snackbar.setAction("REFRESH", view -> initializeMap());
+    Task<Location> locationTask = getDeviceLocation();
 
-      Task<Location> locationTask = getDeviceLocation();
-
-      if (locationTask != null) {
-        locationTask.addOnCompleteListener(
-                task -> {
-                  currentLocation = task.getResult();
-
-                  if (task.isSuccessful() && currentLocation != null) {
-                    renderMap(googleMap);
-                  } else {
-                    Timber.w("current location is null");
-                    snackbar.show();
-                  }
-                });
-      } else {
-        Timber.w("location result is null");
-        snackbar.show();
-      }
+    if (locationTask != null) {
+      locationTask.addOnCompleteListener(task -> {
+        this.currentLocation = task.getResult();
+        renderMap();
+      });
+    } else {
+      snackbar.show();
     }
   }
 
-  private void renderMap(@NonNull GoogleMap googleMap) {
-    userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+  private void renderMap() {
+    final int FINE_LOCATION_PERMISSION = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+    final int GRANTED = PackageManager.PERMISSION_GRANTED;
+
     imageLocation = new LatLng(lat, lon);
-
-    Timber.i("Creating map. User location: (%f, %f) Image location: (%f, %f), (lat, lon)",
-            userLocation.latitude,
-            userLocation.longitude,
-            imageLocation.latitude,
-            imageLocation.longitude);
-
-    googleMap.addMarker(new MarkerOptions().position(userLocation).title("User"));
     googleMap.addMarker(new MarkerOptions().position(imageLocation).title("Image"));
-    googleMap.addPolyline(new PolylineOptions().add(userLocation, imageLocation).width(5).color(Color.RED));
-    googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
-    googleMap.setMyLocationEnabled(true);
-    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-    LatLngBounds bounds = new LatLngBounds.Builder()
-            .include(userLocation)
-            .include(imageLocation)
-            .build();
+    if (FINE_LOCATION_PERMISSION == GRANTED && currentLocation != null) {
+      userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-    int padding = 300; // offset from edges of the map in pixels
-    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+      Timber.i("Creating map. User location: (%f, %f) Image location: (%f, %f), (lat, lon)",
+              userLocation.latitude,
+              userLocation.longitude,
+              imageLocation.latitude,
+              imageLocation.longitude);
 
-    Handler handler = new Handler();
-    handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
+      googleMap.addMarker(new MarkerOptions().position(userLocation).title("User"));
+      googleMap.addPolyline(
+              new PolylineOptions().add(userLocation, imageLocation).width(5).color(Color.RED)
+      );
+      googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+      googleMap.setMyLocationEnabled(true);
+      googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+      LatLngBounds bounds = new LatLngBounds.Builder()
+              .include(userLocation)
+              .include(imageLocation)
+              .build();
+
+      int padding = 300; // offset from edges of the map in pixels
+      CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+      Handler handler = new Handler();
+      handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
+    } else {
+      Timber.i("Creating map. Image location: (%f, %f), (lat, lon)",
+              imageLocation.latitude,
+              imageLocation.longitude);
+
+      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(imageLocation, 12f));
+      googleMap.setMyLocationEnabled(false);
+      googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+    }
   }
 
   @Override
