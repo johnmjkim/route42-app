@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">groupProject</string>
+    <string name="app_name">Route42</string>
     <string name="title_activity_login">Log In</string>
 
     <string name="prompt_email">Email</string>

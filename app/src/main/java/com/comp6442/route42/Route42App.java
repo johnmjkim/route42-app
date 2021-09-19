@@ -136,7 +136,7 @@ public class Route42App extends Application {
         );
         executor.scheduleAtFixedRate(
                 livePostTask,
-                2,
+                2, // initial delay
                 BuildConfig.intervalLengthInSeconds,
                 TimeUnit.SECONDS
         );

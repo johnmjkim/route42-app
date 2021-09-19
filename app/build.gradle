@@ -18,9 +18,9 @@ android {
         buildConfigField("boolean", "EMULATOR", "true")
         buildConfigField("boolean", "loadData", "false")
         buildConfigField("boolean", "skipLogin", "false")
-        buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
+        buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
 
         // for demo
         buildConfigField("boolean", "DEMO", "false")
