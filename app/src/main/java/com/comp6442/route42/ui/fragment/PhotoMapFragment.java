@@ -22,6 +22,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.comp6442.route42.R;
+import com.comp6442.route42.data.model.Post;
+import com.comp6442.route42.data.repository.PostRepository;
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -35,31 +39,36 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import timber.log.Timber;
 
 public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
-  private static final String ARG_PARAM1 = "lat";
-  private static final String ARG_PARAM2 = "lon";
-  private Double lat, lon;
+  private static final String ARG_PARAM1 = "posts";
+  private static final String ARG_PARAM2 = "drawLine";
+  private List<Post> posts = new ArrayList<>();
   private Location currentLocation = null;
   private LatLng userLocation;
-  private LatLng imageLocation;
   private SupportMapFragment mapFragment;
   private GoogleMap googleMap;
   private FusedLocationProviderClient fusedLocationProviderClient;
   private boolean locationPermissionGranted = false;
   private ActivityResultLauncher<String> requestPermissionLauncher;
 
-  public static PhotoMapFragment newInstance(Double param1, Double param2) {
-    Timber.i("New instance created with param (%f, %f)", param1, param2);
+  public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
+    Timber.i("%d posts received, drawLine = %s", param1.size(), param2);
     PhotoMapFragment fragment = new PhotoMapFragment();
 
     Bundle args = new Bundle();
-    args.putDouble(ARG_PARAM1, param1);
-    args.putDouble(ARG_PARAM2, param2);
+    args.putParcelableArrayList(ARG_PARAM1, (ArrayList<Post>) param1);
+    args.putBoolean(ARG_PARAM2, param2);
     fragment.setArguments(args);
     return fragment;
   }
@@ -74,42 +83,23 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     bottomNavView.animate().translationY(0).setDuration(250);
 
     if (getArguments() != null) {
-      this.lat = getArguments().getDouble(ARG_PARAM1);
-      this.lon = getArguments().getDouble(ARG_PARAM2);
+      this.posts = getArguments().getParcelableArrayList(ARG_PARAM1);
     }
-    Timber.i("Coordinate: (%f, %f)", lat, lon);
+
+    if (this.posts == null) {
+      this.posts = new ArrayList<>();
+    }
+
+    Timber.i("Creating map with %d posts", posts.size());
+    Timber.d(posts.toString());
   }
 
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_photo_map, container, false);
-    init();
+    Timber.d("Creating view");
     getLocationPermission();
-    return view;
-  }
-
-  public void init() {
-    requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-      if (isGranted) {
-        Timber.i("Location access granted");
-        locationPermissionGranted = true;
-        initializeMap();
-      } else {
-        Timber.w("Location access not granted");
-        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-          showAlert();
-        } else {
-          Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission not granted", Snackbar.LENGTH_INDEFINITE);
-          locationPermissionGranted = false;
-          snackbar.setAction("EXIT", view -> {
-            requireActivity().finishAffinity();
-            System.exit(0);
-          });
-          snackbar.show();
-        }
-      }
-    });
+    return inflater.inflate(R.layout.fragment_photo_map, container, false);
   }
 
   private void initializeMap() {
@@ -146,6 +136,27 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
   }
 
   private void getLocationPermission() {
+    requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+      if (isGranted) {
+        Timber.i("Location access granted");
+        locationPermissionGranted = true;
+        initializeMap();
+      } else {
+        Timber.w("Location access not granted");
+        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+          showAlert();
+        } else {
+          Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission not granted", Snackbar.LENGTH_INDEFINITE);
+          locationPermissionGranted = false;
+          snackbar.setAction("EXIT", view -> {
+            requireActivity().finishAffinity();
+            System.exit(0);
+          });
+          snackbar.show();
+        }
+      }
+    });
+
     if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
       locationPermissionGranted = true;
       initializeMap();
@@ -174,13 +185,13 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
    * Manipulates the map once available.
    * This callback is triggered when the map is ready to be used.
    * This is where we can add markers or lines, add listeners or move the camera.
-   * In this case, we just add a marker near Sydney, Australia.
    * If Google Play services is not installed on the device, the user will be prompted to
    * install it inside the SupportMapFragment. This method will only be triggered once the
    * user has installed Google Play services and returned to the app.
    */
   @Override
   public void onMapReady(@NonNull GoogleMap googleMap) {
+    Timber.i("Map ready. Beginning annotations.");
     this.googleMap = googleMap;
 
     Snackbar snackbar = Snackbar.make(
@@ -193,58 +204,115 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     Task<Location> locationTask = getDeviceLocation();
 
     if (locationTask != null) {
-      locationTask.addOnCompleteListener(task -> {
-        this.currentLocation = task.getResult();
-        renderMap();
-      });
+      locationTask.addOnCompleteListener(
+              task -> {
+                this.currentLocation = task.getResult();
+                // Timber.i("User location: (%s)", currentLocation.toString());
+                renderMap();
+              });
     } else {
       snackbar.show();
     }
   }
 
+  /**
+   * posts.size() == 0 && userLocation == null: blank
+   * posts.size() == 0 && userLocation != null: geo search based on user location (points)
+   * posts.size() == 1 && userLocation == null: single point
+   * posts.size() == 1 && userLocation != null: one polyline
+   * TODO posts.size() > 1: points
+   * TODO when user taps on "only once" or "deny" and then approve, map should update with user's location
+   */
   private void renderMap() {
+    Timber.i("Rendering map");
     final int FINE_LOCATION_PERMISSION = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION);
     final int GRANTED = PackageManager.PERMISSION_GRANTED;
 
-    imageLocation = new LatLng(lat, lon);
+    assert this.posts != null;
+
     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
-    googleMap.addMarker(new MarkerOptions().position(imageLocation).title("Image"));
 
     if (FINE_LOCATION_PERMISSION == GRANTED && currentLocation != null) {
       userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
-      Timber.i("Creating map. User location: (%f, %f) Image location: (%f, %f), (lat, lon)",
-              userLocation.latitude,
-              userLocation.longitude,
-              imageLocation.latitude,
-              imageLocation.longitude);
-
       googleMap.addMarker(new MarkerOptions().position(userLocation).title("User"));
-      googleMap.addPolyline(
-              new PolylineOptions().add(userLocation, imageLocation).width(5).color(Color.RED)
-      );
-      googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
       googleMap.setMyLocationEnabled(true);
       googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+      googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
 
-      LatLngBounds bounds = new LatLngBounds.Builder()
-              .include(userLocation)
-              .include(imageLocation)
-              .build();
+      if (posts.size() == 0) geoQuery();
+      else if (posts.size() == 1) {
+        Timber.i("1 post received. Drawing line.");
+        // draw polyline
+        LatLng imageLocation = posts.get(0).getLatLng();
+        googleMap.addMarker(new MarkerOptions().position(imageLocation).title("Image"));
+        googleMap.addPolyline(new PolylineOptions().add(userLocation, imageLocation).width(5).color(Color.RED));
 
-      int padding = 300; // offset from edges of the map in pixels
-      CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-      Handler handler = new Handler();
-      handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
+        LatLngBounds bounds = new LatLngBounds.Builder()
+                .include(userLocation)
+                .include(imageLocation)
+                .build();
+
+        int padding = 300; // offset from edges of the map in pixels
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
+      }
     } else {
-      Timber.i("Creating map. Image location: (%f, %f), (lat, lon)",
-              imageLocation.latitude,
-              imageLocation.longitude);
-
-      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(imageLocation, 12f));
+      Timber.i("User location not available, plotting a single point");
       googleMap.setMyLocationEnabled(false);
       googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+      if (posts.size() == 1) {
+        googleMap.addMarker(new MarkerOptions().position(posts.get(0).getLatLng()).title("Image"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(posts.get(0).getLatLng(), 12f));
+      }
     }
+  }
+
+  private void geoQuery() {
+    Timber.i("Beginning geoQuery with userLocation: %s", userLocation.toString());
+    final GeoLocation center = new GeoLocation(userLocation.latitude, userLocation.longitude);
+    final double radiusInM = 50 * 1000;
+    final List<Task<QuerySnapshot>> tasks = PostRepository.getInstance().getPostsWithinRadius(center, radiusInM, 50);
+    final List<DocumentSnapshot> matchingDocs = new ArrayList<>();
+
+    // Collect all the query results together into a single list
+    Tasks.whenAllComplete(tasks).addOnCompleteListener(
+            unused -> {
+              for (Task<QuerySnapshot> task : tasks) {
+                QuerySnapshot snap = task.getResult();
+
+                for (DocumentSnapshot doc : snap.getDocuments()) {
+                  // Filter out a few false positives due to GeoHash accuracy, but most will match
+                  GeoLocation docLocation = new GeoLocation(doc.getDouble("latitude"), doc.getDouble("longitude"));
+                  double distanceInM = GeoFireUtils.getDistanceBetween(docLocation, center);
+                  if (distanceInM <= radiusInM) matchingDocs.add(doc);
+                }
+              }
+
+              Timber.i("Found %d documents within %f km", matchingDocs.size(), radiusInM);
+
+              if (matchingDocs.size() > 0) {
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+                for (DocumentSnapshot matchingDoc : matchingDocs) {
+                  if (matchingDoc.contains("latitude") && matchingDoc.contains("longitude")) {
+                    Post post = matchingDoc.toObject(Post.class);
+                    assert post != null;
+                    LatLng point = new LatLng(post.getLatitude(), post.getLongitude());
+                    googleMap.addMarker(new MarkerOptions().position(point).title(post.getLocationName()));
+                    builder.include(point);
+                  }
+                }
+
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f));
+                LatLngBounds bounds = builder.build();
+                int padding = 300; // offset from edges of the map in pixels
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                Handler handler = new Handler();
+                handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
+              }
+            });
   }
 
   @Override

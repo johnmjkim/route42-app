@@ -97,18 +97,18 @@ public class PostRepository extends FirestoreRepository<Post> {
       Timber.d("breadcrumb");
       return this.collection
               .whereGreaterThanOrEqualTo("userName", name)
-              .whereLessThanOrEqualTo("userName", name+"\uF7FF")
+              .whereLessThanOrEqualTo("userName", name + "\uF7FF")
               .limit(limit);
     } else {
       Timber.d("breadcrumb");
       return this.collection
               .whereGreaterThanOrEqualTo("userName", name)
-              .whereLessThanOrEqualTo("userName", name+"\uF7FF")
+              .whereLessThanOrEqualTo("userName", name + "\uF7FF")
               .limit(limit);
     }
   }
 
-  public List<Task<QuerySnapshot>> getPostsWithinRadius(GeoLocation location, double radiusInM) {
+  public List<Task<QuerySnapshot>> getPostsWithinRadius(GeoLocation location, double radiusInM, int limit) {
     // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
     // a separate query for each pair. There can be up to 9 pairs of bounds
     // depending on overlap, but in most cases there are 4.
@@ -121,7 +121,8 @@ public class PostRepository extends FirestoreRepository<Post> {
               .orderBy("geohash")
               .startAt(b.startHash)
               .endAt(b.endHash)
-              .whereEqualTo("isPublic", 1);
+              .whereEqualTo("isPublic", 1)
+              .limit(limit);
 
       tasks.add(query.get());
     }

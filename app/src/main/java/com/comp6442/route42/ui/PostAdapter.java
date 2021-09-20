@@ -28,6 +28,8 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+
 import timber.log.Timber;
 
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
@@ -115,9 +117,10 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
         @Override
         public void onClick(View view) {
           Fragment fragment = new PhotoMapFragment();
+          ArrayList<Post> posts = new ArrayList<>();
+          posts.add(post);
           Bundle bundle = new Bundle();
-          bundle.putDouble("lat", post.getLatitude());
-          bundle.putDouble("lon", post.getLongitude());
+          bundle.putParcelableArrayList("posts", posts);
           fragment.setArguments(bundle);
           ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
                   .beginTransaction()
