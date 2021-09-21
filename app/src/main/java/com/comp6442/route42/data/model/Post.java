@@ -30,6 +30,7 @@ public class Post extends Model implements Parcelable {
       return new Post[size];
     }
   };
+
   private DocumentReference uid;
   private String userName;
   private int isPublic;

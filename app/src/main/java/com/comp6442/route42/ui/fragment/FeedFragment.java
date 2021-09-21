@@ -36,11 +36,11 @@ public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
   private String uid;
   private UserViewModel viewModel;
-  private RecyclerView recyclerView;
   private SearchView searchView;
-  private BottomNavigationView bottomNavView;
+  private RecyclerView recyclerView;
   private PostAdapter adapter;
   private LinearLayoutManager layoutManager;
+  private BottomNavigationView bottomNavView;
 
   public FeedFragment() {
     // Required empty public constructor
@@ -129,8 +129,7 @@ public class FeedFragment extends Fragment {
               searchView.animate().translationY(-searchView.getHeight()).setDuration(1000);
               bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000);
             } else {
-              // account for margin between top of screen and search bar
-              searchView.animate().translationY(8).setDuration(1000);
+              searchView.animate().translationY(0).setDuration(1000);
               bottomNavView.animate().translationY(0).setDuration(1000);
             }
           }

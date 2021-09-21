@@ -6,8 +6,7 @@
         tools:context=".ui.fragment.ProfileFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#121212"
-        android:padding="15dp">
+        android:background="@color/dark">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -16,7 +15,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHorizontal_bias="0.0">
+            android:padding="15dp"
+            android:background="@color/dark"
+            android:id="@+id/profile_info_widget"
+            >
 
         <!-- Media -->
 
@@ -37,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="15dp">
 
                 <!-- Title, secondary and supporting text -->
                 <TextView
@@ -116,7 +118,6 @@
 
             </LinearLayout>
         </LinearLayout>
-
         <!-- Buttons -->
         <LinearLayout
                 android:layout_width="match_parent"
@@ -157,8 +158,17 @@
                     app:backgroundTint="@color/teal_700"
                     android:textSize="12sp" />
         </LinearLayout>
-
     </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/profile_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:scrollbars="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     <com.google.android.material.button.MaterialButton
             android:id="@+id/show_blocked_users_button"

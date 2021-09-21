@@ -49,6 +49,7 @@ public class PostRepository extends FirestoreRepository<Post> {
       return json.getAsDouble();
     }).registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
       String str = json.toString();
+      if (str.contains("\"")) str = str.replaceAll("^\"|\"$", "");
       return UserRepository.getInstance().getOne(str);
     }).create();
   }
@@ -57,8 +58,17 @@ public class PostRepository extends FirestoreRepository<Post> {
     return this.collection.document(postId);
   }
 
-  public Task<QuerySnapshot> getMany(String uid) {
-    return this.collection.whereEqualTo("uid", uid).get();
+  public Query getMany(String uid) {
+    DocumentReference docRef = UserRepository.getInstance().getOne(uid);
+    return this.collection.whereEqualTo("uid", docRef)
+            .orderBy("postDatetime", Query.Direction.DESCENDING);
+  }
+
+  public Query getMany(String uid, int limit) {
+    DocumentReference docRef = UserRepository.getInstance().getOne(uid);
+    return this.collection.whereEqualTo("uid", docRef)
+            .orderBy("postDatetime", Query.Direction.DESCENDING)
+            .limit(limit);
   }
 
   /**

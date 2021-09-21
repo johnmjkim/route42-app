@@ -33,6 +33,7 @@ public final class UserRepository extends FirestoreRepository<User> {
   public static Gson getJsonDeserializer() {
     return new GsonBuilder().registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
       String str = json.toString();
+      if (str.contains("\"")) str = str.replaceAll("^\"|\"$", "");
       return UserRepository.getInstance().getOne(str);
     }).create();
   }
