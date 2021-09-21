@@ -35,7 +35,7 @@
         <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.33125" />
         <entry key="app/src/main/res/layout/fragment_maps2.xml" value="0.16473259334006055" />
         <entry key="app/src/main/res/layout/fragment_options.xml" value="0.5335144927536232" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_scrolling.xml" value="0.3140625" />
         <entry key="app/src/main/res/layout/fragment_userlist.xml" value="0.3203125" />
         <entry key="app/src/main/res/layout/incoming_message.xml" value="0.15943491422805248" />

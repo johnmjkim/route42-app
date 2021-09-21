@@ -131,7 +131,9 @@
                     style="?attr/borderlessButtonStyle"
                     android:checked="false"
                     android:id="@+id/profile_follow_switch"
-                    android:textSize="12sp" />
+                    android:textColor="@color/gray_400"
+                    android:textSize="12sp"
+                    />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                     android:layout_width="0dp"
@@ -141,7 +143,9 @@
                     style="?attr/borderlessButtonStyle"
                     android:checked="false"
                     android:id="@+id/profile_block_switch"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_400"
+                    />
 
             <com.google.android.material.button.MaterialButton
                     android:layout_width="0dp"
@@ -150,6 +154,7 @@
                     android:text="@string/message_button"
                     style="?attr/borderRound"
                     android:id="@+id/profile_message_button"
+                    app:backgroundTint="@color/teal_700"
                     android:textSize="12sp" />
         </LinearLayout>
 
@@ -164,6 +169,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:backgroundTint="@color/teal_700"
             android:layout_marginBottom="160dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
