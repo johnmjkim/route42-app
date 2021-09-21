@@ -22,6 +22,9 @@
 20. Implemented hide-on-scroll
 21. Got rid of mapbox stuff and switched to google maps in MapFragment. Now, MapFragment takes lon and lat as an input draws a line between two coordinates.
 22. Now you can click on the name of the location to see it on the map with respect to your current location.
+23. Updated color scheme and corrected full-screen mode.
+24. Added `PhotoMapFragment` and enabled geoQuery search for nearby posts.
+25. Added `blocked` field to `User` model and display `Show blocked users` button when a user is looking at his/her own profile. Now users can see list of users that they blocked. 
 
 # Requirements
 
