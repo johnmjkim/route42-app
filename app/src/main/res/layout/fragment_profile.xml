@@ -160,8 +160,20 @@
 
     </LinearLayout>
 
+    <com.google.android.material.button.MaterialButton
+            android:id="@+id/show_blocked_users_button"
+            android:text="Blocked Users"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:backgroundTint="@color/teal_700"
+            app:layout_constraintBottom_toTopOf="@+id/sign_out_button"
+            android:layout_marginBottom="30dp"
+            />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/sign_out_button"
             android:text="@string/action_sign_out"
             android:layout_width="wrap_content"
@@ -170,6 +182,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:backgroundTint="@color/teal_700"
-            android:layout_marginBottom="160dp" />
+            android:layout_marginBottom="120dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

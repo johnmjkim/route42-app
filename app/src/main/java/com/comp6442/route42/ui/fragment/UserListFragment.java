@@ -98,8 +98,8 @@ public class UserListFragment extends Fragment {
             break;
           case "followers":
             usersRef = user.getFollowers();
-          case "blockedBy":
-            usersRef = user.getBlockedBy();
+          case "blocked":
+            usersRef = user.getBlocked();
             break;
           default:
             throw new IllegalStateException("Unexpected value: " + fieldName);
@@ -111,10 +111,10 @@ public class UserListFragment extends Fragment {
           if (id.contains("\"")) id = id.replaceAll("^\"|\"$", "");
           Timber.i("ID=%s", id);
           UserRepository.getInstance().getOne(id).get().addOnSuccessListener(
-                  snapshot1 -> {
-                    if (snapshot1.exists()) {
-                      Timber.i(snapshot1.toObject(User.class).toString());
-                      users.add(snapshot1.toObject(User.class));
+                  snapshot -> {
+                    if (snapshot.exists()) {
+                      Timber.i(snapshot.toObject(User.class).toString());
+                      users.add(snapshot.toObject(User.class));
                     }
 
                     if (users.size() == finalUsersRef.size()) {

@@ -44,7 +44,7 @@ public class ProfileFragment extends Fragment {
   private UserViewModel viewModel;
   private TextView userNameView, followerCountView, followingCountView;
   private SwitchMaterial blockSwitch, followSwitch;
-  private MaterialButton messageButton, signOutButton;
+  private MaterialButton messageButton, signOutButton, showBlockedUsersButton;
 
   public ProfileFragment() {
     // Required empty public constructor
@@ -106,6 +106,7 @@ public class ProfileFragment extends Fragment {
     signOutButton = view.findViewById(R.id.sign_out_button);
     followerCountView = view.findViewById(R.id.profile_primary_text);
     followingCountView = view.findViewById(R.id.profile_secondary_text);
+    showBlockedUsersButton = view.findViewById(R.id.show_blocked_users_button);
 
     if (savedInstanceState != null) {
       //Restore the fragment's state here
@@ -363,20 +364,37 @@ public class ProfileFragment extends Fragment {
 
     int visibility;
 
-    // if a user is looking at his/her own profile, hide Follow and Message buttons.
+    // if a user is looking at his/her own profile, hide Follow and Message buttons, show Logout button and blocked users
     // TODO: delete these parts entirely instead of setting to invisible
     if (liveUser.getId().equals(profileUser.getId())) {
       Timber.i("Viewing self's profile. Hiding Follow and Message buttons.");
-      visibility = View.INVISIBLE;
+      visibility = View.GONE;
       signOutButton.setEnabled(true);
       signOutButton.setOnClickListener(unused -> ProfileFragment.this.logOut());
       signOutButton.setVisibility(View.VISIBLE);
+      showBlockedUsersButton.setVisibility(View.VISIBLE);
+      showBlockedUsersButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new UserListFragment();
+          Bundle bundle = new Bundle();
+
+          bundle.putString("uid", liveUser.getId());
+          bundle.putString("fieldName", "blocked");
+          fragment.setArguments(bundle);
+          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
     } else {
       visibility = View.VISIBLE;
       signOutButton.setEnabled(false);
-      signOutButton.setVisibility(View.INVISIBLE);
+      signOutButton.setVisibility(View.GONE);
+      showBlockedUsersButton.setVisibility(View.GONE);
     }
-
     followSwitch.setVisibility(visibility);
     blockSwitch.setVisibility(visibility);
     messageButton.setVisibility(visibility);
