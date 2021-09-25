@@ -16,7 +16,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "EMULATOR", "true")
-        buildConfigField("boolean", "loadData", "false")
+        buildConfigField("boolean", "loadData", "true")
         buildConfigField("boolean", "skipLogin", "false")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
@@ -60,12 +60,9 @@ dependencies {
     implementation 'com.google.guava:guava:30.1.1-android'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.google.code.gson:gson:2.8.8'
-    implementation "com.xwray:groupie:2.9.0"
 
     // UI
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.1'
 
     // ----------- Navigation Component ------------
     def nav_version = "2.3.5"
@@ -103,16 +100,21 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
+    // ----------- Google Maps ------------
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+
     // ----------- Mapbox ------------
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1'
-    implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0"
-    // Core: Color, text, and networking utility classes.
-    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:5.8.0'
-    // GeoJSON: Java classes that model the GeoJSON spec.
-    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-geojson:5.8.0'
-    // Turf: Runtime geospatial calculations.
-    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.8.0'
-    implementation "com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0"
+//    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1'
+//    implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0"
+//    // Core: Color, text, and networking utility classes.
+//    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:5.8.0'
+//    // GeoJSON: Java classes that model the GeoJSON spec.
+//    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-geojson:5.8.0'
+//    // Turf: Runtime geospatial calculations.
+//    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.8.0'
+//    implementation "com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0"
+
 
     // ----------- Tests ---------------
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

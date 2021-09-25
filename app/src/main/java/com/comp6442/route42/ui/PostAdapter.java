@@ -20,13 +20,15 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.MapsFragment;
+import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
 
 import timber.log.Timber;
 
@@ -114,10 +116,11 @@ public class PostAdapter extends FirestoreRecyclerAdapter<Post, PostAdapter.Post
       viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          Fragment fragment = new MapsFragment();
+          Fragment fragment = new PhotoMapFragment();
+          ArrayList<Post> posts = new ArrayList<>();
+          posts.add(post);
           Bundle bundle = new Bundle();
-          bundle.putDouble("lat", post.getLatitude());
-          bundle.putDouble("lon", post.getLongitude());
+          bundle.putParcelableArrayList("posts", posts);
           fragment.setArguments(bundle);
           ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
                   .beginTransaction()

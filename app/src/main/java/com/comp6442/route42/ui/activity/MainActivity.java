@@ -15,7 +15,7 @@ import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.ui.fragment.FeedFragment;
-import com.comp6442.route42.ui.fragment.MapsFragment;
+import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-            | View.SYSTEM_UI_FLAG_FULLSCREEN);
     setContentView(R.layout.activity_main);
     uid = getIntent().getStringExtra("uid");
 
@@ -54,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     userViewModel.addSnapshotListenerToLiveUser(uid);
 
-    toolbar = getSupportActionBar();
-    toolbar.hide();
+    // toolbar = getSupportActionBar();
+    // toolbar.hide();
 
     // bottom navigation
     bottomNav = findViewById(R.id.bottom_navigation_view);
@@ -69,9 +67,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   @Override
   public void onWindowFocusChanged(boolean hasFocus) {
     super.onWindowFocusChanged(hasFocus);
-    if (hasFocus) {
-      hideSystemUI();
-    }
+//    if (hasFocus) hideSystemUI();
+//    else showSystemUI();
   }
 
   private void hideSystemUI() {
@@ -84,12 +81,13 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     // Set the content to appear under the system bars so that the
                     // content doesn't resize when the system bars hide and show.
-//            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    // | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    // | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     // Hide the nav bar and status bar
                     // force back button to appear
                     | View.SYSTEM_UI_FLAG_VISIBLE
+//                    | View.SYSTEM_UI_FLAG_LOW_PROFILE
     );
   }
 
@@ -130,15 +128,15 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
       case R.id.navigation_profile:
         fragment = new ProfileFragment();
         userViewModel.setProfileUser(userViewModel.getLiveUser().getValue());
-        toolbar.setTitle(R.string.title_fragment_profile);
+//        toolbar.setTitle(R.string.title_fragment_profile);
         break;
       case R.id.navigation_feed:
         fragment = new FeedFragment();
-        toolbar.setTitle(R.string.title_fragment_feed);
+//        toolbar.setTitle(R.string.title_fragment_feed);
         break;
       case R.id.navigation_map:
-        fragment = new MapsFragment();
-        toolbar.setTitle(R.string.title_fragment_map);
+        fragment = new PhotoMapFragment();
+//        toolbar.setTitle(R.string.title_fragment_map);
         break;
     }
 

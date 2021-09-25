@@ -33,6 +33,7 @@ public final class UserRepository extends FirestoreRepository<User> {
   public static Gson getJsonDeserializer() {
     return new GsonBuilder().registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
       String str = json.toString();
+      if (str.contains("\"")) str = str.replaceAll("^\"|\"$", "");
       return UserRepository.getInstance().getOne(str);
     }).create();
   }
@@ -136,6 +137,8 @@ public final class UserRepository extends FirestoreRepository<User> {
 
   public void block(String blockerUid, String beingBlockedUid) {
     DocumentReference blocker = this.collection.document(blockerUid);
+    DocumentReference userBeingBlocked = this.collection.document(beingBlockedUid);
+    this.collection.document(blockerUid).update("blocked", FieldValue.arrayUnion(userBeingBlocked));
     this.collection.document(beingBlockedUid).update("blockedBy", FieldValue.arrayUnion(blocker));
 
     // automatically unfollow
@@ -144,6 +147,8 @@ public final class UserRepository extends FirestoreRepository<User> {
 
   public void unblock(String unblockerUid, String beingUnblockedUid) {
     DocumentReference blocker = this.collection.document(unblockerUid);
+    DocumentReference userBeingUnblocked = this.collection.document(beingUnblockedUid);
+    this.collection.document(unblockerUid).update("blocked", FieldValue.arrayRemove(userBeingUnblocked));
     this.collection.document(beingUnblockedUid).update("blockedBy", FieldValue.arrayRemove(blocker));
   }
 

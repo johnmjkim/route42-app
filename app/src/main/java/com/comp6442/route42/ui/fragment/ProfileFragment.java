@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,21 +15,28 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
+import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
+import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
+import com.comp6442.route42.ui.PostAdapter;
 import com.comp6442.route42.ui.activity.LogInActivity;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -44,7 +52,11 @@ public class ProfileFragment extends Fragment {
   private UserViewModel viewModel;
   private TextView userNameView, followerCountView, followingCountView;
   private SwitchMaterial blockSwitch, followSwitch;
-  private MaterialButton messageButton, signOutButton;
+  private MaterialButton messageButton, signOutButton, showBlockedUsersButton;
+  private RecyclerView recyclerView;
+  private PostAdapter adapter;
+  private LinearLayoutManager layoutManager;
+  private BottomNavigationView bottomNavView;
 
   public ProfileFragment() {
     // Required empty public constructor
@@ -93,8 +105,8 @@ public class ProfileFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     Timber.d("breadcrumb");
 
-    BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
-    bottomNavView.animate().translationY(0).setDuration(250);
+    // BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+    // bottomNavView.animate().translationY(0).setDuration(250);
 
     viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
@@ -106,6 +118,7 @@ public class ProfileFragment extends Fragment {
     signOutButton = view.findViewById(R.id.sign_out_button);
     followerCountView = view.findViewById(R.id.profile_primary_text);
     followingCountView = view.findViewById(R.id.profile_secondary_text);
+    showBlockedUsersButton = view.findViewById(R.id.show_blocked_users_button);
 
     if (savedInstanceState != null) {
       //Restore the fragment's state here
@@ -127,6 +140,33 @@ public class ProfileFragment extends Fragment {
         if (currentProfileUser.getId().equals(updatedProfileUser.getId())) {
           renderProfile(updatedProfileUser, view);
         }
+        renderRecyclerView(updatedProfileUser, view);
+        // hide profile on scroll
+        LinearLayout layout = view.findViewById(R.id.profile_info_widget);
+        layout.bringToFront();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+          @Override
+          public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
+              if (dy > 0) {
+                // scrolling down
+                layout.animate().translationY(-layout.getHeight()).setDuration(1000);
+                bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000);
+              } else {
+                // account for margin between top of screen and search bar
+                layout.animate().translationY(0).setDuration(1000);
+                bottomNavView.animate().translationY(0).setDuration(1000);
+              }
+            }
+          }
+
+          @Override
+          public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+          }
+        });
       };
 
       // initialize profileUser, observe change to the profileUser data, and get a registration
@@ -160,6 +200,7 @@ public class ProfileFragment extends Fragment {
   public void onStop() {
     super.onStop();
     Timber.d("breadcrumb");
+    if (adapter != null) adapter.stopListening();
   }
 
   @Override
@@ -363,22 +404,81 @@ public class ProfileFragment extends Fragment {
 
     int visibility;
 
-    // if a user is looking at his/her own profile, hide Follow and Message buttons.
+    // if a user is looking at his/her own profile, hide Follow and Message buttons, show Logout button and blocked users
     // TODO: delete these parts entirely instead of setting to invisible
     if (liveUser.getId().equals(profileUser.getId())) {
       Timber.i("Viewing self's profile. Hiding Follow and Message buttons.");
-      visibility = View.INVISIBLE;
+      visibility = View.GONE;
       signOutButton.setEnabled(true);
       signOutButton.setOnClickListener(unused -> ProfileFragment.this.logOut());
       signOutButton.setVisibility(View.VISIBLE);
+      showBlockedUsersButton.setVisibility(View.VISIBLE);
+      showBlockedUsersButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new UserListFragment();
+          Bundle bundle = new Bundle();
+
+          bundle.putString("uid", liveUser.getId());
+          bundle.putString("fieldName", "blocked");
+          fragment.setArguments(bundle);
+          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
     } else {
       visibility = View.VISIBLE;
       signOutButton.setEnabled(false);
-      signOutButton.setVisibility(View.INVISIBLE);
+      signOutButton.setVisibility(View.GONE);
+      showBlockedUsersButton.setVisibility(View.GONE);
     }
-
     followSwitch.setVisibility(visibility);
     blockSwitch.setVisibility(visibility);
     messageButton.setVisibility(visibility);
+  }
+
+  private void renderRecyclerView(User user, View view) {
+    Timber.i("Rendering feed by user: %s", user);
+    Query query = PostRepository.getInstance().getMany(user.getId(), 20);
+    FirestoreRecyclerOptions<Post> postsOptions = new FirestoreRecyclerOptions.Builder<Post>()
+            .setQuery(query, Post.class)
+            .build();
+
+    adapter = new PostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
+    layoutManager = new LinearLayoutManager(getActivity());
+    layoutManager.setReverseLayout(false);
+    layoutManager.setStackFromEnd(false);
+
+    recyclerView = view.findViewById(R.id.profile_recycler_view);
+    recyclerView.setLayoutManager(layoutManager);
+    recyclerView.setAdapter(adapter);
+    recyclerView.setHasFixedSize(false);
+
+    adapter.startListening();
+
+    Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+    query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
+
+    // hide search view on scroll
+    bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+      @Override
+      public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+
+        if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
+          if (dy > 0) bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000); // scrolling down
+          else bottomNavView.animate().translationY(0).setDuration(1000); // scrolling up
+        }
+      }
+
+      @Override
+      public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+      }
+    });
   }
 }
