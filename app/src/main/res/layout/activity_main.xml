@@ -15,6 +15,20 @@
             tools:layout_editor_absoluteX="22dp"
             android:gravity="center_horizontal|center_vertical">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/Btn_Create_Activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:contentDescription="@string/create_activity_content_desc"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.921"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@android:drawable/ic_input_add" />
+
         <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_container_view"
                 android:name="androidx.navigation.fragment.NavHostFragment"
