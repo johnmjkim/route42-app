@@ -117,4 +117,5 @@
     <string name="title_fragment_map">Map</string>
     <string name="navigation_map">Map</string>
     <string name="block_button">Block</string>
+    <string name="create_activity_content_desc">click to create activity</string>
 </resources>

@@ -53,15 +53,29 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     userViewModel.addSnapshotListenerToLiveUser(uid);
 
-    MainActivity self = this;
+    this.findViewById(R.id.Btn_Create_Activity).setOnClickListener( event -> {
+
+      createActivityBtnClickHandler();
+    });
 
     // bottom navigation
     toolbar = getSupportActionBar();
     navBarView = findViewById(R.id.bottom_navigation_view);
-    navBarView.setOnItemSelectedListener(self);
+    navBarView.setOnItemSelectedListener(this);
     navBarView.setSelectedItemId(R.id.navigation_profile);
   }
+  public void createActivityBtnClickHandler() {
+    Timber.i("Create activity btn clicked.");
 
+    Bundle bundle = new Bundle();
+    bundle.putString("uid", this.uid);
+    Fragment fragment = new MapFragment();
+    fragment.setArguments(bundle);
+    getSupportFragmentManager()
+            .beginTransaction()
+            .replace(R.id.fragment_container_view, fragment)
+            .commit();
+  }
   /**
    * Called when an item in the bottom navigation menu is selected.
    *
