@@ -86,4 +86,15 @@ public class Tokenizer {
   public static List<Token> tokenizeQuery(String text) {
     return new Tokenizer(text).tokenize();
   }
+
+  public static void main(String[] args) {
+    System.out.println("raw str: username: xxxx hashtags: #hashtag #android #app");
+    System.out.println(SyntaxTreeNode.fromTokens(Tokenizer.tokenizeQuery("username: xxxx hashtags: #hashtag #android #app")));
+
+    System.out.println("raw str: username: xxxx or hashtags: #hashtag #android #app");
+    System.out.println(SyntaxTreeNode.fromTokens(Tokenizer.tokenizeQuery("username: xxxx or hashtags: #hashtag #android #app")));
+
+    System.out.println("raw str: (username: xxxx or hashtags: #hashtag #android #app) username: test_user");
+    System.out.println(SyntaxTreeNode.fromTokens(Tokenizer.tokenizeQuery("(username: xxxx or hashtags: #hashtag #android #app) username: test_user")));
+  }
 }

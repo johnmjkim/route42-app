@@ -83,7 +83,7 @@ public class SyntaxTreeNode {
       case FILTER:
         String[] groups = token.getValue().split(":");
         if(groups.length == 2) return new SyntaxTreeNode(groups[0].trim(), groups[1].trim());
-        else throw new ClassCastException("error");
+        else throw new ClassCastException("error " + token.toString());
     }
     return null;
   }
