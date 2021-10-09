@@ -21,9 +21,14 @@ import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.PostAdapter;
+import com.comp6442.route42.utils.query.SyntaxTreeNode;
+import com.comp6442.route42.utils.query.Token;
+import com.comp6442.route42.utils.query.Tokenizer;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.Query;
+
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -94,7 +99,7 @@ public class FeedFragment extends Fragment {
               .build();
 
       adapter = new PostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
-//      adapter.notifyDataSetChanged();
+
       layoutManager = new LinearLayoutManager(getActivity());
       layoutManager.setReverseLayout(false);
       layoutManager.setStackFromEnd(false);
@@ -104,75 +109,91 @@ public class FeedFragment extends Fragment {
       recyclerView.setAdapter(adapter);
       recyclerView.setHasFixedSize(false);
 
-//      recyclerView.addOnLayoutChangeListener((changedView, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-//        if (oldBottom < bottom) {
-//          recyclerView.postDelayed(() -> recyclerView.smoothScrollToPosition(0), 100);
-//        }
-//        Timber.i("breadcrumb %d %d", bottom, oldBottom);
-//      });
       adapter.startListening();
 
       Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
       query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
 
-      // hide search view on scroll
-      bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
-      searchView = view.findViewById(R.id.search_view);
-      recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-          super.onScrolled(recyclerView, dx, dy);
-
-          if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
-            if (dy > 0) {
-              // scrolling down
-              searchView.animate().translationY(-searchView.getHeight()).setDuration(1000);
-              bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000);
-            } else {
-              searchView.animate().translationY(0).setDuration(1000);
-              bottomNavView.animate().translationY(0).setDuration(1000);
-            }
-          }
-        }
-
-        @Override
-        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-          super.onScrollStateChanged(recyclerView, newState);
-        }
-      });
-
-      // search
-      SearchView searchView = view.findViewById(R.id.search_view);
-      searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-        @Override
-        public boolean onQueryTextSubmit(String s) {
-          return false;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String s) {
-          Query query;
-          if (TextUtils.isEmpty(s)) {
-            query = PostRepository.getInstance().getVisiblePosts(user, 20);
-          } else {
-            query = PostRepository.getInstance().searchByNamePrefix(user, s, 20);
-          }
-          FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
-                  .setQuery(query, Post.class)
-                  .build();
-          adapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
-          recyclerView.setAdapter(adapter);
-          adapter.startListening();
-          Timber.i("PostAdapter bound to RecyclerView with size %d for query: %s", adapter.getItemCount(), s);
-          query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
-
-          return true;
-        }
-      });
+      hideSearchOnScroll(view);
+      initSearch(view, user);
     } else {
       Timber.e("uid is null");
     }
+  }
+
+  public void hideSearchOnScroll(View view) {
+    // hide search view on scroll
+    bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+    searchView = view.findViewById(R.id.search_view);
+    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+      @Override
+      public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+
+        if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
+          if (dy > 0) {
+            // scrolling down
+            searchView.animate().translationY(-searchView.getHeight()).setDuration(1000);
+            bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000);
+          } else {
+            searchView.animate().translationY(0).setDuration(1000);
+            bottomNavView.animate().translationY(0).setDuration(1000);
+          }
+        }
+      }
+
+      @Override
+      public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+      }
+    });
+  }
+
+  public void initSearch(View view, User user) {
+    // search
+    SearchView searchView = view.findViewById(R.id.search_view);
+    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+      @Override
+      public boolean onQueryTextSubmit(String s) {
+        return false;
+      }
+
+      @Override
+      public boolean onQueryTextChange(String s) {
+        if (!s.isEmpty()) {
+          try {
+            SyntaxTreeNode node = processSearch(s);
+            Timber.w(node.toString());
+          } catch (Exception exc) {
+            Timber.w(exc);
+          }
+        }
+
+        Query query;
+        if (TextUtils.isEmpty(s)) {
+          query = PostRepository.getInstance().getVisiblePosts(user, 20);
+        } else {
+          query = PostRepository.getInstance().searchByNamePrefix(user, s, 20);
+        }
+        FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
+                .setQuery(query, Post.class)
+                .build();
+        adapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+        recyclerView.setAdapter(adapter);
+        adapter.startListening();
+        Timber.i("PostAdapter bound to RecyclerView with size %d for query: %s", adapter.getItemCount(), s);
+        query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
+
+        return true;
+      }
+    });
+  }
+
+  private SyntaxTreeNode processSearch(String s) {
+    List<Token> tokens = Tokenizer.tokenizeQuery(s);
+    SyntaxTreeNode node = SyntaxTreeNode.fromTokens(tokens);
+    return node;
   }
 
   @Override
