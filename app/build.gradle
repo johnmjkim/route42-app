@@ -104,16 +104,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
 
-    // ----------- Mapbox ------------
-//    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1'
-//    implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0"
-//    // Core: Color, text, and networking utility classes.
-//    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:5.8.0'
-//    // GeoJSON: Java classes that model the GeoJSON spec.
-//    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-geojson:5.8.0'
-//    // Turf: Runtime geospatial calculations.
-//    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.8.0'
-//    implementation "com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0"
+    // ----------- REST API ------------
+    implementation 'com.squareup.retrofit2:retrofit:2.8.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.7'
 
 
     // ----------- Tests ---------------
