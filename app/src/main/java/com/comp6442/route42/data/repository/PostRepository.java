@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import timber.log.Timber;
@@ -45,6 +46,9 @@ public class PostRepository extends FirestoreRepository<Post> {
               Long.parseLong(tsString.substring(0, decimalIdx)),
               (decimalIdx != tsString.length()) ? Integer.parseInt(tsString.substring(decimalIdx + 1)) : 0
       );
+    }).registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, type, context) -> {
+      String tsString = json.toString();
+      return new Date(Long.parseLong(tsString));
     }).registerTypeAdapter(Double.class, (JsonDeserializer<Double>) (json, type, context) -> {
       return json.getAsDouble();
     }).registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
@@ -73,10 +77,6 @@ public class PostRepository extends FirestoreRepository<Post> {
 
   /**
    * Get posts by users that did not block the current user, and are public.
-   *
-   * @param user
-   * @param limit
-   * @return
    */
   public Query getVisiblePosts(User user, int limit) {
     if (user.getBlockedBy().size() > 0) {

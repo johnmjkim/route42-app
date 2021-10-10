@@ -28,7 +28,7 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
-import com.comp6442.route42.ui.PostAdapter;
+import com.comp6442.route42.ui.FirestorePostAdapter;
 import com.comp6442.route42.ui.activity.LogInActivity;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -54,7 +54,7 @@ public class ProfileFragment extends Fragment {
   private SwitchMaterial blockSwitch, followSwitch;
   private MaterialButton messageButton, signOutButton, showBlockedUsersButton;
   private RecyclerView recyclerView;
-  private PostAdapter adapter;
+  private FirestorePostAdapter adapter;
   private LinearLayoutManager layoutManager;
   private BottomNavigationView bottomNavView;
 
@@ -447,7 +447,7 @@ public class ProfileFragment extends Fragment {
             .setQuery(query, Post.class)
             .build();
 
-    adapter = new PostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
+    adapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
     layoutManager = new LinearLayoutManager(getActivity());
     layoutManager.setReverseLayout(false);
     layoutManager.setStackFromEnd(false);
@@ -459,7 +459,7 @@ public class ProfileFragment extends Fragment {
 
     adapter.startListening();
 
-    Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+    Timber.i("FirestorePostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
     query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
 
     // hide search view on scroll
