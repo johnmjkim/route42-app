@@ -77,17 +77,33 @@ public class PostRepository extends FirestoreRepository<Post> {
 
   /**
    * Get posts by users that did not block the current user, and are public.
+   * TODO: limitation - only supports up to 10 blocked
    */
   public Query getVisiblePosts(User user, int limit) {
-    if (user.getBlockedBy().size() > 0) {
-      Timber.d("breadcrumb");
-      // TODO: temporarily removed filter on isBlockedBy since unblock button is inside each profile
+    Timber.d("breadcrumb");
+    if (user.getBlockedBy().size() > 0 && user.getBlocked().size() > 0) {
       return this.collection
               .whereEqualTo("isPublic", 1)
+              .whereNotIn("uid", user.getBlockedBy())
+              .whereNotIn("uid", user.getBlocked())
+              .orderBy("uid", Query.Direction.ASCENDING)
+              .orderBy("postDatetime", Query.Direction.DESCENDING)
+              .limit(limit);
+    } else if (user.getBlocked().size() > 0) {
+      return this.collection
+              .whereEqualTo("isPublic", 1)
+              .whereNotIn("uid", user.getBlocked())
+              .orderBy("uid", Query.Direction.ASCENDING)
+              .orderBy("postDatetime", Query.Direction.DESCENDING)
+              .limit(limit);
+    } else if (user.getBlockedBy().size() > 0) {
+      return this.collection
+              .whereEqualTo("isPublic", 1)
+              .whereNotIn("uid", user.getBlockedBy())
+              .orderBy("uid", Query.Direction.ASCENDING)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
     } else {
-      Timber.d("breadcrumb");
       return this.collection
               .whereEqualTo("isPublic", 1)
               .orderBy("postDatetime", Query.Direction.DESCENDING)

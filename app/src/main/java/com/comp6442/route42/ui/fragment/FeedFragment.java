@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,6 +49,7 @@ public class FeedFragment extends Fragment {
   private String uid;
   private UserViewModel viewModel;
   private SearchView searchView;
+  private NestedScrollView scrollview;
   private RecyclerView recyclerView;
   private PostAdapter adapter;
   // private FirestorePostAdapter firestorePostAdapter;
@@ -90,7 +92,6 @@ public class FeedFragment extends Fragment {
     Timber.d("breadcrumb");
 
     if (savedInstanceState != null) {
-      //Restore the fragment's state here
       Timber.i("Restoring fragment state");
       this.uid = savedInstanceState.getString("uid");
     }
@@ -101,8 +102,8 @@ public class FeedFragment extends Fragment {
 
       assert user != null;
 
-      Query query = PostRepository.getInstance().getVisiblePosts(user, 20);
       // without firestore post adapter
+      Query query = PostRepository.getInstance().getVisiblePosts(user, 20);
       query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
         @Override
         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -116,9 +117,10 @@ public class FeedFragment extends Fragment {
           recyclerView.setLayoutManager(layoutManager);
           recyclerView.setAdapter(adapter);
           recyclerView.setHasFixedSize(false);
+          recyclerView.setNestedScrollingEnabled(false);
           adapter.notifyDataSetChanged();
 
-          hideSearchOnScroll(view);
+          initFeed(view);
           initSearch(view, user);
         }
       });
@@ -151,30 +153,28 @@ public class FeedFragment extends Fragment {
     }
   }
 
-  public void hideSearchOnScroll(View view) {
+  public void initFeed(View view) {
     // hide search view on scroll
     bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+
+    scrollview = view.findViewById(R.id.feed_scroll_view);
+    scrollview.setSmoothScrollingEnabled(true);
+
     searchView = view.findViewById(R.id.search_view);
     recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
       @Override
       public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
-        if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
-          if (dy > 0) {
-            // scrolling down
-            searchView.animate().translationY(-searchView.getHeight()).setDuration(1000);
-            bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000);
-          } else {
-            searchView.animate().translationY(0).setDuration(1000);
-            bottomNavView.animate().translationY(0).setDuration(1000);
-          }
+        if (dy > 0) {
+          // scrolling down
+          searchView.animate().translationY(-searchView.getHeight()).setDuration(500);
+          bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(500);
+        } else {
+          // scrolling up
+          searchView.animate().translationY(0).setDuration(500);
+          bottomNavView.animate().translationY(0).setDuration(500);
         }
-      }
-
-      @Override
-      public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-        super.onScrollStateChanged(recyclerView, newState);
       }
     });
   }
@@ -212,6 +212,7 @@ public class FeedFragment extends Fragment {
         return true;
       }
 
+      // do not react to every text edit
       @Override
       public boolean onQueryTextChange(String queryText) {
         return false;

@@ -6,11 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -53,6 +53,7 @@ public class ProfileFragment extends Fragment {
   private TextView userNameView, followerCountView, followingCountView;
   private SwitchMaterial blockSwitch, followSwitch;
   private MaterialButton messageButton, signOutButton, showBlockedUsersButton;
+  private NestedScrollView scrollview;
   private RecyclerView recyclerView;
   private FirestorePostAdapter adapter;
   private LinearLayoutManager layoutManager;
@@ -127,10 +128,8 @@ public class ProfileFragment extends Fragment {
     }
 
     if (this.uid != null) {
-      // TODO: find out where double quotes entered uid
-      // Timber.i("Received uid: %s", this.uid);
       if (this.uid.contains("\"")) this.uid = this.uid.replaceAll("^\"|\"$", "");
-      Timber.i("Cleaned uid: %s", this.uid);
+      Timber.i("Received uid: %s", this.uid);
 
       // create observer to update the profile UI on change to the `ProfileUser`
       final Observer<User> userObserver = updatedProfileUser -> {
@@ -141,32 +140,6 @@ public class ProfileFragment extends Fragment {
           renderProfile(updatedProfileUser, view);
         }
         renderRecyclerView(updatedProfileUser, view);
-        // hide profile on scroll
-        LinearLayout layout = view.findViewById(R.id.profile_info_widget);
-        layout.bringToFront();
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-          @Override
-          public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-            if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
-              if (dy > 0) {
-                // scrolling down
-                layout.animate().translationY(-layout.getHeight()).setDuration(1000);
-                bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000);
-              } else {
-                // account for margin between top of screen and search bar
-                layout.animate().translationY(0).setDuration(1000);
-                bottomNavView.animate().translationY(0).setDuration(1000);
-              }
-            }
-          }
-
-          @Override
-          public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-          }
-        });
       };
 
       // initialize profileUser, observe change to the profileUser data, and get a registration
@@ -232,6 +205,7 @@ public class ProfileFragment extends Fragment {
   }
 
   private void setProfilePic(User user, View view) {
+    // TODO: enable cache
     ImageView profilePic = view.findViewById(R.id.profile_picture);
     Timber.i(user.toString());
     if (user.getProfilePicUrl() != null) {
@@ -456,6 +430,10 @@ public class ProfileFragment extends Fragment {
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.setAdapter(adapter);
     recyclerView.setHasFixedSize(false);
+    recyclerView.setNestedScrollingEnabled(false);
+
+    scrollview = view.findViewById(R.id.profile_scroll_view);
+    scrollview.setSmoothScrollingEnabled(true);
 
     adapter.startListening();
 
