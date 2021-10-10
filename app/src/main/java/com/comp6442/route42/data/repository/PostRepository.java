@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import timber.log.Timber;
@@ -45,6 +46,9 @@ public class PostRepository extends FirestoreRepository<Post> {
               Long.parseLong(tsString.substring(0, decimalIdx)),
               (decimalIdx != tsString.length()) ? Integer.parseInt(tsString.substring(decimalIdx + 1)) : 0
       );
+    }).registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, type, context) -> {
+      String tsString = json.toString();
+      return new Date(Long.parseLong(tsString));
     }).registerTypeAdapter(Double.class, (JsonDeserializer<Double>) (json, type, context) -> {
       return json.getAsDouble();
     }).registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
@@ -73,21 +77,33 @@ public class PostRepository extends FirestoreRepository<Post> {
 
   /**
    * Get posts by users that did not block the current user, and are public.
-   *
-   * @param user
-   * @param limit
-   * @return
+   * TODO: limitation - only supports up to 10 blocked
    */
   public Query getVisiblePosts(User user, int limit) {
-    if (user.getBlockedBy().size() > 0) {
-      Timber.d("breadcrumb");
-      // TODO: temporarily removed filter on isBlockedBy since unblock button is inside each profile
+    Timber.d("breadcrumb");
+    if (user.getBlockedBy().size() > 0 && user.getBlocked().size() > 0) {
       return this.collection
               .whereEqualTo("isPublic", 1)
+              .whereNotIn("uid", user.getBlockedBy())
+              .whereNotIn("uid", user.getBlocked())
+              .orderBy("uid", Query.Direction.ASCENDING)
+              .orderBy("postDatetime", Query.Direction.DESCENDING)
+              .limit(limit);
+    } else if (user.getBlocked().size() > 0) {
+      return this.collection
+              .whereEqualTo("isPublic", 1)
+              .whereNotIn("uid", user.getBlocked())
+              .orderBy("uid", Query.Direction.ASCENDING)
+              .orderBy("postDatetime", Query.Direction.DESCENDING)
+              .limit(limit);
+    } else if (user.getBlockedBy().size() > 0) {
+      return this.collection
+              .whereEqualTo("isPublic", 1)
+              .whereNotIn("uid", user.getBlockedBy())
+              .orderBy("uid", Query.Direction.ASCENDING)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
     } else {
-      Timber.d("breadcrumb");
       return this.collection
               .whereEqualTo("isPublic", 1)
               .orderBy("postDatetime", Query.Direction.DESCENDING)

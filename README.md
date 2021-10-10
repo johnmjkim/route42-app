@@ -24,7 +24,12 @@
 22. Now you can click on the name of the location to see it on the map with respect to your current location.
 23. Updated color scheme and corrected full-screen mode.
 24. Added `PhotoMapFragment` and enabled geoQuery search for nearby posts.
-25. Added `blocked` field to `User` model and display `Show blocked users` button when a user is looking at his/her own profile. Now users can see list of users that they blocked. 
+25. Added `blocked` field to `User` model and display `Show blocked users` button when a user is looking at his/her own profile. Now users can see list of users that they blocked.
+26. Parsing 
+    - add REST API client using retrofit
+    - update FeedFragment to use regular PostAdapter instead of FirestorePostAdapter
+    - make FeedFragment Searchview issue query only on submit
+    - use single thread executor service to make REST API request
 
 # Requirements
 
