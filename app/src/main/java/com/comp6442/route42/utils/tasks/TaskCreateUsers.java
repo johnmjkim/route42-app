@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils;
+package com.comp6442.route42.utils.tasks;
 
 import android.content.Context;
 
@@ -6,6 +6,7 @@ import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.UserRepository;
+import com.comp6442.route42.utils.tasks.DataTask;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
