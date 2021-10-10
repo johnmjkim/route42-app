@@ -1,11 +1,14 @@
 package com.comp6442.route42.ui.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -15,11 +18,14 @@ import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
 
+import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.User;
+import com.comp6442.route42.ui.fragment.ActiveMapFragment;
 import com.comp6442.route42.ui.fragment.FeedFragment;
 import com.comp6442.route42.ui.fragment.MapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.ListenerRegistration;
 
@@ -66,11 +72,19 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   }
   public void createActivityBtnClickHandler() {
     Timber.i("Create activity btn clicked.");
-
+    AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(this, R.style.AlertDialog_AppCompat)).setTitle("Choose Activity Type")
+            .setItems(Activity.Activity_Type.getValues(), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        System.out.println("clicked " + i);
+      }
+    }).create();
+    alertDialog.show();
     Bundle bundle = new Bundle();
     bundle.putString("uid", this.uid);
-    Fragment fragment = new MapFragment();
+    Fragment fragment = new ActiveMapFragment();
     fragment.setArguments(bundle);
+    toolbar.setTitle("Activity");
     getSupportFragmentManager()
             .beginTransaction()
             .replace(R.id.fragment_container_view, fragment)

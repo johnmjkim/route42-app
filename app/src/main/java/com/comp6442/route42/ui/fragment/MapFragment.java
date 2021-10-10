@@ -1,7 +1,5 @@
 package com.comp6442.route42.ui.fragment;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,14 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+
 import androidx.fragment.app.Fragment;
 
 import com.comp6442.route42.R;
+
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -50,20 +47,7 @@ public class MapFragment extends Fragment {
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    // request access to fine location
-    String fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION;
-    int hasLocationPermission = ContextCompat.checkSelfPermission(this.getContext(),fineLocationPermission);
-    if (!(hasLocationPermission == PackageManager.PERMISSION_GRANTED)) {
-      ActivityResultLauncher<String> requestPermissionLauncher= registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-        if (isGranted) {
-          System.out.println("permission granted");
-        } else {
-          //navigate away from map
-          System.out.println("permission not granted");
-        }
-      });
-      requestPermissionLauncher.launch(fineLocationPermission);
-    }
+
     setHasOptionsMenu(true);
     mapbox = Mapbox.getInstance(requireContext(), getString(R.string.mapbox_api_key));
     return inflater.inflate(R.layout.fragment_map, container, false);
