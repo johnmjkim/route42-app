@@ -68,7 +68,9 @@ public class Post extends Model implements Parcelable {
     setGeohash();
   }
 
-  public Post(DocumentReference uid, String userName, int isPublic, String profilePicUrl, Date postDatetime, String postDescription, String locationName, Double latitude, Double longitude, List<String> hashtags, int likeCount, String imageUrl, List<DocumentReference> likedBy) {
+  public Post(DocumentReference uid, String userName, int isPublic, String profilePicUrl, Date postDatetime,
+              String postDescription, String locationName, Double latitude, Double longitude, List<String> hashtags,
+              int likeCount, String imageUrl, List<DocumentReference> likedBy) {
     super();
     this.uid = uid;
     this.userName = userName;

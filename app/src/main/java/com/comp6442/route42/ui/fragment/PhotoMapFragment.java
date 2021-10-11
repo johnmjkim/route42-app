@@ -45,6 +45,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,16 +105,16 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
 
   private void initializeMap() {
     mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
-    assert mapFragment != null;
+  assert mapFragment != null;
     mapFragment.getMapAsync(this);
   }
 
   private void showAlert() {
     new AlertDialog.Builder(requireContext())
             .setTitle("Revoke permission")
-            .setMessage("Enabling location access to Route42 will allow you to see your location relative to locations tagged by posts.")
-            .setPositiveButton("OK", (dialog, which) -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION))
-            .setNegativeButton("Cancel", (dialog, which) -> {
+                    .setMessage("Enabling location access to Route42 will allow you to see your location relative to locations tagged by posts.")
+                    .setPositiveButton("OK", (dialog, which) -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION))
+                    .setNegativeButton("Cancel", (dialog, which) -> {
               Snackbar snackbar = Snackbar.make(
                       mapFragment.requireView(),
                       "Permission not granted",

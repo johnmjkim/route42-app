@@ -116,12 +116,28 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     }
 
     Timber.i("BottomNav Selection: %s", item.toString());
+    Fragment fragment;
 
-    if (item == lastSelected) return false;
-    lastSelected = item;
+    if (item == lastSelected) {
+      fragment =  selectMenuItemFragment(lastSelected);
+    } else{
+      fragment = selectMenuItemFragment(item);
+
+      lastSelected = item;
+    }
 
     Bundle bundle = new Bundle();
     bundle.putString("uid", this.uid);
+    fragment.setArguments(bundle);
+
+    getSupportFragmentManager()
+            .beginTransaction()
+            .replace(R.id.fragment_container_view, fragment)
+            .commit();
+
+    return true;
+  }
+  public Fragment selectMenuItemFragment(MenuItem item) {
     Fragment fragment = null;
 
     switch (item.getItemId()) {
@@ -139,16 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 //        toolbar.setTitle(R.string.title_fragment_map);
         break;
     }
-
-    assert fragment != null;
-    fragment.setArguments(bundle);
-
-    getSupportFragmentManager()
-            .beginTransaction()
-            .replace(R.id.fragment_container_view, fragment)
-            .commit();
-
-    return true;
+    return fragment;
   }
 
   @Override
