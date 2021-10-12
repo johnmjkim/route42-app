@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils;
+package com.comp6442.route42.utils.tasks;
 
 import android.content.Context;
 
@@ -6,6 +6,7 @@ import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.PostRepository;
+import com.comp6442.route42.utils.tasks.DataTask;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ public class TaskCreatePosts extends DataTask<Post> {
     gson = PostRepository.getJsonDeserializer();
     jsonString = readTextFile(demoContext.getResources().openRawResource(R.raw.posts));
     postList = Arrays.asList(gson.fromJson(jsonString, (Type) Post[].class));
+    postList.forEach(Post::setGeohash);
     Collections.shuffle(postList);
   }
 
@@ -45,8 +47,7 @@ public class TaskCreatePosts extends DataTask<Post> {
   private void createPosts() {
     if (!DEMO) {
       PostRepository.getInstance().createMany(postList);
-    }
-    else {
+    } else {
       createPostsMiniBatch(
               BuildConfig.batchSize,
               Math.min(postList.size(), BuildConfig.demoPostLimit)

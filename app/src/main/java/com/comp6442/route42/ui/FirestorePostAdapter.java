@@ -20,12 +20,15 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
+import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
 
 import timber.log.Timber;
 
@@ -108,6 +111,29 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     if (post.getHashtags().size() > 0)
       viewHolder.hashtagsTextView.setText(String.join(" ", post.getHashtags()));
 
+    if (post.getLocationName() != null) {
+      viewHolder.locationTextView.setText(post.getLocationName());
+      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new PhotoMapFragment();
+          ArrayList<Post> posts = new ArrayList<>();
+          posts.add(post);
+          Bundle bundle = new Bundle();
+          bundle.putParcelableArrayList("posts", posts);
+          fragment.setArguments(bundle);
+          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
+    } else {
+      viewHolder.locationTextView.setText(" ");
+      viewHolder.locationTextView.setText("");
+    }
+
     Timber.d("OnBindView complete.");
   }
 
@@ -152,8 +178,9 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     viewHolder.userNameView.setOnClickListener(view -> {
       Fragment fragment = new ProfileFragment();
       Bundle bundle = new Bundle();
-
       bundle.putString("uid", post.getUid().getId());
+
+      Timber.i("Taking user to Profile: %s", post.getUid().get());
       fragment.setArguments(bundle);
       ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
               .beginTransaction()
@@ -164,23 +191,24 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
   }
 
   public static class PostViewHolder extends RecyclerView.ViewHolder {
-    public ImageView userIcon, imageView, like, unlike;
-    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView;
+    public ImageView userIcon, imageView, like, unlike, locationPin;
+    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
     public MaterialCardView materialCardView;
 
     public PostViewHolder(View view) {
       super(view);
-      // Define click listener for the ViewHolder's View
       userIcon = view.findViewById(R.id.card_profile_pic);
       imageView = view.findViewById(R.id.card_main_image);
       like = view.findViewById(R.id.like_button);
       unlike = view.findViewById(R.id.unlike_button);
 
+      materialCardView = view.findViewById(R.id.post_card);
       userNameView = view.findViewById(R.id.card_username);
       hashtagsTextView = view.findViewById(R.id.card_hashtags);
       descriptionView = view.findViewById(R.id.card_description);
       likeCountTextView = view.findViewById(R.id.like_count_text);
-      materialCardView = view.findViewById(R.id.post_card);
+      locationTextView = view.findViewById(R.id.location);
+      locationPin = view.findViewById(R.id.pin);
     }
   }
 }

@@ -17,16 +17,16 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "EMULATOR", "true")
         buildConfigField("boolean", "loadData", "true")
-        buildConfigField("boolean", "skipLogin", "true")
-        buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
+        buildConfigField("boolean", "skipLogin", "false")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
+        buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
 
         // for demo
         buildConfigField("boolean", "DEMO", "false")
         buildConfigField("int", "batchSize", "1")
         buildConfigField("int", "intervalLengthInSeconds", "4")
-        buildConfigField("int", "demoPostLimit", "120")
+        buildConfigField("int", "demoPostLimit", "500") // also controls how many posts are inserted when loadData is true
     }
 
     buildTypes {
@@ -99,20 +99,21 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
 
+    implementation 'com.firebase:geofire-android-common:3.1.0'
+
     // ----------- Glide ------------
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
-    // ----------- Mapbox ------------
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1'
-    implementation "com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0"
-    // Core: Color, text, and networking utility classes.
-    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-core:5.8.0'
-    // GeoJSON: Java classes that model the GeoJSON spec.
-    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-geojson:5.8.0'
-    // Turf: Runtime geospatial calculations.
-    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-turf:5.8.0'
-    implementation "com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0"
+    // ----------- Google Maps ------------
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+
+    // ----------- REST API ------------
+    implementation 'com.squareup.retrofit2:retrofit:2.8.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.7'
+
 
     // ----------- Tests ---------------
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

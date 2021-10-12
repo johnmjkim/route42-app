@@ -15,9 +15,10 @@ public class User extends Model {
   private String userName;
   private int isPublic = 1;
   private String profilePicUrl;
-  private List<DocumentReference> blockedBy = new ArrayList<>();
   private List<DocumentReference> following = new ArrayList<>();
   private List<DocumentReference> followers = new ArrayList<>();
+  private List<DocumentReference> blockedBy = new ArrayList<>();
+  private List<DocumentReference> blocked = new ArrayList<>();
   @Exclude
   private String password = null;
 
@@ -50,6 +51,16 @@ public class User extends Model {
     setIsPublic(isPublic);
     setProfilePicUrl(profilePicUrl);
     setBlockedBy(blockedBy);
+  }
+
+  public User(String id, @NonNull String email, @NonNull String userName, List<DocumentReference> following, List<DocumentReference> followers, String password, int isPublic, String profilePicUrl, List<DocumentReference> blockedBy, List<DocumentReference> blocked) {
+    this(id, email, userName, password);
+    setFollowing(following);
+    setFollowers(followers);
+    setIsPublic(isPublic);
+    setProfilePicUrl(profilePicUrl);
+    setBlockedBy(blockedBy);
+    setBlocked(blocked);
   }
 
   @NonNull
@@ -138,5 +149,13 @@ public class User extends Model {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public List<DocumentReference> getBlocked() {
+    return blocked;
+  }
+
+  public void setBlocked(List<DocumentReference> blocked) {
+    this.blocked = blocked;
   }
 }

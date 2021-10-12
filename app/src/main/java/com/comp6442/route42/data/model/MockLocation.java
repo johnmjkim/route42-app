@@ -1,6 +1,8 @@
 package com.comp6442.route42.data.model;
 
-import com.mapbox.mapboxsdk.geometry.LatLng;
+import android.location.Location;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,25 +68,29 @@ public class MockLocation {
                 locationTimes.set(i, Duration.ofSeconds(0));
                 continue;
             }
-            double p2pDistance = locations.get(i).distanceTo(locations.get(i-1));
-            totalDistance += p2pDistance;
+            LatLng l1 = locations.get(i);
+            LatLng l2 = locations.get(i-1);
+            float[] p2pDistance = new float[3];
+            Location.distanceBetween(l1.latitude, l1.longitude, l2.latitude,l2.longitude, p2pDistance);
+
+            totalDistance += p2pDistance[0];
 
             Duration elapsedTimeAtPoint =  Duration.ofSeconds((long) (totalDistance/ speed));
             locationTimes.set(i, elapsedTimeAtPoint);
         }
     }
-    public  LatLng next() {
+    public LatLng next() {
         Instant currentTime = Instant.now();
         long elapsedSeconds =  currentTime.getEpochSecond() - startTime.getEpochSecond();
-        while (elapsedSeconds.compareTo(  locationTimes.get(currentIdx)) >= 0) {
+        while ( Duration.ofSeconds(elapsedSeconds).compareTo(locationTimes.get(currentIdx)) >=0) {
              prevIdx = currentIdx;
              currentIdx = (currentIdx % locations.size()) + 1;
         }
         long nextPointElapsedSeconds = locationTimes.get(currentIdx).getSeconds();
         long previousPointElapsedSeconds = locationTimes.get(prevIdx).getSeconds();
         long percentageBetweenConsecutivePts = (elapsedSeconds - previousPointElapsedSeconds) / (nextPointElapsedSeconds - previousPointElapsedSeconds);
-        double longitude = locations.get(prevIdx).getLongitude() + percentageBetweenConsecutivePts * (locations.get(currentIdx).getLongitude() - locations.get(prevIdx).getLongitude());
-        double latitude = locations.get(prevIdx).getLatitude() + percentageBetweenConsecutivePts * (locations.get(currentIdx).getLatitude() - locations.get(prevIdx).getLatitude());
+        double longitude = locations.get(prevIdx).longitude + percentageBetweenConsecutivePts * (locations.get(currentIdx).longitude - locations.get(prevIdx).longitude);
+        double latitude = locations.get(prevIdx).latitude + percentageBetweenConsecutivePts * (locations.get(currentIdx).latitude - locations.get(prevIdx).latitude);
 
         return new LatLng(latitude, longitude);
     }
