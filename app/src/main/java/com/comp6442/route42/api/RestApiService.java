@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils.apiclient;
+package com.comp6442.route42.api;
 
 import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.repository.PostRepository;
@@ -10,12 +10,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public abstract class RestApi {
+public abstract class RestApiService {
   protected Retrofit retrofit;
-  protected APIService api;
+  protected RestApiClient api;
   protected final Gson gson = PostRepository.getJsonDeserializer();
 
-  public RestApi() {
+  public RestApiService() {
     // if BuildConfig.EMULATOR is True, assumes rest api is also running locally on port 8080 at localhost
     String url = (BuildConfig.EMULATOR) ? "http://10.0.2.2:8080/" : "http://13.211.169.204:8080/";
     HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -26,6 +26,6 @@ public abstract class RestApi {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(httpClient)
             .build();
-    api = retrofit.create(APIService.class);
+    api = retrofit.create(RestApiClient.class);
   }
 }
