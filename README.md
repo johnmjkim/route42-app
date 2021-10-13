@@ -30,6 +30,7 @@
     - update FeedFragment to use regular PostAdapter instead of FirestorePostAdapter
     - make FeedFragment Searchview issue query only on submit
     - use single thread executor service to make REST API request
+    - incorporated KNN endpoint via KDTree
 
 # Requirements
 
