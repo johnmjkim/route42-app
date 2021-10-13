@@ -21,6 +21,7 @@ import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.User;
 //import com.comp6442.route42.ui.fragment.ActiveMapFragment;
+import com.comp6442.route42.ui.fragment.ActiveMapFragment;
 import com.comp6442.route42.ui.fragment.FeedFragment;
 import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
@@ -113,23 +114,25 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   }
   public void createActivityBtnClickHandler() {
     Timber.i("Create activity btn clicked.");
+    MainActivity self = this;
     AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(this, R.style.AlertDialog_AppCompat)).setTitle("Choose Activity Type")
             .setItems(Activity.Activity_Type.getValues(), new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialogInterface, int i) {
-        System.out.println("clicked " + i);
+        Bundle bundle = new Bundle();
+        bundle.putInt("activity_type", i);
+        bundle.putString("uid", self.uid );
+        Fragment fragment = new ActiveMapFragment(false);
+        fragment.setArguments(bundle);
+//    toolbar.setTitle("Activity");
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container_view, fragment)
+                .commit();
       }
     }).create();
     alertDialog.show();
-    Bundle bundle = new Bundle();
-    bundle.putString("uid", this.uid);
-//    Fragment fragment = new ActiveMapFragment();
-//    fragment.setArguments(bundle);
-//    toolbar.setTitle("Activity");
-//    getSupportFragmentManager()
-//            .beginTransaction()
-//            .replace(R.id.fragment_container_view, fragment)
-//            .commit();
+
   }
   /**
    * Called when an item in the bottom navigation menu is selected.

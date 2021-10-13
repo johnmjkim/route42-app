@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.time.*;
+
+import timber.log.Timber;
+
 public class MockLocation {
     private final List<LatLng> locations =Arrays.asList(
         new LatLng(-35.25932077515105, 149.11459641897002),
@@ -62,36 +65,41 @@ public class MockLocation {
         }
         this.startTime = Instant.now();
         double totalDistance = 0.0;
+        // initialize location times array
         for (int i=0; i<locations.size() ; i++) {
-            // distance in meters
             if (i==0) {
-                locationTimes.set(i, Duration.ofSeconds(0));
+                locationTimes.add( Duration.ofSeconds(0));
                 continue;
             }
             LatLng l1 = locations.get(i);
             LatLng l2 = locations.get(i-1);
             float[] p2pDistance = new float[3];
             Location.distanceBetween(l1.latitude, l1.longitude, l2.latitude,l2.longitude, p2pDistance);
-
             totalDistance += p2pDistance[0];
-
             Duration elapsedTimeAtPoint =  Duration.ofSeconds((long) (totalDistance/ speed));
-            locationTimes.set(i, elapsedTimeAtPoint);
+            locationTimes.add( elapsedTimeAtPoint);
         }
     }
     public LatLng next() {
         Instant currentTime = Instant.now();
         long elapsedSeconds =  currentTime.getEpochSecond() - startTime.getEpochSecond();
         while ( Duration.ofSeconds(elapsedSeconds).compareTo(locationTimes.get(currentIdx)) >=0) {
+            Timber.i("YEEEE");
              prevIdx = currentIdx;
              currentIdx = (currentIdx % locations.size()) + 1;
         }
+        Timber.i("elapsedSeocnds: " + elapsedSeconds);
+        Timber.i("prevIdx: " + prevIdx);
+        Timber.i("currentIdx: " + currentIdx);
+
         long nextPointElapsedSeconds = locationTimes.get(currentIdx).getSeconds();
         long previousPointElapsedSeconds = locationTimes.get(prevIdx).getSeconds();
-        long percentageBetweenConsecutivePts = (elapsedSeconds - previousPointElapsedSeconds) / (nextPointElapsedSeconds - previousPointElapsedSeconds);
+        Timber.i("previous poiint elapsed secs" + previousPointElapsedSeconds);
+        Timber.i("next poioint elapsed sec " + nextPointElapsedSeconds);
+        float percentageBetweenConsecutivePts = (float)(elapsedSeconds - previousPointElapsedSeconds) / (nextPointElapsedSeconds - previousPointElapsedSeconds);
+        Timber.i("percent btwn points " + percentageBetweenConsecutivePts);
         double longitude = locations.get(prevIdx).longitude + percentageBetweenConsecutivePts * (locations.get(currentIdx).longitude - locations.get(prevIdx).longitude);
         double latitude = locations.get(prevIdx).latitude + percentageBetweenConsecutivePts * (locations.get(currentIdx).latitude - locations.get(prevIdx).latitude);
-
         return new LatLng(latitude, longitude);
     }
 }

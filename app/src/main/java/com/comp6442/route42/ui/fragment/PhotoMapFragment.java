@@ -3,36 +3,23 @@ package com.comp6442.route42.ui.fragment;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -40,8 +27,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -50,17 +35,11 @@ import java.util.List;
 
 import timber.log.Timber;
 
-public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
+public class PhotoMapFragment extends MapFragment {
   private static final String ARG_PARAM1 = "posts";
   private static final String ARG_PARAM2 = "drawLine";
-  private List<Post> posts = new ArrayList<>();
-  private Location currentLocation = null;
-  private LatLng userLocation;
-  private SupportMapFragment mapFragment;
-  private GoogleMap googleMap;
-  private FusedLocationProviderClient fusedLocationProviderClient;
-  private boolean locationPermissionGranted = false;
-  private ActivityResultLauncher<String> requestPermissionLauncher;
+  private ArrayList<Post> posts;
+
 
   public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
     Timber.i("%d posts received, drawLine = %s", param1.size(), param2);
@@ -76,12 +55,6 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setHasOptionsMenu(true);
-
-    // reveal bottom nav if hidden
-    BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
-    bottomNavView.animate().translationY(0).setDuration(250);
-
     if (getArguments() != null) {
       this.posts = getArguments().getParcelableArrayList(ARG_PARAM1);
     }
@@ -94,12 +67,12 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     Timber.d(posts.toString());
   }
 
-//  @Override
-//  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//
-//
-//    return inflater.inflate(R.layout.fragment_photo_map, container, false);
-//  }
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
+    return inflater.inflate(R.layout.fragment_photo_map, container, false);
+  }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -107,118 +80,6 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     getLocationPermission();
   }
 
-  private void initializeMap() {
-    mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
-    assert mapFragment != null;
-    mapFragment.getMapAsync(this);
-  }
-
-  private void showAlert() {
-    new AlertDialog.Builder(requireContext())
-            .setTitle("Revoke permission")
-            .setMessage("Enabling location access to Route42 will allow you to see your location relative to locations tagged by posts.")
-            .setPositiveButton("OK", (dialog, which) -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION))
-            .setNegativeButton("Cancel", (dialog, which) -> {
-              Snackbar snackbar = Snackbar.make(
-                      mapFragment.requireView(),
-                      "Permission not granted",
-                      Snackbar.LENGTH_INDEFINITE
-              );
-
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                locationPermissionGranted = false;
-
-                snackbar.setAction("EXIT", view -> {
-                  requireActivity().finishAffinity();
-                  System.exit(0);
-                });
-              } else {
-                snackbar.setAction("REVOKE", view -> getLocationPermission());
-              }
-              snackbar.show();
-              dialog.dismiss();
-            }).create().show();
-  }
-
-  private void getLocationPermission() {
-    requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-      if (isGranted) {
-        Timber.i("Location access granted");
-        locationPermissionGranted = true;
-        initializeMap();
-      } else {
-        Timber.w("Location access not granted");
-        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-          showAlert();
-        } else {
-          Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission not granted", Snackbar.LENGTH_INDEFINITE);
-          locationPermissionGranted = false;
-          snackbar.setAction("EXIT", view -> {
-            requireActivity().finishAffinity();
-            System.exit(0);
-          });
-          snackbar.show();
-        }
-      }
-    });
-
-    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-      locationPermissionGranted = true;
-      initializeMap();
-    } else {
-      requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-    }
-  }
-
-  private Task<Location> getDeviceLocation() {
-    try {
-      Timber.i("getDeviceLocation: getting the devices current location");
-      fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-      return locationPermissionGranted ? fusedLocationProviderClient.getLastLocation() : null;
-    } catch (SecurityException e) {
-      Timber.w("Unable to get current location");
-      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-      return null;
-    } catch (RuntimeException e) {
-      Timber.e(e);
-      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-      return null;
-    }
-  }
-
-  /**
-   * Manipulates the map once available.
-   * This callback is triggered when the map is ready to be used.
-   * This is where we can add markers or lines, add listeners or move the camera.
-   * If Google Play services is not installed on the device, the user will be prompted to
-   * install it inside the MapFragment. This method will only be triggered once the
-   * user has installed Google Play services and returned to the app.
-   */
-  @Override
-  public void onMapReady(@NonNull GoogleMap googleMap) {
-    Timber.i("Map ready. Beginning annotations.");
-    this.googleMap = googleMap;
-
-    Snackbar snackbar = Snackbar.make(
-            mapFragment.requireView(),
-            "Please enable location access.",
-            Snackbar.LENGTH_INDEFINITE
-    );
-    snackbar.setAction("REFRESH", view -> initializeMap());
-
-    Task<Location> locationTask = getDeviceLocation();
-
-    if (locationTask != null) {
-      locationTask.addOnCompleteListener(
-              task -> {
-                this.currentLocation = task.getResult();
-                // Timber.i("User location: (%s)", currentLocation.toString());
-                renderMap();
-              });
-    } else {
-      snackbar.show();
-    }
-  }
 
   /**
    * posts.size() == 0 && userLocation == null: blank
@@ -228,7 +89,8 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
    * TODO posts.size() > 1: points
    * TODO when user taps on "only once" or "deny" and then approve, map should update with user's location
    */
-  private void renderMap() {
+
+  protected void renderMap() {
     Timber.i("Rendering map");
     final int FINE_LOCATION_PERMISSION = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION);
     final int GRANTED = PackageManager.PERMISSION_GRANTED;
@@ -320,21 +182,5 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
             });
   }
 
-  @Override
-  public void onPause() {
-    super.onPause();
-    if (mapFragment != null) mapFragment.onPause();
-  }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    if (mapFragment != null) mapFragment.onResume();
-  }
-
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    if (mapFragment != null) mapFragment.onDestroyView();
-  }
 }
