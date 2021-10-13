@@ -194,6 +194,18 @@
             android:layout_marginBottom="30dp" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/show_create_post_frag_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:text="@string/create_post"
+        app:backgroundTint="@color/teal_700"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/sign_out_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
             android:id="@+id/sign_out_button"
             android:text="@string/action_sign_out"
             android:layout_width="wrap_content"
