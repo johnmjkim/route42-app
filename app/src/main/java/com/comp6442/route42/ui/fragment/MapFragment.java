@@ -50,6 +50,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     // reveal bottom nav if hidden
     BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
     bottomNavView.animate().translationY(0).setDuration(250);
+    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
     try {
       Timber.i("getDeviceLocation: getting the devices current location");
       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
@@ -188,5 +189,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onDestroyView() {
     super.onDestroyView();
     if (mapFragment != null) mapFragment.onDestroyView();
+    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
+
   }
 }

@@ -1,7 +1,6 @@
 package com.comp6442.route42.ui.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
@@ -21,8 +20,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.comp6442.route42.R;
+import com.comp6442.route42.data.ActiveMapViewModel;
 import com.comp6442.route42.data.model.Activity;
-import com.comp6442.route42.data.model.RunActivity;
+import com.comp6442.route42.data.model.BaseActivity;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
@@ -31,9 +31,12 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -138,43 +141,38 @@ public class ActiveMapFragment extends MapFragment {
     }
     private void setActivityButton() {
         activityButton.setOnClickListener( click -> {
-            GoogleMap.SnapshotReadyCallback snapshotCallback = new GoogleMap.SnapshotReadyCallback() {
-                @Override
-                public void onSnapshotReady(@Nullable Bitmap bitmap) {
-                    try {
-                        String baseFilename = "activity_route";
-                        String localFilename = baseFilename+ ".png";
-                        String storageFilename = baseFilename + new Date().toString() + ".png";
-                        FileOutputStream out = getContext().openFileOutput(localFilename, 0);
-                        Timber.i(out.toString());
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-                        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(localFilename, storageFilename,getContext().getFilesDir().getPath());
-                        activeMapViewModel.setSnapshotFileName(storageFilename);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("uid", getArguments().getString("uid"));
-                        Fragment fragment = new CreatePostFragment();
-                        fragment.setArguments(bundle);
-                        getActivity()
-                                .getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.fragment_container_view, fragment)
-                                .commit();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            GoogleMap.SnapshotReadyCallback snapshotCallback = bitmap -> {
+                try {
+                    String baseFilename = "activity_route";
+                    String localFilename = baseFilename+ ".png";
+                    String storageFilename = baseFilename + new Date().toString() + ".png";
+                    FileOutputStream out = getContext().openFileOutput(localFilename, 0);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(localFilename, storageFilename,getContext().getFilesDir().getPath());
+                    activeMapViewModel.setSnapshotFileName(storageFilename);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("uid", getArguments().getString("uid"));
+                    bundle.putString("img_path","/"+ localFilename);
+                    Fragment fragment = new CreatePostFragment();
+                    fragment.setArguments(bundle);
+                    getActivity()
+                            .getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container_view, fragment)
+                            .commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             };
-            googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                 @Override
-                 public void onMapLoaded() {
-                     Timber.i("clicked activity button");
-                     googleMap.snapshot(snapshotCallback);
-                     googleMap.setOnMapLoadedCallback(null);
-                 }
-             }
+            googleMap.setOnMapLoadedCallback(() -> {
+                Timber.i("clicked activity button");
+                googleMap.snapshot(snapshotCallback);
+                googleMap.setOnMapLoadedCallback(null);
+            }
             );
         });
     }
+
     @Override
     protected Task<Location> getDeviceLocation() {
         try {
@@ -211,46 +209,45 @@ public class ActiveMapFragment extends MapFragment {
     protected void renderMap() {
         try {
             if (locationPermissionGranted) {
-                Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(this.getActivity(), new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            Location lastKnownLocation = task.getResult();
-                            Timber.i("successful get location from fusedProvider: " + lastKnownLocation);
-                            if (lastKnownLocation != null) {
-                                LatLng locationLatLng = com.comp6442.route42.data.model.Location.latLngFromLocation(lastKnownLocation);
-                                //add current location marker
-                                googleMap.clear();
-                                googleMap.addMarker(new MarkerOptions().position(locationLatLng).title("User"));
-                                //track user using camera
-                                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        locationLatLng, 20));
-                            }
-                            //add activity route polyline
-                            if(activeMapViewModel.hasPastLocations()) {
-                                googleMap.addPolyline(new PolylineOptions().clickable(false).addAll(
-                                        activeMapViewModel.getPastLocations()
-                                ).width(15).color(Color.RED));
-                            }
 
-                        } else {
+                googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json_activity_map));
+                Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
+                locationResult.addOnCompleteListener(this.getActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        // Set the map's camera position to the current location of the device.
+                        Location lastKnownLocation = task.getResult();
+                        Timber.i("successful get location from fusedProvider: " + lastKnownLocation);
+                        if (lastKnownLocation != null) {
+                            LatLng locationLatLng = com.comp6442.route42.data.model.Location.latLngFromLocation(lastKnownLocation);
+                            //add current location marker
+                            googleMap.clear();
+                            googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
+                            //track user using camera
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    locationLatLng, 20));
+                        }
+                        //add activity route polyline
+                        if(activeMapViewModel.hasPastLocations()) {
+                            googleMap.addPolyline(new PolylineOptions()
+                                            .endCap(new RoundCap()).clickable(false).addAll(
+                                    activeMapViewModel.getPastLocations()
+                            )
+                                    .width(25)
+                                    .color(Color.BLUE)
+
+                            );
+                        }
+
+                    } else {
 //                            Log.d(TAG, "Current location is null. Using defaults.");
 //                            Log.e(TAG, "Exception: %s", task.getException());
 //                            map.moveCamera(CameraUpdateFactory
 //                                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
-                            googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-                        }
+                        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                     }
-                }).addOnSuccessListener(this.getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        Timber.i("location is :" + location);
-                    }
-                });
-                long elapsedTime = RunActivity.getElapsedTimeSeconds(new Date(), activeMapViewModel.getStartTime());
-                Activity userActivityData = new RunActivity(activeMapViewModel.getPastLocations(), elapsedTime);
+                }).addOnSuccessListener(this.getActivity(), location -> Timber.i("location is :" + location));
+                long elapsedTime = BaseActivity.getElapsedTimeSeconds(new Date(), activeMapViewModel.getStartTime());
+                Activity userActivityData = new BaseActivity(activeMapViewModel.getPastLocations(), elapsedTime);
                 activeMapViewModel.setActivityData(userActivityData);
                 activityMetricsText.setText(userActivityData.toString());
             }

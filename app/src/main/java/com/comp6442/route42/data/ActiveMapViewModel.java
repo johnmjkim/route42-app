@@ -1,4 +1,4 @@
-package com.comp6442.route42.ui.fragment;
+package com.comp6442.route42.data;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -28,7 +28,7 @@ public class ActiveMapViewModel extends ViewModel {
 
     private final MutableLiveData<Location> deviceLocation = new MutableLiveData<>();
     private final MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
-    private List<LatLng> pastLocations = new ArrayList<LatLng>();
+    private List<LatLng> pastLocations = new ArrayList<>();
     private Date startTime;
     private Activity activityData = null;
 

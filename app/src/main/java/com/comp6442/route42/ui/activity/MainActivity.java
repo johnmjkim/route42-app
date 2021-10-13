@@ -63,10 +63,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     // toolbar = getSupportActionBar();
     // toolbar.hide();
-    this.findViewById(R.id.Btn_Create_Activity).setOnClickListener( event -> {
+    setCreateActivityBtn();
 
-      createActivityBtnClickHandler();
-    });
 
     // bottom navigation
     bottomNav = findViewById(R.id.bottom_navigation_view);
@@ -75,6 +73,12 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     // NavigationUI.setupWithNavController(bottomNav, navController);
     // fragmentContainerView = findViewById(R.id.fragment_container_view);
+  }
+
+  private void setCreateActivityBtn() {
+    this.findViewById(R.id.Btn_Create_Activity).setOnClickListener( event -> {
+      createActivityBtnClickHandler();
+    });
   }
 
   @Override
@@ -122,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         Bundle bundle = new Bundle();
         bundle.putInt("activity", i);
         bundle.putString("uid", self.uid );
-        Timber.i("activity type"+i);
         Fragment fragment = new ActiveMapFragment(false);
         fragment.setArguments(bundle);
 //    toolbar.setTitle("Activity");
@@ -135,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     alertDialog.show();
 
   }
+
+
   /**
    * Called when an item in the bottom navigation menu is selected.
    *

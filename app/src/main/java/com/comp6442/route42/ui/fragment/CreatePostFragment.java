@@ -1,10 +1,11 @@
 package com.comp6442.route42.ui.fragment;
 
+import static com.comp6442.route42.data.model.Post.getHashTagsFromTextInput;
+
 import androidx.lifecycle.ViewModelProvider;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,24 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.comp6442.route42.R;
+import com.comp6442.route42.data.ActiveMapViewModel;
 import com.comp6442.route42.data.CreatePostViewModel;
 import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.Post;
-import com.comp6442.route42.data.model.RunActivity;
 import com.comp6442.route42.data.model.User;
-import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -57,8 +54,8 @@ public class CreatePostFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         uid = getArguments().getString("uid");
         return inflater.inflate(R.layout.create_post_fragment, container, false);
-
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -69,7 +66,7 @@ public class CreatePostFragment extends Fragment {
         postRepository = PostRepository.getInstance();
         postImage = view.findViewById(R.id.create_post_image);
 
-        Bitmap myBitmap = BitmapFactory.decodeFile(getContext().getFilesDir().getPath()+"/test.png");
+        Bitmap myBitmap = BitmapFactory.decodeFile(getContext().getFilesDir().getPath() + getArguments().getString("img_path"));
         postImage.setImageBitmap(myBitmap);
         cancelPostButton = view.findViewById(R.id.cancel_post_button);
         createPostButton = view.findViewById(R.id.create_post_button);
@@ -80,10 +77,8 @@ public class CreatePostFragment extends Fragment {
 
             Bundle bundle = new Bundle();
             bundle.putString("uid", uid);
-
             Fragment fragment = new FeedFragment();
             fragment.setArguments(bundle);
-
             getActivity()
                     .getSupportFragmentManager()
                     .beginTransaction()
@@ -92,6 +87,15 @@ public class CreatePostFragment extends Fragment {
         });
         createPostButton.setOnClickListener(event -> {
             onClickCreatePostHandler();
+            Bundle bundle = new Bundle();
+            bundle.putString("uid", uid);
+            Fragment fragment = new ProfileFragment();
+            fragment.setArguments(bundle);
+            getActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container_view, fragment)
+                    .commit();
         });
 
     }
@@ -120,36 +124,4 @@ public class CreatePostFragment extends Fragment {
 
     }
 
-    private List<String> getHashTagsFromTextInput(String textInput) {
-
-        List<String> hashTags = new ArrayList<>();
-
-        String currentTag = "";
-
-        textInput = textInput.toLowerCase().trim();
-        for (int i=0; i<textInput.length(); i++) {
-            char c = textInput.charAt(i);
-            if(c == '#') {
-                if ( currentTag.length()>0) {
-                    hashTags.add(currentTag.trim());
-                    currentTag = "";
-                }
-                currentTag+= c;
-
-            } else if (currentTag.length()>0 && Pattern.matches("[:space:]" , Character.toString(c))) {
-                hashTags.add(currentTag.trim());
-                currentTag = "";
-            }
-            else if (currentTag.length()>0 && Pattern.matches("\\p{Punct}" , Character.toString(c)) ) {
-                hashTags.add(currentTag.trim());
-                currentTag = "";
-            } else if (currentTag.length()>0) {
-                currentTag += c;
-            }
-        }
-        if (currentTag.length()>0) {
-            hashTags.add(currentTag.trim());
-        }
-        return hashTags;
-    }
 }

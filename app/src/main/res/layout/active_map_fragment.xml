@@ -15,7 +15,7 @@
         android:clickable="true"
         android:paddingHorizontal="0dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#FF5722"
+        app:backgroundTint="#3F51B5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -36,14 +36,16 @@
             android:layout_width="55dp"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_margin="5dp" />
+            android:layout_margin="5dp"
+            android:contentDescription="activity icon" />
 
         <TextView
             android:id="@+id/activity_metrics_text"
             android:layout_width="320dp"
             android:layout_height="match_parent"
             android:layout_marginVertical="5dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:contentDescription="activity metrics"
             android:fontFamily="sans-serif-thin"
             android:textAlignment="textStart"
             android:textAllCaps="false"

@@ -4,9 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../../layout/custom_preview.xml" value="0.5958333333333333" />
+        <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/drawable/chat_icon.xml" value="0.21510416666666668" />
+        <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/drawable/ic_launcher_background.xml" value="0.21510416666666668" />
+        <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/drawable/map.xml" value="0.21510416666666668" />
+        <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/drawable/pin_drop.xml" value="0.21510416666666668" />
         <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/layout/active_map_fragment.xml" value="0.33" />
         <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/layout/create_post_fragment.xml" value="0.33" />
+        <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/layout/fragment_feed.xml" value="0.20010422094841063" />
         <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/layout/fragment_map.xml" value="0.22199062011464304" />
         <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/layout/fragment_photo_map.xml" value="0.25" />
         <entry key="..\:/Users/discovery_pc/OneDrive - Australian National University/ANU/Courses/Sem 2 2021/COMP2100/group assignment/route-42/software-construction-group-project/app/src/main/res/layout/fragment_profile.xml" value="0.5" />

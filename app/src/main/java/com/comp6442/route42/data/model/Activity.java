@@ -1,11 +1,6 @@
 package com.comp6442.route42.data.model;
 
-import android.graphics.drawable.Drawable;
-
 import com.comp6442.route42.R;
-import com.google.android.gms.maps.model.LatLng;
-
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +43,6 @@ public interface Activity {
     Float getDistance();
     Float getSpeed();
     String getPostString();
-    Long getElapsedTime();
 
 
 }
