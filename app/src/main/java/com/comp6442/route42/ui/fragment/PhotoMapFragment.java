@@ -62,19 +62,17 @@ import java.util.concurrent.Future;
 
 import timber.log.Timber;
 
-public class PhotoMapFragment extends Fragment implements LocationListener, OnMapReadyCallback {
+public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
   private static final String ARG_PARAM1 = "posts";
   private static final String ARG_PARAM2 = "drawLine";
   private List<Post> posts = new ArrayList<>();
   private Location currentLocation = null;
-  private LatLng userLocation;
   private SupportMapFragment mapFragment;
   private GoogleMap googleMap;
   private FusedLocationProviderClient fusedLocationProviderClient;
   private ActivityResultLauncher<String> requestPermissionLauncher;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private static final boolean useKDTree = true;
-  private Marker currentLocationMarker;
   private static final Float ZOOM = 12f;
 
   public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
@@ -253,27 +251,16 @@ public class PhotoMapFragment extends Fragment implements LocationListener, OnMa
 
     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
 
-    if (currentLocation == null) {
-      Timber.i("User location not available");
-      userLocation = new LatLng(-33.8523f, 151.2108f);
-//      googleMap.setMyLocationEnabled(false);
-      googleMap.setMyLocationEnabled(true);
-      googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-    } else {
-      Timber.i("User location: %s", userLocation);
-      googleMap.setMyLocationEnabled(true);
-      googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-    }
-
-    googleMap.addMarker(new MarkerOptions().position(userLocation).title("User").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-    googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+    googleMap.setMyLocationEnabled(true);
+    if (currentLocation == null) googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+    else googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
     if (posts.size() == 0) {
       if (useKDTree) {
-        posts = getKNearestNeighbor(50, userLocation);
+        posts = getKNearestNeighbor(50, currentLocation);
         renderPosts(googleMap, posts);
       } else {
-        geoQuery(userLocation);
+        geoQuery(currentLocation);
       }
     } else {
       renderPosts(googleMap, posts);
@@ -295,10 +282,10 @@ public class PhotoMapFragment extends Fragment implements LocationListener, OnMa
     handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
   }
 
-  private List<Post> getKNearestNeighbor(int k, LatLng location) {
-    final GeoLocation center = new GeoLocation(location.latitude, location.longitude);
+  private List<Post> getKNearestNeighbor(int k, Location location) {
+    final GeoLocation center = new GeoLocation(location.getLatitude(), location.getLongitude());
     Timber.i("Beginning KNN geoQuery with K: %d userLocation: %s", k, location.toString());
-    KNearestNeighbourService knnapi = new KNearestNeighbourService(k, location.latitude, location.longitude);
+    KNearestNeighbourService knnapi = new KNearestNeighbourService(k, location.getLatitude(), location.getLongitude());
     Future<List<Post>> future = executor.submit(knnapi);
 
     try {
@@ -310,9 +297,9 @@ public class PhotoMapFragment extends Fragment implements LocationListener, OnMa
   }
 
 
-  private void geoQuery(LatLng location) {
+  private void geoQuery(Location location) {
     Timber.i("Beginning geoQuery with userLocation: %s", location.toString());
-    final GeoLocation center = new GeoLocation(location.latitude, location.longitude);
+    final GeoLocation center = new GeoLocation(location.getLatitude(), location.getLongitude());
     final double radiusInM = 50 * 1000;
     final List<Task<QuerySnapshot>> tasks = PostRepository.getInstance().getPostsWithinRadius(center, radiusInM, 50);
     final List<DocumentSnapshot> matchingDocs = new ArrayList<>();
@@ -338,8 +325,6 @@ public class PhotoMapFragment extends Fragment implements LocationListener, OnMa
   }
 
   private void renderPosts(GoogleMap googleMap, List<Post> posts) {
-    assert userLocation != null;
-
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
     for (Post post : posts) {
       LatLng point = new LatLng(post.getLatitude(), post.getLongitude());
@@ -348,9 +333,8 @@ public class PhotoMapFragment extends Fragment implements LocationListener, OnMa
     }
 
     LatLngBounds bounds = builder.build();
-    int padding = 300; // offset from edges of the map in pixels
-    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, ZOOM));
+    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 300);
+    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), ZOOM));
     Handler handler = new Handler();
     handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
   }
@@ -360,26 +344,6 @@ public class PhotoMapFragment extends Fragment implements LocationListener, OnMa
     super.onResume();
     initializeMap();
   }
-
-  @Override
-  public void onLocationChanged(@NonNull Location location) {
-    if (currentLocationMarker != null) {
-      currentLocationMarker.remove();
-    }
-
-    // Update current location
-    currentLocation = location;
-    userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-
-    // Update map
-    MarkerOptions markerOptions = new MarkerOptions();
-    markerOptions.position(userLocation);
-    markerOptions.title("Current Position");
-    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-    currentLocationMarker = googleMap.addMarker(markerOptions);
-    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, ZOOM));
-  }
-
 
   @Override
   public void onPause() {
