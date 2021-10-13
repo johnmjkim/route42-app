@@ -6,13 +6,16 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -84,18 +87,9 @@ public class PhotoMapFragment extends MapFragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
-
-    // get location provider client
-    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-
-    // reveal bottom nav if hidden
-    BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
-    bottomNavView.animate().translationY(0).setDuration(250);
-
     if (getArguments() != null) {
       this.posts = getArguments().getParcelableArrayList(ARG_PARAM1);
     }
-
     if (this.posts == null) {
       this.posts = new ArrayList<>();
     }
@@ -111,77 +105,8 @@ public class PhotoMapFragment extends MapFragment {
     return inflater.inflate(R.layout.fragment_photo_map, container, false);
   }
 
-  private void initializeMap() {
-    mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
-    assert mapFragment != null;
-    mapFragment.getMapAsync(this);
-  }
 
-  private void showAlert() {
-    new AlertDialog.Builder(requireContext())
-            .setTitle("Revoke permission")
-            .setMessage("Enabling location access to Route42 will allow you to see your location relative to locations tagged by posts.")
-            .setPositiveButton("OK", (dialog, which) -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION))
-            .setNegativeButton("Cancel", (dialog, which) -> {
-              Snackbar snackbar = Snackbar.make(
-                      mapFragment.requireView(),
-                      "Permission not granted",
-                      Snackbar.LENGTH_INDEFINITE
-              );
 
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                snackbar.setAction("EXIT", view -> {
-                  requireActivity().finishAffinity();
-                  System.exit(0);
-                });
-              } else {
-                snackbar.setAction("REVOKE", view -> getLocationPermission());
-              }
-              snackbar.show();
-              dialog.dismiss();
-            }).create().show();
-  }
-
-  private void getLocationPermission() {
-    requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-      if (isGranted) {
-        Timber.i("Location access granted");
-        initializeMap();
-      } else {
-        Timber.w("Location access not granted");
-        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-          showAlert();
-        } else {
-          Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission not granted", Snackbar.LENGTH_INDEFINITE);
-          snackbar.setAction("EXIT", view -> {
-            requireActivity().finishAffinity();
-            System.exit(0);
-          });
-          snackbar.show();
-        }
-      }
-    });
-
-    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-      initializeMap();
-    } else {
-      requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-    }
-  }
-
-  private Task<Location> getDeviceLocation() {
-    try {
-      Timber.i("getDeviceLocation: getting the devices current location");
-      return fusedLocationProviderClient.getLastLocation();
-    } catch (SecurityException e) {
-      Timber.w("Unable to get current location");
-      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-    } catch (RuntimeException e) {
-      Timber.e(e);
-      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-    }
-    return null;
-  }
 
 //  private Task<Location> requestLocation(FusedLocationProviderClient fusedLocationProviderClient) {
 //    LocationRequest locationRequest = LocationRequest.create();
@@ -218,19 +143,6 @@ public class PhotoMapFragment extends MapFragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     getLocationPermission();
-  }
-
-    Task<Location> locationTask = getDeviceLocation();
-
-    if (locationTask != null) {
-      locationTask.addOnCompleteListener(
-              task -> {
-                this.currentLocation = task.getResult();
-                renderMap();
-              });
-    } else {
-      snackbar.show();
-    }
   }
 
   /**

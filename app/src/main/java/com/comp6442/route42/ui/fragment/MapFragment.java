@@ -89,8 +89,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
               );
 
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                locationPermissionGranted = false;
-
                 snackbar.setAction("EXIT", view -> {
                   requireActivity().finishAffinity();
                   System.exit(0);
@@ -107,7 +105,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
       if (isGranted) {
         Timber.i("Location access granted");
-        locationPermissionGranted = true;
         initializeMap();
       } else {
         Timber.w("Location access not granted");
@@ -115,7 +112,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
           showAlert();
         } else {
           Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission not granted", Snackbar.LENGTH_INDEFINITE);
-          locationPermissionGranted = false;
           snackbar.setAction("EXIT", view -> {
             requireActivity().finishAffinity();
             System.exit(0);
@@ -133,9 +129,19 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     }
   }
 
-  @SuppressLint("MissingPermission")
+
   protected Task<Location> getDeviceLocation() {
-    return locationPermissionGranted ? fusedLocationProviderClient.getLastLocation() : null;
+    try {
+      Timber.i("getDeviceLocation: getting the devices current location");
+      return fusedLocationProviderClient.getLastLocation();
+    } catch (SecurityException e) {
+      Timber.w("Unable to get current location");
+      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
+    } catch (RuntimeException e) {
+      Timber.e(e);
+      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
+    }
+    return null;
   }
 
   /**

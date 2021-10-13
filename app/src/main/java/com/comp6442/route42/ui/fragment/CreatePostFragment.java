@@ -89,7 +89,7 @@ public class CreatePostFragment extends Fragment {
             onClickCreatePostHandler();
             Bundle bundle = new Bundle();
             bundle.putString("uid", uid);
-            Fragment fragment = new ProfileFragment();
+            Fragment fragment = new FeedFragment();
             fragment.setArguments(bundle);
             getActivity()
                     .getSupportFragmentManager()
