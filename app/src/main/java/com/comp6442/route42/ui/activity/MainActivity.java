@@ -1,12 +1,15 @@
 package com.comp6442.route42.ui.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,10 +17,16 @@ import androidx.lifecycle.ViewModelProvider;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
+
+import com.comp6442.route42.data.model.Activity;
+import com.comp6442.route42.data.model.User;
+//import com.comp6442.route42.ui.fragment.ActiveMapFragment;
+import com.comp6442.route42.ui.fragment.ActiveMapFragment;
 import com.comp6442.route42.ui.fragment.FeedFragment;
 import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.ListenerRegistration;
 
@@ -54,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     // toolbar = getSupportActionBar();
     // toolbar.hide();
+    setCreateActivityBtn();
+
 
     // bottom navigation
     bottomNav = findViewById(R.id.bottom_navigation_view);
@@ -62,6 +73,12 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     // NavigationUI.setupWithNavController(bottomNav, navController);
     // fragmentContainerView = findViewById(R.id.fragment_container_view);
+  }
+
+  private void setCreateActivityBtn() {
+    this.findViewById(R.id.Btn_Create_Activity).setOnClickListener( event -> {
+      createActivityBtnClickHandler();
+    });
   }
 
   @Override
@@ -99,6 +116,29 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
   }
+  public void createActivityBtnClickHandler() {
+    Timber.i("Create activity btn clicked.");
+    MainActivity self = this;
+    AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(this, R.style.AlertDialog_AppCompat)).setTitle("Choose Activity Type")
+            .setItems(Activity.Activity_Type.getValues(), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("activity", i);
+        bundle.putString("uid", self.uid );
+        Fragment fragment = new ActiveMapFragment(false);
+        fragment.setArguments(bundle);
+//    toolbar.setTitle("Activity");
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container_view, fragment)
+                .commit();
+      }
+    }).create();
+    alertDialog.show();
+
+  }
+
 
   /**
    * Called when an item in the bottom navigation menu is selected.
@@ -116,12 +156,28 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     }
 
     Timber.i("BottomNav Selection: %s", item.toString());
+    Fragment fragment;
 
-    if (item == lastSelected) return false;
-    lastSelected = item;
+    if (item == lastSelected) {
+      fragment =  selectMenuItemFragment(lastSelected);
+    } else{
+      fragment = selectMenuItemFragment(item);
+
+      lastSelected = item;
+    }
 
     Bundle bundle = new Bundle();
     bundle.putString("uid", this.uid);
+    fragment.setArguments(bundle);
+
+    getSupportFragmentManager()
+            .beginTransaction()
+            .replace(R.id.fragment_container_view, fragment)
+            .commit();
+
+    return true;
+  }
+  public Fragment selectMenuItemFragment(MenuItem item) {
     Fragment fragment = null;
 
     switch (item.getItemId()) {
@@ -139,16 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 //        toolbar.setTitle(R.string.title_fragment_map);
         break;
     }
-
-    assert fragment != null;
-    fragment.setArguments(bundle);
-
-    getSupportFragmentManager()
-            .beginTransaction()
-            .replace(R.id.fragment_container_view, fragment)
-            .commit();
-
-    return true;
+    return fragment;
   }
 
   @Override

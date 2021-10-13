@@ -69,13 +69,13 @@
                             app:srcCompat="@drawable/thumb_up_outline" />
 
                     <ImageView
-                            android:id="@+id/unlike_button"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            app:srcCompat="@drawable/thumb_up"
-                            android:layout_alignTop="@id/like_button"
-                            android:layout_alignLeft="@id/like_button"
-                            app:layout_constraintTop_toTopOf="@+id/like_button" />
+                        android:id="@+id/unlike_button"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignLeft="@id/like_button"
+                        android:layout_alignTop="@id/like_button"
+                        app:layout_constraintTop_toTopOf="@+id/like_button"
+                        app:srcCompat="@drawable/thumb_up" />
 
                 </RelativeLayout>
 
