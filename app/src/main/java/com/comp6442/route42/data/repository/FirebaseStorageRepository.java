@@ -1,9 +1,16 @@
 package com.comp6442.route42.data.repository;
 
+import android.net.Uri;
+
 import com.comp6442.route42.BuildConfig;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
 
 import timber.log.Timber;
 
@@ -35,7 +42,27 @@ public class FirebaseStorageRepository {
 
   public StorageReference get(String path) {
     String url = String.format("gs://%s/%s", bucketUrl, path);
-    Timber.i(url);
+//    Timber.i(url);
+
     return storage.getReferenceFromUrl(url);
+  }
+  public void uploadSnapshotFromLocal(String filename, String basePath) {
+    StorageReference snapshotFolderRef = storage.getReference().child("snapshots/"+filename);
+    Uri file = Uri.fromFile(new File(basePath+"/"+filename));
+    UploadTask uploadTask = snapshotFolderRef.putFile(file);
+
+// Register observers to listen for when the download is done or if it fails
+    uploadTask.addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure( Exception exception) {
+        // Handle unsuccessful uploads
+        Timber.e("error uploading snapshot");
+      }
+    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+      @Override
+      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+      }
+    });
   }
 }

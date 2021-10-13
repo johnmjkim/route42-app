@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.RunActivity;
+import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -144,6 +145,7 @@ public class ActiveMapFragment extends MapFragment {
                         FileOutputStream out = context.openFileOutput(filename, 0);
                         Timber.i(out.toString());
                         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(filename,context.getFilesDir().getPath());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
