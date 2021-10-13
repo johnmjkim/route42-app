@@ -25,10 +25,12 @@ import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.RunActivity;
 import com.comp6442.route42.data.model.User;
+import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,6 +95,10 @@ public class CreatePostFragment extends Fragment {
         });
 
     }
+
+    /**
+     * Creates new Post given map snapshot and the activity data collected.
+     */
     private void onClickCreatePostHandler() {
 
         DocumentReference uidRef = UserRepository.getInstance().getOne(uid);
@@ -107,7 +113,7 @@ public class CreatePostFragment extends Fragment {
         Double latitude = 0.0;
         Double longitude = 0.0;
         int likeCount = 0;
-        String imageUrl = "";
+        String imageUrl = "snapshots/" + activeMapViewModel.getSnapshotFileName();
         List<DocumentReference> likedBy = new ArrayList<>(0);
         Post newPost = new Post(uidRef, username, isPublic, profilePicUrl,postDateTime,postDescription, "", latitude,longitude, hashTags,likeCount, imageUrl,likedBy);
         postRepository.createOne(newPost);

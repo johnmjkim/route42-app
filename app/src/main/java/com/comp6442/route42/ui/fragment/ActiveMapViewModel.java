@@ -30,17 +30,12 @@ public class ActiveMapViewModel extends ViewModel {
     private final MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
     private List<LatLng> pastLocations = new ArrayList<LatLng>();
     private Date startTime;
-
-    public Activity getActivityData() {
-        return activityData;
-    }
-
-    public void setActivityData(Activity activityData) {
-        this.activityData = activityData;
-    }
-
     private Activity activityData = null;
-    private String snapshotPath = "";
+
+
+
+    private String snapshotFileName =  null;
+
 
     public ActiveMapViewModel() {
     }
@@ -85,11 +80,18 @@ public class ActiveMapViewModel extends ViewModel {
         this.pastLocations = pastLocations;
     }
 
-    public String getSnapshotPath() {
-        return snapshotPath;
+    public Activity getActivityData() {
+        return activityData;
     }
 
-    public void setSnapshotPath(String snapshotPath) {
-        this.snapshotPath = snapshotPath;
+    public void setActivityData(Activity activityData) {
+        this.activityData = activityData;
+    }
+    public String getSnapshotFileName() {
+        return snapshotFileName;
+    }
+
+    public void setSnapshotFileName(String snapshotFileName) {
+        this.snapshotFileName = snapshotFileName;
     }
 }

@@ -46,11 +46,10 @@ public class FirebaseStorageRepository {
 
     return storage.getReferenceFromUrl(url);
   }
-  public void uploadSnapshotFromLocal(String filename, String basePath) {
-    StorageReference snapshotFolderRef = storage.getReference().child("snapshots/"+filename);
-    Uri file = Uri.fromFile(new File(basePath+"/"+filename));
+  public StorageReference uploadSnapshotFromLocal(String localFilename,String storageFilename, String basePath) {
+    StorageReference snapshotFolderRef = storage.getReference().child("snapshots/"+ storageFilename);
+    Uri file = Uri.fromFile(new File(basePath+"/"+localFilename));
     UploadTask uploadTask = snapshotFolderRef.putFile(file);
-
 // Register observers to listen for when the download is done or if it fails
     uploadTask.addOnFailureListener(new OnFailureListener() {
       @Override
@@ -64,5 +63,8 @@ public class FirebaseStorageRepository {
         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
       }
     });
+    return snapshotFolderRef;
+
   }
+
 }

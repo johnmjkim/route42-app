@@ -52,7 +52,7 @@ public class ProfileFragment extends Fragment {
   private UserViewModel viewModel;
   private TextView userNameView, followerCountView, followingCountView;
   private SwitchMaterial blockSwitch, followSwitch;
-  private MaterialButton messageButton, signOutButton, showBlockedUsersButton, showCreatePostFragButton;
+  private MaterialButton messageButton, signOutButton, showBlockedUsersButton;
   private NestedScrollView scrollview;
   private RecyclerView recyclerView;
   private FirestorePostAdapter adapter;
@@ -120,7 +120,6 @@ public class ProfileFragment extends Fragment {
     followerCountView = view.findViewById(R.id.profile_primary_text);
     followingCountView = view.findViewById(R.id.profile_secondary_text);
     showBlockedUsersButton = view.findViewById(R.id.show_blocked_users_button);
-    showCreatePostFragButton = view.findViewById(R.id.show_create_post_frag_button);
 
     if (savedInstanceState != null) {
       //Restore the fragment's state here
@@ -341,21 +340,7 @@ public class ProfileFragment extends Fragment {
       }
     });
   }
-  private void setShowCreatePostFragButton() {
-    showCreatePostFragButton.setOnClickListener(event -> {
 
-      Bundle bundle = new Bundle();
-      bundle.putString("uid", this.uid);
-      Fragment fragment = new CreatePostFragment();
-
-      fragment.setArguments(bundle);
-      getActivity()
-              .getSupportFragmentManager()
-              .beginTransaction()
-              .replace(R.id.fragment_container_view, fragment)
-              .commit();
-    });
-  }
   public void logOut() {
     if (mAuth.getCurrentUser() != null) mAuth.signOut();
     Timber.i("Taking user to sign-in screen");
@@ -384,7 +369,6 @@ public class ProfileFragment extends Fragment {
     setFollowingCount(profileUser);
     setFollowSwitch(profileUser);
     setBlockSwitch(profileUser);
-    setShowCreatePostFragButton();
     User liveUser = viewModel.getLiveUser().getValue();
     assert liveUser != null && liveUser.getId() != null;
     Timber.i("Firebase current uid: %s\t\tthis.uid: %s", liveUser.getId(), uid);

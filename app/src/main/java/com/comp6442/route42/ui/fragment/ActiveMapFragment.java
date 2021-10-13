@@ -142,15 +142,17 @@ public class ActiveMapFragment extends MapFragment {
                 @Override
                 public void onSnapshotReady(@Nullable Bitmap bitmap) {
                     try {
-                        String filename = "test.png";
-                        FileOutputStream out = getContext().openFileOutput(filename, 0);
+                        String baseFilename = "activity_route";
+                        String localFilename = baseFilename+ ".png";
+                        String storageFilename = baseFilename + new Date().toString() + ".png";
+                        FileOutputStream out = getContext().openFileOutput(localFilename, 0);
                         Timber.i(out.toString());
                         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-                        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(filename,getContext().getFilesDir().getPath());
+                        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(localFilename, storageFilename,getContext().getFilesDir().getPath());
+                        activeMapViewModel.setSnapshotFileName(storageFilename);
                         Bundle bundle = new Bundle();
-                        bundle.putString("uid",  getActivity().getIntent().getStringExtra("uid"));
+                        bundle.putString("uid", getArguments().getString("uid"));
                         Fragment fragment = new CreatePostFragment();
-
                         fragment.setArguments(bundle);
                         getActivity()
                                 .getSupportFragmentManager()
@@ -170,8 +172,6 @@ public class ActiveMapFragment extends MapFragment {
                      googleMap.setOnMapLoadedCallback(null);
                  }
              }
-
-
             );
         });
     }

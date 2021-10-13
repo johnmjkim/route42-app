@@ -76,13 +76,23 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
               .circleCrop()
               .into(viewHolder.userIcon);
     }
+    if(post.getImageUrl().startsWith("http")) {
+      Glide.with(viewHolder.imageView.getContext())
+              .load(post.getImageUrl())
+              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .skipMemoryCache(false)
+              .centerCrop()
+              .into(viewHolder.imageView);
+    } else {
+      StorageReference postImageRef = FirebaseStorageRepository.getInstance().get(post.getImageUrl());
+      Glide.with(viewHolder.imageView.getContext())
+              .load(postImageRef)
+              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .skipMemoryCache(false)
+              .centerCrop()
+              .into(viewHolder.imageView);
+    }
 
-    Glide.with(viewHolder.imageView.getContext())
-            .load(post.getImageUrl())
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(false)
-            .centerCrop()
-            .into(viewHolder.imageView);
 
     Timber.d("OnBindView complete.");
   }
