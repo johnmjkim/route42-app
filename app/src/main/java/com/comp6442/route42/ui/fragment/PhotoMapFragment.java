@@ -10,7 +10,6 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +31,7 @@ import com.comp6442.route42.data.repository.PostRepository;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +42,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
@@ -64,7 +62,7 @@ import java.util.concurrent.Future;
 
 import timber.log.Timber;
 
-public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
+public class PhotoMapFragment extends Fragment implements LocationListener, OnMapReadyCallback {
   private static final String ARG_PARAM1 = "posts";
   private static final String ARG_PARAM2 = "drawLine";
   private List<Post> posts = new ArrayList<>();
@@ -76,6 +74,8 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
   private ActivityResultLauncher<String> requestPermissionLauncher;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private static final boolean useKDTree = true;
+  private Marker currentLocationMarker;
+  private static final Float ZOOM = 12f;
 
   public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
     Timber.i("%d posts received, drawLine = %s", param1.size(), param2);
@@ -95,7 +95,12 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
 
     // get location provider client
     fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+  }
 
+  @Nullable
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    Timber.d("Creating view");
     // reveal bottom nav if hidden
     BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
     bottomNavView.animate().translationY(0).setDuration(250);
@@ -108,24 +113,26 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
       this.posts = new ArrayList<>();
     }
 
-    Timber.i("Creating map with %d posts", posts.size());
-    Timber.d(posts.toString());
-  }
-
-  @Nullable
-  @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    Timber.d("Creating view");
+    Timber.i("Received %d posts", posts.size());
     getLocationPermission();
     return inflater.inflate(R.layout.fragment_photo_map, container, false);
   }
 
   private void initializeMap() {
-    mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
-    assert mapFragment != null;
-    mapFragment.getMapAsync(this);
+    if (mapFragment == null) {
+      mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+    }
+    if (mapFragment != null) mapFragment.getMapAsync(this);
   }
 
+  /**
+   *    ----- Alert: Revoke permission -----
+   *  Enabling location access to Route42 will
+   *  allow you to see your location relative
+   *  to locations tagged by posts.
+   *    - OK <
+   *    - Cancel
+   */
   private void showAlert() {
     new AlertDialog.Builder(requireContext())
             .setTitle("Revoke permission")
@@ -192,29 +199,6 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     return null;
   }
 
-//  private Task<Location> requestLocation(FusedLocationProviderClient fusedLocationProviderClient) {
-//    LocationRequest locationRequest = LocationRequest.create();
-//    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//    locationRequest.setInterval(20 * 1000);
-//
-//    LocationCallback locationCallback = new LocationCallback() {
-//      @Override
-//      public void onLocationResult(LocationResult locationResult) {
-//        if (locationResult == null) {
-//          return;
-//        }
-//        for (Location location : locationResult.getLocations()) {
-//          if (location != null) {
-//            currentLocation = location;
-//            renderMap();
-//            break;
-//          }
-//        }
-//      }
-//    };
-//    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-//  }
-
   /**
    * Manipulates the map once available.
    * This callback is triggered when the map is ready to be used.
@@ -240,8 +224,10 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     if (locationTask != null) {
       locationTask.addOnCompleteListener(
               task -> {
-                this.currentLocation = task.getResult();
-                renderMap();
+                if (task.isSuccessful()) {
+                  this.currentLocation = task.getResult();
+                  renderMap();
+                } else initializeMap();
               });
     } else {
       snackbar.show();
@@ -265,10 +251,13 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
       Timber.w("Locattion permission granted, but currentLocation is null");
     }
 
+    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
+
     if (currentLocation == null) {
       Timber.i("User location not available");
       userLocation = new LatLng(-33.8523f, 151.2108f);
-      googleMap.setMyLocationEnabled(false);
+//      googleMap.setMyLocationEnabled(false);
+      googleMap.setMyLocationEnabled(true);
       googleMap.getUiSettings().setMyLocationButtonEnabled(false);
     } else {
       Timber.i("User location: %s", userLocation);
@@ -276,7 +265,6 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
       googleMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
 
-    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
     googleMap.addMarker(new MarkerOptions().position(userLocation).title("User").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
     googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
 
@@ -362,10 +350,36 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     LatLngBounds bounds = builder.build();
     int padding = 300; // offset from edges of the map in pixels
     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f));
+    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, ZOOM));
     Handler handler = new Handler();
     handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
   }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    initializeMap();
+  }
+
+  @Override
+  public void onLocationChanged(@NonNull Location location) {
+    if (currentLocationMarker != null) {
+      currentLocationMarker.remove();
+    }
+
+    // Update current location
+    currentLocation = location;
+    userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+    // Update map
+    MarkerOptions markerOptions = new MarkerOptions();
+    markerOptions.position(userLocation);
+    markerOptions.title("Current Position");
+    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+    currentLocationMarker = googleMap.addMarker(markerOptions);
+    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, ZOOM));
+  }
+
 
   @Override
   public void onPause() {
@@ -373,15 +387,16 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     if (mapFragment != null) mapFragment.onPause();
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    if (mapFragment != null) mapFragment.onResume();
-  }
 
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    if (mapFragment != null) mapFragment.onDestroyView();
-  }
+//  @Override
+//  public void onResume() {
+//    super.onResume();
+//    if (mapFragment != null) mapFragment.onResume();
+//  }
+//
+//  @Override
+//  public void onDestroyView() {
+//    super.onDestroyView();
+//    if (mapFragment != null) mapFragment.onDestroyView();
+//  }
 }
