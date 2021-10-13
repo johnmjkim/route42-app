@@ -28,11 +28,11 @@ public interface Activity {
         public static int getIconResource (int activityType) {
             switch (activityType) {
                 case 1:
-                    return R.drawable.cycle;
-                case 2:
                     return R.drawable.run;
-                default:
+                case 2:
                     return R.drawable.walk;
+                default:
+                    return R.drawable.cycle;
             }
         }
 
@@ -47,6 +47,7 @@ public interface Activity {
    int getCalories();
     Float getDistance();
     Float getSpeed();
+    String getPostString();
     Long getElapsedTime();
 
 

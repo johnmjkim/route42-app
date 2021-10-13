@@ -46,13 +46,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/create_post_image"
         android:layout_width="match_parent"
         android:layout_height="357dp"
         android:layout_marginBottom="292dp"
         android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:src="@drawable/person_photo" />
 
     <EditText

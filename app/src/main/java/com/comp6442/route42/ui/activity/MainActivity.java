@@ -120,8 +120,9 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
       @Override
       public void onClick(DialogInterface dialogInterface, int i) {
         Bundle bundle = new Bundle();
-        bundle.putInt("activity_type", i);
+        bundle.putInt("activity", i);
         bundle.putString("uid", self.uid );
+        Timber.i("activity type"+i);
         Fragment fragment = new ActiveMapFragment(false);
         fragment.setArguments(bundle);
 //    toolbar.setTitle("Activity");

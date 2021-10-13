@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -125,7 +126,9 @@ public class ActiveMapFragment extends MapFragment {
         }
         //set active icon
         ImageView activityIconView =  view.findViewById(R.id.activity_icon);
-        int iconResource = Activity.Activity_Type.getIconResource(this.getActivity().getIntent().getExtras().getInt("activity_type"));
+        int activityType = getArguments().getInt("activity");
+        Timber.i("darmawan "+ activityType);
+        int iconResource = Activity.Activity_Type.getIconResource(activityType);
         Glide.with(activityIconView.getContext()).load(iconResource).into(activityIconView);
         //set metrics
         activityMetricsText = view.findViewById(R.id.activity_metrics_text);
@@ -134,18 +137,26 @@ public class ActiveMapFragment extends MapFragment {
 
     }
     private void setActivityButton() {
-        Context context = this.getContext();
         activityButton.setOnClickListener( click -> {
             GoogleMap.SnapshotReadyCallback snapshotCallback = new GoogleMap.SnapshotReadyCallback() {
                 @Override
                 public void onSnapshotReady(@Nullable Bitmap bitmap) {
                     try {
                         String filename = "test.png";
-                        assert context != null;
-                        FileOutputStream out = context.openFileOutput(filename, 0);
+                        FileOutputStream out = getContext().openFileOutput(filename, 0);
                         Timber.i(out.toString());
                         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-                        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(filename,context.getFilesDir().getPath());
+                        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(filename,getContext().getFilesDir().getPath());
+                        Bundle bundle = new Bundle();
+                        bundle.putString("uid",  getActivity().getIntent().getStringExtra("uid"));
+                        Fragment fragment = new CreatePostFragment();
+
+                        fragment.setArguments(bundle);
+                        getActivity()
+                                .getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragment_container_view, fragment)
+                                .commit();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -238,12 +249,10 @@ public class ActiveMapFragment extends MapFragment {
                         Timber.i("location is :" + location);
                     }
                 });
-
-                Activity userActivityData = new RunActivity(activeMapViewModel.getPastLocations(),
-                RunActivity.getElapsedTimeSeconds(new Date(), activeMapViewModel.getStartTime()));
-                Timber.i("YELHO" + userActivityData.toString());
+                long elapsedTime = RunActivity.getElapsedTimeSeconds(new Date(), activeMapViewModel.getStartTime());
+                Activity userActivityData = new RunActivity(activeMapViewModel.getPastLocations(), elapsedTime);
+                activeMapViewModel.setActivityData(userActivityData);
                 activityMetricsText.setText(userActivityData.toString());
-
             }
         } catch (SecurityException e)  {
             Timber.e("Exception: %s", e.getMessage());

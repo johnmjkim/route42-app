@@ -2,6 +2,9 @@ package com.comp6442.route42.ui.fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,12 +15,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.CreatePostViewModel;
 import com.comp6442.route42.data.UserViewModel;
+import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.Post;
+import com.comp6442.route42.data.model.RunActivity;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
@@ -34,9 +40,11 @@ public class CreatePostFragment extends Fragment {
 
     private CreatePostViewModel mViewModel;
     private MaterialButton cancelPostButton, createPostButton;
+    private ImageView postImage;
     private EditText postDescriptionInput;
     private String uid;
     private UserViewModel userViewModel;
+    private ActiveMapViewModel activeMapViewModel;
     private PostRepository postRepository;
     public static CreatePostFragment newInstance() {
         return new CreatePostFragment();
@@ -55,11 +63,17 @@ public class CreatePostFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         userViewModel.loadProfileUser(this.uid);
+        activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
         postRepository = PostRepository.getInstance();
+        postImage = view.findViewById(R.id.create_post_image);
 
+        Bitmap myBitmap = BitmapFactory.decodeFile(getContext().getFilesDir().getPath()+"/test.png");
+        postImage.setImageBitmap(myBitmap);
         cancelPostButton = view.findViewById(R.id.cancel_post_button);
         createPostButton = view.findViewById(R.id.create_post_button);
         postDescriptionInput = view.findViewById(R.id.post_description_input);
+        Activity userActivity  = activeMapViewModel.getActivityData();
+        postDescriptionInput.setText(userActivity.getPostString());
         cancelPostButton.setOnClickListener(event -> {
 
             Bundle bundle = new Bundle();
@@ -77,10 +91,7 @@ public class CreatePostFragment extends Fragment {
         createPostButton.setOnClickListener(event -> {
             onClickCreatePostHandler();
         });
-        postDescriptionInput.setOnClickListener(event -> {
-            System.out.println("clicked input for create post");
-            postDescriptionInput.setText("");
-        });
+
     }
     private void onClickCreatePostHandler() {
 

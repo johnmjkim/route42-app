@@ -18,6 +18,7 @@ public class RunActivity implements Activity{
     private Float speed;
     private int calories;
     private final int CALORIES_PER_METER = 4;
+    private final Activity_Type activityType = Activity_Type.RUNNING;
     public RunActivity(List<LatLng> route, long elapsedTime) {
         this.route = route;
         this.distance = calculateDistance();
@@ -63,10 +64,17 @@ public class RunActivity implements Activity{
     @Override
     public String toString() {
         return
-                "distance=" + distance +
-                ", elapsedTime=" + String.format("%.02f", (float) elapsedTime) +
-                ", speed=" + speed +
-                ", calories=" + calories +
-                '}';
+                "Distance: " + distance +
+                ", Duration:" + String.format("%.02f", (float) elapsedTime) +
+                "\ncalories: " + calories
+                ;
+    }
+    public String getPostString() {
+        return "Check out my " + activityType.toString().toLowerCase() + " activity stats:\n" +
+                "Distance: " + distance + "m" +
+                "\nDuration: " + String.format("%.02f", (float) elapsedTime) + "s" +
+                "\nAverage speed: " + speed + "m/s" +
+                "\nCalories: " + calories + "kcal"
+                ;
     }
 }

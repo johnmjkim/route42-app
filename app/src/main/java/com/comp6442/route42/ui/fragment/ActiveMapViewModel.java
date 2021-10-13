@@ -30,7 +30,21 @@ public class ActiveMapViewModel extends ViewModel {
     private final MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
     private List<LatLng> pastLocations = new ArrayList<LatLng>();
     private Date startTime;
+
+    public Activity getActivityData() {
+        return activityData;
+    }
+
+    public void setActivityData(Activity activityData) {
+        this.activityData = activityData;
+    }
+
+    private Activity activityData = null;
     private String snapshotPath = "";
+
+    public ActiveMapViewModel() {
+    }
+
     public LiveData<Location> getDeviceLocation() {
         return deviceLocation;
     }
