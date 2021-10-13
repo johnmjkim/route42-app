@@ -10,7 +10,6 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +31,7 @@ import com.comp6442.route42.data.repository.PostRepository;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +42,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
@@ -69,13 +67,13 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
   private static final String ARG_PARAM2 = "drawLine";
   private List<Post> posts = new ArrayList<>();
   private Location currentLocation = null;
-  private LatLng userLocation;
   private SupportMapFragment mapFragment;
   private GoogleMap googleMap;
   private FusedLocationProviderClient fusedLocationProviderClient;
   private ActivityResultLauncher<String> requestPermissionLauncher;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private static final boolean useKDTree = true;
+  private static final Float ZOOM = 12f;
 
   public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
     Timber.i("%d posts received, drawLine = %s", param1.size(), param2);
@@ -95,7 +93,12 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
 
     // get location provider client
     fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+  }
 
+  @Nullable
+  @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    Timber.d("Creating view");
     // reveal bottom nav if hidden
     BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
     bottomNavView.animate().translationY(0).setDuration(250);
@@ -108,24 +111,26 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
       this.posts = new ArrayList<>();
     }
 
-    Timber.i("Creating map with %d posts", posts.size());
-    Timber.d(posts.toString());
-  }
-
-  @Nullable
-  @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    Timber.d("Creating view");
+    Timber.i("Received %d posts", posts.size());
     getLocationPermission();
     return inflater.inflate(R.layout.fragment_photo_map, container, false);
   }
 
   private void initializeMap() {
-    mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
-    assert mapFragment != null;
-    mapFragment.getMapAsync(this);
+    if (mapFragment == null) {
+      mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+    }
+    if (mapFragment != null) mapFragment.getMapAsync(this);
   }
 
+  /**
+   *    ----- Alert: Revoke permission -----
+   *  Enabling location access to Route42 will
+   *  allow you to see your location relative
+   *  to locations tagged by posts.
+   *    - OK <
+   *    - Cancel
+   */
   private void showAlert() {
     new AlertDialog.Builder(requireContext())
             .setTitle("Revoke permission")
@@ -192,29 +197,6 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     return null;
   }
 
-//  private Task<Location> requestLocation(FusedLocationProviderClient fusedLocationProviderClient) {
-//    LocationRequest locationRequest = LocationRequest.create();
-//    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//    locationRequest.setInterval(20 * 1000);
-//
-//    LocationCallback locationCallback = new LocationCallback() {
-//      @Override
-//      public void onLocationResult(LocationResult locationResult) {
-//        if (locationResult == null) {
-//          return;
-//        }
-//        for (Location location : locationResult.getLocations()) {
-//          if (location != null) {
-//            currentLocation = location;
-//            renderMap();
-//            break;
-//          }
-//        }
-//      }
-//    };
-//    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-//  }
-
   /**
    * Manipulates the map once available.
    * This callback is triggered when the map is ready to be used.
@@ -240,8 +222,10 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     if (locationTask != null) {
       locationTask.addOnCompleteListener(
               task -> {
-                this.currentLocation = task.getResult();
-                renderMap();
+                if (task.isSuccessful()) {
+                  this.currentLocation = task.getResult();
+                  renderMap();
+                } else initializeMap();
               });
     } else {
       snackbar.show();
@@ -265,27 +249,18 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
       Timber.w("Locattion permission granted, but currentLocation is null");
     }
 
-    if (currentLocation == null) {
-      Timber.i("User location not available");
-      userLocation = new LatLng(-33.8523f, 151.2108f);
-      googleMap.setMyLocationEnabled(false);
-      googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-    } else {
-      Timber.i("User location: %s", userLocation);
-      googleMap.setMyLocationEnabled(true);
-      googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-    }
-
     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
-    googleMap.addMarker(new MarkerOptions().position(userLocation).title("User").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-    googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+
+    googleMap.setMyLocationEnabled(true);
+    if (currentLocation == null) googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+    else googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
     if (posts.size() == 0) {
       if (useKDTree) {
-        posts = getKNearestNeighbor(50, userLocation);
+        posts = getKNearestNeighbor(50, currentLocation);
         renderPosts(googleMap, posts);
       } else {
-        geoQuery(userLocation);
+        geoQuery(currentLocation);
       }
     } else {
       renderPosts(googleMap, posts);
@@ -307,10 +282,10 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
   }
 
-  private List<Post> getKNearestNeighbor(int k, LatLng location) {
-    final GeoLocation center = new GeoLocation(location.latitude, location.longitude);
+  private List<Post> getKNearestNeighbor(int k, Location location) {
+    final GeoLocation center = new GeoLocation(location.getLatitude(), location.getLongitude());
     Timber.i("Beginning KNN geoQuery with K: %d userLocation: %s", k, location.toString());
-    KNearestNeighbourService knnapi = new KNearestNeighbourService(k, location.latitude, location.longitude);
+    KNearestNeighbourService knnapi = new KNearestNeighbourService(k, location.getLatitude(), location.getLongitude());
     Future<List<Post>> future = executor.submit(knnapi);
 
     try {
@@ -322,9 +297,9 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
   }
 
 
-  private void geoQuery(LatLng location) {
+  private void geoQuery(Location location) {
     Timber.i("Beginning geoQuery with userLocation: %s", location.toString());
-    final GeoLocation center = new GeoLocation(location.latitude, location.longitude);
+    final GeoLocation center = new GeoLocation(location.getLatitude(), location.getLongitude());
     final double radiusInM = 50 * 1000;
     final List<Task<QuerySnapshot>> tasks = PostRepository.getInstance().getPostsWithinRadius(center, radiusInM, 50);
     final List<DocumentSnapshot> matchingDocs = new ArrayList<>();
@@ -350,8 +325,6 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
   }
 
   private void renderPosts(GoogleMap googleMap, List<Post> posts) {
-    assert userLocation != null;
-
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
     for (Post post : posts) {
       LatLng point = new LatLng(post.getLatitude(), post.getLongitude());
@@ -360,11 +333,16 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     LatLngBounds bounds = builder.build();
-    int padding = 300; // offset from edges of the map in pixels
-    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f));
+    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 300);
+    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), ZOOM));
     Handler handler = new Handler();
     handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    initializeMap();
   }
 
   @Override
@@ -373,15 +351,16 @@ public class PhotoMapFragment extends Fragment implements OnMapReadyCallback {
     if (mapFragment != null) mapFragment.onPause();
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    if (mapFragment != null) mapFragment.onResume();
-  }
 
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    if (mapFragment != null) mapFragment.onDestroyView();
-  }
+//  @Override
+//  public void onResume() {
+//    super.onResume();
+//    if (mapFragment != null) mapFragment.onResume();
+//  }
+//
+//  @Override
+//  public void onDestroyView() {
+//    super.onDestroyView();
+//    if (mapFragment != null) mapFragment.onDestroyView();
+//  }
 }
