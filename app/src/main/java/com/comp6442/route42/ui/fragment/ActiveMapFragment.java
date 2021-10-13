@@ -1,6 +1,8 @@
 package com.comp6442.route42.ui.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -32,7 +35,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.Timer;
 
@@ -44,6 +49,7 @@ public class ActiveMapFragment extends MapFragment {
     private ActiveMapViewModel activeMapViewModel;
     private TextView activityMetricsText;
     private LocationCallback locationCallBack;
+    private FloatingActionButton activityButton;
     Timer timer = new Timer();
 
 //     class MockDataUpdate extends TimerTask {
@@ -122,7 +128,39 @@ public class ActiveMapFragment extends MapFragment {
         Glide.with(activityIconView.getContext()).load(iconResource).into(activityIconView);
         //set metrics
         activityMetricsText = view.findViewById(R.id.activity_metrics_text);
+        activityButton  = view.findViewById(R.id.activity_button);
+        setActivityButton();
 
+    }
+    private void setActivityButton() {
+        Context context = this.getContext();
+        activityButton.setOnClickListener( click -> {
+            GoogleMap.SnapshotReadyCallback snapshotCallback = new GoogleMap.SnapshotReadyCallback() {
+                @Override
+                public void onSnapshotReady(@Nullable Bitmap bitmap) {
+                    try {
+                        String filename = "test.png";
+                        assert context != null;
+                        FileOutputStream out = context.openFileOutput(filename, 0);
+                        Timber.i(out.toString());
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                 @Override
+                 public void onMapLoaded() {
+                     Timber.i("clicked activity button");
+                     googleMap.snapshot(snapshotCallback);
+                     googleMap.setOnMapLoadedCallback(null);
+                 }
+             }
+
+
+            );
+        });
     }
     @Override
     protected Task<Location> getDeviceLocation() {

@@ -30,8 +30,9 @@ public class ActiveMapViewModel extends ViewModel {
     private final MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
     private List<LatLng> pastLocations = new ArrayList<LatLng>();
     private Date startTime;
+    private String snapshotPath = "";
     public LiveData<Location> getDeviceLocation() {
-     return deviceLocation;
+        return deviceLocation;
     }
     public void setDeviceLocation(Location newLocation) {
         if(deviceLocation.getValue() != null)
@@ -68,5 +69,13 @@ public class ActiveMapViewModel extends ViewModel {
 
     public void setPastLocations(List<LatLng> pastLocations) {
         this.pastLocations = pastLocations;
+    }
+
+    public String getSnapshotPath() {
+        return snapshotPath;
+    }
+
+    public void setSnapshotPath(String snapshotPath) {
+        this.snapshotPath = snapshotPath;
     }
 }

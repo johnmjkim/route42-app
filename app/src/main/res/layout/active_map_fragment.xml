@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.ActiveMapFragment">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/activity_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="64dp"
+        android:clickable="true"
+        android:src="@android:drawable/presence_online"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="407dp"
@@ -40,6 +51,7 @@
     </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -47,11 +59,11 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:layout_editor_absoluteX="70dp">
 
-<!--        <com.mapbox.mapboxsdk.maps.MapView-->
-<!--            android:id="@+id/mapView"-->
+        <!--        <com.mapbox.mapboxsdk.maps.MapView-->
+        <!--            android:id="@+id/mapView"-->
 
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent" />-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent" />-->
         <fragment
             android:id="@+id/map_fragment2"
             android:name="com.google.android.gms.maps.SupportMapFragment"
