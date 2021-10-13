@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils.apiclient;
+package com.comp6442.route42.api;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +12,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class SearchService extends RestApi implements Callable<List<Post>> {
+public class SearchService extends RestApiService implements Callable<List<Post>> {
   private String query;
 
   public SearchService(String query) {

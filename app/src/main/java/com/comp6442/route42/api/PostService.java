@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils.apiclient;
+package com.comp6442.route42.api;
 
 import com.comp6442.route42.data.model.Post;
 
@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class PostService extends RestApi implements Callable<Post> {
+public class PostService extends RestApiService implements Callable<Post> {
   private String postId;
 
   public PostService(String postId) {

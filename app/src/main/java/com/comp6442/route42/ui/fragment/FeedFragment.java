@@ -17,13 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.route42.R;
+import com.comp6442.route42.api.SearchService;
 import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.FirestorePostAdapter;
 import com.comp6442.route42.ui.PostAdapter;
-import com.comp6442.route42.utils.apiclient.SearchService;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
