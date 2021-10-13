@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils.apiclient;
+package com.comp6442.route42.api;
 
 import androidx.annotation.NonNull;
 

@@ -1,10 +1,14 @@
 package com.comp6442.route42.ui.fragment;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +18,22 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.comp6442.route42.R;
+import com.comp6442.route42.api.KNearestNeighbourService;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -29,16 +43,30 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.JsonSyntaxException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import timber.log.Timber;
 
 public class PhotoMapFragment extends MapFragment {
   private static final String ARG_PARAM1 = "posts";
   private static final String ARG_PARAM2 = "drawLine";
-  private ArrayList<Post> posts;
+  private List<Post> posts = new ArrayList<>();
+  private Location currentLocation = null;
+  private LatLng userLocation;
+  private SupportMapFragment mapFragment;
+  private GoogleMap googleMap;
+  private FusedLocationProviderClient fusedLocationProviderClient;
+  private ActivityResultLauncher<String> requestPermissionLauncher;
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private static final boolean useKDTree = true;
+
 
 
   public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
@@ -55,6 +83,15 @@ public class PhotoMapFragment extends MapFragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setHasOptionsMenu(true);
+
+    // get location provider client
+    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+    // reveal bottom nav if hidden
+    BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+    bottomNavView.animate().translationY(0).setDuration(250);
+
     if (getArguments() != null) {
       this.posts = getArguments().getParcelableArrayList(ARG_PARAM1);
     }
@@ -74,71 +111,205 @@ public class PhotoMapFragment extends MapFragment {
     return inflater.inflate(R.layout.fragment_photo_map, container, false);
   }
 
+  private void initializeMap() {
+    mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+    assert mapFragment != null;
+    mapFragment.getMapAsync(this);
+  }
+
+  private void showAlert() {
+    new AlertDialog.Builder(requireContext())
+            .setTitle("Revoke permission")
+            .setMessage("Enabling location access to Route42 will allow you to see your location relative to locations tagged by posts.")
+            .setPositiveButton("OK", (dialog, which) -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION))
+            .setNegativeButton("Cancel", (dialog, which) -> {
+              Snackbar snackbar = Snackbar.make(
+                      mapFragment.requireView(),
+                      "Permission not granted",
+                      Snackbar.LENGTH_INDEFINITE
+              );
+
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                snackbar.setAction("EXIT", view -> {
+                  requireActivity().finishAffinity();
+                  System.exit(0);
+                });
+              } else {
+                snackbar.setAction("REVOKE", view -> getLocationPermission());
+              }
+              snackbar.show();
+              dialog.dismiss();
+            }).create().show();
+  }
+
+  private void getLocationPermission() {
+    requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+      if (isGranted) {
+        Timber.i("Location access granted");
+        initializeMap();
+      } else {
+        Timber.w("Location access not granted");
+        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+          showAlert();
+        } else {
+          Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission not granted", Snackbar.LENGTH_INDEFINITE);
+          snackbar.setAction("EXIT", view -> {
+            requireActivity().finishAffinity();
+            System.exit(0);
+          });
+          snackbar.show();
+        }
+      }
+    });
+
+    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+      initializeMap();
+    } else {
+      requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+  }
+
+  private Task<Location> getDeviceLocation() {
+    try {
+      Timber.i("getDeviceLocation: getting the devices current location");
+      return fusedLocationProviderClient.getLastLocation();
+    } catch (SecurityException e) {
+      Timber.w("Unable to get current location");
+      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
+    } catch (RuntimeException e) {
+      Timber.e(e);
+      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
+    }
+    return null;
+  }
+
+//  private Task<Location> requestLocation(FusedLocationProviderClient fusedLocationProviderClient) {
+//    LocationRequest locationRequest = LocationRequest.create();
+//    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//    locationRequest.setInterval(20 * 1000);
+//
+//    LocationCallback locationCallback = new LocationCallback() {
+//      @Override
+//      public void onLocationResult(LocationResult locationResult) {
+//        if (locationResult == null) {
+//          return;
+//        }
+//        for (Location location : locationResult.getLocations()) {
+//          if (location != null) {
+//            currentLocation = location;
+//            renderMap();
+//            break;
+//          }
+//        }
+//      }
+//    };
+//    fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+//  }
+
+  /**
+   * Manipulates the map once available.
+   * This callback is triggered when the map is ready to be used.
+   * This is where we can add markers or lines, add listeners or move the camera.
+   * If Google Play services is not installed on the device, the user will be prompted to
+   * install it inside the SupportMapFragment. This method will only be triggered once the
+   * user has installed Google Play services and returned to the app.
+   */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     getLocationPermission();
   }
 
+    Task<Location> locationTask = getDeviceLocation();
+
+    if (locationTask != null) {
+      locationTask.addOnCompleteListener(
+              task -> {
+                this.currentLocation = task.getResult();
+                renderMap();
+              });
+    } else {
+      snackbar.show();
+    }
+  }
 
   /**
-   * posts.size() == 0 && userLocation == null: blank
+   * posts.size() == 0 && userLocation == null: set user location as sydney, geo search
    * posts.size() == 0 && userLocation != null: geo search based on user location (points)
-   * posts.size() == 1 && userLocation == null: single point
-   * posts.size() == 1 && userLocation != null: one polyline
+   * posts.size() >= 1: render posts as points
    * TODO posts.size() > 1: points
    * TODO when user taps on "only once" or "deny" and then approve, map should update with user's location
    */
 
   protected void renderMap() {
     Timber.i("Rendering map");
-    final int FINE_LOCATION_PERMISSION = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-    final int GRANTED = PackageManager.PERMISSION_GRANTED;
+    final int FINE_LOCATION_PERMISSION = ContextCompat.checkSelfPermission(requireContext(), ACCESS_FINE_LOCATION);
 
     assert this.posts != null;
 
-    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
+    if (FINE_LOCATION_PERMISSION == PERMISSION_GRANTED && currentLocation == null) {
+      Timber.w("Locattion permission granted, but currentLocation is null");
+    }
 
-    if (FINE_LOCATION_PERMISSION == GRANTED && currentLocation != null) {
-      userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-      googleMap.addMarker(new MarkerOptions().position(userLocation).title("User"));
-      googleMap.setMyLocationEnabled(true);
-      googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-      googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
-
-      if (posts.size() == 0) geoQuery();
-      else if (posts.size() == 1) {
-        Timber.i("1 post received. Drawing line.");
-        // draw polyline
-        LatLng imageLocation = posts.get(0).getLatLng();
-        googleMap.addMarker(new MarkerOptions().position(imageLocation).title("Image"));
-        googleMap.addPolyline(new PolylineOptions().add(userLocation, imageLocation).width(5).color(Color.RED));
-
-        LatLngBounds bounds = new LatLngBounds.Builder()
-                .include(userLocation)
-                .include(imageLocation)
-                .build();
-
-        int padding = 300; // offset from edges of the map in pixels
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        Handler handler = new Handler();
-        handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
-      }
-    } else {
-      Timber.i("User location not available, plotting a single point");
+    if (currentLocation == null) {
+      Timber.i("User location not available");
+      userLocation = new LatLng(-33.8523f, 151.2108f);
       googleMap.setMyLocationEnabled(false);
       googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+    } else {
+      Timber.i("User location: %s", userLocation);
+      googleMap.setMyLocationEnabled(true);
+      googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+    }
 
-      if (posts.size() == 1) {
-        googleMap.addMarker(new MarkerOptions().position(posts.get(0).getLatLng()).title("Image"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(posts.get(0).getLatLng(), 12f));
+    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
+    googleMap.addMarker(new MarkerOptions().position(userLocation).title("User").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+    googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+
+    if (posts.size() == 0) {
+      if (useKDTree) {
+        posts = getKNearestNeighbor(50, userLocation);
+        renderPosts(googleMap, posts);
+      } else {
+        geoQuery(userLocation);
       }
+    } else {
+      renderPosts(googleMap, posts);
     }
   }
 
-  private void geoQuery() {
-    Timber.i("Beginning geoQuery with userLocation: %s", userLocation.toString());
-    final GeoLocation center = new GeoLocation(userLocation.latitude, userLocation.longitude);
+  private void plotLine(LatLng userLocation, LatLng location) {
+    googleMap.addMarker(new MarkerOptions().position(location).title("Image"));
+    googleMap.addPolyline(new PolylineOptions().add(userLocation, location).width(5).color(Color.RED));
+
+    LatLngBounds bounds = new LatLngBounds.Builder()
+            .include(userLocation)
+            .include(location)
+            .build();
+
+    int padding = 300; // offset from edges of the map in pixels
+    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+    Handler handler = new Handler();
+    handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
+  }
+
+  private List<Post> getKNearestNeighbor(int k, LatLng location) {
+    final GeoLocation center = new GeoLocation(location.latitude, location.longitude);
+    Timber.i("Beginning KNN geoQuery with K: %d userLocation: %s", k, location.toString());
+    KNearestNeighbourService knnapi = new KNearestNeighbourService(k, location.latitude, location.longitude);
+    Future<List<Post>> future = executor.submit(knnapi);
+
+    try {
+      return future.get();
+    } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
+      Timber.e(e);
+      return new ArrayList<>();
+    }
+  }
+
+  private void geoQuery(LatLng location) {
+    Timber.i("Beginning geoQuery with userLocation: %s", location.toString());
+    final GeoLocation center = new GeoLocation(location.latitude, location.longitude);
     final double radiusInM = 50 * 1000;
     final List<Task<QuerySnapshot>> tasks = PostRepository.getInstance().getPostsWithinRadius(center, radiusInM, 50);
     final List<DocumentSnapshot> matchingDocs = new ArrayList<>();
@@ -149,37 +320,36 @@ public class PhotoMapFragment extends MapFragment {
               for (Task<QuerySnapshot> task : tasks) {
                 QuerySnapshot snap = task.getResult();
 
+                List<Post> posts = new ArrayList<>();
                 for (DocumentSnapshot doc : snap.getDocuments()) {
                   // Filter out a few false positives due to GeoHash accuracy, but most will match
                   GeoLocation docLocation = new GeoLocation(doc.getDouble("latitude"), doc.getDouble("longitude"));
                   double distanceInM = GeoFireUtils.getDistanceBetween(docLocation, center);
-                  if (distanceInM <= radiusInM) matchingDocs.add(doc);
+                  if (distanceInM <= radiusInM) posts.add(doc.toObject(Post.class));
                 }
               }
 
-              Timber.i("Found %d documents within %f km", matchingDocs.size(), radiusInM);
-
-              if (matchingDocs.size() > 0) {
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
-                for (DocumentSnapshot matchingDoc : matchingDocs) {
-                  if (matchingDoc.contains("latitude") && matchingDoc.contains("longitude")) {
-                    Post post = matchingDoc.toObject(Post.class);
-                    assert post != null;
-                    LatLng point = new LatLng(post.getLatitude(), post.getLongitude());
-                    googleMap.addMarker(new MarkerOptions().position(point).title(post.getLocationName()));
-                    builder.include(point);
-                  }
-                }
-
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f));
-                LatLngBounds bounds = builder.build();
-                int padding = 300; // offset from edges of the map in pixels
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                Handler handler = new Handler();
-                handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
-              }
+              Timber.i("Found %d documents within %f km", posts.size(), radiusInM);
+              if (matchingDocs.size() > 0) renderPosts(googleMap, posts);
             });
+  }
+
+  private void renderPosts(GoogleMap googleMap, List<Post> posts) {
+    assert userLocation != null;
+
+    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+    for (Post post : posts) {
+      LatLng point = new LatLng(post.getLatitude(), post.getLongitude());
+      googleMap.addMarker(new MarkerOptions().position(point).title(post.getLocationName()));
+      builder.include(point);
+    }
+
+    LatLngBounds bounds = builder.build();
+    int padding = 300; // offset from edges of the map in pixels
+    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12f));
+    Handler handler = new Handler();
+    handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
   }
 
 
