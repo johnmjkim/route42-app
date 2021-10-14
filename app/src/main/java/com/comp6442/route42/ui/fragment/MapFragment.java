@@ -24,6 +24,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -31,16 +32,18 @@ import timber.log.Timber;
 
 public abstract class MapFragment extends Fragment implements OnMapReadyCallback {
   protected int MAP_FRAGMENT;
-
-  public MapFragment(int mapFragment) {
-    this.MAP_FRAGMENT = mapFragment;
-  }
-
-  protected abstract void renderMap(Location location) ;
+  protected int MAP_STYLE;
   protected SupportMapFragment mapFragment;
   protected GoogleMap googleMap;
   protected FusedLocationProviderClient fusedLocationProviderClient;
   protected ActivityResultLauncher<String> requestPermissionLauncher;
+
+  protected abstract void renderMap(Location location);
+
+  public MapFragment(int mapFragment, int mapStyle) {
+    this.MAP_FRAGMENT = mapFragment;
+    this.MAP_STYLE = mapStyle;
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -100,12 +103,12 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   }
 
   /**
-   *    ----- Alert: Revoke permission -----
-   *  Enabling location access to Route42 will
-   *  allow you to see your location relative
-   *  to locations tagged by posts.
-   *    - OK <
-   *    - Cancel
+   * ----- Alert: Revoke permission -----
+   * Enabling location access to Route42 will
+   * allow you to see your location relative
+   * to locations tagged by posts.
+   * - OK <
+   * - Cancel
    */
   private void showAlert() {
     new AlertDialog.Builder(requireContext())
@@ -146,6 +149,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onMapReady(@NonNull GoogleMap googleMap) {
     Timber.i("Map ready. Beginning annotations.");
     this.googleMap = googleMap;
+    this.googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), MAP_STYLE));
 
     // get device location and render map
     try {
@@ -183,6 +187,5 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onDestroyView() {
     super.onDestroyView();
     if (mapFragment != null) mapFragment.onDestroyView();
-
   }
 }

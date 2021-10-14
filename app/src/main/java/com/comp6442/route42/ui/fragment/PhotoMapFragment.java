@@ -26,7 +26,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
@@ -53,7 +52,7 @@ public class PhotoMapFragment extends MapFragment {
   private List<Post> posts = new ArrayList<>();
 
   public PhotoMapFragment() {
-    super(R.id.map_fragment);
+    super(R.id.map_fragment, R.raw.style_json);
   }
 
   public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
@@ -107,6 +106,7 @@ public class PhotoMapFragment extends MapFragment {
    * posts.size() == 0 && userLocation != null: geo search based on user location (points)
    * posts.size() >= 1: render posts as points
    * TODO when user taps on "only once" or "deny" and then approve, map should update with user's location
+   *
    * @param location
    */
   protected void renderMap(Location location) {
@@ -118,7 +118,6 @@ public class PhotoMapFragment extends MapFragment {
     googleMap.setMyLocationEnabled(FINE_LOCATION_PERMISSION == PERMISSION_GRANTED);
     googleMap.getUiSettings().setMyLocationButtonEnabled(FINE_LOCATION_PERMISSION == PERMISSION_GRANTED);
 
-    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
     googleMap.moveCamera(CameraUpdateFactory.newLatLng(center));
 
     if (posts != null && posts.size() > 0) {
