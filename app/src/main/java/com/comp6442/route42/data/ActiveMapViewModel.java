@@ -28,12 +28,22 @@ import java.util.List;
 @SuppressLint("MissingPermission")
 public class ActiveMapViewModel extends ViewModel {
 
-    private final MutableLiveData<Location> deviceLocation = new MutableLiveData<>();
-    private final MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
+    private  MutableLiveData<Location> deviceLocation = new MutableLiveData<>();
+    private MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
     private List<LatLng> pastLocations = new ArrayList<>();
     private Activity activityData = null;
     private String snapshotFileName =  null;
-
+    private long elapsedTime = 0;
+    private Date lastUpdateTime = null;
+    public void reset() {
+            deviceLocation = new MutableLiveData<>();
+         mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
+         pastLocations = new ArrayList<>();
+         activityData = null;
+        snapshotFileName =  null;
+        elapsedTime = 0;
+        lastUpdateTime = null;
+    }
     public long getElapsedTime() {
         return elapsedTime;
     }
@@ -50,8 +60,6 @@ public class ActiveMapViewModel extends ViewModel {
         this.lastUpdateTime = time;
     }
 
-    private long elapsedTime = 0;
-    private Date lastUpdateTime = null;
     public ActiveMapViewModel() {
     }
 

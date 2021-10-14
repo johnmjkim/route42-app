@@ -181,6 +181,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   @Override
   public void onPause() {
     super.onPause();
+    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     if (mapFragment != null) mapFragment.onPause();
   }
 
@@ -194,7 +195,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onDestroyView() {
     super.onDestroyView();
     if (mapFragment != null) mapFragment.onDestroyView();
-    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
 
   }
 }

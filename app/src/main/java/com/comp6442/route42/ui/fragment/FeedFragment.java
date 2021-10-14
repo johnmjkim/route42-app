@@ -83,6 +83,7 @@ public class FeedFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     return inflater.inflate(R.layout.fragment_feed, container, false);
   }
 

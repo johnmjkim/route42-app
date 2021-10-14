@@ -63,10 +63,10 @@ public class PhotoMapFragment extends MapFragment {
   private List<Post> posts = new ArrayList<>();
   private Location currentLocation = null;
   private LatLng userLocation;
-  private SupportMapFragment mapFragment;
-  private GoogleMap googleMap;
-  private FusedLocationProviderClient fusedLocationProviderClient;
-  private ActivityResultLauncher<String> requestPermissionLauncher;
+//  private SupportMapFragment mapFragment;
+//  private GoogleMap googleMap;
+//  private FusedLocationProviderClient fusedLocationProviderClient;
+//  private ActivityResultLauncher<String> requestPermissionLauncher;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private static final boolean useKDTree = true;
 

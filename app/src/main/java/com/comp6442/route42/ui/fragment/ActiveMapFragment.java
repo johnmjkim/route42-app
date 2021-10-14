@@ -27,6 +27,7 @@ import com.comp6442.route42.R;
 import com.comp6442.route42.data.ActiveMapViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.BaseActivity;
+import com.comp6442.route42.data.model.MockLocation;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.ui.activity.MainActivity;
 import com.google.android.gms.location.LocationAvailability;
@@ -87,8 +88,6 @@ public class ActiveMapFragment extends MapFragment {
     public ActiveMapFragment(boolean mockMode) {
         super();
         this.mockMode = mockMode;
-
-
     }
 
     @Override
@@ -151,10 +150,10 @@ public class ActiveMapFragment extends MapFragment {
                 String baseFilename = "activity_route";
                 String localFilename = baseFilename+ ".png";
                 String storageFilename = baseFilename + new Date().toString() + ".png";
+                activeMapViewModel.setSnapshotFileName(storageFilename);
                 FileOutputStream out = getContext().openFileOutput(localFilename, 0);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                 FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(localFilename, storageFilename,getContext().getFilesDir().getPath());
-                activeMapViewModel.setSnapshotFileName(storageFilename);
                 Bundle bundle = new Bundle();
                 bundle.putString("uid", getArguments().getString("uid"));
                 bundle.putString("img_path","/"+ localFilename);
@@ -201,7 +200,7 @@ public class ActiveMapFragment extends MapFragment {
                         Location lastKnownLocation = task.getResult();
                         Timber.i("successful get location from fusedProvider: " + lastKnownLocation);
                         if (lastKnownLocation != null) {
-                            LatLng locationLatLng = com.comp6442.route42.data.model.Location.latLngFromLocation(lastKnownLocation);
+                            LatLng locationLatLng = MockLocation.latLngFromLocation(lastKnownLocation);
                             //add current location marker
                             googleMap.clear();
                             googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
