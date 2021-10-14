@@ -15,6 +15,20 @@ import java.time.*;
 import timber.log.Timber;
 
 public class MockLocationTest {
+    public MockLocation mock;
 
+    @Test
+    public void cycleTest(){
+        mock = new MockLocation(Activity.Activity_Type.CYCLING);
+    }
 
+    @Test
+    public void runningTest(){
+        mock = new MockLocation(Activity.Activity_Type.RUNNING);
+    }
+
+    @Test
+    public void walkingTest(){
+        mock = new MockLocation(Activity.Activity_Type.WALKING);
+    }
 }
