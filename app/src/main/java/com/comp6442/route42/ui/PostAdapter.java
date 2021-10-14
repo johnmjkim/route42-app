@@ -19,7 +19,6 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.storage.StorageReference;
@@ -29,31 +28,9 @@ import java.util.List;
 
 import timber.log.Timber;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
   private final String loggedInUID;
   private List<Post> posts = new ArrayList<>();
-
-  public static class ViewHolder extends RecyclerView.ViewHolder {
-    public ImageView userIcon, imageView, like, unlike, locationPin;
-    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
-    public MaterialCardView materialCardView;
-
-    public ViewHolder(View view) {
-      super(view);
-      userIcon = view.findViewById(R.id.card_profile_pic);
-      imageView = view.findViewById(R.id.card_main_image);
-      like = view.findViewById(R.id.like_button);
-      unlike = view.findViewById(R.id.unlike_button);
-
-      materialCardView = view.findViewById(R.id.post_card);
-      userNameView = view.findViewById(R.id.card_username);
-      hashtagsTextView = view.findViewById(R.id.card_hashtags);
-      descriptionView = view.findViewById(R.id.card_description);
-      likeCountTextView = view.findViewById(R.id.like_count_text);
-      locationTextView = view.findViewById(R.id.location);
-      locationPin = view.findViewById(R.id.pin);
-    }
-  }
 
   public PostAdapter(List<Post> posts, String loggedInUID) {
     this.posts = posts;
@@ -63,16 +40,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   // Create new views (invoked by the layout manager)
   @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+  public PostViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
     View view = LayoutInflater.from(viewGroup.getContext())
             .inflate(R.layout.post_card, viewGroup, false);
     Timber.d("PostAdapter created.");
-    return new ViewHolder(view);
+    return new PostViewHolder(view);
   }
 
   // Replace the contents of a view (invoked by the layout manager)
   @Override
-  public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position) {
+  public void onBindViewHolder(@NonNull PostViewHolder viewHolder, final int position) {
     Post post = posts.get(position);
     setViewBehavior(post, viewHolder);
 
@@ -118,7 +95,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     Timber.d("OnBindView complete.");
   }
-  private void setViewBehavior(Post post, PostAdapter.ViewHolder viewHolder) {
+  private void setViewBehavior(Post post, PostViewHolder viewHolder) {
     Timber.d("breadcrumb");
     // Add listener and navigate to the user's profile on click
     setUserNameView(post, viewHolder);
@@ -156,7 +133,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     Timber.d("OnBindView complete.");
   }
 
-  private void setLikeButtons(Post post, PostAdapter.ViewHolder viewHolder, boolean postIsLiked) {
+  private void setLikeButtons(Post post, PostViewHolder viewHolder, boolean postIsLiked) {
     viewHolder.like.setOnClickListener(view -> {
       PostRepository.getInstance().like(post, loggedInUID);
       viewHolder.like.setVisibility(View.GONE);
@@ -180,7 +157,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
   }
 
-  private void setLikeCountTextView(Post post, PostAdapter.ViewHolder viewHolder) {
+  private void setLikeCountTextView(Post post, PostViewHolder viewHolder) {
     viewHolder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
     setLikeButtons(
             post,
@@ -193,7 +170,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     );
   }
 
-  private void setUserNameView(Post post, PostAdapter.ViewHolder viewHolder) {
+  private void setUserNameView(Post post, PostViewHolder viewHolder) {
     viewHolder.userNameView.setOnClickListener(view -> {
       Fragment fragment = new ProfileFragment();
       Bundle bundle = new Bundle();
@@ -226,5 +203,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   public void setPosts(List<Post> posts) {
     this.posts = posts;
   }
-}
 
+  public static class PostViewHolder extends RecyclerView.ViewHolder {
+    public ImageView userIcon, imageView, like, unlike, locationPin;
+    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
+    public MaterialCardView materialCardView;
+
+    public PostViewHolder(View view) {
+      super(view);
+      userIcon = view.findViewById(R.id.card_profile_pic);
+      imageView = view.findViewById(R.id.card_main_image);
+      like = view.findViewById(R.id.like_button);
+      unlike = view.findViewById(R.id.unlike_button);
+
+      materialCardView = view.findViewById(R.id.post_card);
+      userNameView = view.findViewById(R.id.card_username);
+      hashtagsTextView = view.findViewById(R.id.card_hashtags);
+      descriptionView = view.findViewById(R.id.card_description);
+      likeCountTextView = view.findViewById(R.id.like_count_text);
+      locationTextView = view.findViewById(R.id.location);
+      locationPin = view.findViewById(R.id.pin);
+    }
+  }
+}
