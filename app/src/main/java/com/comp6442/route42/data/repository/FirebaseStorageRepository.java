@@ -46,14 +46,15 @@ public class FirebaseStorageRepository {
 
     return storage.getReferenceFromUrl(url);
   }
-  public StorageReference uploadSnapshotFromLocal(String localFilename,String storageFilename, String basePath) {
-    StorageReference snapshotFolderRef = storage.getReference().child("snapshots/"+ storageFilename);
-    Uri file = Uri.fromFile(new File(basePath+"/"+localFilename));
+
+  public StorageReference uploadSnapshotFromLocal(String localFilename, String storageFilename, String basePath) {
+    StorageReference snapshotFolderRef = storage.getReference().child("snapshots/" + storageFilename);
+    Uri file = Uri.fromFile(new File(basePath + "/" + localFilename));
     UploadTask uploadTask = snapshotFolderRef.putFile(file);
 // Register observers to listen for when the download is done or if it fails
     uploadTask.addOnFailureListener(new OnFailureListener() {
       @Override
-      public void onFailure( Exception exception) {
+      public void onFailure(Exception exception) {
         // Handle unsuccessful uploads
         Timber.e("error uploading snapshot");
       }

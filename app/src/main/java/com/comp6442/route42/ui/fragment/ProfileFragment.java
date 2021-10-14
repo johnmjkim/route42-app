@@ -447,7 +447,8 @@ public class ProfileFragment extends Fragment {
         super.onScrolled(recyclerView, dx, dy);
 
         if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
-          if (dy > 0) bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000); // scrolling down
+          if (dy > 0)
+            bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000); // scrolling down
           else bottomNavView.animate().translationY(0).setDuration(1000); // scrolling up
         }
       }
