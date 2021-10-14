@@ -32,21 +32,7 @@ public class SearchService extends RestApiService implements Callable<List<Post>
 
   @Override
   public List<Post> call() throws Exception {
-    Call<List<Post>> callSync = super.api.search(new QueryString(query));
-
-//    callSync.enqueue(new Callback<List<Post>>() {
-//      @Override
-//      public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-//        for(Post post: response.body()) {
-//          System.out.println(post.toString());
-//        }
-//      }
-//
-//      @Override
-//      public void onFailure(Call<List<Post>> call, Throwable t) {
-//        Timber.e(t);
-//      }
-//    });
+    Call<List<Post>> callSync = super.api.search(new QueryString(query, 20));
 
     try {
       Response<List<Post>> response = callSync.execute();
