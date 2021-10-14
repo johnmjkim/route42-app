@@ -6,6 +6,7 @@ import com.comp6442.route42.data.model.User;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQueryBounds;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
@@ -134,11 +135,14 @@ public class PostRepository extends FirestoreRepository<Post> {
     }
   }
 
-  public List<Task<QuerySnapshot>> getPostsWithinRadius(GeoLocation location, double radiusInM, int limit) {
+  public List<Task<QuerySnapshot>> getPostsWithinRadius(LatLng location, double radiusInM, int limit) {
     // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
     // a separate query for each pair. There can be up to 9 pairs of bounds
     // depending on overlap, but in most cases there are 4.
-    List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(location, radiusInM);
+    List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(
+            new GeoLocation(location.latitude, location.longitude),
+            radiusInM
+    );
     final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
 
     // todo - only select followed / followers?
