@@ -48,7 +48,8 @@
         </activity>
         <activity
                 android:name=".ui.activity.MainActivity"
-                android:label="@string/title_fragment_feed" />
+                android:label="@string/title_fragment_feed"
+                android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>

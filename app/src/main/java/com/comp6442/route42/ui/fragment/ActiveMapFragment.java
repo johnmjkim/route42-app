@@ -1,10 +1,12 @@
 package com.comp6442.route42.ui.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,6 +27,7 @@ import com.comp6442.route42.R;
 import com.comp6442.route42.data.ActiveMapViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.BaseActivity;
+import com.comp6442.route42.data.model.MockLocation;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
@@ -38,6 +43,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.FileOutputStream;
@@ -50,6 +56,7 @@ import timber.log.Timber;
 public class ActiveMapFragment extends MapFragment {
   private final boolean mockMode;
   Timer timer = new Timer();
+  private boolean requestingLocationUpdates = false;
   private ActiveMapViewModel activeMapViewModel;
   private TextView activityMetricsText;
   private LocationCallback locationCallBack;
@@ -78,8 +85,6 @@ public class ActiveMapFragment extends MapFragment {
   public ActiveMapFragment(boolean mockMode) {
     super();
     this.mockMode = mockMode;
-
-
   }
 
   @Override
@@ -128,7 +133,6 @@ public class ActiveMapFragment extends MapFragment {
     //set active icon
     ImageView activityIconView = view.findViewById(R.id.activity_icon);
     int activityType = getArguments().getInt("activity");
-    Timber.i("darmawan " + activityType);
     int iconResource = Activity.Activity_Type.getIconResource(activityType);
     Glide.with(activityIconView.getContext()).load(iconResource).into(activityIconView);
     //set metrics
@@ -138,66 +142,42 @@ public class ActiveMapFragment extends MapFragment {
 
   }
 
-  private void setActivityButton() {
-    activityButton.setOnClickListener(click -> {
-      GoogleMap.SnapshotReadyCallback snapshotCallback = bitmap -> {
-        try {
-          String baseFilename = "activity_route";
-          String localFilename = baseFilename + ".png";
-          String storageFilename = baseFilename + new Date().toString() + ".png";
-          FileOutputStream out = getContext().openFileOutput(localFilename, 0);
-          bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-          FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(localFilename, storageFilename, getContext().getFilesDir().getPath());
-          activeMapViewModel.setSnapshotFileName(storageFilename);
-          Bundle bundle = new Bundle();
-          bundle.putString("uid", getArguments().getString("uid"));
-          bundle.putString("img_path", "/" + localFilename);
-          Fragment fragment = new CreatePostFragment();
-          fragment.setArguments(bundle);
-          getActivity()
-                  .getSupportFragmentManager()
-                  .beginTransaction()
-                  .replace(R.id.fragment_container_view, fragment)
-                  .commit();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      };
-      googleMap.setOnMapLoadedCallback(() -> {
-                Timber.i("clicked activity button");
-                googleMap.snapshot(snapshotCallback);
-                googleMap.setOnMapLoadedCallback(null);
-              }
-      );
+  private void endUserActivity() {
+    GoogleMap.SnapshotReadyCallback snapshotCallback = bitmap -> {
+      try {
+        String baseFilename = "activity_route";
+        String localFilename = baseFilename + ".png";
+        String storageFilename = baseFilename + new Date().toString() + ".png";
+        activeMapViewModel.setSnapshotFileName(storageFilename);
+        FileOutputStream out = getContext().openFileOutput(localFilename, 0);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(localFilename, storageFilename, getContext().getFilesDir().getPath());
+        Bundle bundle = new Bundle();
+        bundle.putString("uid", getArguments().getString("uid"));
+        bundle.putString("img_path", "/" + localFilename);
+        Fragment fragment = new CreatePostFragment();
+        fragment.setArguments(bundle);
+        getActivity()
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container_view, fragment)
+                .commit();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    };
+    googleMap.setOnMapLoadedCallback(() -> {
+      Timber.i("clicked activity button");
+      googleMap.snapshot(snapshotCallback);
+      googleMap.setOnMapLoadedCallback(null);
     });
   }
 
-  @Override
-  protected Task<Location> getDeviceLocation() {
-    try {
-      Timber.i("getDeviceLocation: getting the devices current location");
-      LocationRequest locationRequest = LocationRequest.create();
-      long intervalMillis = 1000;
-      locationRequest.setInterval(intervalMillis).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-      if (mockMode) {
-        Timber.i("setting mock mode to true");
-        fusedLocationProviderClient.setMockMode(mockMode);
-        fusedLocationProviderClient.setMockLocation(activeMapViewModel.getDeviceLocation().getValue());
-      }
-      activeMapViewModel.setStartTime(new Date());
-      fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
-      return locationPermissionGranted ? fusedLocationProviderClient.getLastLocation() : null;
-    } catch (SecurityException e) {
-      Timber.w("Unable to get current location");
-      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-      return null;
-    } catch (RuntimeException e) {
-      Timber.e(e);
-      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-      return null;
-    }
-  }
-
+  //
+//    @Override
+//    protected Task<Location> getDeviceLocation() {
+//
+//    }
   @Override
   protected void initializeMap() {
     mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment2);
@@ -218,7 +198,7 @@ public class ActiveMapFragment extends MapFragment {
             Location lastKnownLocation = task.getResult();
             Timber.i("successful get location from fusedProvider: " + lastKnownLocation);
             if (lastKnownLocation != null) {
-              LatLng locationLatLng = com.comp6442.route42.data.model.Location.latLngFromLocation(lastKnownLocation);
+              LatLng locationLatLng = MockLocation.latLngFromLocation(lastKnownLocation);
               //add current location marker
               googleMap.clear();
               googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
@@ -234,7 +214,6 @@ public class ActiveMapFragment extends MapFragment {
                       )
                       .width(25)
                       .color(Color.BLUE)
-
               );
             }
 
@@ -246,8 +225,11 @@ public class ActiveMapFragment extends MapFragment {
             googleMap.getUiSettings().setMyLocationButtonEnabled(false);
           }
         }).addOnSuccessListener(this.getActivity(), location -> Timber.i("location is :" + location));
-        long elapsedTime = BaseActivity.getElapsedTimeSeconds(new Date(), activeMapViewModel.getStartTime());
-        Activity userActivityData = new BaseActivity(activeMapViewModel.getPastLocations(), elapsedTime);
+        if (activeMapViewModel.getLastUpdateTime() != null) {
+          activeMapViewModel.updateElapsedTime();
+        }
+        activeMapViewModel.setLastUpdateTime(new Date());
+        Activity userActivityData = new BaseActivity(activeMapViewModel.getPastLocations(), activeMapViewModel.getElapsedTime());
         activeMapViewModel.setActivityData(userActivityData);
         activityMetricsText.setText(userActivityData.toString());
       }
@@ -256,11 +238,86 @@ public class ActiveMapFragment extends MapFragment {
     }
   }
 
+  private void setActivityButton() {
+    activityButton.setOnClickListener(click -> {
+      activityBtnClickHandler();
+    });
+  }
+
+  public void activityBtnClickHandler() {
+    FragmentActivity activity = this.getActivity();
+    String[] dialogItems = new String[]{"Pause", "End Activity"};
+    if (!requestingLocationUpdates) {
+      dialogItems = new String[]{"Start", "End Activity"};
+    }
+    AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(activity, R.style.AlertDialog_AppCompat)).setTitle("Select Action")
+            .setItems(dialogItems, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i) {
+                if (i == 1) {
+                  endUserActivity();
+                } else if (i == 0) {
+                  if (requestingLocationUpdates) {
+                    stopLocationUpdates();
+                  } else {
+                    startLocationUpdates();
+                  }
+                }
+              }
+            }).create();
+    alertDialog.show();
+  }
+
+  private void stopLocationUpdates() {
+    fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
+    requestingLocationUpdates = false;
+    activeMapViewModel.setLastUpdateTime(null);
+
+
+  }
+
+  private void startLocationUpdates() {
+    try {
+      Timber.i("getDeviceLocation: getting the devices current location");
+      if (mockMode) {
+        Timber.i("setting mock mode to true");
+        fusedLocationProviderClient.setMockMode(mockMode);
+        fusedLocationProviderClient.setMockLocation(activeMapViewModel.getDeviceLocation().getValue());
+      }
+      requestingLocationUpdates = true;
+      LocationRequest locationRequest = LocationRequest.create();
+      long intervalMillis = 1000;
+      locationRequest.setInterval(intervalMillis).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+      fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
+    } catch (SecurityException e) {
+      Timber.w("Unable to get current location");
+      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
+    } catch (RuntimeException e) {
+      Timber.e(e);
+      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
+    }
+
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+//        Timber.i("elapsed time is " + elapsedTime);
+    if (requestingLocationUpdates) {
+      startLocationUpdates();
+    }
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    stopLocationUpdates();
+  }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
     timer.cancel();
-    fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
+    stopLocationUpdates();
   }
 }

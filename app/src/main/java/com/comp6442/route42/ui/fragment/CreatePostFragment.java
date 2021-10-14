@@ -48,6 +48,13 @@ public class CreatePostFragment extends Fragment {
   }
 
   @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
+
+  }
+
+  @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                            @Nullable Bundle savedInstanceState) {
     uid = getArguments().getString("uid");
@@ -72,11 +79,11 @@ public class CreatePostFragment extends Fragment {
     Activity userActivity = activeMapViewModel.getActivityData();
     postDescriptionInput.setText(userActivity.getPostString());
     cancelPostButton.setOnClickListener(event -> {
-
       Bundle bundle = new Bundle();
       bundle.putString("uid", uid);
       Fragment fragment = new FeedFragment();
       fragment.setArguments(bundle);
+      activeMapViewModel.reset();
       getActivity()
               .getSupportFragmentManager()
               .beginTransaction()
@@ -102,7 +109,6 @@ public class CreatePostFragment extends Fragment {
    * Creates new Post given map snapshot and the activity data collected.
    */
   private void onClickCreatePostHandler() {
-
     DocumentReference uidRef = UserRepository.getInstance().getOne(uid);
     User liveUser = userViewModel.getLiveUser().getValue();
     assert liveUser != null;
@@ -119,6 +125,7 @@ public class CreatePostFragment extends Fragment {
     List<DocumentReference> likedBy = new ArrayList<>(0);
     Post newPost = new Post(uidRef, username, isPublic, profilePicUrl, postDateTime, postDescription, "", latitude, longitude, hashTags, likeCount, imageUrl, likedBy);
     postRepository.createOne(newPost);
+//        activeMapViewModel.reset();
 
   }
 

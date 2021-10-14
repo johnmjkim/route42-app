@@ -7,7 +7,9 @@
         android:layout_gravity="center_horizontal"
         android:fillViewport="true"
         android:gravity="center_horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/dark"
+        >
 
     <LinearLayout
             android:layout_width="match_parent"

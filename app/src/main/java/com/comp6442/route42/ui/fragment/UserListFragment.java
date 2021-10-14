@@ -138,29 +138,4 @@ public class UserListFragment extends Fragment {
       Timber.e("uid is null");
     }
   }
-
-  @Override
-  public void onStart() {
-    super.onStart();
-    Timber.d("breadcrumb");
-  }
-
-  @Override
-  public void onStop() {
-    super.onStop();
-    Timber.d("breadcrumb");
-  }
-
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    Timber.d("breadcrumb");
-  }
-
-  /* onDetach() is always called after any Lifecycle state changes. */
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    Timber.d("breadcrumb");
-  }
 }

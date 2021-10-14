@@ -45,12 +45,14 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
+
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
+
     // reveal bottom nav if hidden
     BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
     bottomNavView.animate().translationY(0).setDuration(250);
-    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
+
     try {
-      Timber.i("getDeviceLocation: getting the devices current location");
       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
     } catch (SecurityException e) {
       Timber.w("Unable to get current location");
@@ -195,6 +197,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   @Override
   public void onPause() {
     super.onPause();
+    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     if (mapFragment != null) mapFragment.onPause();
   }
 
@@ -210,6 +213,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onDestroyView() {
     super.onDestroyView();
     if (mapFragment != null) mapFragment.onDestroyView();
-    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
+
   }
 }

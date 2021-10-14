@@ -1,11 +1,13 @@
 package com.comp6442.route42.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,10 +27,8 @@ import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.FirestorePostAdapter;
 import com.comp6442.route42.ui.PostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.JsonSyntaxException;
 
 import java.util.List;
@@ -46,16 +46,16 @@ import timber.log.Timber;
  */
 public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private String uid;
   private UserViewModel viewModel;
   private SearchView searchView;
   private NestedScrollView scrollview;
   private RecyclerView recyclerView;
-  private PostAdapter adapter;
-  // private FirestorePostAdapter firestorePostAdapter;
+  private PostAdapter postAdapter;
+  private FirestorePostAdapter adapter;
   private LinearLayoutManager layoutManager;
   private BottomNavigationView bottomNavView;
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public FeedFragment() {
     // Required empty public constructor
@@ -78,11 +78,17 @@ public class FeedFragment extends Fragment {
       this.uid = getArguments().getString(ARG_PARAM1);
     }
     Timber.i("onCreate called with uid %s", uid);
+
+    layoutManager = new LinearLayoutManager(getActivity());
+    layoutManager.setReverseLayout(false);
+    layoutManager.setStackFromEnd(false);
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+
+    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     return inflater.inflate(R.layout.fragment_feed, container, false);
   }
 
@@ -102,52 +108,25 @@ public class FeedFragment extends Fragment {
 
       assert user != null;
 
-      // without firestore post adapter
       Query query = PostRepository.getInstance().getVisiblePosts(user, 20);
-      query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-        @Override
-        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-          List<Post> posts = queryDocumentSnapshots.toObjects(Post.class);
-          adapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
-          layoutManager = new LinearLayoutManager(getActivity());
-          layoutManager.setReverseLayout(false);
-          layoutManager.setStackFromEnd(false);
+      FirestoreRecyclerOptions<Post> postsOptions = new FirestoreRecyclerOptions.Builder<Post>()
+              .setQuery(query, Post.class)
+              .build();
 
-          recyclerView = view.findViewById(R.id.recycler_view);
-          recyclerView.setLayoutManager(layoutManager);
-          recyclerView.setAdapter(adapter);
-          recyclerView.setHasFixedSize(false);
-          recyclerView.setNestedScrollingEnabled(false);
-          adapter.notifyDataSetChanged();
+      adapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
 
-          initFeed(view);
-          initSearch(view, user);
-        }
-      });
+      recyclerView = view.findViewById(R.id.recycler_view);
+      recyclerView.setLayoutManager(layoutManager);
+      recyclerView.setAdapter(adapter);
+      recyclerView.setHasFixedSize(false);
 
-//      // with firestore post adapter
-//      FirestoreRecyclerOptions<Post> postsOptions = new FirestoreRecyclerOptions.Builder<Post>()
-//              .setQuery(query, Post.class)
-//              .build();
-//
-//      firestorePostAdapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
-//
-//      layoutManager = new LinearLayoutManager(getActivity());
-//      layoutManager.setReverseLayout(false);
-//      layoutManager.setStackFromEnd(false);
-//
-//      recyclerView = view.findViewById(R.id.recycler_view);
-//      recyclerView.setLayoutManager(layoutManager);
-//      recyclerView.setAdapter(firestorePostAdapter);
-//      recyclerView.setHasFixedSize(false);
-//
-//      firestorePostAdapter.startListening();
-//
-//      Timber.i("PostAdapter bound to RecyclerView with size %d", firestorePostAdapter.getItemCount());
-//      query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
-//
-//      hideSearchOnScroll(view);
-//      initSearch(view, user);
+      adapter.startListening();
+
+      Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
+      query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
+
+      initFeed(view);
+      initSearch(view, user);
     } else {
       Timber.e("uid is null");
     }
@@ -196,15 +175,16 @@ public class FeedFragment extends Fragment {
               Timber.i("Response received from API: %d items", posts.size());
               Timber.d(posts.toString());
 
-              // query via REST API
-              adapter.setPosts(posts);
-              adapter.notifyDataSetChanged();
-//            // query directly using firestore
-//            firestorePostAdapter = queryFirestore(user, s);
-//            firestorePostAdapter.startListening();
+              postAdapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+              recyclerView.setAdapter(postAdapter);
+              postAdapter.notifyDataSetChanged();
             } else {
               // do nothing, or let the user know there was no hit for the query
             }
+
+            // hide keyboard
+            InputMethodManager imm = (InputMethodManager)requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
           } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
             Timber.e(e);
           }
@@ -232,6 +212,7 @@ public class FeedFragment extends Fragment {
             .build();
     FirestorePostAdapter adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
     recyclerView.setAdapter(adapter);
+//    recyclerView.swapAdapter(adapter);
     Timber.i("PostAdapter bound to RecyclerView with size %d for query: %s", adapter.getItemCount(), queryText);
     query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
     return adapter;
@@ -258,7 +239,7 @@ public class FeedFragment extends Fragment {
   public void onStop() {
     super.onStop();
     Timber.d("breadcrumb");
-//    firestorePostAdapter.stopListening();
+    if (adapter != null) adapter.stopListening();
   }
 
   @Override

@@ -1,56 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".ui.activity.MainActivity"
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.activity.MainActivity">
+        android:fitsSystemWindows="true"
+        app:layout_insetEdge="bottom">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/container"
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            android:layout_above="@+id/bottom_navigation_view">
+            android:gravity="center_horizontal|center_vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_horizontal|center_vertical">
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/nav_graph"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-            <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragment_container_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:name="androidx.navigation.fragment.NavHostFragment"
-                    app:defaultNavHost="true"
-                    app:navGraph="@navigation/nav_graph"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/Btn_Create_Activity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="16dp"
-                android:clickable="true"
-                android:contentDescription="@string/create_activity_content_desc"
-                app:layout_constraintBottom_toBottomOf="@id/fragment_container_view"
-                app:srcCompat="@android:drawable/ic_input_add"/>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/Btn_Create_Activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:contentDescription="@string/create_activity_content_desc"
+            app:layout_constraintBottom_toBottomOf="@id/fragment_container_view"
+            app:srcCompat="@android:drawable/ic_input_add" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
+            app:menu="@menu/bottom_nav"
             android:background="?android:attr/windowBackground"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:menu="@menu/bottom_nav"
+            android:layout_gravity="bottom"
             app:backgroundTint="@color/purple_200"
             app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
-            app:labelVisibilityMode="auto" />
-</RelativeLayout>
+            app:layout_insetEdge="bottom"
+            app:labelVisibilityMode="auto"
+            />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
