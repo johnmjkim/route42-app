@@ -83,6 +83,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     // set profile pic
     Timber.i("Fetched post: %s", post);
 
+
     if (post.getProfilePicUrl().startsWith("http")) {
       Glide.with(viewHolder.imageView.getContext())
               .load(post.getProfilePicUrl())
@@ -102,13 +103,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
               .circleCrop()
               .into(viewHolder.userIcon);
     }
-
-    Glide.with(viewHolder.imageView.getContext())
-            .load(post.getImageUrl())
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(false)
-            .centerCrop()
-            .into(viewHolder.imageView);
+    if(post.getImageUrl().startsWith("http")) {
+      Glide.with(viewHolder.imageView.getContext())
+              .load(post.getImageUrl())
+              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .skipMemoryCache(false)
+              .centerCrop()
+              .into(viewHolder.imageView);
+    } else {
+      StorageReference postImageRef = FirebaseStorageRepository.getInstance().get(post.getImageUrl());
+      Glide.with(viewHolder.imageView.getContext())
+              .load(postImageRef)
+              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .skipMemoryCache(false)
+              .centerCrop()
+              .into(viewHolder.imageView);
+    }
 
     Timber.d("OnBindView complete.");
   }

@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
   }
   public void createActivityBtnClickHandler() {
-    Timber.i("Create activity btn clicked.");
+//    Timber.i("Create activity btn clicked.");
     MainActivity self = this;
     AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(this, R.style.AlertDialog_AppCompat)).setTitle("Choose Activity Type")
             .setItems(Activity.Activity_Type.getValues(), new DialogInterface.OnClickListener() {
@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
       }
     }).create();
     alertDialog.show();
-
   }
 
 

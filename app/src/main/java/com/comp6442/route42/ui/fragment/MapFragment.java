@@ -52,7 +52,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     bottomNavView.animate().translationY(0).setDuration(250);
     getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
     try {
-      Timber.i("getDeviceLocation: getting the devices current location");
       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
     } catch (SecurityException e) {
       Timber.w("Unable to get current location");

@@ -5,11 +5,13 @@ import android.content.Context;
 import android.location.Location;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.comp6442.route42.data.model.Activity;
+import com.comp6442.route42.data.model.BaseActivity;
 import com.comp6442.route42.data.model.MockLocation;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,14 +31,27 @@ public class ActiveMapViewModel extends ViewModel {
     private final MutableLiveData<Location> deviceLocation = new MutableLiveData<>();
     private final MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
     private List<LatLng> pastLocations = new ArrayList<>();
-    private Date startTime;
     private Activity activityData = null;
-
-
-
     private String snapshotFileName =  null;
 
+    public long getElapsedTime() {
+        return elapsedTime;
+    }
 
+    public void updateElapsedTime() {
+        this.elapsedTime = elapsedTime + BaseActivity.getElapsedTimeSeconds(new Date(), lastUpdateTime);
+    }
+
+    public Date getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(@Nullable Date time) {
+        this.lastUpdateTime = time;
+    }
+
+    private long elapsedTime = 0;
+    private Date lastUpdateTime = null;
     public ActiveMapViewModel() {
     }
 
@@ -47,14 +62,6 @@ public class ActiveMapViewModel extends ViewModel {
         if(deviceLocation.getValue() != null)
             addPastLocation(deviceLocation.getValue());
         deviceLocation.setValue(newLocation);
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
     }
 
     public void setMockDeviceLocation() {

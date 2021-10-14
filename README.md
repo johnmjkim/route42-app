@@ -30,7 +30,8 @@
     - update FeedFragment to use regular PostAdapter instead of FirestorePostAdapter
     - make FeedFragment Searchview issue query only on submit
     - use single thread executor service to make REST API request
-
+27. Added create activity and create new post feature.
+    - 
 # Requirements
 
 - Android Gradle Plugin Version 7.0.1
