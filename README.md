@@ -30,10 +30,14 @@
     - update FeedFragment to use regular PostAdapter instead of FirestorePostAdapter
     - make FeedFragment Searchview issue query only on submit
     - use single thread executor service to make REST API request
-27. Added create activity and create new post feature.
-    - 
-# Requirements
+27. Enabled user create workout activity and save workout post feature.
+    - create 'ActiveMapFragment' which displays map and user activity route data and metrics
+    - Allow user to Pause / Resume workout activity when navigating away, or by clicking Activity button on page
+    - create 'CreatePostFragment' which enables user to save new post   
+    - Hashtags in post description are auto-parsed. Separate hashtags with punctuation. 
+    - enable mock location using MockLocation class, to feed location data provider. (non-emulator only) 
 
+# Requirements
 - Android Gradle Plugin Version 7.0.1
 - Gradle version 7.0.2
 - Android Emulator: Pixel 4 API 30
