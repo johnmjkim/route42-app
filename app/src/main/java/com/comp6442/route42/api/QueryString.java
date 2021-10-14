@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 
 public class QueryString {
   private String query;
+  private final int limit;
 
-  public QueryString(String query) {
+  public QueryString(String query, int limit) {
     this.query = query;
+    this.limit = limit;
   }
 
   public String getQuery() {
@@ -20,6 +22,9 @@ public class QueryString {
   @NonNull
   @Override
   public String toString() {
-    return this.query;
+    return "QueryString{" +
+            "query='" + query + '\'' +
+            ", limit=" + limit +
+            '}';
   }
 }

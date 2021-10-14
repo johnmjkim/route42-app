@@ -98,6 +98,7 @@ public class ProfileFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Timber.d("breadcrumb");
+    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     return inflater.inflate(R.layout.fragment_profile, container, false);
   }
 
@@ -447,7 +448,8 @@ public class ProfileFragment extends Fragment {
         super.onScrolled(recyclerView, dx, dy);
 
         if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
-          if (dy > 0) bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000); // scrolling down
+          if (dy > 0)
+            bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000); // scrolling down
           else bottomNavView.animate().translationY(0).setDuration(1000); // scrolling up
         }
       }
