@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,10 +17,20 @@ import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.repository.UserRepository;
+import com.comp6442.route42.utils.AESCrypt;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 import timber.log.Timber;
 
@@ -36,12 +47,12 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     setContentView(R.layout.activity_login);
     mAuth = FirebaseAuthLiveData.getInstance().getAuth();
 
-    // UI
     ed1 = findViewById(R.id.login_form_email);
     ed2 = findViewById(R.id.login_form_password);
     b1 = findViewById(R.id.login_button);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);
+
     // ActionBar toolbar = getSupportActionBar();
     // toolbar.hide();
   }
@@ -62,11 +73,16 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
   public void onClick(View view) {
     String username = ed1.getText().toString();
     String password = ed2.getText().toString();
-    signIn(username, password);
+
+    try {
+      signIn(username, AESCrypt.encrypt(password));
+    } catch (IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
+      Timber.e(e);
+    }
   }
 
   @SuppressLint("TimberArgCount")
-  private void signIn(String email, String password) {
+  private void signIn(String email, String password)  {
     mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, task -> {
               if (task.isSuccessful()) {
@@ -78,11 +94,6 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                 }
               } else {
                 Timber.w(task.getException(), "Failed to sign in");
-                if (BuildConfig.EMULATOR) {
-                  Toast.makeText(LogInActivity.this, "Sign in failed.",
-                          Toast.LENGTH_SHORT).show();
-                }
-                // this is required to clear the password form
                 ed2.setText(" ");
                 ed2.setText("");
               }

@@ -12,6 +12,7 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
 import com.comp6442.route42.ui.activity.MainActivity;
+import com.comp6442.route42.utils.AESCrypt;
 import com.comp6442.route42.utils.CustomLogger;
 import com.comp6442.route42.utils.tasks.TaskCreatePosts;
 import com.comp6442.route42.utils.tasks.TaskCreateUsers;
@@ -26,17 +27,6 @@ import java.util.concurrent.TimeUnit;
 import timber.log.Timber;
 
 
-/**
- * In many apps, there's no need to work with an application class directly.
- * However, there are a few acceptable uses of a custom application class:
- * Specialized tasks that need to run before the creation of your first activity
- * Global initialization that needs to be shared across all components (crash reporting, persistence)
- * Static methods for easy access to static immutable data such as a shared network client object
- * Note that you should never store mutable shared data inside the Application object since
- * that data might disappear or become invalid at any time.
- * Instead, store any mutable shared data using persistence strategies such as files,
- * SharedPreferences or SQLite.
- */
 public class Route42App extends Application {
   private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
   private FirebaseAuth mAuth;
@@ -48,7 +38,7 @@ public class Route42App extends Application {
     mAuth = FirebaseAuthLiveData.getInstance().getAuth();
     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
-    // initialize Timber logger in application class
+    // initialize Timber logger
     Timber.plant(new CustomLogger());
 
     if (BuildConfig.EMULATOR) {
@@ -57,24 +47,27 @@ public class Route42App extends Application {
       Timber.i("Application starting");
     }
 
-    // create test user
     if (BuildConfig.loadData) {
-      createTestUser();
-    }
+      try {
+        createTestUser();
 
-    if (BuildConfig.skipLogin) {
-      mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword)
-              .addOnSuccessListener(authResult -> {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("uid", mAuth.getUid());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-              });
-    } else {
-      if (mAuth.getCurrentUser() != null) mAuth.signOut();
-      Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
-      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-      startActivity(intent);
+        if (BuildConfig.skipLogin) {
+          mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword)
+                  .addOnSuccessListener(authResult -> {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("uid", mAuth.getUid());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                  });
+        } else {
+          if (mAuth.getCurrentUser() != null) mAuth.signOut();
+          Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
+          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          startActivity(intent);
+        }
+      } catch (Exception e) {
+        Timber.e("Could not create test user: %s", e.getMessage());
+      }
     }
   }
 
@@ -88,7 +81,7 @@ public class Route42App extends Application {
   /**
    * Create test user, and insert sample data if loadData flag is set to true
    */
-  public void createTestUser() {
+  public void createTestUser() throws Exception {
     Timber.i("Creating test user.");
     User testUser = new User(
             null,
@@ -99,7 +92,7 @@ public class Route42App extends Application {
     testUser.setProfilePicUrl("https://images.unsplash.com/photo-1512327605305-64e5ce63b346?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200");
 
     Timber.i("Creating test user in Firebase Auth.");
-    mAuth.createUserWithEmailAndPassword(testUser.getEmail(), testUser.getPassword())
+    mAuth.createUserWithEmailAndPassword(testUser.getEmail(), AESCrypt.encrypt(testUser.getPassword()))
             .addOnCompleteListener(task -> {
               if (task.isSuccessful()) {
                 AuthResult authResult = task.getResult();
@@ -119,28 +112,26 @@ public class Route42App extends Application {
   }
 
   private void insertData() {
-    if (BuildConfig.loadData) {
-      Timber.i("Loading sample data");
+    Timber.i("Loading sample data");
 
-      TaskCreateUsers insertUsers = new TaskCreateUsers(this, BuildConfig.EMULATOR);
-      TaskCreatePosts livePostTask = new TaskCreatePosts(this, BuildConfig.EMULATOR, BuildConfig.DEMO);
+    TaskCreateUsers insertUsers = new TaskCreateUsers(this, BuildConfig.EMULATOR);
+    TaskCreatePosts livePostTask = new TaskCreatePosts(this, BuildConfig.EMULATOR, BuildConfig.DEMO);
 
-      executor.execute(insertUsers);
+    executor.execute(insertUsers);
 
-      if (!BuildConfig.DEMO) executor.schedule(livePostTask, 5, TimeUnit.SECONDS);
-      else {
-        Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
-                BuildConfig.batchSize,
-                BuildConfig.intervalLengthInSeconds,
-                BuildConfig.demoPostLimit
-        );
-        executor.scheduleAtFixedRate(
-                livePostTask,
-                2, // initial delay
-                BuildConfig.intervalLengthInSeconds,
-                TimeUnit.SECONDS
-        );
-      }
+    if (!BuildConfig.DEMO) executor.schedule(livePostTask, 5, TimeUnit.SECONDS);
+    else {
+      Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
+              BuildConfig.batchSize,
+              BuildConfig.intervalLengthInSeconds,
+              BuildConfig.demoPostLimit
+      );
+      executor.scheduleAtFixedRate(
+              livePostTask,
+              2, // initial delay
+              BuildConfig.intervalLengthInSeconds,
+              TimeUnit.SECONDS
+      );
     }
   }
 }
