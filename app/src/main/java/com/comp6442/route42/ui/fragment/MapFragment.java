@@ -32,7 +32,6 @@ import timber.log.Timber;
 
 public abstract class MapFragment extends Fragment implements OnMapReadyCallback {
 
-  protected abstract void renderMap() ;
   protected Location currentLocation = null;
   protected SupportMapFragment mapFragment;
   protected GoogleMap googleMap;
@@ -40,6 +39,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   protected boolean locationPermissionGranted = false;
   protected ActivityResultLauncher<String> requestPermissionLauncher;
 
+  protected abstract void renderMap();
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -76,13 +76,14 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     if (mapFragment != null) mapFragment.getMapAsync(this);
 
   }
+
   /**
-   *    ----- Alert: Revoke permission -----
-   *  Enabling location access to Route42 will
-   *  allow you to see your location relative
-   *  to locations tagged by posts.
-   *    - OK <
-   *    - Cancel
+   * ----- Alert: Revoke permission -----
+   * Enabling location access to Route42 will
+   * allow you to see your location relative
+   * to locations tagged by posts.
+   * - OK <
+   * - Cancel
    */
   private void showAlert() {
     new AlertDialog.Builder(requireContext())
@@ -201,7 +202,8 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onResume() {
     super.onResume();
     if (mapFragment != null) mapFragment.onResume();
-    else mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+    else
+      mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
   }
 
   @Override

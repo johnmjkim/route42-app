@@ -49,11 +49,11 @@ import timber.log.Timber;
 
 public class ActiveMapFragment extends MapFragment {
   private final boolean mockMode;
+  Timer timer = new Timer();
   private ActiveMapViewModel activeMapViewModel;
   private TextView activityMetricsText;
   private LocationCallback locationCallBack;
   private FloatingActionButton activityButton;
-  Timer timer = new Timer();
 
 //     class MockDataUpdate extends TimerTask {
 //        @Override

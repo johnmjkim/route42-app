@@ -55,7 +55,7 @@ public class FeedFragment extends Fragment {
   // private FirestorePostAdapter firestorePostAdapter;
   private LinearLayoutManager layoutManager;
   private BottomNavigationView bottomNavView;
-  private ExecutorService executor = Executors.newSingleThreadExecutor();
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public FeedFragment() {
     // Required empty public constructor
@@ -187,28 +187,28 @@ public class FeedFragment extends Fragment {
       @Override
       public boolean onQueryTextSubmit(String queryText) {
         if (!queryText.isEmpty()) {
-            SearchService api = new SearchService(queryText);
-            Timber.i("SearchService created %s", api);
-            Future<List<Post>> future = executor.submit(api);
-            try {
-              List<Post> posts = future.get();
-              if (posts != null) {
-                Timber.i("Response received from API: %d items", posts.size());
-                Timber.d(posts.toString());
+          SearchService api = new SearchService(queryText);
+          Timber.i("SearchService created %s", api);
+          Future<List<Post>> future = executor.submit(api);
+          try {
+            List<Post> posts = future.get();
+            if (posts != null) {
+              Timber.i("Response received from API: %d items", posts.size());
+              Timber.d(posts.toString());
 
-                // query via REST API
-                adapter.setPosts(posts);
-                adapter.notifyDataSetChanged();
+              // query via REST API
+              adapter.setPosts(posts);
+              adapter.notifyDataSetChanged();
 //            // query directly using firestore
 //            firestorePostAdapter = queryFirestore(user, s);
 //            firestorePostAdapter.startListening();
-              } else {
-                // do nothing, or let the user know there was no hit for the query
-              }
-            } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
-              Timber.e(e);
+            } else {
+              // do nothing, or let the user know there was no hit for the query
             }
+          } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
+            Timber.e(e);
           }
+        }
         return true;
       }
 
