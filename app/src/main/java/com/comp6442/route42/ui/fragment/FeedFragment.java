@@ -105,25 +105,22 @@ public class FeedFragment extends Fragment {
 
       // without firestore post adapter
       Query query = PostRepository.getInstance().getVisiblePosts(user, 20);
-      query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-        @Override
-        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-          List<Post> posts = queryDocumentSnapshots.toObjects(Post.class);
-          adapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
-          layoutManager = new LinearLayoutManager(getActivity());
-          layoutManager.setReverseLayout(false);
-          layoutManager.setStackFromEnd(false);
+      query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+        List<Post> posts = queryDocumentSnapshots.toObjects(Post.class);
+        adapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setReverseLayout(false);
+        layoutManager.setStackFromEnd(false);
 
-          recyclerView = view.findViewById(R.id.recycler_view);
-          recyclerView.setLayoutManager(layoutManager);
-          recyclerView.setAdapter(adapter);
-          recyclerView.setHasFixedSize(false);
-          recyclerView.setNestedScrollingEnabled(false);
-          adapter.notifyDataSetChanged();
+        recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(false);
+        recyclerView.setNestedScrollingEnabled(false);
+        adapter.notifyDataSetChanged();
 
-          initFeed(view);
-          initSearch(view, user);
-        }
+        initFeed(view);
+        initSearch(view, user);
       });
 
 //      // with firestore post adapter

@@ -33,10 +33,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   private final String loggedInUID;
   private List<Post> posts = new ArrayList<>();
 
-  /**
-   * Provide a reference to the type of views that you are using
-   * (custom ViewHolder).
-   */
   public static class ViewHolder extends RecyclerView.ViewHolder {
     public ImageView userIcon, imageView, like, unlike, locationPin;
     public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
