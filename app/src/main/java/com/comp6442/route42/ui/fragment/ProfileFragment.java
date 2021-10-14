@@ -369,7 +369,6 @@ public class ProfileFragment extends Fragment {
     setFollowingCount(profileUser);
     setFollowSwitch(profileUser);
     setBlockSwitch(profileUser);
-
     User liveUser = viewModel.getLiveUser().getValue();
     assert liveUser != null && liveUser.getId() != null;
     Timber.i("Firebase current uid: %s\t\tthis.uid: %s", liveUser.getId(), uid);

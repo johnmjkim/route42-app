@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.comp6442.route42">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.comp6442.route42">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -9,7 +10,8 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
+<!--    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"-->
+<!--        tools:ignore="MockLocation,ProtectedPermissions" />-->
     <application
             android:name=".Route42App"
             android:allowBackup="true"
