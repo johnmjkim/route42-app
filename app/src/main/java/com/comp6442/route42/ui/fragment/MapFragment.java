@@ -120,14 +120,16 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
         Timber.w("Location access not granted");
         if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
           showAlert();
-        } else {
-          Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission not granted", Snackbar.LENGTH_INDEFINITE);
-          snackbar.setAction("EXIT", view -> {
-            requireActivity().finishAffinity();
-            System.exit(0);
-          });
-          snackbar.show();
+          initializeMap();
         }
+//        else {
+//          Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission could not be obtained.", Snackbar.LENGTH_INDEFINITE);
+//          snackbar.setAction("EXIT", view -> {
+//            requireActivity().finishAffinity();
+//            System.exit(0);
+//          });
+//          snackbar.show();
+//        }
       }
     });
 
