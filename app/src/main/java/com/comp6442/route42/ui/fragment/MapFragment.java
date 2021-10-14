@@ -38,12 +38,12 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   protected FusedLocationProviderClient fusedLocationProviderClient;
   protected ActivityResultLauncher<String> requestPermissionLauncher;
 
-  protected abstract void renderMap(Location location);
-
   public MapFragment(int mapFragment, int mapStyle) {
     this.MAP_FRAGMENT = mapFragment;
     this.MAP_STYLE = mapStyle;
   }
+
+  protected abstract void renderMap(Location location);
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -180,7 +180,8 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onResume() {
     super.onResume();
     if (mapFragment != null) mapFragment.onResume();
-    else mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+    else
+      mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
   }
 
   @Override
