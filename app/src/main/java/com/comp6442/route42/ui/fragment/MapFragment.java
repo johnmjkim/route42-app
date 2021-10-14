@@ -45,10 +45,13 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
+
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
+
     // reveal bottom nav if hidden
     BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
     bottomNavView.animate().translationY(0).setDuration(250);
-    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
+
     try {
       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
     } catch (SecurityException e) {
