@@ -1,18 +1,4 @@
-# [Team Name] Report
-
-The following is a report template to help your team successfully provide all the details necessary for your report in a structured and organised manner. Please give a straightforward and concise report that best demonstrates your project. Note that a good report will give a better impression of your project to the reviewers.
-
-*Here are some tips to write a good report:*
-
-* *Try to summarise and list the `bullet points` of your project as much as possible rather than give long, tedious paragraphs that mix up everything together.*
-
-* *Try to create `diagrams` instead of text descriptions, which are more straightforward and explanatory.*
-
-* *Try to make your report `well structured`, which is easier for the reviewers to capture the necessary information.*
-
-*We give instructions enclosed in square brackets [...] and examples for each sections to demonstrate what are expected for your project report.*
-
-*Please remove the instructions or examples in `italic` in your final report.*
+# Route 42 Report
 
 ## Table of Contents
 
@@ -30,14 +16,15 @@ The following is a report template to help your team successfully provide all th
 
 | UID | Name | Role |
 | :--- | :----: | ---: |
-| [uid] | [name] | [role] |
-| [uid] | [name] | [role] |
-| [uid] | [name] | [role] |
-| [uid] | [name] | [role] |
+| u7233149 | Kai Hirota | Lead / Architect |
+| [uid] | [name] | Full-Stack |
+| [uid] | [name] | Full-Stack |
+| [uid] | [name] | Full-Stack |
 
 ## Conflict Resolution Protocol
 
-*[Write a well defined protocol your team can use to handle conflicts. That is, if your group has problems, what is the procedure for reaching consensus or solving a problem? (If you choose to make this an external document, link to it here)]*
+- Conflicts will be resolved through civil discussion and democratic voting process involving all parties interested in the matter.
+	- For example, if someone wants to change the direction or the concept of the app, everyone must be involved in the decision-making. If someone wants to change a small class in the project, then that can be done either through voting, or by mutual agreement upon directly discussing with the person who created the class.
 
 ## Application Description
 
@@ -82,35 +69,72 @@ The following is a report template to help your team successfully provide all th
 
 ## Application Design and Decisions
 
-*Please give clear and concise descriptions for each subsections of this part. It would be better to list all the concrete items for each subsection and give no more than `5` concise, crucial reasons of your design. Here is an example for the subsection `Data Structures`:*
+*Please give clear and concise descriptions for each subsections of this part. It would be better to list all the concrete items for each subsection and give no more than `5` concise, crucial reasons of your design. 
 
-*I used the following data structures in my project:*
 
-1. *LinkedList*
 
-   * *Objective: It is used for storing xxxx for xxx feature.*
-
-   * *Locations: line xxx in XXX.java, ..., etc.*
-
-   * *Reasons:*
-
-     * *It is more efficient than Arraylist for insertion with a time complexity O(1)*
-
-     * *We don't need to access the item by index for this feature*
-
-2. ...
-
-3. ...
-
-**Data Structures**
+### **Data Structures**
 
 *[What data structures did your team utilise? Where and why?]*
 
-**Design Patterns**
+- KD Tree
+	- Where: REST API `GET /search/knn` with `k`, `lon`, `lat` parameters.
+- HashMap
+	- Where: Used by the REST API for union and intersection operations between lists of `Post`s.
+	- Why:
+- Binary Tree
+	- Where:
+		- REST API `POST /search/` with query encoded as plain text in `query` field of the body sent in JSON format.
+		- `QueryTreeNode` is used to extract the hierarchical structure of nodes, each representing a binary operator and two expressions.
+	- Why:
+
+
+
+### **Design Patterns**
 
 *[What design patterns did your team utilise? Where and why?]*
 
-**Grammars**
+- Singleton
+
+	- Where: `UserRepository`, `PostRepository`, and `FirebaseStorageRepository` classes under `repository` submodule.
+	- Why: Prevents unnecessary creation of multiple instances of connections with the database. By using singleton, it saves memory and connection with the database is easier to manage.
+
+- Repository pattern:
+
+	- Where: `UserRepository`, `PostRepository` classes under `repository` submodule.
+	- Why:
+
+- Single-activity architecture
+
+	- Where:
+	- Why:
+
+- REST API
+
+	- Where:
+	- Why:
+
+- ViewModel
+
+	- Where:
+	- Why:
+
+- Multi-threading / background execution
+
+	- Where: `PhotoMapFragment`
+	- Why: When making the REST API call to `search/knn`, the communication is handled by a background worker thread. This ensures the UI thread (the main thread) does not freeze and remains responsive.
+
+- Factory method
+
+	<img src="https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png" alt="img" style="zoom:50%;" />
+
+	[Source](https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png)
+
+	![img](Report.assets/final-architecture.png)
+
+	 [Source](https://developer.android.com/jetpack/guide)
+
+### **Grammars**
 
 *Search Engine*
 <br> *Production Rules* <br>
@@ -122,15 +146,15 @@ The following is a report template to help your team successfully provide all th
 
 *If there are several grammars, list them all under this section and what they relate to.*
 
-**Tokenizer and Parsers**
+### **Tokenizer and Parsers**
 
 *[Where do you use tokenisers and parsers? How are they built? What are the advantages of the designs?]*
 
-**Surpise Item**
+### **Surpise Item**
 
 *[If you implement the surprise item, explain how your solution addresses the surprise task. What decisions do your team make in addressing the problem?]*
 
-**Other**
+### **Other**
 
 *[What other design decisions have you made which you feel are relevant? Feel free to separate these into their own subheadings.]*
 
