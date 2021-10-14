@@ -37,7 +37,7 @@
     - create 'CreatePostFragment' which enables user to save new post   
     - Hashtags in post description are auto-parsed. Separate hashtags with punctuation. 
     - enable mock location using MockLocation class, to feed location data provider. (non-emulator only) 
-
+28. Hash passwords before storing in Firebase
 
 # Requirements
 - Android Gradle Plugin Version 7.0.1

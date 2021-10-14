@@ -1,20 +1,13 @@
 package com.comp6442.route42.utils;
-// copied from https://stackoverflow.com/questions/41223937/how-can-i-encrypte-my-password-android-studio with some modifications
+// copied from https://stackoverflow.com/questions/36883971/encrypt-and-decrypt-with-password-in-android
 
 import android.util.Base64;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;

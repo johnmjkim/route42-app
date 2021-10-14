@@ -12,7 +12,7 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.activity.LogInActivity;
 import com.comp6442.route42.ui.activity.MainActivity;
-import com.comp6442.route42.utils.AESCrypt;
+import com.comp6442.route42.utils.Crypto;
 import com.comp6442.route42.utils.CustomLogger;
 import com.comp6442.route42.utils.tasks.TaskCreatePosts;
 import com.comp6442.route42.utils.tasks.TaskCreateUsers;
@@ -52,7 +52,7 @@ public class Route42App extends Application {
         createTestUser();
 
         if (BuildConfig.skipLogin) {
-          mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, BuildConfig.testUserPassword)
+          mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, Crypto.encryptAndEncode(BuildConfig.testUserPassword))
                   .addOnSuccessListener(authResult -> {
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.putExtra("uid", mAuth.getUid());
@@ -92,7 +92,7 @@ public class Route42App extends Application {
     testUser.setProfilePicUrl("https://images.unsplash.com/photo-1512327605305-64e5ce63b346?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200");
 
     Timber.i("Creating test user in Firebase Auth.");
-    mAuth.createUserWithEmailAndPassword(testUser.getEmail(), AESCrypt.encrypt(testUser.getPassword()))
+    mAuth.createUserWithEmailAndPassword(testUser.getEmail(), Crypto.encryptAndEncode(testUser.getPassword()))
             .addOnCompleteListener(task -> {
               if (task.isSuccessful()) {
                 AuthResult authResult = task.getResult();

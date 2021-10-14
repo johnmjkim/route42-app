@@ -13,24 +13,14 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.repository.UserRepository;
-import com.comp6442.route42.utils.AESCrypt;
+import com.comp6442.route42.utils.Crypto;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 
 import timber.log.Timber;
 
@@ -73,12 +63,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
   public void onClick(View view) {
     String username = ed1.getText().toString();
     String password = ed2.getText().toString();
-
-    try {
-      signIn(username, AESCrypt.encrypt(password));
-    } catch (IllegalBlockSizeException | InvalidKeyException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-      Timber.e(e);
-    }
+    signIn(username, Crypto.encryptAndEncode(password));
   }
 
   @SuppressLint("TimberArgCount")
