@@ -1,7 +1,6 @@
 package com.comp6442.route42.ui.fragment;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -17,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.comp6442.route42.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -35,7 +34,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
 
   protected abstract void renderMap() ;
   protected Location currentLocation = null;
-  protected LatLng userLocation;
   protected SupportMapFragment mapFragment;
   protected GoogleMap googleMap;
   protected FusedLocationProviderClient fusedLocationProviderClient;
@@ -50,7 +48,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     // reveal bottom nav if hidden
     BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
     bottomNavView.animate().translationY(0).setDuration(250);
-    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
     try {
       Timber.i("getDeviceLocation: getting the devices current location");
       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
@@ -67,15 +65,25 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
     getLocationPermission();
   }
 
   protected void initializeMap() {
-    mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
-    assert mapFragment != null;
-    mapFragment.getMapAsync(this);
-  }
+    if (mapFragment == null) {
+      mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+    }
+    if (mapFragment != null) mapFragment.getMapAsync(this);
 
+  }
+  /**
+   *    ----- Alert: Revoke permission -----
+   *  Enabling location access to Route42 will
+   *  allow you to see your location relative
+   *  to locations tagged by posts.
+   *    - OK <
+   *    - Cancel
+   */
   private void showAlert() {
     new AlertDialog.Builder(requireContext())
             .setTitle("Revoke permission")
@@ -90,8 +98,10 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
 
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 snackbar.setAction("EXIT", view -> {
-                  requireActivity().finishAffinity();
-                  System.exit(0);
+                  ((FragmentActivity) requireContext()).getSupportFragmentManager()
+                          .beginTransaction()
+                          .replace(R.id.fragment_container_view, new ProfileFragment())
+                          .commit();
                 });
               } else {
                 snackbar.setAction("REVOKE", view -> getLocationPermission());
@@ -170,7 +180,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
       locationTask.addOnCompleteListener(
               task -> {
                 this.currentLocation = task.getResult();
-                // Timber.i("User location: (%s)", currentLocation.toString());
+                if (currentLocation != null) Timber.i("Device location: %s", currentLocation);
                 renderMap();
               });
     } else {
@@ -189,13 +199,13 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onResume() {
     super.onResume();
     if (mapFragment != null) mapFragment.onResume();
+    else mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
     if (mapFragment != null) mapFragment.onDestroyView();
-    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
-
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
   }
 }
