@@ -24,22 +24,23 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import timber.log.Timber;
 
 public abstract class MapFragment extends Fragment implements OnMapReadyCallback {
+  protected int MAP_FRAGMENT;
 
-  protected Location currentLocation = null;
+  public MapFragment(int mapFragment) {
+    this.MAP_FRAGMENT = mapFragment;
+  }
+
+  protected abstract void renderMap(Location location) ;
   protected SupportMapFragment mapFragment;
   protected GoogleMap googleMap;
   protected FusedLocationProviderClient fusedLocationProviderClient;
-  protected boolean locationPermissionGranted = false;
   protected ActivityResultLauncher<String> requestPermissionLauncher;
-
-  protected abstract void renderMap();
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     }
   }
 
-
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -68,21 +68,44 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     getLocationPermission();
   }
 
+  protected void getLocationPermission() {
+    requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+      if (isGranted) {
+        Timber.i("Location access granted");
+        initializeMap();
+      } else {
+        Timber.w("Location access not granted");
+        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+          showAlert();
+          initializeMap();
+        }
+      }
+    });
+
+    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+      initializeMap();
+    } else {
+      requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+  }
+
+  /**
+   * Creates a map. After this, onMapReady will be called automatically
+   */
   protected void initializeMap() {
     if (mapFragment == null) {
       mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
     }
     if (mapFragment != null) mapFragment.getMapAsync(this);
-
   }
 
   /**
-   * ----- Alert: Revoke permission -----
-   * Enabling location access to Route42 will
-   * allow you to see your location relative
-   * to locations tagged by posts.
-   * - OK <
-   * - Cancel
+   *    ----- Alert: Revoke permission -----
+   *  Enabling location access to Route42 will
+   *  allow you to see your location relative
+   *  to locations tagged by posts.
+   *    - OK <
+   *    - Cancel
    */
   private void showAlert() {
     new AlertDialog.Builder(requireContext())
@@ -111,51 +134,6 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
             }).create().show();
   }
 
-  protected void getLocationPermission() {
-    requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-      if (isGranted) {
-        Timber.i("Location access granted");
-        initializeMap();
-      } else {
-        Timber.w("Location access not granted");
-        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-          showAlert();
-          initializeMap();
-        }
-//        else {
-//          Snackbar snackbar = Snackbar.make(mapFragment.requireView(), "Permission could not be obtained.", Snackbar.LENGTH_INDEFINITE);
-//          snackbar.setAction("EXIT", view -> {
-//            requireActivity().finishAffinity();
-//            System.exit(0);
-//          });
-//          snackbar.show();
-//        }
-      }
-    });
-
-    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-      locationPermissionGranted = true;
-      initializeMap();
-    } else {
-      requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-    }
-  }
-
-
-  protected Task<Location> getDeviceLocation() {
-    try {
-      Timber.i("getDeviceLocation: getting the devices current location");
-      return fusedLocationProviderClient.getLastLocation();
-    } catch (SecurityException e) {
-      Timber.w("Unable to get current location");
-      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-    } catch (RuntimeException e) {
-      Timber.e(e);
-      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-    }
-    return null;
-  }
-
   /**
    * Manipulates the map once available.
    * This callback is triggered when the map is ready to be used.
@@ -169,27 +147,23 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
     Timber.i("Map ready. Beginning annotations.");
     this.googleMap = googleMap;
 
-    Snackbar snackbar = Snackbar.make(
-            mapFragment.requireView(),
-            "Please enable location access.",
-            Snackbar.LENGTH_INDEFINITE
-    );
-    snackbar.setAction("REFRESH", view -> initializeMap());
-
-    Task<Location> locationTask = getDeviceLocation();
-
-    if (locationTask != null) {
-      locationTask.addOnCompleteListener(
-              task -> {
-                this.currentLocation = task.getResult();
-                if (currentLocation != null) Timber.i("Device location: %s", currentLocation);
-                renderMap();
+    // get device location and render map
+    try {
+      Timber.i("getDeviceLocation: getting the devices current location");
+      fusedLocationProviderClient.getLastLocation()
+              .addOnSuccessListener(location -> {
+                if (location != null) renderMap(location);
               });
-    } else {
-      snackbar.show();
+    } catch (SecurityException e) {
+      Timber.w("Unable to get current location");
+      Timber.e(e);
+      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
+    } catch (RuntimeException e) {
+      Timber.w("Unable to get current location");
+      Timber.e(e);
+      Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
     }
   }
-
 
   @Override
   public void onPause() {
@@ -202,8 +176,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   public void onResume() {
     super.onResume();
     if (mapFragment != null) mapFragment.onResume();
-    else
-      mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
+    else mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
   }
 
   @Override

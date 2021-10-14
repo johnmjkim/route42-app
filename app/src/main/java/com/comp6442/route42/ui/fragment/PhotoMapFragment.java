@@ -4,6 +4,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -50,6 +51,10 @@ public class PhotoMapFragment extends MapFragment {
   private static final boolean useKDTree = true;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private List<Post> posts = new ArrayList<>();
+
+  public PhotoMapFragment() {
+    super(R.id.map_fragment);
+  }
 
   public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
     Timber.i("%d posts received, drawLine = %s", param1.size(), param2);
@@ -102,14 +107,13 @@ public class PhotoMapFragment extends MapFragment {
    * posts.size() == 0 && userLocation != null: geo search based on user location (points)
    * posts.size() >= 1: render posts as points
    * TODO when user taps on "only once" or "deny" and then approve, map should update with user's location
+   * @param location
    */
-  protected void renderMap() {
+  protected void renderMap(Location location) {
     Timber.i("Rendering map");
-    final int FINE_LOCATION_PERMISSION = ContextCompat.checkSelfPermission(requireContext(), ACCESS_FINE_LOCATION);
 
-    LatLng center;
-    if (this.currentLocation == null) center = new LatLng(-33.8523f, 151.2108f);
-    else center = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+    final int FINE_LOCATION_PERMISSION = ContextCompat.checkSelfPermission(requireContext(), ACCESS_FINE_LOCATION);
+    LatLng center = new LatLng(location.getLatitude(), location.getLongitude());
 
     googleMap.setMyLocationEnabled(FINE_LOCATION_PERMISSION == PERMISSION_GRANTED);
     googleMap.getUiSettings().setMyLocationButtonEnabled(FINE_LOCATION_PERMISSION == PERMISSION_GRANTED);
@@ -117,15 +121,15 @@ public class PhotoMapFragment extends MapFragment {
     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json));
     googleMap.moveCamera(CameraUpdateFactory.newLatLng(center));
 
-    if (posts == null || posts.size() == 0) {
+    if (posts != null && posts.size() > 0) {
+      renderPosts(googleMap, posts);
+    } else {
       if (useKDTree) {
         posts = getKNearestNeighbor(50, center);
         renderPosts(googleMap, posts);
       } else {
         geoQuery(center);
       }
-    } else {
-      renderPosts(googleMap, posts);
     }
   }
 
