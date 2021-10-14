@@ -1,11 +1,13 @@
 package com.comp6442.route42.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -173,16 +175,16 @@ public class FeedFragment extends Fragment {
               Timber.i("Response received from API: %d items", posts.size());
               Timber.d(posts.toString());
 
-              if (postAdapter == null) {
-                postAdapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
-                recyclerView.swapAdapter(postAdapter, false);
-              } else {
-                postAdapter.setPosts(posts);
-              }
-              adapter.notifyDataSetChanged();
+              postAdapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+              recyclerView.setAdapter(postAdapter);
+              postAdapter.notifyDataSetChanged();
             } else {
               // do nothing, or let the user know there was no hit for the query
             }
+
+            // hide keyboard
+            InputMethodManager imm = (InputMethodManager)requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
           } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
             Timber.e(e);
           }
@@ -210,6 +212,7 @@ public class FeedFragment extends Fragment {
             .build();
     FirestorePostAdapter adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
     recyclerView.setAdapter(adapter);
+//    recyclerView.swapAdapter(adapter);
     Timber.i("PostAdapter bound to RecyclerView with size %d for query: %s", adapter.getItemCount(), queryText);
     query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
     return adapter;
