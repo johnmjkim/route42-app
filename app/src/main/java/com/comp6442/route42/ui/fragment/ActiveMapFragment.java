@@ -116,7 +116,6 @@ public class ActiveMapFragment extends MapFragment {
         );
         activeMapViewModel.setActivityData(userActivityData);
         activeMapViewModel.setSnapshotFileName(storageFilename);
-        renderSnapshotMap(activeMapViewModel.getDeviceLocation().getValue());
         // save map snapshot to local
         FileOutputStream out = getContext().openFileOutput(localFilename, 0);
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
@@ -136,8 +135,9 @@ public class ActiveMapFragment extends MapFragment {
         e.printStackTrace();
       }
     };
+
+    renderSnapshotMap(activeMapViewModel.getDeviceLocation().getValue());
     googleMap.setOnMapLoadedCallback(() -> {
-      Timber.i("clicked activity button");
       googleMap.snapshot(snapshotCallback);
       googleMap.setOnMapLoadedCallback(null);
     });
