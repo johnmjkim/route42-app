@@ -157,12 +157,14 @@ public class ActiveMapFragment extends MapFragment {
         String localFilename = baseFilename + ".png";
         String storageFilename = baseFilename + new Date().toString() + ".png";
         activeMapViewModel.setSnapshotFileName(storageFilename);
+        // save map snapshot to local
         FileOutputStream out = getContext().openFileOutput(localFilename, 0);
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(localFilename, storageFilename, getContext().getFilesDir().getPath());
+
         Bundle bundle = new Bundle();
         bundle.putString("uid", getArguments().getString("uid"));
-        bundle.putString("img_path", "/" + localFilename);
+        bundle.putString("local_filename",  localFilename);
+        bundle.putString("storage_filename",  storageFilename);
         Fragment fragment = new CreatePostFragment();
         fragment.setArguments(bundle);
         requireActivity()
