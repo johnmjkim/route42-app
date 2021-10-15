@@ -106,8 +106,6 @@ public class PhotoMapFragment extends MapFragment {
    * posts.size() == 0 && userLocation != null: geo search based on user location (points)
    * posts.size() >= 1: render posts as points
    * TODO when user taps on "only once" or "deny" and then approve, map should update with user's location
-   *
-   * @param location
    */
   protected void renderMap(Location location) {
     Timber.i("Rendering map");
