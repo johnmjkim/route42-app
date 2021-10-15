@@ -1,7 +1,8 @@
-package com.comp6442.route42.data.model;
+package com.comp6442.route42.utils;
 
 import android.location.Location;
 
+import com.comp6442.route42.data.model.Activity;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
