@@ -35,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
@@ -43,6 +44,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.FileOutputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 
 import timber.log.Timber;
@@ -156,7 +158,14 @@ public class ActiveMapFragment extends MapFragment {
         String baseFilename = "activity_route";
         String localFilename = baseFilename + ".png";
         String storageFilename = baseFilename + new Date().toString() + ".png";
+        Activity userActivityData = new BaseActivity(
+                activeMapViewModel.getPastLocations(),
+                activeMapViewModel.getElapsedTime(),
+                activeMapViewModel.getActivityType()
+        );
+        activeMapViewModel.setActivityData(userActivityData);
         activeMapViewModel.setSnapshotFileName(storageFilename);
+        renderSnapshotMap(activeMapViewModel.getDeviceLocation().getValue());
         // save map snapshot to local
         FileOutputStream out = getContext().openFileOutput(localFilename, 0);
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
@@ -190,7 +199,40 @@ public class ActiveMapFragment extends MapFragment {
     mapFragment.getMapAsync(this);
   }
 
-  @SuppressLint("MissingPermission")
+  private void renderSnapshotMap(Location location) {
+    // Set the map's camera position to the current location of the device.
+    int MAP_ZOOM_LEVEL = 18;
+    int LINE_WIDTH = 25;
+    int ROUTE_COLOR = Color.BLUE;
+    if (location != null) {
+      LatLng locationLatLng = MockLocation.latLngFromLocation(location);
+      // add current location marker
+      googleMap.clear();
+      googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
+      // add activity route polyline
+      if (activeMapViewModel.hasPastLocations()) {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getMapBounds(activeMapViewModel.getPastLocations()), 150));
+        googleMap.addPolyline(
+                new PolylineOptions()
+                        .endCap(new RoundCap())
+                        .clickable(false)
+                        .addAll(activeMapViewModel.getPastLocations())
+                        .width(LINE_WIDTH)
+                        .color(ROUTE_COLOR)
+        );
+      } else {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                locationLatLng, MAP_ZOOM_LEVEL));
+      }
+    }
+  }
+  private LatLngBounds getMapBounds(List<LatLng> routePoints) {
+    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+    for (int i=0; i< routePoints.size(); i++) {
+      builder.include(routePoints.get(i));
+    }
+    return builder.build();
+  }
   @Override
   protected void renderMap(Location location) {
     Timber.i("Received location from fusedLocationProvider: %s", location);
@@ -220,7 +262,7 @@ public class ActiveMapFragment extends MapFragment {
       );
     }
 
-    // update activity
+    // update activity view model
     if (activeMapViewModel.getLastUpdateTime() != null) {
       activeMapViewModel.updateElapsedTime();
     }
@@ -231,7 +273,6 @@ public class ActiveMapFragment extends MapFragment {
             activeMapViewModel.getElapsedTime(),
             activeMapViewModel.getActivityType()
     );
-    activeMapViewModel.setActivityData(userActivityData);
     activityMetricsText.setText(userActivityData.toString());
   }
 

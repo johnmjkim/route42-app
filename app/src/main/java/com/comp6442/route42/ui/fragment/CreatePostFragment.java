@@ -18,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.ActiveMapViewModel;
-import com.comp6442.route42.data.CreatePostViewModel;
 import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.Post;
@@ -27,11 +26,9 @@ import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class CreatePostFragment extends Fragment {
 
@@ -81,7 +78,7 @@ public class CreatePostFragment extends Fragment {
 
   }
   private void setCancelButton() {
-    MaterialButton cancelPostButton = this.getView().findViewById(R.id.cancel_post_button);
+    MaterialButton cancelPostButton = this.requireView().findViewById(R.id.cancel_post_button);
     cancelPostButton.setOnClickListener(event -> {
       Bundle bundle = new Bundle();
       bundle.putString("uid", uid);
@@ -96,7 +93,7 @@ public class CreatePostFragment extends Fragment {
     });
   }
   private void setPostButton() {
-    MaterialButton createPostButton = this.getView().findViewById(R.id.create_post_button);
+    MaterialButton createPostButton = this.requireView().findViewById(R.id.create_post_button);
     createPostButton.setOnClickListener(event -> {
       createActivityPost();
       // navigate to feed
@@ -116,24 +113,29 @@ public class CreatePostFragment extends Fragment {
    * Creates new Post given map snapshot and the activity data collected.
    */
   private void createActivityPost() {
-    FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(getArguments().getString("local_filename"),getArguments().getString("storage_filename"), getContext().getFilesDir().getPath());
-    DocumentReference uidRef = UserRepository.getInstance().getOne(uid);
     User liveUser = userViewModel.getLiveUser().getValue();
     assert liveUser != null;
-    String username = liveUser.getUserName();
-    int isPublic = liveUser.getIsPublic();
     String profilePicUrl = liveUser.getProfilePicUrl();
-    Date postDateTime = new Date();
+    FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(getArguments().getString("local_filename"),getArguments().getString("storage_filename"), getContext().getFilesDir().getPath());
     String postDescription = postDescriptionInput.getText().toString().trim();
-    List<String> hashTags = getHashTagsFromTextInput(postDescription);
-    Double latitude = 0.0;
-    Double longitude = 0.0;
-    int likeCount = 0;
+    Double latitude = activeMapViewModel.getDeviceLocation().getValue().getLatitude();
+    Double longitude = activeMapViewModel.getDeviceLocation().getValue().getLongitude();
     String imageUrl = "snapshots/" + activeMapViewModel.getSnapshotFileName();
-    List<DocumentReference> likedBy = new ArrayList<>(0);
-    Post newPost = new Post(uidRef, username, isPublic, profilePicUrl, postDateTime, postDescription, "", latitude, longitude, hashTags, likeCount, imageUrl, likedBy);
+    Post newPost = new Post( UserRepository.getInstance().getOne(uid),
+            liveUser.getUserName(),
+            liveUser.getIsPublic(),
+            profilePicUrl,
+            new Date(),
+            postDescription,
+            "",
+            latitude,
+            longitude,
+            getHashTagsFromTextInput(postDescription),
+            0,
+            imageUrl,
+            new ArrayList<>(0));
     postRepository.createOne(newPost);
-//        activeMapViewModel.reset();
+    activeMapViewModel.reset();
 
   }
 
