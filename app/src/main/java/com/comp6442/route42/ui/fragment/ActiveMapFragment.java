@@ -1,7 +1,6 @@
 package com.comp6442.route42.ui.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
@@ -16,9 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -38,11 +35,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -83,13 +78,15 @@ public class ActiveMapFragment extends MapFragment {
 //    }
 
   public ActiveMapFragment(boolean mockMode) {
-    super();
+    super(R.id.map_fragment2, R.raw.style_json_activity_map);
     this.mockMode = mockMode;
   }
 
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                           @Nullable Bundle savedInstanceState) {
+  public View onCreateView(
+          @NonNull LayoutInflater inflater,
+          @Nullable ViewGroup container,
+          @Nullable Bundle savedInstanceState) {
     activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
     locationCallBack = new LocationCallback() {
       @Override
@@ -99,7 +96,7 @@ public class ActiveMapFragment extends MapFragment {
           activeMapViewModel.setMockDeviceLocation();
         else
           activeMapViewModel.setDeviceLocation(locationResult.getLastLocation());
-        renderMap();
+        renderMap(locationResult.getLastLocation());
         Timber.i("location result ready");
       }
 
@@ -109,10 +106,7 @@ public class ActiveMapFragment extends MapFragment {
         Timber.i("location available");
       }
     };
-
-
     return inflater.inflate(R.layout.active_map_fragment, container, false);
-
   }
 
   @Override
@@ -130,16 +124,19 @@ public class ActiveMapFragment extends MapFragment {
       activeMapViewModel.setMockDeviceLocation();
       activeMapViewModel.getDeviceLocation().observe(getViewLifecycleOwner(), deviceLocationObserver);
     }
+
     //set active icon
     ImageView activityIconView = view.findViewById(R.id.activity_icon);
-    int activityType = getArguments().getInt("activity");
-    int iconResource = Activity.Activity_Type.getIconResource(activityType);
-    Glide.with(activityIconView.getContext()).load(iconResource).into(activityIconView);
+    Glide.with(activityIconView.getContext())
+            .load(Activity.Activity_Type.getIconResource(getArguments().getInt("activity")))
+            .into(activityIconView);
+
     //set metrics
     activityMetricsText = view.findViewById(R.id.activity_metrics_text);
     activityButton = view.findViewById(R.id.activity_button);
-    setActivityButton();
-
+    activityButton.setOnClickListener(click -> {
+      activityBtnClickHandler();
+    });
   }
 
   private void endUserActivity() {
@@ -157,7 +154,7 @@ public class ActiveMapFragment extends MapFragment {
         bundle.putString("img_path", "/" + localFilename);
         Fragment fragment = new CreatePostFragment();
         fragment.setArguments(bundle);
-        getActivity()
+        requireActivity()
                 .getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container_view, fragment)
@@ -173,11 +170,6 @@ public class ActiveMapFragment extends MapFragment {
     });
   }
 
-  //
-//    @Override
-//    protected Task<Location> getDeviceLocation() {
-//
-//    }
   @Override
   protected void initializeMap() {
     mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment2);
@@ -185,95 +177,72 @@ public class ActiveMapFragment extends MapFragment {
     mapFragment.getMapAsync(this);
   }
 
+  @SuppressLint("MissingPermission")
   @Override
-  protected void renderMap() {
-    try {
-      if (locationPermissionGranted) {
+  protected void renderMap(Location location) {
+    Timber.i("Received location from fusedLocationProvider: %s", location);
 
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.style_json_activity_map));
-        Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-        locationResult.addOnCompleteListener(this.getActivity(), task -> {
-          if (task.isSuccessful()) {
-            // Set the map's camera position to the current location of the device.
-            Location lastKnownLocation = task.getResult();
-            Timber.i("successful get location from fusedProvider: " + lastKnownLocation);
-            if (lastKnownLocation != null) {
-              LatLng locationLatLng = MockLocation.latLngFromLocation(lastKnownLocation);
-              //add current location marker
-              googleMap.clear();
-              googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
-              //track user using camera
-              googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                      locationLatLng, 20));
-            }
-            //add activity route polyline
-            if (activeMapViewModel.hasPastLocations()) {
-              googleMap.addPolyline(new PolylineOptions()
-                      .endCap(new RoundCap()).clickable(false).addAll(
-                              activeMapViewModel.getPastLocations()
-                      )
+    // Set the map's camera position to the current location of the device.
+    if (location != null) {
+      LatLng locationLatLng = MockLocation.latLngFromLocation(location);
+
+      // add current location marker
+      googleMap.clear();
+      googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
+
+      // track user using camera
+      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+              locationLatLng, 20));
+    }
+
+    // add activity route polyline
+    if (activeMapViewModel.hasPastLocations()) {
+      googleMap.addPolyline(
+              new PolylineOptions()
+                      .endCap(new RoundCap())
+                      .clickable(false)
+                      .addAll(activeMapViewModel.getPastLocations())
                       .width(25)
                       .color(Color.BLUE)
-              );
-            }
-
-          } else {
-//                            Log.d(TAG, "Current location is null. Using defaults.");
-//                            Log.e(TAG, "Exception: %s", task.getException());
-//                            map.moveCamera(CameraUpdateFactory
-//                                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
-            googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-          }
-        }).addOnSuccessListener(this.getActivity(), location -> Timber.i("location is :" + location));
-        if (activeMapViewModel.getLastUpdateTime() != null) {
-          activeMapViewModel.updateElapsedTime();
-        }
-        activeMapViewModel.setLastUpdateTime(new Date());
-        Activity userActivityData = new BaseActivity(activeMapViewModel.getPastLocations(), activeMapViewModel.getElapsedTime());
-        activeMapViewModel.setActivityData(userActivityData);
-        activityMetricsText.setText(userActivityData.toString());
-      }
-    } catch (SecurityException e) {
-      Timber.e("Exception: %s", e.getMessage());
+      );
     }
-  }
 
-  private void setActivityButton() {
-    activityButton.setOnClickListener(click -> {
-      activityBtnClickHandler();
-    });
+    // update activity
+    if (activeMapViewModel.getLastUpdateTime() != null) {
+      activeMapViewModel.updateElapsedTime();
+    }
+    activeMapViewModel.setLastUpdateTime(new Date());
+
+    Activity userActivityData = new BaseActivity(
+            activeMapViewModel.getPastLocations(),
+            activeMapViewModel.getElapsedTime()
+    );
+    activeMapViewModel.setActivityData(userActivityData);
+    activityMetricsText.setText(userActivityData.toString());
   }
 
   public void activityBtnClickHandler() {
-    FragmentActivity activity = this.getActivity();
-    String[] dialogItems = new String[]{"Pause", "End Activity"};
-    if (!requestingLocationUpdates) {
-      dialogItems = new String[]{"Start", "End Activity"};
-    }
-    AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(activity, R.style.AlertDialog_AppCompat)).setTitle("Select Action")
-            .setItems(dialogItems, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialogInterface, int i) {
-                if (i == 1) {
-                  endUserActivity();
-                } else if (i == 0) {
-                  if (requestingLocationUpdates) {
-                    stopLocationUpdates();
-                  } else {
-                    startLocationUpdates();
-                  }
-                }
+    String[] dialogItems;
+    if (!requestingLocationUpdates) dialogItems = new String[]{"Start", "End Activity"};
+    else dialogItems = new String[]{"Pause", "End Activity"};
+
+    MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
+            new ContextThemeWrapper(requireActivity(), R.style.AlertDialog_AppCompat)
+    );
+    dialogBuilder.setTitle("Select Action")
+            .setItems(dialogItems, (dialogInterface, i) -> {
+              if (i == 1) endUserActivity();
+              else if (i == 0) {
+                if (requestingLocationUpdates) stopLocationUpdates();
+                else startLocationUpdates();
               }
-            }).create();
-    alertDialog.show();
+            }).create().show();
   }
 
   private void stopLocationUpdates() {
     fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
     requestingLocationUpdates = false;
     activeMapViewModel.setLastUpdateTime(null);
-
-
   }
 
   private void startLocationUpdates() {
@@ -296,13 +265,11 @@ public class ActiveMapFragment extends MapFragment {
       Timber.e(e);
       Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
     }
-
   }
 
   @Override
   public void onResume() {
     super.onResume();
-//        Timber.i("elapsed time is " + elapsedTime);
     if (requestingLocationUpdates) {
       startLocationUpdates();
     }

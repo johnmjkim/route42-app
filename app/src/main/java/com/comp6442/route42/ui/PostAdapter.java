@@ -19,6 +19,7 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
+import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.storage.StorageReference;
@@ -109,22 +110,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     if (post.getLocationName() != null) {
       viewHolder.locationTextView.setText(post.getLocationName());
-//      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//          Fragment fragment = new PhotoMapFragment();
-//          ArrayList<Post> posts = new ArrayList<>();
-//          posts.add(post);
-//          Bundle bundle = new Bundle();
-//          bundle.putParcelableArrayList("posts", posts);
-//          fragment.setArguments(bundle);
-//          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
-//                  .beginTransaction()
-//                  .add(R.id.fragment_container_view, fragment)
-//                  .addToBackStack(this.getClass().getCanonicalName())
-//                  .commit();
-//        }
-//      });
+      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new PhotoMapFragment();
+          ArrayList<Post> posts = new ArrayList<>();
+          posts.add(post);
+          Bundle bundle = new Bundle();
+          bundle.putParcelableArrayList("posts", posts);
+          fragment.setArguments(bundle);
+          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
     } else {
       viewHolder.locationTextView.setText(" ");
       viewHolder.locationTextView.setText("");

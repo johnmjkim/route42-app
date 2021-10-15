@@ -38,6 +38,7 @@
     - Hashtags in post description are auto-parsed. Separate hashtags with punctuation. 
     - enable mock location using MockLocation class, to feed location data provider. (non-emulator only) 
 28. Hash passwords before storing in Firebase
+29. Added refresh on swipe down to FeedFragment
 
 # Requirements
 - Android Gradle Plugin Version 7.0.1
