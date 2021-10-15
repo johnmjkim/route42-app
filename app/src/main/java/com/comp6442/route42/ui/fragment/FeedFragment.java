@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.api.SearchService;
@@ -27,8 +28,10 @@ import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.FirestorePostAdapter;
 import com.comp6442.route42.ui.PostAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.JsonSyntaxException;
 
 import java.util.List;
@@ -46,7 +49,6 @@ import timber.log.Timber;
  */
 public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private String uid;
   private UserViewModel viewModel;
   private SearchView searchView;
@@ -54,8 +56,10 @@ public class FeedFragment extends Fragment {
   private RecyclerView recyclerView;
   private PostAdapter postAdapter;
   private FirestorePostAdapter adapter;
+  // private FirestorePostAdapter firestorePostAdapter;
   private LinearLayoutManager layoutManager;
   private BottomNavigationView bottomNavView;
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public FeedFragment() {
     // Required empty public constructor
@@ -87,7 +91,6 @@ public class FeedFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-
     getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     return inflater.inflate(R.layout.fragment_feed, container, false);
   }
@@ -108,6 +111,7 @@ public class FeedFragment extends Fragment {
 
       assert user != null;
 
+      // without firestore post adapter
       Query query = PostRepository.getInstance().getVisiblePosts(user, 20);
       FirestoreRecyclerOptions<Post> postsOptions = new FirestoreRecyclerOptions.Builder<Post>()
               .setQuery(query, Post.class)
@@ -122,14 +126,22 @@ public class FeedFragment extends Fragment {
 
       adapter.startListening();
 
-      Timber.i("PostAdapter bound to RecyclerView with size %d", adapter.getItemCount());
-      query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
-
       initFeed(view);
       initSearch(view, user);
+      initSwipeRefresher(view);
     } else {
       Timber.e("uid is null");
     }
+  }
+
+  private void initSwipeRefresher(View view) {
+    SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_container);
+    swipeRefreshLayout.setOnRefreshListener(() -> {
+      if(searchView.getQuery().length() > 0) searchView.setQuery(searchView.getQuery(), true);
+
+      // Notify swipeRefreshLayout that the refresh has finished
+      swipeRefreshLayout.setRefreshing(false);
+    });
   }
 
   public void initFeed(View view) {
@@ -171,7 +183,7 @@ public class FeedFragment extends Fragment {
           Future<List<Post>> future = executor.submit(api);
           try {
             List<Post> posts = future.get();
-            if (posts != null) {
+            if (posts != null && posts.size() > 0) {
               Timber.i("Response received from API: %d items", posts.size());
               Timber.d(posts.toString());
 
@@ -212,7 +224,6 @@ public class FeedFragment extends Fragment {
             .build();
     FirestorePostAdapter adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
     recyclerView.setAdapter(adapter);
-//    recyclerView.swapAdapter(adapter);
     Timber.i("PostAdapter bound to RecyclerView with size %d for query: %s", adapter.getItemCount(), queryText);
     query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
     return adapter;
