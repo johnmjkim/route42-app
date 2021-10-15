@@ -8,12 +8,16 @@ import java.util.Map;
 public interface Activity {
     enum Activity_Type { CYCLING(0), RUNNING(1), WALKING(2);
         private final int value;
-        private static Map map = new HashMap<>();
+        private static final HashMap<Integer, Activity_Type> map = new HashMap<>();
         Activity_Type(int value) {
             this.value = value;
         }
+
         public static Activity_Type valueOf(int activityType) {
-            return (Activity_Type) map.get(activityType);
+            return map.get(activityType);
+        }
+        public int getValue() {
+            return value;
         }
         static {
             for (Activity_Type activityType : Activity_Type.values()) {
@@ -32,17 +36,21 @@ public interface Activity {
         }
 
         public static CharSequence[] getValues() {
-            ArrayList<String> out = new ArrayList();
+            ArrayList<String> out = new ArrayList<String>();
             for (Activity_Type a : Activity_Type.values()) {
-                 out.add(a.toString());
+                out.add(a.toString());
             }
-            return out.toArray(new CharSequence[out.size()]);
+            return  out.toArray(new CharSequence[out.size()]);
         }
     }
-   int getCalories();
-    Float getDistance();
-    Float getSpeed();
-    String getPostString();
+    public int getCalories();
+    public Float getDistance();
+    public Float getSpeed();
+    /**
+     * Returns a post description string for creating posts about the activity.
+     * @return post description
+     */
+    public String getPostString();
 
 
 }

@@ -81,13 +81,25 @@ public class ActiveMapFragment extends MapFragment {
     super(R.id.map_fragment2, R.raw.style_json_activity_map);
     this.mockMode = mockMode;
   }
-
+  @Override
+  public void onCreate(Bundle savedStateInstance) {
+    super.onCreate(savedStateInstance);
+    activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
+    activeMapViewModel.setActivityType(Activity.Activity_Type.valueOf(getArguments().getInt("activity")));
+    setGetLocationCallBack();
+  }
   @Override
   public View onCreateView(
           @NonNull LayoutInflater inflater,
           @Nullable ViewGroup container,
           @Nullable Bundle savedInstanceState) {
-    activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
+    return inflater.inflate(R.layout.active_map_fragment, container, false);
+  }
+
+  /**
+   * Sets a reference for the location callback required by fused location provider class.
+   */
+  private void setGetLocationCallBack() {
     locationCallBack = new LocationCallback() {
       @Override
       public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -106,7 +118,6 @@ public class ActiveMapFragment extends MapFragment {
         Timber.i("location available");
       }
     };
-    return inflater.inflate(R.layout.active_map_fragment, container, false);
   }
 
   @Override
@@ -215,7 +226,8 @@ public class ActiveMapFragment extends MapFragment {
 
     Activity userActivityData = new BaseActivity(
             activeMapViewModel.getPastLocations(),
-            activeMapViewModel.getElapsedTime()
+            activeMapViewModel.getElapsedTime(),
+            activeMapViewModel.getActivityType()
     );
     activeMapViewModel.setActivityData(userActivityData);
     activityMetricsText.setText(userActivityData.toString());
