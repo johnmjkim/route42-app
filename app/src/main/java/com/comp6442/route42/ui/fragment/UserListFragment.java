@@ -98,6 +98,7 @@ public class UserListFragment extends Fragment {
             break;
           case "followers":
             usersRef = user.getFollowers();
+            break;
           case "blocked":
             usersRef = user.getBlocked();
             break;
