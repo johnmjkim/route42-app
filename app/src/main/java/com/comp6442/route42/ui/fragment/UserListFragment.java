@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -98,6 +99,7 @@ public class UserListFragment extends Fragment {
             break;
           case "followers":
             usersRef = user.getFollowers();
+            break;
           case "blocked":
             usersRef = user.getBlocked();
             break;
@@ -132,7 +134,26 @@ public class UserListFragment extends Fragment {
                     }
                   });
         });
+        String toastText = "";
+        if(usersRef.size()==0){
+          if(fieldName.equals("followers")){
+            toastText = "No " + fieldName;
+          }
+          else{
+            toastText = "Nobody " + fieldName;
+          }
+        }
+        else{
+          if(fieldName.equals("followers")){
+            toastText = "Total " + usersRef.size() + " " + fieldName;
+          }
+          else{
+            toastText = "Total " + usersRef.size() + " people " + fieldName;
+          }
 
+        }
+        Toast toast = Toast.makeText(getContext(), toastText,Toast.LENGTH_SHORT);
+        toast.show();
       }
     } else {
       Timber.e("uid is null");
