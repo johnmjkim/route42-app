@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -190,8 +191,8 @@ public class FeedFragment extends Fragment {
               postAdapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
               recyclerView.setAdapter(postAdapter);
               postAdapter.notifyDataSetChanged();
-            } else {
-              // do nothing, or let the user know there was no hit for the query
+            } else {// let users know there was no hit for the query
+              Toast.makeText(view.getContext(),"Query did not return any items",Toast.LENGTH_SHORT).show();
             }
 
             // hide keyboard
