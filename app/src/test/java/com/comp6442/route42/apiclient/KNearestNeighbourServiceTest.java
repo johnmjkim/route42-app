@@ -1,5 +1,6 @@
-package com.comp6442.route42.api;
+package com.comp6442.route42.apiclient;
 
+import com.comp6442.route42.api.KNearestNeighbourService;
 import com.comp6442.route42.data.model.Post;
 
 import org.junit.Test;
