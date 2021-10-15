@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.api.SearchService;
@@ -123,35 +124,22 @@ public class FeedFragment extends Fragment {
 
           initFeed(view);
           initSearch(view, user);
+          initSwipeRefresher(view);
         }
       });
-
-//      // with firestore post adapter
-//      FirestoreRecyclerOptions<Post> postsOptions = new FirestoreRecyclerOptions.Builder<Post>()
-//              .setQuery(query, Post.class)
-//              .build();
-//
-//      firestorePostAdapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
-//
-//      layoutManager = new LinearLayoutManager(getActivity());
-//      layoutManager.setReverseLayout(false);
-//      layoutManager.setStackFromEnd(false);
-//
-//      recyclerView = view.findViewById(R.id.recycler_view);
-//      recyclerView.setLayoutManager(layoutManager);
-//      recyclerView.setAdapter(firestorePostAdapter);
-//      recyclerView.setHasFixedSize(false);
-//
-//      firestorePostAdapter.startListening();
-//
-//      Timber.i("PostAdapter bound to RecyclerView with size %d", firestorePostAdapter.getItemCount());
-//      query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));
-//
-//      hideSearchOnScroll(view);
-//      initSearch(view, user);
     } else {
       Timber.e("uid is null");
     }
+  }
+
+  private void initSwipeRefresher(View view) {
+    SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_container);
+    swipeRefreshLayout.setOnRefreshListener(() -> {
+      if(searchView.getQuery().length() > 0) searchView.setQuery(searchView.getQuery(), true);
+
+      // Notify swipeRefreshLayout that the refresh has finished
+      swipeRefreshLayout.setRefreshing(false);
+    });
   }
 
   public void initFeed(View view) {
@@ -193,18 +181,15 @@ public class FeedFragment extends Fragment {
           Future<List<Post>> future = executor.submit(api);
           try {
             List<Post> posts = future.get();
-            if (posts != null) {
+            if (posts != null && posts.size() > 0) {
               Timber.i("Response received from API: %d items", posts.size());
               Timber.d(posts.toString());
 
               // query via REST API
               adapter.setPosts(posts);
               adapter.notifyDataSetChanged();
-//            // query directly using firestore
-//            firestorePostAdapter = queryFirestore(user, s);
-//            firestorePostAdapter.startListening();
             } else {
-              // do nothing, or let the user know there was no hit for the query
+              // do nothing, or let the user know there was no documents matching the query
             }
           } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
             Timber.e(e);
