@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,6 +50,7 @@ import timber.log.Timber;
  */
 public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
+  private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private String uid;
   private UserViewModel viewModel;
   private SearchView searchView;
@@ -59,7 +61,6 @@ public class FeedFragment extends Fragment {
   // private FirestorePostAdapter firestorePostAdapter;
   private LinearLayoutManager layoutManager;
   private BottomNavigationView bottomNavView;
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public FeedFragment() {
     // Required empty public constructor
@@ -190,8 +191,8 @@ public class FeedFragment extends Fragment {
               postAdapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
               recyclerView.setAdapter(postAdapter);
               postAdapter.notifyDataSetChanged();
-            } else {
-              // do nothing, or let the user know there was no hit for the query
+            } else {// let users know there was no hit for the query
+              Toast.makeText(view.getContext(),"Query did not return any items",Toast.LENGTH_SHORT).show();
             }
 
             // hide keyboard

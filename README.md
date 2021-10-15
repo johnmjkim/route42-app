@@ -39,6 +39,7 @@
     - enable mock location using MockLocation class, to feed location data provider. (non-emulator only) 
 28. Hash passwords before storing in Firebase
 29. Added refresh on swipe down to FeedFragment
+30. Add toast when search result has no query
 
 # Requirements
 - Android Gradle Plugin Version 7.0.1
