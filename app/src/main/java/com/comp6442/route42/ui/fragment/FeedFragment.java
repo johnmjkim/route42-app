@@ -50,6 +50,7 @@ import timber.log.Timber;
  */
 public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
+  private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private String uid;
   private UserViewModel viewModel;
   private SearchView searchView;
@@ -60,7 +61,6 @@ public class FeedFragment extends Fragment {
   // private FirestorePostAdapter firestorePostAdapter;
   private LinearLayoutManager layoutManager;
   private BottomNavigationView bottomNavView;
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public FeedFragment() {
     // Required empty public constructor
