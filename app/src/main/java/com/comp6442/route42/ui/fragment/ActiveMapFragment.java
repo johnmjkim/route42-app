@@ -20,12 +20,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.ActiveMapViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.BaseActivity;
-import com.comp6442.route42.data.model.MockLocation;
-import com.comp6442.route42.data.repository.FirebaseStorageRepository;
+import com.comp6442.route42.utils.MockLocation;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -35,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
@@ -43,83 +44,46 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.FileOutputStream;
 import java.util.Date;
-import java.util.Timer;
+import java.util.List;
 
 import timber.log.Timber;
 
 
 public class ActiveMapFragment extends MapFragment {
-  private final boolean mockMode;
-  Timer timer = new Timer();
+  private final boolean demoMode;
   private boolean requestingLocationUpdates = false;
   private ActiveMapViewModel activeMapViewModel;
   private TextView activityMetricsText;
   private LocationCallback locationCallBack;
-  private FloatingActionButton activityButton;
 
-//     class MockDataUpdate extends TimerTask {
-//        @Override
-//        public void run() {
-//            Timber.i("setting mock location ");
-//            try {
-//                Timber.i("getDeviceLocation: getting the devices current location");
-////                fusedLocationProviderClient.getLastLocation().addOnSuccessListener(deviceLocation::setValue);
-//            } catch (SecurityException e) {
-//                Timber.w("Unable to get current location");
-//                Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-//            } catch (RuntimeException e) {
-//                Timber.e(e);
-//                Toast.makeText(getActivity(), "Unable to get current location", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//        void setViewModelDeviceLocation() {
-//
-//        }
-//    }
-
-  public ActiveMapFragment(boolean mockMode) {
+  public ActiveMapFragment() {
     super(R.id.map_fragment2, R.raw.style_json_activity_map);
-    this.mockMode = mockMode;
+    this.demoMode = BuildConfig.DEMO;
   }
-
+  @Override
+  public void onCreate(Bundle savedStateInstance) {
+    super.onCreate(savedStateInstance);
+    activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
+    activeMapViewModel.setActivityType(Activity.Activity_Type.valueOf(getArguments().getInt("activity")));
+    setGetLocationCallBack();
+  }
   @Override
   public View onCreateView(
           @NonNull LayoutInflater inflater,
           @Nullable ViewGroup container,
           @Nullable Bundle savedInstanceState) {
-    activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
-    locationCallBack = new LocationCallback() {
-      @Override
-      public void onLocationResult(@NonNull LocationResult locationResult) {
-        super.onLocationResult(locationResult);
-        if (mockMode)
-          activeMapViewModel.setMockDeviceLocation();
-        else
-          activeMapViewModel.setDeviceLocation(locationResult.getLastLocation());
-        renderMap(locationResult.getLastLocation());
-        Timber.i("location result ready");
-      }
-
-      @Override
-      public void onLocationAvailability(@NonNull LocationAvailability locationAvailability) {
-        super.onLocationAvailability(locationAvailability);
-        Timber.i("location available");
-      }
-    };
     return inflater.inflate(R.layout.active_map_fragment, container, false);
   }
+
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    if (mockMode) {
+    if (demoMode) {
       @SuppressLint("MissingPermission") Observer<Location> deviceLocationObserver = updatedLocation -> {
-        // update the mock location in the provider
-//                    Timber.i("updated mock location to " + updatedLocation.toString());
-//                    Task<Void> updateFusedProvider = fusedLocationProviderClient.setMockLocation(updatedLocation);
-//                   updateFusedProvider.addOnFailureListener(err-> {
-//                      Timber.e(err);
-//                   });
+         //update the mock location in the provider
+                    Timber.i("updated mock location to %s", updatedLocation.toString());
+                     fusedLocationProviderClient.setMockLocation(updatedLocation);
       };
       activeMapViewModel.setMockDeviceLocation();
       activeMapViewModel.getDeviceLocation().observe(getViewLifecycleOwner(), deviceLocationObserver);
@@ -133,7 +97,7 @@ public class ActiveMapFragment extends MapFragment {
 
     //set metrics
     activityMetricsText = view.findViewById(R.id.activity_metrics_text);
-    activityButton = view.findViewById(R.id.activity_button);
+    FloatingActionButton activityButton = view.findViewById(R.id.activity_button);
     activityButton.setOnClickListener(click -> {
       activityBtnClickHandler();
     });
@@ -145,13 +109,21 @@ public class ActiveMapFragment extends MapFragment {
         String baseFilename = "activity_route";
         String localFilename = baseFilename + ".png";
         String storageFilename = baseFilename + new Date().toString() + ".png";
+        Activity userActivityData = new BaseActivity(
+                activeMapViewModel.getPastLocations(),
+                activeMapViewModel.getElapsedTime(),
+                activeMapViewModel.getActivityType()
+        );
+        activeMapViewModel.setActivityData(userActivityData);
         activeMapViewModel.setSnapshotFileName(storageFilename);
+        // save map snapshot to local
         FileOutputStream out = getContext().openFileOutput(localFilename, 0);
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-        FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(localFilename, storageFilename, getContext().getFilesDir().getPath());
+
         Bundle bundle = new Bundle();
         bundle.putString("uid", getArguments().getString("uid"));
-        bundle.putString("img_path", "/" + localFilename);
+        bundle.putString("local_filename",  localFilename);
+        bundle.putString("storage_filename",  storageFilename);
         Fragment fragment = new CreatePostFragment();
         fragment.setArguments(bundle);
         requireActivity()
@@ -163,8 +135,9 @@ public class ActiveMapFragment extends MapFragment {
         e.printStackTrace();
       }
     };
+
+    renderSnapshotMap(activeMapViewModel.getDeviceLocation().getValue());
     googleMap.setOnMapLoadedCallback(() -> {
-      Timber.i("clicked activity button");
       googleMap.snapshot(snapshotCallback);
       googleMap.setOnMapLoadedCallback(null);
     });
@@ -177,7 +150,41 @@ public class ActiveMapFragment extends MapFragment {
     mapFragment.getMapAsync(this);
   }
 
-  @SuppressLint("MissingPermission")
+  private void renderSnapshotMap(Location location) {
+    // Set the map's camera position to the current location of the device.
+    int MAP_ZOOM_LEVEL = 18;
+    int LINE_WIDTH = 25;
+    int ROUTE_COLOR = Color.BLUE;
+    int PADDING = 300;
+    if (location != null) {
+      LatLng locationLatLng = MockLocation.latLngFromLocation(location);
+      // add current location marker
+      googleMap.clear();
+      googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
+      // add activity route polyline
+      if (activeMapViewModel.hasPastLocations()) {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getMapBounds(activeMapViewModel.getPastLocations()), PADDING));
+        googleMap.addPolyline(
+                new PolylineOptions()
+                        .endCap(new RoundCap())
+                        .clickable(false)
+                        .addAll(activeMapViewModel.getPastLocations())
+                        .width(LINE_WIDTH)
+                        .color(ROUTE_COLOR)
+        );
+      } else {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                locationLatLng, MAP_ZOOM_LEVEL));
+      }
+    }
+  }
+  private LatLngBounds getMapBounds(List<LatLng> routePoints) {
+    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+    for (int i=0; i< routePoints.size(); i++) {
+      builder.include(routePoints.get(i));
+    }
+    return builder.build();
+  }
   @Override
   protected void renderMap(Location location) {
     Timber.i("Received location from fusedLocationProvider: %s", location);
@@ -194,9 +201,13 @@ public class ActiveMapFragment extends MapFragment {
       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
               locationLatLng, 20));
     }
-
+    // update activity view model
+    if (activeMapViewModel.getLastUpdateTime() != null) {
+      activeMapViewModel.updateElapsedTime();
+    }
     // add activity route polyline
     if (activeMapViewModel.hasPastLocations()) {
+      activeMapViewModel.setLastUpdateTime(new Date());
       googleMap.addPolyline(
               new PolylineOptions()
                       .endCap(new RoundCap())
@@ -207,17 +218,13 @@ public class ActiveMapFragment extends MapFragment {
       );
     }
 
-    // update activity
-    if (activeMapViewModel.getLastUpdateTime() != null) {
-      activeMapViewModel.updateElapsedTime();
-    }
-    activeMapViewModel.setLastUpdateTime(new Date());
+
 
     Activity userActivityData = new BaseActivity(
             activeMapViewModel.getPastLocations(),
-            activeMapViewModel.getElapsedTime()
+            activeMapViewModel.getElapsedTime(),
+            activeMapViewModel.getActivityType()
     );
-    activeMapViewModel.setActivityData(userActivityData);
     activityMetricsText.setText(userActivityData.toString());
   }
 
@@ -242,21 +249,19 @@ public class ActiveMapFragment extends MapFragment {
   private void stopLocationUpdates() {
     fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
     requestingLocationUpdates = false;
+
     activeMapViewModel.setLastUpdateTime(null);
   }
 
   private void startLocationUpdates() {
     try {
       Timber.i("getDeviceLocation: getting the devices current location");
-      if (mockMode) {
-        Timber.i("setting mock mode to true");
-        fusedLocationProviderClient.setMockMode(mockMode);
-        fusedLocationProviderClient.setMockLocation(activeMapViewModel.getDeviceLocation().getValue());
-      }
       requestingLocationUpdates = true;
+      // request location every 1000 millis from the provider
       LocationRequest locationRequest = LocationRequest.create();
       long intervalMillis = 1000;
       locationRequest.setInterval(intervalMillis).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+      fusedLocationProviderClient.setMockMode(demoMode);
       fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
     } catch (SecurityException e) {
       Timber.w("Unable to get current location");
@@ -267,6 +272,33 @@ public class ActiveMapFragment extends MapFragment {
     }
   }
 
+  /**
+   * Sets a reference for the location callback required by fused location provider class.
+   */
+  private void setGetLocationCallBack() {
+    locationCallBack = new LocationCallback() {
+      @SuppressLint("MissingPermission")
+      @Override
+      public void onLocationResult(@NonNull LocationResult locationResult) {
+        super.onLocationResult(locationResult);
+        // if demo, update the mock device location
+        if (demoMode) {
+          activeMapViewModel.setMockDeviceLocation();
+          fusedLocationProviderClient.setMockLocation(activeMapViewModel.getDeviceLocation().getValue());
+        }
+        else
+          activeMapViewModel.setDeviceLocation(locationResult.getLastLocation());
+        renderMap(locationResult.getLastLocation());
+        Timber.i("location result ready");
+      }
+
+      @Override
+      public void onLocationAvailability(@NonNull LocationAvailability locationAvailability) {
+        super.onLocationAvailability(locationAvailability);
+        Timber.i("location available");
+      }
+    };
+  }
   @Override
   public void onResume() {
     super.onResume();
@@ -284,7 +316,6 @@ public class ActiveMapFragment extends MapFragment {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    timer.cancel();
     stopLocationUpdates();
   }
 }
