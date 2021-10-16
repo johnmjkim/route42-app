@@ -126,6 +126,15 @@ public class MainTest {
         onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check blocked
         onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isNotChecked()));//check not blocked
     }
+    @Test
+    public void followUnfollowCheck(){
+        createPost("#hash","CYCLING");
+        onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
+        onView(withId(R.id.card_username)).perform(click());
+        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isChecked()));//check blocked
+        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isNotChecked()));//check not blocked
+    }
+
 
     protected boolean checkAccess(ViewInteraction textView) {
         String text = textView.toString();
