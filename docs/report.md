@@ -155,10 +155,9 @@ Basically we classify keywords by '(',')','and','or','#' and text for tokenizati
 Our parsing is trying to follow MongoDB query language rule so we can clearly classify the searching type
 For examples
    *     "test" becomes {$hashtags: ["#test"]} // basically default search field is hashtag
-   *     "username: xxxx hashtags: #hashtag #android #app" becomes // default search type is or
-   *	 {$or: [ {"username": "xxx"}, {"hashtags": ["#hashtag", "#android", "#app"]} ]}
-   *     "username: xxxx and hashtags: #hashtag #android #app" becomes 
-   *     {$and: [ {$userName: "xxx"}, {$hashtags: ["#hashtag", "#android", "#app"]} ]}
+   *     "username: xxxx hashtags: #hashtag #android #app" becomes {$or: [ {"username": "xxx"}, {"hashtags": ["#hashtag", "#android", "#app"]} ]} // default search type is or 
+   *     "username: xxxx and hashtags: #hashtag #android #app" becomes {$and: [ {$userName: "xxx"}, {$hashtags: ["#hashtag", "#android", "#app"]} ]}
+   *     
 
 ### **Surpise Item**
 
