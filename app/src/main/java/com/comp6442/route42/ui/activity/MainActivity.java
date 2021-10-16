@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
                   Bundle bundle = new Bundle();
                   bundle.putInt("activity", i);
                   bundle.putString("uid", self.uid );
-                  Fragment fragment = new ActiveMapFragment(false);
+                  Fragment fragment = new ActiveMapFragment();
                   fragment.setArguments(bundle);
 //    toolbar.setTitle("Activity");
                   getSupportFragmentManager()
@@ -140,17 +140,17 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
       alertDialog.show();
 
     } else{
-
-                  Bundle bundle = new Bundle();
-                  bundle.putInt("activity", 1);
-                  bundle.putString("uid", self.uid );
-                  Fragment fragment = new ActiveMapFragment(false);
-                  fragment.setArguments(bundle);
+      ActiveMapViewModel activeMapViewModel = new ViewModelProvider(this).get(ActiveMapViewModel.class);
+      Bundle bundle = new Bundle();
+      bundle.putInt("activity", activeMapViewModel.getActivityType().getValue());
+      bundle.putString("uid", self.uid );
+      Fragment fragment = new ActiveMapFragment();
+      fragment.setArguments(bundle);
 //    toolbar.setTitle("Activity");
-                  getSupportFragmentManager()
-                          .beginTransaction()
-                          .replace(R.id.fragment_container_view, fragment)
-                          .commit();
+      getSupportFragmentManager()
+              .beginTransaction()
+              .replace(R.id.fragment_container_view, fragment)
+              .commit();
     }
 
   }
