@@ -20,29 +20,17 @@ public abstract class RestApiService {
 
   public RestApiService() {
     // if BuildConfig.EMULATOR is True, assumes rest api is also running locally on port 8080 at localhost
-    String API_LOCALHOST_ADDRESS = "";
-    String API_PRODUCTION_ADDRESS = "http://13.211.169.204:8080/";
-    String url = API_PRODUCTION_ADDRESS;
-    try {
-      final String LOCAL_IPV4_ADDRESS = InetAddress.getLocalHost().getHostAddress();
-      API_LOCALHOST_ADDRESS = String.format("http://%s:8080", LOCAL_IPV4_ADDRESS);
-    } catch (UnknownHostException e) {
-      if (BuildConfig.EMULATOR) Timber.e(e);
-    } finally {
-      if (BuildConfig.EMULATOR && !API_LOCALHOST_ADDRESS.isEmpty()) {
-        url = API_LOCALHOST_ADDRESS;
-      }
+    // replace 192.168.... with your own machine's local IP address
+    // for Mac, use the command `ifconfig | grep 192.168`
+    String url = (BuildConfig.EMULATOR) ? "http://192.168.0.2:8080/" : "http://13.211.169.204:8080/";
+    HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+    OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
-      HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-      OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
-      retrofit = new Retrofit.Builder()
-              .baseUrl(url)
-              .addConverterFactory(GsonConverterFactory.create(gson))
-              .client(httpClient)
-              .build();
-
-      api = retrofit.create(RestApiClient.class);
-    }
+    retrofit = new Retrofit.Builder()
+            .baseUrl(url)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(httpClient)
+            .build();
+    api = retrofit.create(RestApiClient.class);
   }
 }
