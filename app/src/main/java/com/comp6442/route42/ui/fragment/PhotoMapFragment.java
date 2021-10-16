@@ -48,7 +48,7 @@ public class PhotoMapFragment extends MapFragment {
   private static final String ARG_PARAM2 = "drawLine";
   private static final float ZOOM = 12f;
   private static final boolean useKDTree = true;
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private List<Post> posts = new ArrayList<>();
 
   public PhotoMapFragment() {
