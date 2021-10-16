@@ -29,35 +29,9 @@ import java.util.List;
 
 import timber.log.Timber;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
   private final String loggedInUID;
   private List<Post> posts = new ArrayList<>();
-
-  /**
-   * Provide a reference to the type of views that you are using
-   * (custom ViewHolder).
-   */
-  public static class ViewHolder extends RecyclerView.ViewHolder {
-    public ImageView userIcon, imageView, like, unlike, locationPin;
-    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
-    public MaterialCardView materialCardView;
-
-    public ViewHolder(View view) {
-      super(view);
-      userIcon = view.findViewById(R.id.card_profile_pic);
-      imageView = view.findViewById(R.id.card_main_image);
-      like = view.findViewById(R.id.like_button);
-      unlike = view.findViewById(R.id.unlike_button);
-
-      materialCardView = view.findViewById(R.id.post_card);
-      userNameView = view.findViewById(R.id.card_username);
-      hashtagsTextView = view.findViewById(R.id.card_hashtags);
-      descriptionView = view.findViewById(R.id.card_description);
-      likeCountTextView = view.findViewById(R.id.like_count_text);
-      locationTextView = view.findViewById(R.id.location);
-      locationPin = view.findViewById(R.id.pin);
-    }
-  }
 
   public PostAdapter(List<Post> posts, String loggedInUID) {
     this.posts = posts;
@@ -67,21 +41,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   // Create new views (invoked by the layout manager)
   @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+  public PostViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
     View view = LayoutInflater.from(viewGroup.getContext())
             .inflate(R.layout.post_card, viewGroup, false);
     Timber.d("PostAdapter created.");
-    return new ViewHolder(view);
+    return new PostViewHolder(view);
   }
 
   // Replace the contents of a view (invoked by the layout manager)
   @Override
-  public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position) {
+  public void onBindViewHolder(@NonNull PostViewHolder viewHolder, final int position) {
     Post post = posts.get(position);
     setViewBehavior(post, viewHolder);
 
     // set profile pic
     Timber.i("Fetched post: %s", post);
+
 
     if (post.getProfilePicUrl().startsWith("http")) {
       Glide.with(viewHolder.imageView.getContext())
@@ -102,17 +77,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
               .circleCrop()
               .into(viewHolder.userIcon);
     }
-
-    Glide.with(viewHolder.imageView.getContext())
-            .load(post.getImageUrl())
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(false)
-            .centerCrop()
-            .into(viewHolder.imageView);
+    if(post.getImageUrl().startsWith("http")) {
+      Glide.with(viewHolder.imageView.getContext())
+              .load(post.getImageUrl())
+              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .skipMemoryCache(false)
+              .centerCrop()
+              .into(viewHolder.imageView);
+    } else {
+      StorageReference postImageRef = FirebaseStorageRepository.getInstance().get(post.getImageUrl());
+      Glide.with(viewHolder.imageView.getContext())
+              .load(postImageRef)
+              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .skipMemoryCache(false)
+              .centerCrop()
+              .into(viewHolder.imageView);
+    }
 
     Timber.d("OnBindView complete.");
   }
-  private void setViewBehavior(Post post, PostAdapter.ViewHolder viewHolder) {
+  private void setViewBehavior(Post post, PostViewHolder viewHolder) {
     Timber.d("breadcrumb");
     // Add listener and navigate to the user's profile on click
     setUserNameView(post, viewHolder);
@@ -126,22 +110,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     if (post.getLocationName() != null) {
       viewHolder.locationTextView.setText(post.getLocationName());
-//      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//          Fragment fragment = new PhotoMapFragment();
-//          ArrayList<Post> posts = new ArrayList<>();
-//          posts.add(post);
-//          Bundle bundle = new Bundle();
-//          bundle.putParcelableArrayList("posts", posts);
-//          fragment.setArguments(bundle);
-//          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
-//                  .beginTransaction()
-//                  .add(R.id.fragment_container_view, fragment)
-//                  .addToBackStack(this.getClass().getCanonicalName())
-//                  .commit();
-//        }
-//      });
+      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new PhotoMapFragment();
+          ArrayList<Post> posts = new ArrayList<>();
+          posts.add(post);
+          Bundle bundle = new Bundle();
+          bundle.putParcelableArrayList("posts", posts);
+          fragment.setArguments(bundle);
+          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
     } else {
       viewHolder.locationTextView.setText(" ");
       viewHolder.locationTextView.setText("");
@@ -150,7 +134,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     Timber.d("OnBindView complete.");
   }
 
-  private void setLikeButtons(Post post, PostAdapter.ViewHolder viewHolder, boolean postIsLiked) {
+  private void setLikeButtons(Post post, PostViewHolder viewHolder, boolean postIsLiked) {
     viewHolder.like.setOnClickListener(view -> {
       PostRepository.getInstance().like(post, loggedInUID);
       viewHolder.like.setVisibility(View.GONE);
@@ -174,7 +158,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
   }
 
-  private void setLikeCountTextView(Post post, PostAdapter.ViewHolder viewHolder) {
+  private void setLikeCountTextView(Post post, PostViewHolder viewHolder) {
     viewHolder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
     setLikeButtons(
             post,
@@ -187,7 +171,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     );
   }
 
-  private void setUserNameView(Post post, PostAdapter.ViewHolder viewHolder) {
+  private void setUserNameView(Post post, PostViewHolder viewHolder) {
     viewHolder.userNameView.setOnClickListener(view -> {
       Fragment fragment = new ProfileFragment();
       Bundle bundle = new Bundle();
@@ -220,5 +204,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   public void setPosts(List<Post> posts) {
     this.posts = posts;
   }
-}
 
+  public static class PostViewHolder extends RecyclerView.ViewHolder {
+    public ImageView userIcon, imageView, like, unlike, locationPin;
+    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
+    public MaterialCardView materialCardView;
+
+    public PostViewHolder(View view) {
+      super(view);
+      userIcon = view.findViewById(R.id.card_profile_pic);
+      imageView = view.findViewById(R.id.card_main_image);
+      like = view.findViewById(R.id.like_button);
+      unlike = view.findViewById(R.id.unlike_button);
+
+      materialCardView = view.findViewById(R.id.post_card);
+      userNameView = view.findViewById(R.id.card_username);
+      hashtagsTextView = view.findViewById(R.id.card_hashtags);
+      descriptionView = view.findViewById(R.id.card_description);
+      likeCountTextView = view.findViewById(R.id.like_count_text);
+      locationTextView = view.findViewById(R.id.location);
+      locationPin = view.findViewById(R.id.pin);
+    }
+  }
+}

@@ -10,24 +10,29 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * BaseActivity is a generic concrete Activity class.
+ * It should be extended when different activities have more specialized functions, as the app evolves.
+ */
 public class BaseActivity implements Activity{
-    private List<LatLng> route;
-    private Float distance;
-    private long elapsedTime;
-    private Float speed;
-    private int calories;
-    private final int CALORIES_PER_METER = 2;
-    private final Activity_Type activityType = Activity_Type.RUNNING;
+    private final List<LatLng> route;
+    private final Float distance;
+    private final long elapsedTime;
+    private final Float speed;
+    private final int calories;
+    private final Activity_Type activityType ;
 
     public static long getElapsedTimeSeconds(Date date1, Date date2) {
-        return TimeUnit.SECONDS.convert(date1.getTime() - date2.getTime(), TimeUnit.MILLISECONDS);
+        return (date1.getTime() - date2.getTime()) / 1000 ;
     }
-    public BaseActivity(List<LatLng> route, long elapsedTime) {
+    public BaseActivity(List<LatLng> route, long elapsedTime, Activity_Type activityType) {
+        int CALORIES_PER_METER = 2;
         this.route = route;
         this.distance = calculateDistance();
         this.elapsedTime = elapsedTime;
-         this.calories = (int) (getDistance() * CALORIES_PER_METER);
+        this.calories = (int) (getDistance() * CALORIES_PER_METER);
         this.speed = distance / elapsedTime;
+        this.activityType = activityType;
     }
 
     public int getCalories() {
@@ -42,6 +47,10 @@ public class BaseActivity implements Activity{
         return speed;
     }
 
+    /**
+     * Calculates the distance travelled during the activity.
+     * @return distance, in meters
+     */
     private Float calculateDistance() {
         float total = 0.0F;
         if(route.size()>1) {
@@ -53,26 +62,31 @@ public class BaseActivity implements Activity{
                 total += p2pDistance[0];
             }
         }
-       return  total;
+        return  total;
     }
 
-    @NonNull
-    @Override
-    @SuppressLint("DefaultLocale")
-    public String toString() {
-        return
-                "Distance: " + String.format("%.00f", distance) +  "m"+
-                ", Duration:" + String.format("%.00f", (float) elapsedTime) + "s"+
-                "\ncalories: " + calories
-                ;
-    }
+
+
     @SuppressLint("DefaultLocale")
     public String getPostString() {
         return "Check out my " + activityType.toString().toLowerCase() + " activity stats:\n" +
                 "Distance: " + String.format("%.01f", distance) + " m" +
                 "\nDuration: " + String.format("%.00f", (float) elapsedTime) + " s" +
                 "\nAverage speed: " + String.format("%.01f",  speed)  + " m/s" +
-                "\nCalories: " + calories + " kcal"
+                "\nCalories: " + calories + " kcal" +
+                "\n #myworkouts"
+
                 ;
     }
+    @NonNull
+    @Override
+    @SuppressLint("DefaultLocale")
+    public String toString() {
+        return
+                "Distance: " + String.format("%.00f", distance) +  "m" +
+                        "\nDuration:" + String.format("%.01f", (float) elapsedTime) + "s"+
+                        "\nCalories: " + calories
+                ;
+    }
+
 }

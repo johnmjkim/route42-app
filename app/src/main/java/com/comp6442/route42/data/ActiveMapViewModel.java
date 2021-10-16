@@ -1,43 +1,70 @@
 package com.comp6442.route42.data;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.location.Location;
 
-import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.comp6442.route42.data.model.Activity;
-import com.comp6442.route42.data.model.MockLocation;
-import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.comp6442.route42.data.model.BaseActivity;
+import com.comp6442.route42.utils.MockLocation;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@SuppressLint("MissingPermission")
 public class ActiveMapViewModel extends ViewModel {
 
-    private final MutableLiveData<Location> deviceLocation = new MutableLiveData<>();
-    private final MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
+    private  MutableLiveData<Location> deviceLocation = new MutableLiveData<>();
+    private MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
     private List<LatLng> pastLocations = new ArrayList<>();
-    private Date startTime;
     private Activity activityData = null;
-
-
-
     private String snapshotFileName =  null;
+    private long elapsedTime = 0;
 
+    public Activity.Activity_Type getActivityType() {
+        return activityType;
+    }
+
+    public void setActivityType(Activity.Activity_Type activityType) {
+        this.activityType = activityType;
+    }
+
+    private Activity.Activity_Type activityType = null;
+    private Date lastUpdateTime = null;
 
     public ActiveMapViewModel() {
+    }
+    /**
+     * Resets the data collected within an active map fragment.
+     */
+    public void reset() {
+        deviceLocation = new MutableLiveData<>();
+        mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
+        pastLocations = new ArrayList<>();
+        activityData = null;
+        snapshotFileName =  null;
+        elapsedTime = 0;
+        lastUpdateTime = null;
+        activityType = null;
+    }
+    public long getElapsedTime() {
+        return elapsedTime;
+    }
+
+    public void updateElapsedTime() {
+        this.elapsedTime = elapsedTime + BaseActivity.getElapsedTimeSeconds(new Date(), lastUpdateTime);
+    }
+
+    public Date getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(@Nullable Date time) {
+        this.lastUpdateTime = time;
     }
 
     public LiveData<Location> getDeviceLocation() {
@@ -47,14 +74,6 @@ public class ActiveMapViewModel extends ViewModel {
         if(deviceLocation.getValue() != null)
             addPastLocation(deviceLocation.getValue());
         deviceLocation.setValue(newLocation);
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
     }
 
     public void setMockDeviceLocation() {

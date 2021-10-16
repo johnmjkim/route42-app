@@ -20,21 +20,21 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.PhotoMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import timber.log.Timber;
 
 /* Class to feed Cloud Firestore documents into the FirestoreRecyclerAdapter */
 public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, FirestorePostAdapter.PostViewHolder> {
   private final String loggedInUID;
+  private List<Post> posts = new ArrayList<>();
 
   public FirestorePostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
     super(options);
@@ -51,7 +51,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
   }
 
   @Override
-  protected void onBindViewHolder(@NonNull PostViewHolder viewHolder, int position, @NonNull Post post) {
+  public void onBindViewHolder(@NonNull PostViewHolder viewHolder, int position, @NonNull Post post) {
     setViewBehavior(post, viewHolder);
 
     // set profile pic
@@ -97,18 +97,6 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
     Timber.d("OnBindView complete.");
   }
 
-  @Override
-  public void onDataChanged() {
-    //Called each time there is a new query snapshot.
-    Timber.d("breadcrumb");
-  }
-
-  @Override
-  public void onError(@NonNull FirebaseFirestoreException e) {
-    //Handle the error
-    Timber.d(e);
-  }
-
   private void setViewBehavior(Post post, PostViewHolder viewHolder) {
     Timber.d("breadcrumb");
     // Add listener and navigate to the user's profile on click
@@ -123,27 +111,26 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
 
     if (post.getLocationName() != null) {
       viewHolder.locationTextView.setText(post.getLocationName());
-      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          Fragment fragment = new PhotoMapFragment();
-          ArrayList<Post> posts = new ArrayList<>();
-          posts.add(post);
-          Bundle bundle = new Bundle();
-          bundle.putParcelableArrayList("posts", posts);
-          fragment.setArguments(bundle);
-          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
-                  .beginTransaction()
-                  .add(R.id.fragment_container_view, fragment)
-                  .addToBackStack(this.getClass().getCanonicalName())
-                  .commit();
-        }
-      });
+//      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//          Fragment fragment = new PhotoMapFragment();
+//          ArrayList<Post> posts = new ArrayList<>();
+//          posts.add(post);
+//          Bundle bundle = new Bundle();
+//          bundle.putParcelableArrayList("posts", posts);
+//          fragment.setArguments(bundle);
+//          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+//                  .beginTransaction()
+//                  .add(R.id.fragment_container_view, fragment)
+//                  .addToBackStack(this.getClass().getCanonicalName())
+//                  .commit();
+//        }
+//      });
     } else {
       viewHolder.locationTextView.setText(" ");
       viewHolder.locationTextView.setText("");
     }
-
     Timber.d("OnBindView complete.");
   }
 
@@ -198,6 +185,14 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
               .addToBackStack(this.getClass().getCanonicalName())
               .commit();
     });
+  }
+
+  public List<Post> getPosts() {
+    return posts;
+  }
+
+  public void setPosts(List<Post> posts) {
+    this.posts = posts;
   }
 
   public static class PostViewHolder extends RecyclerView.ViewHolder {

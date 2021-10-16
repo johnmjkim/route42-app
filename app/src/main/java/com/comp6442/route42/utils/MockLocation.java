@@ -1,7 +1,8 @@
-package com.comp6442.route42.data.model;
+package com.comp6442.route42.utils;
 
 import android.location.Location;
 
+import com.comp6442.route42.data.model.Activity;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -43,7 +44,9 @@ public class MockLocation {
     private int currentIdx = 0;
     private int prevIdx;
     private final Instant startTime;
-
+    public static LatLng latLngFromLocation(android.location.Location location) {
+        return  new LatLng(location.getLatitude(), location.getLongitude());
+    }
     public MockLocation(Activity.Activity_Type activityType) {
         double motorSpeed = 40.0;
         double cycleSpeed = 15.0;
@@ -84,7 +87,6 @@ public class MockLocation {
         Instant currentTime = Instant.now();
         long elapsedSeconds =  currentTime.getEpochSecond() - startTime.getEpochSecond();
         while ( Duration.ofSeconds(elapsedSeconds).compareTo(locationTimes.get(currentIdx)) >=0) {
-            Timber.i("YEEEE");
              prevIdx = currentIdx;
              currentIdx = (currentIdx % locations.size()) + 1;
         }
