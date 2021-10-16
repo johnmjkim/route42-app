@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "EMULATOR", "true")
         buildConfigField("boolean", "loadData", "true")
-        buildConfigField("boolean", "skipLogin", "true")
+        buildConfigField("boolean", "skipLogin", "false")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
         buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
