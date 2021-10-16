@@ -1,7 +1,7 @@
 package com.comp6442.route42.utils;
 
 import com.comp6442.route42.data.model.Activity;
-import com.comp6442.route42.data.model.MockLocation;
+import com.comp6442.route42.utils.MockLocation;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Assert;
