@@ -79,6 +79,7 @@
 
 - KD Tree
 	- Where: REST API `GET /search/knn` with `k`, `lon`, `lat` parameters.
+	- Why: KD Tree (K dimension tree) is used to store and search 2-D data of location (longitude, latitude). KD tree is useful when we need to use multi-dimensional data.
 - HashMap
 	- Where: Used by the REST API for union and intersection operations between lists of `Post`s.
 	- Why:
