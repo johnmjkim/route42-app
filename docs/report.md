@@ -18,7 +18,7 @@
 | :--- | :----: | ---: |
 | u7233149 | Kai Hirota | Lead / Architect |
 | u7269158 | John (Min Jae) Kim | Data Structure, Feature Testing |
-| [uid] | [name] | Full-Stack |
+| u7234659 | Honggic Oh | Search,Feature Testing |
 | [uid] | [name] | Full-Stack |
 
 ## Conflict Resolution Protocol
@@ -150,6 +150,15 @@
 ### **Tokenizer and Parsers**
 
 *[Where do you use tokenisers and parsers? How are they built? What are the advantages of the designs?]*
+Use these to Search Query. 
+Basically we classify keywords by '(',')','and','or','#' and text for tokenizations.
+Our parsing is trying to follow MongoDB query language rule so we can clearly classify the searching type
+For examples
+   *     "test" becomes {$hashtags: ["#test"]} // basically default search field is hashtag
+   *     "username: xxxx hashtags: #hashtag #android #app" becomes // default search type is or
+   *	 {$or: [ {"username": "xxx"}, {"hashtags": ["#hashtag", "#android", "#app"]} ]}
+   *     "username: xxxx and hashtags: #hashtag #android #app" becomes 
+   *     {$and: [ {$userName: "xxx"}, {$hashtags: ["#hashtag", "#android", "#app"]} ]}
 
 ### **Surpise Item**
 
