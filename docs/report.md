@@ -69,51 +69,51 @@
 
 ## Application Design and Decisions
 
-*Please give clear and concise descriptions for each subsections of this part. It would be better to list all the concrete items for each subsection and give no more than `5` concise, crucial reasons of your design. 
-
-
-
 ### **Data Structures**
-
-*[What data structures did your team utilise? Where and why?]*
 
 - KD Tree
 	- Where: REST API `GET /search/knn` with `k`, `lon`, `lat` parameters.
-	- Why: KD Tree (K dimension tree) is used to store and search 2-D data of location (longitude, latitude). KD tree is useful when we need to use multi-dimensional data.
+	- Why: KD Tree (K-dimensional tree) is used to store and search 2-D data of location (longitude, latitude). KD tree is useful for finding nearest neighbors and performing range search based on multiple dimensions of data - such as longitude and latitude.
 - HashMap
 	- Where: Used by the REST API for union and intersection operations between lists of `Post`s.
-	- Why:
+	- Why: It's the most efficient way of finding set union and intersections. This is used to chain the left and right results when executing commands in `QuerySyntaxTree`.
 - Binary Tree
 	- Where:
-		- REST API `POST /search/` with query encoded as plain text in `query` field of the body sent in JSON format.
+		- REST API `POST /search/` endpoint uses `QuerySyntaxTree` to process the query text sent by a client.
 		- `QueryTreeNode` is used to extract the hierarchical structure of nodes, each representing a binary operator and two expressions.
 	- Why:
+		- It allows efficient parsing of tokens, and allows us to express various operations in a recursive manner, making the code easy to read and maintain.
 
 
 
 ### **Design Patterns**
 
-*[What design patterns did your team utilise? Where and why?]*
+- Singleton & Repository
 
-- Singleton
-
-	- Where: `UserRepository`, `PostRepository`, and `FirebaseStorageRepository` classes under `repository` submodule.
-	- Why: Prevents unnecessary creation of multiple instances of connections with the database. By using singleton, it saves memory and connection with the database is easier to manage.
-
-- Repository pattern:
-
-	- Where: `UserRepository`, `PostRepository` classes under `repository` submodule.
-	- Why:
+  - Where: `UserRepository` and `PostRepository` classes under `repository` submodule.
+  - Why: 
+  	- Singleton pattern prevents unnecessary creation of multiple instances of connections with the database. By using singleton, the program uses less memory, and managing the connection with the database is easier.
+  	- Repository pattern abstracts the database operations and allows decoupling of the database access logic from the application logic.
 
 - Single-activity architecture
 
-	- Where:
-	- Why:
+  - What: Composition of Android application based on single or a couple activities, each managing one or more fragments.
+  - Where: Entire application.
+  - Why:
+  	- Route42 primarily has one activity called `MainActivity` which contains a fragment container view, which transitions between fragments based on user selection from the bottom navigation bar.
+  	- Usage of this architecture reduces lines of code required for the whole app, while making it easier to prototype new features.
 
 - REST API
 
-	- Where:
-	- Why:
+  - Where: In the cloud (AWS EC2 instance)
+  - Why: 
+  	- When using Cloud Firestore Android SDK, we have some limitations.
+  		- Cannot perform partial text search - for example, we cannot query on substring of a text field.
+  		- Cannot use more than one `arrayContains` in a single query.
+  		- No support for boolean OR operation between multiple filters.
+  		- Every CRUD operation must be asynchronous in order to not freeze up the UI thread.
+  	- Using the REST API allows us to use the Firebase-admin SDK, which gives the REST API higher privilege and more capability than the mobile client.
+  	- Using REST API allows us to simplify database reads and writes. The downside is that we sacrifice Firestore's document listener feature, where we can listen to updates on documents of interest.
 
 - ViewModel
 
@@ -122,18 +122,18 @@
 
 - Multi-threading / background execution
 
-	- Where: `PhotoMapFragment`
-	- Why: When making the REST API call to `search/knn`, the communication is handled by a background worker thread. This ensures the UI thread (the main thread) does not freeze and remains responsive.
+  - Where: `PhotoMapFragment`
+  - Why: When making the REST API call to `search/knn`, the communication is handled by a background worker thread. This ensures the UI thread (the main thread) does not freeze and remains responsive.
 
-- Factory method
+  
 
-	<img src="https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png" alt="img" style="zoom:50%;" />
+  <img src="https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png" alt="img" style="zoom:50%;" />
 
-	[Source](https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png)
+  [Source](https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png)
 
-	![img](Report.assets/final-architecture.png)
+  ![img](Report.assets/final-architecture.png)
 
-	 [Source](https://developer.android.com/jetpack/guide)
+   [Source](https://developer.android.com/jetpack/guide)
 
 ### **Grammars**
 
@@ -150,23 +150,30 @@
 ### **Tokenizer and Parsers**
 
 *[Where do you use tokenisers and parsers? How are they built? What are the advantages of the designs?]*
-*Use these to Search Query. 
-Basically we classify keywords by '(',')','and','or','#' and text for tokenizations.
-Our parsing is trying to follow MongoDB query language rule so we can clearly classify the searching type
-default search field : hashtag, default search type : or*
 
-*For examples*
+Every token either contains an operator and two expressions, or a key and value. Example #1 below is an example of a token that has the key `hashtags` and value `["test"]`. Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
 
-*"test" becomes {$hashtags: ["#test"]}*
+```
+EXAMPLES
+1. "test" -> {hashtags: ["test"]}
 
-*"username: xxxx hashtags: #hashtag #android #app" becomes {$or: [ {"username": "xxx"}, {"hashtags": ["#hashtag", "#android", "#app"]} ]}*
+2. "username: xxx hashtags: #hashtag #android #app" ->
+{OR: [
+    {userName: "xxx"}, 
+    {hashtags: ["#hashtag", "#android", "#app"]}
+  ]
+}
 
-*"username: xxxx and hashtags: #hashtag #android #app" becomes {$and: [ {$userName: "xxx"}, {$hashtags: ["#hashtag", "#android", "#app"]} ]}*
-  
+3. "(username: xxxx or hashtags: #hashtag #android #app) and username: yyy" ->
+ {AND: [
+     {OR: [
+         {userName: "xxx"}, 
+         {hashtags: ["#hashtag", "#android", "#app"]}
+     ]},
+     {userName: "yyy"}
+ ]}
 
-### **Surpise Item**
-
-*[If you implement the surprise item, explain how your solution addresses the surprise task. What decisions do your team make in addressing the problem?]*
+```
 
 ### **Other**
 
@@ -190,43 +197,59 @@ default search field : hashtag, default search type : or*
 
 ## Testing Summary
 
-*[What features have you tested? What is your testing coverage?]*
-
-*Here is an example:*
-
-*Number of test cases: ...*
-
-*Code coverage: ...*
-
-*Types of tests created: ...*
-
-*Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
-
 ## Implemented Features
 
-*[What features have you implemented?]*
+- Easy: 5
+- Medium: 5
+- Hard: 1
+- Very Hard: 1
 
-*Here is an example:*
 
-*User Privacy*
 
-1. *Friendship. Users may send friend requests which are then accepted or denied. (easy)*
-2. *Privacy I: A user must approve a friend's request based on privacy settings. (easy)*
-3. *Privacy II: A user can only see a profile that is Public (consider that there are at least two types of profiles: public and private). (easy)*
-4. *Privacy III: A user can only follow someone who shares at least one mutual friend based on privacy settings. (Medium)*
+Improved Search
 
-*Firebase Integration*
-1. *Use Firebase to implement user Authentication/Authorisation. (easy)*
-2. *Use Firebase to persist all data used in your app (this item replace the requirement to retrieve data from a local file) (medium)*
+1. Search functionality can handle partially valid and invalid search queries. (medium)
 
-*List all features you have completed in their separate categories with their difficulty classification. If they are features that are suggested and approved, please state this somewhere as well.*
+UI Design and Testing
+
+1. UI tests using espresso or similar. Please note that your tests must be of reasonable quality. (For UI testing, you may use something such as espresso) (hard)
+
+Greater Data Usage, Handling and Sophistication
+
+1. User profile activity containing a media file (image, animation (e.g. gif), video). (easy)
+2. Use GPS information. (easy)
+3. User statistics. Provide users with the ability to see a report of total views, total followers, total posts, total likes, in a graphical manner. (medium)
+
+User Interactivity
+
+1. The ability to micro-interact with 'posts' (e.g. like, report, etc.) [stored in-memory]. (easy)
+2. The ability for users to ‘follow’ other users. There must be an adjustment to either the user’s timeline in relation to their following users or a section specifically dedicated to posts by followed users. [stored in-memory] (medium)
+
+User Privacy
+
+1. Privacy II: A user can only see a profile that is Public (consider that there are at least two types of profiles: public and private). (easy)
+
+Peer to Peer Messaging
+
+1. Privacy I: provide users with the ability to ‘block’ users. Preventing them from
+
+	directly messaging them. (medium)
+
+Firebase Integration
+
+1. Use Firebase to implement user Authentication/Authorisation. (easy)
+
+2. Use Firebase to persist all data used in your app (this item replace the requirement
+
+	to retrieve data from a local file) (medium)
+
+3. Using Firebase or another remote database to store user posts and having a user’s
+
+	timeline update as the remote database is updated without restarting the application. E.g. User A makes a post, user B on a separate instance of the application sees user A’s post appear on their timeline without restarting their application. (very hard)
 
 ## Team Meetings
 
-*Here is an example:*
+- [Meeting 1 - 31st August](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/aug31.md)
+- [Meeting 2 - 7th September](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/sep7.md)
+- [Meeting 3 - 8th October](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/oct8.md)
 
-- *[Team Meeting 1 at 31st August](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/aug31.md)*
-- *[Team Meeting 2 at 7th September](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/sep7.md)*
-- *[Team Meeting 3 at 8th October](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/oct8.md)*
-
-*Either write your meeting minutes here or link to documents that contain them. There must be at least 3 team meetings.*
