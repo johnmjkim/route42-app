@@ -59,7 +59,7 @@ public class Point implements Parcelable {
   @NonNull
   @Override
   public String toString() {
-    return "TsPoint{" +
+    return "Point{" +
             ", latitude=" + latitude +
             ", longitude=" + longitude +
             '}';
