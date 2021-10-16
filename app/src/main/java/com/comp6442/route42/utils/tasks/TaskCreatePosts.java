@@ -22,7 +22,8 @@ public class TaskCreatePosts extends DataTask<Post> {
   public TaskCreatePosts(Context context, boolean debug, boolean demo) {
     super(debug, demo, "posts", PostRepository.getInstance(), Post.class, context);
     gson = PostRepository.getJsonDeserializer();
-    jsonString = readTextFile(demoContext.getResources().openRawResource(R.raw.posts));
+    if (demo) jsonString = readTextFile(demoContext.getResources().openRawResource(R.raw.posts_demo));
+    else jsonString = readTextFile(demoContext.getResources().openRawResource(R.raw.posts));
     postList = Arrays.asList(gson.fromJson(jsonString, (Type) Post[].class));
     postList.forEach(Post::setGeohash);
     Collections.shuffle(postList);
