@@ -211,7 +211,8 @@
 
 *Here is an example:*
 
-- *[Team Meeting 1](./MeetingTemplate.md)*
-- ...
+- *[Team Meeting 1 at 31st August](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/aug31.md)*
+- *[Team Meeting 2 at 7th September](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/sep7.md)*
+- *[Team Meeting 3 at 8th October](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/oct8.md)*
 
 *Either write your meeting minutes here or link to documents that contain them. There must be at least 3 team meetings.*
