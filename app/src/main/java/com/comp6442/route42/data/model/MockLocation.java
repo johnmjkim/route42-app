@@ -43,7 +43,9 @@ public class MockLocation {
     private int currentIdx = 0;
     private int prevIdx;
     private final Instant startTime;
-
+    public static LatLng latLngFromLocation(android.location.Location location) {
+        return  new LatLng(location.getLatitude(), location.getLongitude());
+    }
     public MockLocation(Activity.Activity_Type activityType) {
         double motorSpeed = 40.0;
         double cycleSpeed = 15.0;

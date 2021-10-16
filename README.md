@@ -29,11 +29,18 @@
     - add REST API client using retrofit
     - update FeedFragment to use regular PostAdapter instead of FirestorePostAdapter
     - make FeedFragment Searchview issue query only on submit
-    - use single thread executor service to make REST API request
-    - incorporated KNN endpoint via KDTree
+    - use single thread executor service to make REST API request 
+      - incorporated KNN endpoint via KDTree  
+27. Enabled user create workout activity and save workout post feature.
+    - create 'ActiveMapFragment' which displays map and user activity route data and metrics
+    - Allow user to Pause / Resume workout activity when navigating away, or by clicking Activity button on page
+    - create 'CreatePostFragment' which enables user to save new post   
+    - Hashtags in post description are auto-parsed. Separate hashtags with punctuation. 
+    - enable mock location using MockLocation class, to feed location data provider. (non-emulator only) 
+28. Hash passwords before storing in Firebase
+29. Added refresh on swipe down to FeedFragment
 
 # Requirements
-
 - Android Gradle Plugin Version 7.0.1
 - Gradle version 7.0.2
 - Android Emulator: Pixel 4 API 30

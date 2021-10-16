@@ -23,7 +23,7 @@ public abstract class FirestoreRepository<T extends Model> extends Repository<T>
 
       if (BuildConfig.EMULATOR) {
         try {
-          firestore.useEmulator("10.0.2.2", 8080);
+          firestore.useEmulator("10.0.2.2", 8090);
         } catch (IllegalStateException exc) {
           Timber.d(exc);
         }

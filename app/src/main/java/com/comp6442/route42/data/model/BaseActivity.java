@@ -20,7 +20,7 @@ public class BaseActivity implements Activity{
     private final Activity_Type activityType = Activity_Type.RUNNING;
 
     public static long getElapsedTimeSeconds(Date date1, Date date2) {
-        return TimeUnit.SECONDS.convert(date1.getTime() - date2.getTime(), TimeUnit.MILLISECONDS);
+        return (date1.getTime() - date2.getTime()) / 1000 ;
     }
     public BaseActivity(List<LatLng> route, long elapsedTime) {
         this.route = route;
@@ -62,8 +62,8 @@ public class BaseActivity implements Activity{
     public String toString() {
         return
                 "Distance: " + String.format("%.00f", distance) +  "m"+
-                ", Duration:" + String.format("%.00f", (float) elapsedTime) + "s"+
-                "\ncalories: " + calories
+                "\nDuration:" + String.format("%.01f", (float) elapsedTime) + "s"+
+                "\nCalories: " + calories
                 ;
     }
     @SuppressLint("DefaultLocale")
@@ -72,7 +72,9 @@ public class BaseActivity implements Activity{
                 "Distance: " + String.format("%.01f", distance) + " m" +
                 "\nDuration: " + String.format("%.00f", (float) elapsedTime) + " s" +
                 "\nAverage speed: " + String.format("%.01f",  speed)  + " m/s" +
-                "\nCalories: " + calories + " kcal"
+                "\nCalories: " + calories + " kcal" +
+                "\n #myworkouts"
+
                 ;
     }
 }

@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
+import com.comp6442.route42.data.ActiveMapViewModel;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
 
@@ -64,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // toolbar = getSupportActionBar();
     // toolbar.hide();
     setCreateActivityBtn();
-
 
     // bottom navigation
     bottomNav = findViewById(R.id.bottom_navigation_view);
@@ -117,25 +117,41 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
   }
   public void createActivityBtnClickHandler() {
-    Timber.i("Create activity btn clicked.");
+//    Timber.i("Create activity btn clicked.");
+    Activity activityData = new ViewModelProvider(this).get(ActiveMapViewModel.class).getActivityData();
     MainActivity self = this;
-    AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(this, R.style.AlertDialog_AppCompat)).setTitle("Choose Activity Type")
-            .setItems(Activity.Activity_Type.getValues(), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        Bundle bundle = new Bundle();
-        bundle.putInt("activity", i);
-        bundle.putString("uid", self.uid );
-        Fragment fragment = new ActiveMapFragment(false);
-        fragment.setArguments(bundle);
+    if (activityData == null) {
+      AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(this, R.style.AlertDialog_AppCompat)).setTitle("Choose Activity Type")
+              .setItems(Activity.Activity_Type.getValues(), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                  Bundle bundle = new Bundle();
+                  bundle.putInt("activity", i);
+                  bundle.putString("uid", self.uid );
+                  Fragment fragment = new ActiveMapFragment(false);
+                  fragment.setArguments(bundle);
 //    toolbar.setTitle("Activity");
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container_view, fragment)
-                .commit();
-      }
-    }).create();
-    alertDialog.show();
+                  getSupportFragmentManager()
+                          .beginTransaction()
+                          .replace(R.id.fragment_container_view, fragment)
+                          .commit();
+                }
+              }).create();
+      alertDialog.show();
+
+    } else{
+
+                  Bundle bundle = new Bundle();
+                  bundle.putInt("activity", 1);
+                  bundle.putString("uid", self.uid );
+                  Fragment fragment = new ActiveMapFragment(false);
+                  fragment.setArguments(bundle);
+//    toolbar.setTitle("Activity");
+                  getSupportFragmentManager()
+                          .beginTransaction()
+                          .replace(R.id.fragment_container_view, fragment)
+                          .commit();
+    }
 
   }
 

@@ -12,10 +12,11 @@ public class QueryStringTest {
     String value1 = "[@field:fieldName]";
     String value2 = "[@Type:type]";
     char symbol = '?';
-    QueryString querySample = new QueryString(query);
+    int limit = 1;
+    QueryString querySample = new QueryString(query, limit);
     @Test
     public void checkQuery() {
-        querySample.setQuery(symbol+parameter1+"="+value1+"&"+parameter2+"="+value2);
+        querySample.setQuery(symbol + parameter1 + "=" + value1 + "&" + parameter2 + "=" + value2);
         Assert.assertEquals(querySample.getQuery(),"?field=[@field:fieldName]&type=[@Type:type]");
     }
 }
