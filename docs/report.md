@@ -150,13 +150,15 @@
 ### **Tokenizer and Parsers**
 
 *[Where do you use tokenisers and parsers? How are they built? What are the advantages of the designs?]*
-Use these to Search Query. 
+*Use these to Search Query. 
 Basically we classify keywords by '(',')','and','or','#' and text for tokenizations.
-Our parsing is trying to follow MongoDB query language rule so we can clearly classify the searching type
+Our parsing is trying to follow MongoDB query language rule so we can clearly classify the searching type*
 For examples
-"test" becomes {$hashtags: ["#test"]} // default search field is hashtag
-"username: xxxx hashtags: #hashtag #android #app" becomes {$or: [ {"username": "xxx"}, {"hashtags": ["#hashtag", "#android", "#app"]} ]} // default search type is 'or' 
-"username: xxxx and hashtags: #hashtag #android #app" becomes {$and: [ {$userName: "xxx"}, {$hashtags: ["#hashtag", "#android", "#app"]} ]} // search type is 'and'
+*"test" becomes {$hashtags: ["#test"]} // default search field is hashtag*
+
+*"username: xxxx hashtags: #hashtag #android #app" becomes {$or: [ {"username": "xxx"}, {"hashtags": ["#hashtag", "#android", "#app"]} ]} // default search type is 'or' *
+
+*"username: xxxx and hashtags: #hashtag #android #app" becomes {$and: [ {$userName: "xxx"}, {$hashtags: ["#hashtag", "#android", "#app"]} ]} // search type is 'and'*
   
 
 ### **Surpise Item**
