@@ -1,4 +1,4 @@
-package com.comp6442.route42.model;
+package com.comp6442.route42.utils;
 
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.MockLocation;
