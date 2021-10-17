@@ -6,7 +6,6 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import timber.log.Timber;
 
 public class RouteMapFragment extends MapFragment {
   private static final String ARG_PARAM1 = "post";
-  private static final float ZOOM = 10f;
   private static final int LINE_COLOR = Color.rgb(255, 54, 54);
   private Post post;
 
@@ -72,29 +70,30 @@ public class RouteMapFragment extends MapFragment {
   }
 
   private void renderPost(Post post) {
+    // add start and end marker, and draw lines
     LatLng prevLocation = post.getLatLng();
     LatLng currentLocation;
 
-    // add start and end marker, and draw lines
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
+    builder.include(prevLocation);
     googleMap.addMarker(new MarkerOptions().position(prevLocation).title("Start"));
+
     for (Point pt : post.getRoute().subList(1, post.getRoute().size())) {
       currentLocation = new LatLng(pt.getLatitude(), pt.getLongitude());
       googleMap.addPolyline(
               new PolylineOptions()
                       .add(prevLocation, currentLocation)
                       .width(5)
-                      .color(LINE_COLOR));
+                      .color(LINE_COLOR)
+      );
       builder.include(currentLocation);
       prevLocation = currentLocation;
     }
     googleMap.addMarker(new MarkerOptions().position(prevLocation).title("End"));
 
-    // build bounds, move camera, set zoom
+    // build bounds and move camera
     LatLngBounds bounds = builder.build();
     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 300);
-    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), ZOOM));
-    Handler handler = new Handler();
-    handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
+    googleMap.moveCamera(cameraUpdate);
   }
 }
