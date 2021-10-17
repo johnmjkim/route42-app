@@ -1,5 +1,4 @@
-package com.comp6442.route42.ui;
-
+package com.comp6442.route42.ui.adapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

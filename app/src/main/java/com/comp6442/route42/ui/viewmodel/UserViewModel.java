@@ -1,4 +1,4 @@
-package com.comp6442.route42.data;
+package com.comp6442.route42.ui.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
