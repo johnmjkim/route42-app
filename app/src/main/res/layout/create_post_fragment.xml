@@ -17,6 +17,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/create_post_schedule_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="21dp"
+        android:layout_marginBottom="120dp"
+        android:text="Schedule"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.914"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/cancel_post_button"
         android:layout_width="wrap_content"
@@ -60,7 +71,7 @@
         android:id="@+id/post_description_input"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        android:layout_marginBottom="144dp"
+        android:layout_marginBottom="160dp"
         android:background="@color/dark2"
         android:drawablePadding="15dp"
         android:ems="10"
