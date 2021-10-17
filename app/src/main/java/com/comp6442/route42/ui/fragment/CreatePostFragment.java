@@ -6,14 +6,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -25,8 +29,10 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
+import com.comp6442.route42.ui.activity.MainActivity;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
 import com.comp6442.route42.ui.viewmodel.UserViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -45,11 +51,9 @@ public class CreatePostFragment extends Fragment {
   private ActiveMapViewModel activeMapViewModel;
   private PostRepository postRepository;
   private SwitchMaterial scheduleSwitchButton;
-  private MaterialButton createPostButton ;
+  private MaterialButton createPostButton;
+  private int scheduledDelay =0;
 
-  public static CreatePostFragment newInstance() {
-    return new CreatePostFragment();
-  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +77,7 @@ public class CreatePostFragment extends Fragment {
     userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
     userViewModel.loadProfileUser(this.uid);
     scheduleSwitchButton = requireView().findViewById(R.id.create_post_schedule_switch);
-     createPostButton = view.findViewById(R.id.create_post_button);
+    createPostButton = view.findViewById(R.id.create_post_button);
     postRepository = PostRepository.getInstance();
     ImageView postImage = view.findViewById(R.id.create_post_image);
 
@@ -87,54 +91,41 @@ public class CreatePostFragment extends Fragment {
     setPostButton();
 
   }
+
+  /**
+   * Sets behavior of the post scheduler switch.
+   */
   private void setSwitchButton() {
     scheduleSwitchButton.setOnCheckedChangeListener((buttonView,isChecked) -> {
       if(isChecked) {
-          Timber.i("scheduled post");
-          MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
-                  new ContextThemeWrapper(requireActivity(), R.style.AlertDialog_AppCompat)
-          );
-          dialogBuilder.setTitle("Select Delay (Minutes)")
-                  .setItems(SchedulablePost.delayOptions, (dialogInterface, i) -> {
-                    createActivityPost();
-                    int scheduleDelay = Integer.parseInt((String) SchedulablePost.delayOptions[i]);
-                    Snackbar snackbar = Snackbar.make(
-                            requireView(),
-                            "Posting in " + scheduleDelay + "minutes.",
-                            Snackbar.LENGTH_INDEFINITE
-                    );
-                    Bundle bundle = new Bundle();
-                    bundle.putString("uid", uid);
-                    bundle.putInt("delay", scheduleDelay);
-                    Fragment fragment = new FeedFragment();
-                    fragment.setArguments(bundle);
-                    getActivity()
-                            .getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container_view, fragment)
-                            .commit();
-                    snackbar.show();
-                  }).create().show();
+        Timber.i("scheduled post");
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
+                new ContextThemeWrapper(requireActivity(), R.style.AlertDialog_AppCompat)
+        );
+        dialogBuilder.setTitle("Select Delay (Minutes)")
+                .setItems(SchedulablePost.delayOptions, (dialogInterface, i) -> {
+                  scheduledDelay = Integer.parseInt((String) SchedulablePost.delayOptions[i]);
+                  Toast.makeText(requireContext(), "Set post delay to " + scheduledDelay + " minute(s).", Toast.LENGTH_SHORT).show();
+                }).create().show();
       }
     });
   }
 
   private void setPostButton() {
-    MaterialButton createPostButton = this.requireView().findViewById(R.id.create_post_button);
-      createPostButton.setOnClickListener(event -> {
-        createActivityPost();
-        // navigate to feed
-        Bundle bundle = new Bundle();
-        bundle.putString("uid", uid);
-        Fragment fragment = new FeedFragment();
-        fragment.setArguments(bundle);
-        getActivity()
-                .getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container_view, fragment)
-                .commit();
-      });
-    }
+    createPostButton.setOnClickListener(event -> {
+      createActivityPost();
+      // navigate to feed
+      Bundle bundle = new Bundle();
+      bundle.putString("uid", uid);
+      Fragment fragment = new ProfileFragment();
+      fragment.setArguments(bundle);
+      getActivity()
+              .getSupportFragmentManager()
+              .beginTransaction()
+              .replace(R.id.fragment_container_view, fragment)
+              .commit();
+    });
+  }
 
   private void setCancelButton() {
     MaterialButton cancelPostButton = this.requireView().findViewById(R.id.cancel_post_button);
@@ -163,15 +154,15 @@ public class CreatePostFragment extends Fragment {
     String snapshotPath = getContext().getFilesDir().getPath() + "/" + getArguments().getString("local_filename");
     if(scheduleSwitchButton.isChecked()) {
       new SchedulablePost(snapshotPath, activeMapViewModel.getSnapshotFileName(),
-                uid,
-                liveUser.getUserName(),
-                liveUser.getIsPublic(),
-                liveUser.getProfilePicUrl(),
-                postDescription,
-                "",
+              uid,
+              liveUser.getUserName(),
+              liveUser.getIsPublic(),
+              liveUser.getProfilePicUrl(),
+              postDescription,
+              "",
               latitude,
               longitude
-              )
+      )
               .schedule(requireContext(), 1);
     } else {
       Post newPost = new Post( UserRepository.getInstance().getOne(uid),

@@ -230,20 +230,23 @@ public class ActiveMapFragment extends MapFragment {
 
   public void activityBtnClickHandler() {
     String[] dialogItems;
-    if (!requestingLocationUpdates) dialogItems = new String[]{"Start", "End Activity"};
-    else dialogItems = new String[]{"Pause", "End Activity"};
+    if (requestingLocationUpdates)  {
+      dialogItems = new String[]{"Pause", "End Activity"};
+      MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
+              new ContextThemeWrapper(requireActivity(), R.style.AlertDialog_AppCompat)
+      );
 
-    MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
-            new ContextThemeWrapper(requireActivity(), R.style.AlertDialog_AppCompat)
-    );
-    dialogBuilder.setTitle("Select Action")
-            .setItems(dialogItems, (dialogInterface, i) -> {
-              if (i == 1) endUserActivity();
-              else if (i == 0) {
-                if (requestingLocationUpdates) stopLocationUpdates();
-                else startLocationUpdates();
-              }
-            }).create().show();
+      dialogBuilder.setTitle("Select Action")
+              .setItems(dialogItems, (dialogInterface, i) -> {
+                if (i == 1) endUserActivity();
+                else if (i == 0) {
+                   stopLocationUpdates();
+                }
+              }).create().show();
+    } else {
+      //simply start requesting updates
+      startLocationUpdates();
+    }
   }
 
   private void stopLocationUpdates() {

@@ -50,6 +50,7 @@ public class ScheduledTask extends Worker {
                         new ArrayList<>(0));
                 // upload post to database storage
                 PostRepository.getInstance().createOne(newPost);
+
             }
 
         }

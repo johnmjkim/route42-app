@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 //    else showSystemUI();
   }
 
-  private void hideSystemUI() {
+  public void hideSystemUI() {
     // Enables fullscreen
     View decorView = getWindow().getDecorView();
     decorView.setSystemUiVisibility(
