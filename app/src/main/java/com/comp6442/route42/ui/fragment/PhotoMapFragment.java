@@ -46,7 +46,7 @@ import timber.log.Timber;
 public class PhotoMapFragment extends MapFragment {
   private static final String ARG_PARAM1 = "posts";
   private static final String ARG_PARAM2 = "drawLine";
-  private static final float ZOOM = 12f;
+  private static final float ZOOM = 10f;
   private static final boolean useKDTree = true;
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private List<Post> posts = new ArrayList<>();
@@ -91,9 +91,6 @@ public class PhotoMapFragment extends MapFragment {
    * Manipulates the map once available.
    * This callback is triggered when the map is ready to be used.
    * This is where we can add markers or lines, add listeners or move the camera.
-   * If Google Play services is not installed on the device, the user will be prompted to
-   * install it inside the SupportMapFragment. This method will only be triggered once the
-   * user has installed Google Play services and returned to the app.
    */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

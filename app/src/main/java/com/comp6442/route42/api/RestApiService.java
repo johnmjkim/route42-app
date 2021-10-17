@@ -4,11 +4,14 @@ import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.google.gson.Gson;
 
-import okhttp3.OkHttpClient;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
+import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
 
 public abstract class RestApiService {
   protected Retrofit retrofit;
@@ -22,7 +25,7 @@ public abstract class RestApiService {
     String url = (BuildConfig.EMULATOR) ? "http://192.168.0.2:8080/" : "http://13.211.169.204:8080/";
     HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
     OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-    
+
     retrofit = new Retrofit.Builder()
             .baseUrl(url)
             .addConverterFactory(GsonConverterFactory.create(gson))
