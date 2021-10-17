@@ -20,11 +20,10 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.UserViewModel;
 
 import com.comp6442.route42.data.model.Activity;
-import com.comp6442.route42.data.model.User;
 //import com.comp6442.route42.ui.fragment.ActiveMapFragment;
 import com.comp6442.route42.ui.fragment.ActiveMapFragment;
 import com.comp6442.route42.ui.fragment.FeedFragment;
-import com.comp6442.route42.ui.fragment.PhotoMapFragment;
+import com.comp6442.route42.ui.fragment.PointMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -207,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 //        toolbar.setTitle(R.string.title_fragment_feed);
         break;
       case R.id.navigation_map:
-        fragment = new PhotoMapFragment();
+        fragment = new PointMapFragment();
 //        toolbar.setTitle(R.string.title_fragment_map);
         break;
     }

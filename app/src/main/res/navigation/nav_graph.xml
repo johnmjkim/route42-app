@@ -30,7 +30,7 @@
     </fragment>
     <fragment
             android:id="@+id/mapFragment"
-            android:name="com.comp6442.route42.ui.fragment.PhotoMapFragment"
+            android:name="com.comp6442.route42.ui.fragment.PointMapFragment"
             android:label="fragment_map"
             tools:layout="@layout/fragment_photo_map">
         <action

@@ -3,7 +3,6 @@ package com.comp6442.route42.ui.fragment;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -43,25 +41,22 @@ import java.util.concurrent.Future;
 
 import timber.log.Timber;
 
-public class PhotoMapFragment extends MapFragment {
+public class PointMapFragment extends MapFragment {
   private static final String ARG_PARAM1 = "posts";
-  private static final String ARG_PARAM2 = "drawLine";
   private static final float ZOOM = 10f;
   private static final boolean useKDTree = true;
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private List<Post> posts = new ArrayList<>();
 
-  public PhotoMapFragment() {
+  public PointMapFragment() {
     super(R.id.map_fragment, R.raw.style_json);
   }
 
-  public static PhotoMapFragment newInstance(List<Post> param1, boolean param2) {
-    Timber.i("%d posts received, drawLine = %s", param1.size(), param2);
-    PhotoMapFragment fragment = new PhotoMapFragment();
-
+  public static PointMapFragment newInstance(List<Post> param1) {
+    Timber.i("%d posts received", param1.size());
+    PointMapFragment fragment = new PointMapFragment();
     Bundle args = new Bundle();
     args.putParcelableArrayList(ARG_PARAM1, (ArrayList<Post>) param1);
-    args.putBoolean(ARG_PARAM2, param2);
     fragment.setArguments(args);
     return fragment;
   }
@@ -87,11 +82,6 @@ public class PhotoMapFragment extends MapFragment {
     return inflater.inflate(R.layout.fragment_photo_map, container, false);
   }
 
-  /**
-   * Manipulates the map once available.
-   * This callback is triggered when the map is ready to be used.
-   * This is where we can add markers or lines, add listeners or move the camera.
-   */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -102,7 +92,6 @@ public class PhotoMapFragment extends MapFragment {
    * posts.size() == 0 && userLocation == null: set user location as sydney, geo search
    * posts.size() == 0 && userLocation != null: geo search based on user location (points)
    * posts.size() >= 1: render posts as points
-   * TODO when user taps on "only once" or "deny" and then approve, map should update with user's location
    */
   protected void renderMap(Location location) {
     Timber.i("Rendering map");
@@ -125,21 +114,6 @@ public class PhotoMapFragment extends MapFragment {
         geoQuery(center);
       }
     }
-  }
-
-  private void plotLine(LatLng userLocation, LatLng location) {
-    googleMap.addMarker(new MarkerOptions().position(location).title("Image"));
-    googleMap.addPolyline(new PolylineOptions().add(userLocation, location).width(5).color(Color.RED));
-
-    LatLngBounds bounds = new LatLngBounds.Builder()
-            .include(userLocation)
-            .include(location)
-            .build();
-
-    int padding = 300; // offset from edges of the map in pixels
-    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-    Handler handler = new Handler();
-    handler.postDelayed(() -> googleMap.animateCamera(cameraUpdate), 1000);
   }
 
   private List<Post> getKNearestNeighbor(int k, LatLng location) {
