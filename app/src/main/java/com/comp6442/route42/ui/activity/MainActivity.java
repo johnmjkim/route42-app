@@ -15,16 +15,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
-import com.comp6442.route42.data.ActiveMapViewModel;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
-import com.comp6442.route42.data.UserViewModel;
 
 import com.comp6442.route42.data.model.Activity;
-//import com.comp6442.route42.ui.fragment.ActiveMapFragment;
 import com.comp6442.route42.ui.fragment.ActiveMapFragment;
 import com.comp6442.route42.ui.fragment.FeedFragment;
 import com.comp6442.route42.ui.fragment.PointMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
+import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
+import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationBarView;

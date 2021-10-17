@@ -38,7 +38,7 @@ public abstract class FirestoreRepository<T extends Model> extends Repository<T>
     this.collection = firestore.collection(collectionPath);
   }
 
-  abstract DocumentReference getOne(String id);
+  public abstract DocumentReference getOne(String id);
 
-  abstract void setMany(List<T> items);
+  public abstract void setMany(List<T> items);
 }
