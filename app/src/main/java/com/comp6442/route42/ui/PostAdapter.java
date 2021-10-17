@@ -19,8 +19,9 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.PhotoMapFragment;
+import com.comp6442.route42.ui.fragment.PointMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
+import com.comp6442.route42.ui.fragment.RouteMapFragment;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.storage.StorageReference;
 
@@ -57,7 +58,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     // set profile pic
     Timber.i("Fetched post: %s", post);
 
-
     if (post.getProfilePicUrl().startsWith("http")) {
       Glide.with(viewHolder.imageView.getContext())
               .load(post.getProfilePicUrl())
@@ -77,13 +77,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
               .circleCrop()
               .into(viewHolder.userIcon);
     }
-    if(post.getImageUrl().startsWith("http")) {
+
+    // set post photo
+    if (post.getImageUrl().startsWith("http")) {
       Glide.with(viewHolder.imageView.getContext())
               .load(post.getImageUrl())
               .diskCacheStrategy(DiskCacheStrategy.NONE)
               .skipMemoryCache(false)
               .centerCrop()
               .into(viewHolder.imageView);
+
     } else {
       StorageReference postImageRef = FirebaseStorageRepository.getInstance().get(post.getImageUrl());
       Glide.with(viewHolder.imageView.getContext())
@@ -94,8 +97,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
               .into(viewHolder.imageView);
     }
 
+    viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Fragment fragment = new RouteMapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("post", post);
+        fragment.setArguments(bundle);
+        ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container_view, fragment)
+                .addToBackStack(this.getClass().getCanonicalName())
+                .commit();
+      }
+    });
+
     Timber.d("OnBindView complete.");
   }
+
   private void setViewBehavior(Post post, PostViewHolder viewHolder) {
     Timber.d("breadcrumb");
     // Add listener and navigate to the user's profile on click
@@ -113,7 +132,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
       viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          Fragment fragment = new PhotoMapFragment();
+          Fragment fragment = new PointMapFragment();
           ArrayList<Post> posts = new ArrayList<>();
           posts.add(post);
           Bundle bundle = new Bundle();

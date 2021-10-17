@@ -20,8 +20,9 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.PhotoMapFragment;
+import com.comp6442.route42.ui.fragment.PointMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
+import com.comp6442.route42.ui.fragment.RouteMapFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
@@ -94,6 +95,20 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
               .into(viewHolder.imageView);
     }
 
+    viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Fragment fragment = new RouteMapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("post", post);
+        fragment.setArguments(bundle);
+        ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container_view, fragment)
+                .addToBackStack(this.getClass().getCanonicalName())
+                .commit();
+      }
+    });
 
     Timber.d("OnBindView complete.");
   }
@@ -115,11 +130,9 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          Fragment fragment = new PhotoMapFragment();
-          ArrayList<Post> posts = new ArrayList<>();
-          posts.add(post);
+          Fragment fragment = new PointMapFragment();
           Bundle bundle = new Bundle();
-          bundle.putParcelableArrayList("posts", posts);
+          bundle.putParcelable("post", post);
           fragment.setArguments(bundle);
           ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
                   .beginTransaction()
