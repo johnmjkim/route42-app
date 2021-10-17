@@ -71,13 +71,13 @@ With Route42, users can:
 ### UML
 
 ![ClassDiagramExample](./images/ClassDiagramExample.png)
-*[Replace the above with a class diagram. You can look at how we have linked an image here as an example of how you can do it too.]*
+[Link](https://app.creately.com/diagram/LZ01bGYEWO5)
 
 ### Architecture
 
-![img](Report.assets/final-architecture.png)
+<img src="report.assets/Architecture.png" alt="Architecture" style="zoom:67%;" />
 
- [Source](https://developer.android.com/jetpack/guide)
+[Link](https://app.creately.com/diagram/K2ScahytOcK)
 
 ## Design Decisions
 
@@ -146,8 +146,11 @@ With Route42, users can:
 
 ### **Grammars**
 
-*Search Engine*
-<br> *Production Rules* <br>
+Search Engine
+
+
+
+*Production Rules* <br>
 \<Non-Terminal> ::= \<some output>
 <br>
 \<Non-Terminal> ::= \<some output>
