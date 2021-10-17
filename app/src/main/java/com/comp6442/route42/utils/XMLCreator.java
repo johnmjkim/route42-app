@@ -37,12 +37,12 @@ public class XMLCreator {
             postDoc = postDocBuilder.newDocument();
             Element rootEl  = postDoc.createElementNS("", "ActivityPost");
             postDoc.appendChild(rootEl);
-            rootEl.appendChild(createTextElement(postDoc, "uid", post.getUid().toString()));
-            rootEl.appendChild(createTextElement(postDoc, "profilePicUrl", post.getProfilePicUrl()));
-            rootEl.appendChild(createTextElement(postDoc, "postDescription", post.getPostDescription()));
-            rootEl.appendChild(createTextElement(postDoc, "Latitude", post.getLatitude().toString()));
-            rootEl.appendChild(createTextElement(postDoc, "Longitude", post.getLongitude().toString()));
-            rootEl.appendChild(createTextElement(postDoc, "imageUrl", post.getImageUrl()));
+//            rootEl.appendChild(createTextElement(postDoc, "uid", post.getUid().toString()));
+//            rootEl.appendChild(createTextElement(postDoc, "profilePicUrl", post.getProfilePicUrl()));
+//            rootEl.appendChild(createTextElement(postDoc, "postDescription", post.getPostDescription()));
+//            rootEl.appendChild(createTextElement(postDoc, "Latitude", post.getLatitude().toString()));
+//            rootEl.appendChild(createTextElement(postDoc, "Longitude", post.getLongitude().toString()));
+//            rootEl.appendChild(createTextElement(postDoc, "imageUrl", post.getImageUrl()));
             return postDoc;
         }catch (Exception e) {
             Timber.e(e);
@@ -52,6 +52,7 @@ public class XMLCreator {
     public static void saveLocalXMLFromDOM(Document dom, String storagePath) throws TransformerException {
         try {
             Transformer t = TransformerFactory.newInstance().newTransformer();
+            Timber.i("storage path" + storagePath);
             Result out = new StreamResult(new File(storagePath));
             t.transform(new DOMSource(dom), out);
         } catch (TransformerConfigurationException e) {
