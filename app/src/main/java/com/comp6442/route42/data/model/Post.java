@@ -1,9 +1,11 @@
 package com.comp6442.route42.data.model;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
@@ -21,6 +23,7 @@ import java.util.regex.Pattern;
 @IgnoreExtraProperties
 public class Post extends Model implements Parcelable {
   public static final Creator<Post> CREATOR = new Creator<Post>() {
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public Post createFromParcel(Parcel in) {
       return new Post(in);
@@ -42,6 +45,7 @@ public class Post extends Model implements Parcelable {
   private String locationName;
   private Double latitude;
   private Double longitude;
+  private List<Point> route = new ArrayList<>();;
   private String geohash = "";
   private List<String> hashtags = new ArrayList<>();
   private int likeCount = 0;
@@ -89,6 +93,7 @@ public class Post extends Model implements Parcelable {
     setGeohash();
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.Q)
   protected Post(Parcel in) {
     this.id = in.readString();
     this.uid = FirebaseFirestore.getInstance().document(in.readString());
@@ -102,6 +107,7 @@ public class Post extends Model implements Parcelable {
     this.locationName = in.readString();
     this.latitude = in.readDouble();
     this.longitude = in.readDouble();
+    this.route = in.readParcelableList(new ArrayList<>(), Point.class.getClassLoader());
     this.geohash = in.readString();
     this.hashtags = in.createStringArrayList();
     this.postDatetime = new Date((Long) in.readValue(Long.class.getClassLoader()));
@@ -113,6 +119,7 @@ public class Post extends Model implements Parcelable {
     return 0;
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.Q)
   @Override
   public void writeToParcel(Parcel parcel, int i) {
     parcel.writeString(this.id);
@@ -126,6 +133,7 @@ public class Post extends Model implements Parcelable {
     parcel.writeString(this.locationName);
     parcel.writeDouble(this.latitude);
     parcel.writeDouble(this.longitude);
+    parcel.writeParcelableList(this.route, PARCELABLE_WRITE_RETURN_VALUE);
     parcel.writeString(this.geohash);
     parcel.writeStringList(this.hashtags);
 
@@ -246,6 +254,15 @@ public class Post extends Model implements Parcelable {
     this.likedBy = likedBy;
   }
 
+
+  public List<Point> getRoute() {
+    return route;
+  }
+
+  public void setRoute(List<Point> route) {
+    this.route = route;
+  }
+
   public String getGeohash() {
     return geohash;
   }
@@ -263,7 +280,6 @@ public class Post extends Model implements Parcelable {
   }
 
   public static List<String> getHashTagsFromTextInput(String textInput) {
-
     List<String> hashTags = new ArrayList<>();
 
     String currentTag = "";
@@ -294,6 +310,8 @@ public class Post extends Model implements Parcelable {
     }
     return hashTags;
   }
+
+
   @NonNull
   @Override
   public String toString() {
@@ -305,14 +323,15 @@ public class Post extends Model implements Parcelable {
             ", profilePicUrl='" + profilePicUrl + '\'' +
             ", postDatetime=" + postDatetime +
             ", postDescription='" + postDescription + '\'' +
-            ", imageUrl='" + imageUrl + '\'' +
-            ", hashtags=" + hashtags +
-            ", likeCount=" + likeCount +
-            ", likedBy=" + likedBy +
             ", locationName='" + locationName + '\'' +
             ", latitude=" + latitude +
             ", longitude=" + longitude +
-            ", geohash=" + geohash +
+            ", route=" + route +
+            ", geohash='" + geohash + '\'' +
+            ", hashtags=" + hashtags +
+            ", likeCount=" + likeCount +
+            ", imageUrl='" + imageUrl + '\'' +
+            ", likedBy=" + likedBy +
             '}';
   }
 }

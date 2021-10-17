@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp6442.route42.R;
-import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.UserRepository;
-import com.comp6442.route42.ui.UserListAdapter;
+import com.comp6442.route42.ui.adapter.UserListAdapter;
+import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
