@@ -18,8 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
-import com.comp6442.route42.data.ActiveMapViewModel;
-import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.SchedulablePost;
@@ -27,6 +25,8 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
+import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
+import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
