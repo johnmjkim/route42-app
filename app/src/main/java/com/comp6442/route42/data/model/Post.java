@@ -1,5 +1,5 @@
 package com.comp6442.route42.data.model;
-
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
-
 @IgnoreExtraProperties
 public class Post extends Model implements Parcelable {
   public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -315,4 +314,6 @@ public class Post extends Model implements Parcelable {
             ", geohash=" + geohash +
             '}';
   }
+
+
 }

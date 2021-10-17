@@ -21,11 +21,13 @@ import com.comp6442.route42.data.ActiveMapViewModel;
 import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.Post;
+import com.comp6442.route42.data.model.SchedulablePost;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -113,30 +115,46 @@ public class CreatePostFragment extends Fragment {
    * Creates new Post given map snapshot and the activity data collected.
    */
   private void createActivityPost() {
+    SwitchMaterial scheduleSwitch = requireView().findViewById(R.id.create_post_schedule_switch);
+    boolean schedule = scheduleSwitch.isChecked();
     User liveUser = userViewModel.getLiveUser().getValue();
     assert liveUser != null;
     String profilePicUrl = liveUser.getProfilePicUrl();
-    FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(getArguments().getString("local_filename"),getArguments().getString("storage_filename"), getContext().getFilesDir().getPath());
     String postDescription = postDescriptionInput.getText().toString().trim();
     Double latitude = activeMapViewModel.getDeviceLocation().getValue().getLatitude();
     Double longitude = activeMapViewModel.getDeviceLocation().getValue().getLongitude();
     String imageUrl = "snapshots/" + activeMapViewModel.getSnapshotFileName();
-    Post newPost = new Post( UserRepository.getInstance().getOne(uid),
-            liveUser.getUserName(),
-            liveUser.getIsPublic(),
-            profilePicUrl,
-            new Date(),
-            postDescription,
-            "",
-            latitude,
-            longitude,
-            getHashTagsFromTextInput(postDescription),
-            0,
-            imageUrl,
-            new ArrayList<>(0));
-    postRepository.createOne(newPost);
+    if(schedule) {
+      new SchedulablePost()
+    } else {
+      Post newPost = new Post( UserRepository.getInstance().getOne(uid),
+              liveUser.getUserName(),
+              liveUser.getIsPublic(),
+              profilePicUrl,
+              new Date(),
+              postDescription,
+              "",
+              latitude,
+              longitude,
+              getHashTagsFromTextInput(postDescription),
+              0,
+              imageUrl,
+              new ArrayList<>(0));
+      savePost(newPost);
+    }
     activeMapViewModel.reset();
+  }
 
+  private void schedulePost() {
+
+  }
+
+  private void savePost(Post newPost)  {
+    String pathToFile =getContext().getFilesDir().getPath() + "/" + getArguments().getString("local_filename");
+    String storedFileName = getArguments().getString("storage_filename");
+    FirebaseStorageRepository.getInstance()
+            .uploadSnapshotFromLocal(pathToFile,storedFileName );
+    postRepository.createOne(newPost);
   }
 
 }

@@ -68,9 +68,12 @@ dependencies {
 
     // UI
     implementation 'com.google.android.material:material:1.4.0'
-
+    //Worker thread support
+    def work_version = "2.7.0"
+    implementation "androidx.work:work-runtime:$work_version"
     // ----------- Navigation Component ------------
     def nav_version = "2.3.5"
+
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
