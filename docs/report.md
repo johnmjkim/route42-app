@@ -1,4 +1,4 @@
-# Route 42 Report
+# Route 42 Design Document
 
 ## Table of Contents
 
@@ -12,16 +12,24 @@
 6. [Implemented Features](#implemented-features)
 7. [Team Meetings](#team-meetings)
 
-## Team Members and Roles
+## Team
+
+### Team Members and Roles
 
 | UID | Name | Role |
 | :--- | :----: | ---: |
 | u7233149 | Kai Hirota | Lead / Architect |
 | u7269158 | John (Min Jae) Kim | Data Structure, Feature Testing |
-| u7234659 | Honggic Oh | Search,Feature Testing |
+| u7234659 | Honggic Oh | Search, Feature Testing |
 | u7199021| Theo Darmawan | Full-Stack |
 
-## Conflict Resolution Protocol
+### Meeting minutes
+
+- [Meeting 1 - 31st August](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/aug31.md)
+- [Meeting 2 - 7th September](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/sep7.md)
+- [Meeting 3 - 8th October](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/oct8.md)
+
+### Conflict Resolution Protocol
 
 - Conflicts will be resolved through civil discussion and democratic voting process involving all parties interested in the matter.
 	- For example, if someone wants to change the direction or the concept of the app, everyone must be involved in the decision-making. If someone wants to change a small class in the project, then that can be done either through voting, or by mutual agreement upon directly discussing with the person who created the class.
@@ -29,46 +37,49 @@
 
 ## Application Description
 
+**Targets Users: Workout Enthusiasts**
 
-**Targets Users: Workout enthusiast**
+### Use cases
 
-* *Users can use the app to share their workouts*
-* *Users can use the app during workout to track metrics and route*
-* *Users can view and like other people's workouts*
+With Route42, users can:
 
-The Route42 App allows users to collect data on their workout activities including running, cycling , and walking, and posting the activities to the social network feed. During the activity itself, the app collects location data and displays real time location, speed, duration and calories burned.
+* Record various workouts, including walking, running, and cycling.
+* Track performance metrics and see the recorded workouts in an interactive map.
+* Follow other users, and view and like other people's workouts.
 
-Users can easily track their current location and route on a map element. They can also choose to pause or resume the activity at their discretion by pressing the Activity button and selecting the respective option from the menu. Navigating away from the Activity screen will automatically pause their workout. 
+### Examples
 
-Once users have completed their workout, they end the Activity and are given the option to create a post of that activity. The app will include the route map (properly scaled), and a summary of the activity data.
-Users can also add their own post description, including multiple hashtags, which will be recognized and added to the user's post. 
+1. Scenario: As an avid runner, Adam wants to record his daily jogs.
+	1. When heading out for a run, Adam brings his smartphone, like he usually does in order to listen to music.
+	2. Once Adam has warmed up and is ready to start his workout, he will open the Route42 app, tap on the `+` button to create a new post.
+	3. Adam selects which kind of work out he will be engaging in, and then tap on the start button to begin the tracking.
+	4. Until Adam taps on "pause" or "end activity," the app will record Adam's location every 10 seconds.
+	5. Once Adam finishes a workout, he can create a post of the completed workout, and add multiple hashtags.
+2. Scenario: As a triathlete, Emily wants to record her various types of workouts and analyze the performance change over time.
+	1. After using Route42 to log a workout, Emily can edit the post description to note any self-evaluation.
+	2. After having used the app to record several workouts, Emily can view her own profile to see her past recorded workouts.
+	3. Since performance metrics like distance and pace are recorded as well, Emily will be able to see how her performance has changed.
+	4. Emily will also be able to see the instantaneous metrics during her workout, such as the current location, speed, distance from the starting point, elapsed time, and calories burned.
+	5. Sometimes, Emily may choose to run or cycle in remote locations. She can record the workout, and schedule the post to be posted later.
+3. Scenario: As a Software Engineer approaching 35 years old, Jesus would like to start getting in the habit of jogging, but have not been able to start.
+	1. Jesus can follow his friends and strangers on Route42 app to see how others are working out.
+	2. Jesus sees the improvement in metrics such as distance and pace over time, and gets a better idea of the rate of progress he could strive towards.
+	3. Jesus feels more motivated to start working out after seeing his friends improve over time.
+	4. When tired mid-workout, Jesus can also pause the workout and rest.
+	5. Navigating away from the Activity screen will automatically the workout. 
 
-Additionally users may choose to schedule their posting to the network for later, for example if they are without an internet connection, using a simple toggle.
-
-
-**Use Case Example**
-[To-do: insert screengrabs]
-1. Bambang is a student at ANU. He is ready to start a run around campus.
-2. Bambang starts up Route42 and clicks Add button to begin a new Activity
-3. He starts the activity GPS data tracking and begins his run.
-4. During the run, he notices he has his shoelaces untied. 
-5. He pauses the activity, ties his shoes, and resumes the activity.
-6. Bambang finishes the run! He ends the activity.
-7. He writes a cool caption for sharing his achievement. 
-8. Unfortunately he is out of data at this moment, but he chooses to schedule the post in 30 minutes. Problem solved. 
-
-
-
-
-
-*List all the use cases in text descriptions or create use case diagrams. Please refer to https://www.visual-paradigm.com/guide/uml-unified-modeling-language/what-is-use-case-diagram/ for use case diagram.*
-
-## Application UML
+### UML
 
 ![ClassDiagramExample](./images/ClassDiagramExample.png)
 *[Replace the above with a class diagram. You can look at how we have linked an image here as an example of how you can do it too.]*
 
-## Application Design and Decisions
+### Architecture
+
+![img](Report.assets/final-architecture.png)
+
+ [Source](https://developer.android.com/jetpack/guide)
+
+## Design Decisions
 
 ### **Data Structures**
 
@@ -98,11 +109,17 @@ Additionally users may choose to schedule their posting to the network for later
 
 - Single-activity architecture
 
+  - <img src="https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png" alt="img" style="zoom:50%;" />
+
+    [Source](https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png)
+    
   - What: Composition of Android application based on single or a couple activities, each managing one or more fragments.
+
   - Where: Entire application.
+
   - Why:
-  	- Route42 primarily has one activity called `MainActivity` which contains a fragment container view, which transitions between fragments based on user selection from the bottom navigation bar.
-  	- Usage of this architecture reduces lines of code required for the whole app, while making it easier to prototype new features.
+    - Route42 primarily has one activity called `MainActivity` which contains a fragment container view, which swaps between fragments based on user interactions.
+    - Usage of this architecture reduces lines of code required for the whole app, while making it easier to prototype new features.
 
 - REST API
 
@@ -126,15 +143,6 @@ Additionally users may choose to schedule their posting to the network for later
   - Where: `PhotoMapFragment`
   - Why: When making the REST API call to `search/knn`, the communication is handled by a background worker thread. This ensures the UI thread (the main thread) does not freeze and remains responsive.
 
-  
-
-  <img src="https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png" alt="img" style="zoom:50%;" />
-
-  [Source](https://oozou.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBcVVvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--c8573fcc38b58509d10a83145f6b519d306ed039/1*VSXfNBCsxa3_wCOAqR88aQ.png)
-
-  ![img](Report.assets/final-architecture.png)
-
-   [Source](https://developer.android.com/jetpack/guide)
 
 ### **Grammars**
 
@@ -248,9 +256,4 @@ Firebase Integration
 
 	timeline update as the remote database is updated without restarting the application. E.g. User A makes a post, user B on a separate instance of the application sees user A’s post appear on their timeline without restarting their application. (very hard)
 
-## Team Meetings
-
-- [Meeting 1 - 31st August](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/aug31.md)
-- [Meeting 2 - 7th September](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/sep7.md)
-- [Meeting 3 - 8th October](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/oct8.md)
-
+## Appendix
