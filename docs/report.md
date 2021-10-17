@@ -19,46 +19,47 @@
 | u7233149 | Kai Hirota | Lead / Architect |
 | u7269158 | John (Min Jae) Kim | Data Structure, Feature Testing |
 | u7234659 | Honggic Oh | Search,Feature Testing |
-| [uid] | [name] | Full-Stack |
+| u7199021| Theo Darmawan | Full-Stack |
 
 ## Conflict Resolution Protocol
 
 - Conflicts will be resolved through civil discussion and democratic voting process involving all parties interested in the matter.
 	- For example, if someone wants to change the direction or the concept of the app, everyone must be involved in the decision-making. If someone wants to change a small class in the project, then that can be done either through voting, or by mutual agreement upon directly discussing with the person who created the class.
+	
 
 ## Application Description
 
-*[What is your application, what does it do? Include photos or diagrams if necessary]*
 
-*Here is a pet specific social media application example*
+**Targets Users: Workout enthusiast**
 
-*PetBook is a social media application specifically targetting pet owners... it provides... certified practitioners, such as veterians are indicated by a label next to their profile...*
+* *Users can use the app to share their workouts*
+* *Users can use the app during workout to track metrics and route*
+* *Users can view and like other people's workouts*
 
-**Application Use Cases and or Examples**
+The Route42 App allows users to collect data on their workout activities including running, cycling , and walking, and posting the activities to the social network feed. During the activity itself, the app collects location data and displays real time location, speed, duration and calories burned.
 
-*[Provide use cases and examples of people using your application. Who are the target users of your application? How do the users use your application?]*
+Users can easily track their current location and route on a map element. They can also choose to pause or resume the activity at their discretion by pressing the Activity button and selecting the respective option from the menu. Navigating away from the Activity screen will automatically pause their workout. 
 
-*Here is a pet training application example*
+Once users have completed their workout, they end the Activity and are given the option to create a post of that activity. The app will include the route map (properly scaled), and a summary of the activity data.
+Users can also add their own post description, including multiple hashtags, which will be recognized and added to the user's post. 
 
-*Molly wants to inquiry about her cat, McPurr's recent troublesome behaviour*
-1. *Molly notices that McPurr has been hostile since...*
-2. *She makes a post about... with the tag...*
-3. *Lachlan, a vet, writes a reply to Molly's post...*
-4. ...
-5. *Molly gives Lachlan's reply a 'tick' response*
+Additionally users may choose to schedule their posting to the network for later, for example if they are without an internet connection, using a simple toggle.
 
-*Here is a map navigation application example*
 
-*Targets Users: Drivers*
+**Use Case Example**
+[To-do: insert screengrabs]
+1. Bambang is a student at ANU. He is ready to start a run around campus.
+2. Bambang starts up Route42 and clicks Add button to begin a new Activity
+3. He starts the activity GPS data tracking and begins his run.
+4. During the run, he notices he has his shoelaces untied. 
+5. He pauses the activity, ties his shoes, and resumes the activity.
+6. Bambang finishes the run! He ends the activity.
+7. He writes a cool caption for sharing his achievement. 
+8. Unfortunately he is out of data at this moment, but he chooses to schedule the post in 30 minutes. Problem solved. 
 
-* *Users can use it to navigate in order to reach the destinations.*
-* *Users can learn the traffic conditions*
-* ...
 
-*Target Users: Those who want to find some good restaurants*
 
-* *Users can find nearby restaurants and the application can give recommendations*
-* ...
+
 
 *List all the use cases in text descriptions or create use case diagrams. Please refer to https://www.visual-paradigm.com/guide/uml-unified-modeling-language/what-is-use-case-diagram/ for use case diagram.*
 
@@ -116,9 +117,9 @@
   	- Using REST API allows us to simplify database reads and writes. The downside is that we sacrifice Firestore's document listener feature, where we can listen to updates on documents of interest.
 
 - ViewModel
-
-	- Where:
-	- Why:
+	- What: An intermediate observable class which enables data to persist independent of fragment lifecycle and attaching listeners to data changes.  
+	- Where: `ActiveMapViewModel` and `UserViewModel`
+	- Why: By storing data in a view model class, data is not deleted when views are destroyed (e.g. when the user navigates to another page, or when the phone is rotated). Also, by listening to changes to `LiveData` members of the view model, views can update directly to changes in persistent data stored in Firebase, through the `LiveData` class. This improves separation of UI layer from the data layer, as database references only exist in the view model class. 
 
 - Multi-threading / background execution
 
