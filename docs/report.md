@@ -18,7 +18,7 @@
 
 | UID | Name | Role |
 | :--- | :----: | ---: |
-| u7233149 | Kai Hirota | Lead / Architect |
+| u7233149 | Kai Hirota | Full-Stack |
 | u7269158 | John (Min Jae) Kim | Data Structure, Feature Testing |
 | u7234659 | Honggic Oh | Search, Feature Testing |
 | u7199021| Theo Darmawan | Full-Stack |
