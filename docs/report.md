@@ -11,7 +11,7 @@
 5. [Testing Summary](#testing-summary)
 6. [Implemented Features](#implemented-features)
 7. [Team Meetings](#team-meetings)
-
+8. [Individual Reflections](#individual-reflections)
 ## Team
 
 ### Team Members and Roles
@@ -261,5 +261,9 @@ Firebase Integration
 3. Using Firebase or another remote database to store user posts and having a user’s
 
 	timeline update as the remote database is updated without restarting the application. E.g. User A makes a post, user B on a separate instance of the application sees user A’s post appear on their timeline without restarting their application. (very hard)
+
+### Individual Reflections
+##### Theo Darmawan
+My experience working in this team was in a large majority positive. Everyone held themselves accountable to carry responsibility, and was easy to communicate with. We did well in keeping constant communication  on chat and documenting the project on Trello. Work was divided into first-come-first-serve basis based on Trello cards. If anyone claimed a Trello card feature, they were responsible for it.  I believe this system was reasonably fair as we could put in as much or as little work as we wanted. However, in some cases people took features without notifying the group or using this protocol, which was problematic. Another potential improvement is doing a weekly scrum as parsing hundreds of chat messages for updates is difficult. 
 
 ## Appendix
