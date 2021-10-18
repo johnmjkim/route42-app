@@ -39,34 +39,31 @@
 
 **Targets Users: Workout Enthusiasts**
 
-### Use cases
-
 With Route42, users can:
 
-* Record various workouts, including walking, running, and cycling.
-* Track performance metrics and see the recorded workouts in an interactive map.
-* Follow other users, and view and like other people's workouts.
+1. Record various workouts, including walking, running, and cycling.
+2. Track performance metrics and see the recorded workouts in an interactive map.
+3. Follow other users, and view and like other people's workouts.
 
-### Examples
+[To-do: insert screengrabs]
 
-1. Scenario: As an avid runner, Adam wants to record his daily jogs.
-	1. When heading out for a run, Adam brings his smartphone, like he usually does in order to listen to music.
-	2. Once Adam has warmed up and is ready to start his workout, he will open the Route42 app, tap on the `+` button to create a new post.
-	3. Adam selects which kind of work out he will be engaging in, and then tap on the start button to begin the tracking.
-	4. Until Adam taps on "pause" or "end activity," the app will record Adam's location every 10 seconds.
-	5. Once Adam finishes a workout, he can create a post of the completed workout, and add multiple hashtags.
-2. Scenario: As a triathlete, Emily wants to record her various types of workouts and analyze the performance change over time.
-	1. After using Route42 to log a workout, Emily can edit the post description to note any self-evaluation.
-	2. After having used the app to record several workouts, Emily can view her own profile to see her past recorded workouts.
-	3. Since performance metrics like distance and pace are recorded as well, Emily will be able to see how her performance has changed.
-	4. Emily will also be able to see the instantaneous metrics during her workout, such as the current location, speed, distance from the starting point, elapsed time, and calories burned.
-	5. Sometimes, Emily may choose to run or cycle in remote locations. She can record the workout, and schedule the post to be posted later.
-3. Scenario: As a Software Engineer approaching 35 years old, Jesus would like to start getting in the habit of jogging, but have not been able to start.
-	1. Jesus can follow his friends and strangers on Route42 app to see how others are working out.
-	2. Jesus sees the improvement in metrics such as distance and pace over time, and gets a better idea of the rate of progress he could strive towards.
-	3. Jesus feels more motivated to start working out after seeing his friends improve over time.
-	4. When tired mid-workout, Jesus can also pause the workout and rest.
-	5. Navigating away from the Activity screen will automatically the workout. 
+### Use Case Example
+
+1. Bambang runs at ANU running club, and wants to record and share his daily runs.
+2. Once ready, he starts the `run` activity on the app
+3. The app tracks Bambang's location and route, and display it on a map. Performance metrics are displayed in real time.
+4. After finishing his run, Bambang ends the `run` activity on the app.
+5. The app will display a post template for sharing the completed activity.
+6. Bambang may write a description and add hashtags like #ANUrunning before sharing it.
+7. The created post is viewable by other users on their feeds immediately after posting. 
+
+##### Scheduled Actions
+If the user does not have an active internet connection, the app allows scheduling of posts and likes.
+To schedule a post, the user checks the `schedule` button and selects the time delay.
+To schedule a like, the user long-clicks the like button and selects the time delay.
+
+##### Pausing a workout
+If the user needs to pause the workout, they can manually do so. Otherwise, navigating away from the `Activity` screen will automatically pause it for them.
 
 ### UML
 
@@ -140,8 +137,10 @@ With Route42, users can:
 
 - Multi-threading / background execution
 
-  - Where: `PhotoMapFragment`
+  - Where: `PhotoMapFragment`, `ScheduleablePost` , `SchedulableLike`
   - Why: When making the REST API call to `search/knn`, the communication is handled by a background worker thread. This ensures the UI thread (the main thread) does not freeze and remains responsive.
+  Scheduled actions involving IO operations and network calls are also handled in the background to minimize load on the UI thread.
+
 
 
 ### **Grammars**
@@ -211,8 +210,8 @@ EXAMPLES
 
 ## Implemented Features
 
-- Easy: 5
-- Medium: 5
+- Easy: 6
+- Medium: 6
 - Hard: 1
 - Very Hard: 1
 
@@ -228,14 +227,18 @@ UI Design and Testing
 
 Greater Data Usage, Handling and Sophistication
 
-1. User profile activity containing a media file (image, animation (e.g. gif), video). (easy)
-2. Use GPS information. (easy)
-3. User statistics. Provide users with the ability to see a report of total views, total followers, total posts, total likes, in a graphical manner. (medium)
+1. Read data instances from multiple local files in different formats (JSON, XML or
+Bespoken). (easy)
+2. User profile activity containing a media file (image, animation (e.g. gif), video). (easy)
+3. Use GPS information. (easy)
+4. User statistics. Provide users with the ability to see a report of total views, total followers, total posts, total likes, in a graphical manner. (medium)
 
 User Interactivity
 
 1. The ability to micro-interact with 'posts' (e.g. like, report, etc.) [stored in-memory]. (easy)
 2. The ability for users to ‘follow’ other users. There must be an adjustment to either the user’s timeline in relation to their following users or a section specifically dedicated to posts by followed users. [stored in-memory] (medium)
+5. Scheduled actions. At least two different types of actions must be schedulable. For
+example, a user can schedule a post, a like, a follow, a comment, etc. (medium)
 
 User Privacy
 
