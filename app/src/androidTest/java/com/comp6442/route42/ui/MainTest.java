@@ -23,8 +23,11 @@ import androidx.test.filters.LargeTest;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.Route42App;
+import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.ui.activity.MainActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,13 +40,23 @@ import org.junit.runner.RunWith;
 public class MainTest {
     @Rule
     public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
+    private FirebaseAuth mAuth;
 
     @Before
     public void Login(){
 //        ActivityScenario scenario = activityRule.getScenario(); // not sure how can I use this
-        onView(withId(R.id.login_form_email)).perform(typeText("foo@bar.com"), closeSoftKeyboard());
-        onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
-        onView(withId(R.id.login_button)).perform(click());
+        mAuth = FirebaseAuthLiveData.getInstance().getAuth();
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        if(firebaseUser==null) {//if not login, do login
+            onView(withId(R.id.login_form_email)).perform(typeText("foo@bar.com"), closeSoftKeyboard());
+            onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
+            onView(withId(R.id.login_button)).perform(click());
+        }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -56,6 +69,7 @@ public class MainTest {
     public void profileToMapCheck() {//check both side page change between profile and map / currently now working because of map
         onView(withId(R.id.navigation_map)).perform(click()).check(matches(withId(R.id.navigation_map)));
         onView(withId(R.id.navigation_profile)).perform(click()).check(matches(withId(R.id.navigation_profile)));
+        onView(withId(R.id.sign_out_button)).perform(click());
     }
 
     @Test
@@ -64,20 +78,26 @@ public class MainTest {
         onView(withId(R.id.navigation_map)).perform(click()).check(matches(withId(R.id.navigation_map)));
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.navigation_profile)).perform(click()).check(matches(withId(R.id.navigation_profile)));
+        onView(withId(R.id.sign_out_button)).perform(click());
     }
     @Test
     public void CreateCyclingPost(){
         createPost("#hash","CYCLING");
+        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
+
     }
 
     @Test
     public void CreateRunningPost(){
         createPost("#hash","RUNNING");
+        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
     }
 
     @Test
     public void CreateWalkingPost(){
         createPost("#hash","WALKING");
+        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
+
     }
 
     @Test
@@ -85,31 +105,40 @@ public class MainTest {
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));
         onView(withText("CYCLING")).perform(click());
-        if(checkAccess(onView(withText("Allow Route42 to access this device's location")))){
-            onView(withText("While using the app")).perform(click());
-        }
-        onView(withId(R.id.activity_button)).perform(click());
-        try {
+        try {//make delay to get data from active_map_fragment
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onView(withId(R.id.post_description_input)).perform(typeText("CancelTest"), closeSoftKeyboard());
-        onView(withId(R.id.cancel_post_button)).perform(click());
-        onView(withId(R.id.navigation_feed)).check(matches(isDisplayed()));
-        onView(withText("CancelTest")).check(doesNotExist());
+        if(checkAccess(onView(withText("Allow Route42 to access this device's location")))){
+            onView(withText("While using the app")).perform(click());
+        }
+        onView(withId(R.id.activity_button)).perform(click());
+        onView(withText("Start")).perform(click());
+        try {//make delay to get data from active_map_fragment
+            Thread.sleep(10000);
+            onView(withId(R.id.activity_button)).perform(click());
+            onView(withText("End Activity")).perform(click());
+            Thread.sleep(500);
+            onView(withId(R.id.post_description_input)).perform(typeText("CancelTest"), closeSoftKeyboard());
+            onView(withId(R.id.cancel_post_button)).perform(click());
+            onView(withId(R.id.navigation_feed)).perform(click()).check(matches(isDisplayed()));
+            onView(withText("CancelTest")).check(doesNotExist());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void SearchPost(){
-        createPost("#hash","CYCLING");
+//        createPost("#hash","CYCLING");
         onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
-        onView(withText("#hash")).check(matches(isDisplayed()));
+        onView(withText("#hash")).check(matches(isDisplayed())); // not sure for this
     }
 
     @Test
     public void PushLikeUnlike(){
-        createPost("#hash","CYCLING");
+//        createPost("#hash","CYCLING");
         onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
         int num = R.id.like_count_text;
         onView(withId(R.id.like_button)).perform(click());
@@ -120,7 +149,7 @@ public class MainTest {
 
     @Test
     public void blockUnBlockCheck(){
-        createPost("#hash","CYCLING");
+//        createPost("#hash","CYCLING");
         onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
         onView(withId(R.id.card_username)).perform(click());
         onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check blocked
@@ -128,7 +157,7 @@ public class MainTest {
     }
     @Test
     public void followUnfollowCheck(){
-        createPost("#hash","CYCLING");
+//        createPost("#hash","CYCLING");
         onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
         onView(withId(R.id.card_username)).perform(click());
         onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isChecked()));//check blocked
@@ -143,34 +172,39 @@ public class MainTest {
 
     public void createPost(String keyword,String activityType){// create post
         //--------------------------Start to make post-------------------------------------------------
+
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));//check dialog is on
         onView(withText(activityType)).perform(click());//choose activity type
+        try{
+            Thread.sleep(300);//make delay to check the dialog
         if(checkAccess(onView(withText("Allow Route42 to access this device's location")))){
             onView(withText("While using the app")).perform(click());
         }
-        //--------------------------Active_map_fragment-------------------------------------------------
-        onView(withId(R.id.constraintLayout)).check(matches(isDisplayed()));
-        onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
-        onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
-        onView(withId(R.id.linearLayout)).check(matches(isDisplayed()));
-        onView(withId(R.id.map_fragment2)).check(matches(isDisplayed())); //until this line, check components are exist
-        onView(withId(R.id.activity_button)).perform(click());
-        //--------------------------Create_post_fragment-------------------------------------------------
-        try {//make delay to get data from active_map_fragment
-            Thread.sleep(500);
+            Thread.sleep(1000);//make delay to get data from active_map_fragment
+            onView(withId(R.id.activity_button)).perform(click());
+            onView(withText("Start")).perform(click());
+            Thread.sleep(10000); //make delay to get data from active_map_fragment
+            //--------------------------Active_map_fragment------------------------------------------------
+            onView(withId(R.id.constraintLayout)).check(matches(isDisplayed()));
+            onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
+            onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
+            onView(withId(R.id.linearLayout)).check(matches(isDisplayed()));
+            onView(withId(R.id.map_fragment2)).check(matches(isDisplayed())); //until this line, check components are exist
+            Thread.sleep(100);//make delay to get data from active_map_fragment
+
+            onView(withId(R.id.activity_button)).perform(click());
+            onView(withText("End Activity")).perform(click());
+            //--------------------------Create_post_fragment-------------------------------------------------
+            Thread.sleep(500);//make delay to get data from active_map_fragment
+            //--------------------------Write description and then create post------------------------------- will update when we can make hashtag function
+            onView(withId(R.id.post_description_input)).perform(typeText(activityType), closeSoftKeyboard()); //add activitytype to distinguish the post for test
+//        onView(withId(R.id.post_description_input)).perform(typeText(keyword), closeSoftKeyboard());//will update it when I can write hashtag
+            onView(withId(R.id.create_post_button)).perform(click());
+            //--------------------------Create post is finished and check post in feed fragment---------------
+            onView(withId(R.id.navigation_feed)).perform(click());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        onView(withId(R.id.frameLayout)).check(matches(isDisplayed()));
-        onView(withId(R.id.post_description_input)).check(matches(isDisplayed()));
-        //--------------------------Write description and then create post------------------------------- will update when we can make hashtag function
-        onView(withId(R.id.post_description_input)).perform(typeText(activityType), closeSoftKeyboard()); //add activitytype to distinguish the post for test
-//        onView(withId(R.id.post_description_input)).perform(typeText(keyword), closeSoftKeyboard());//will update it when I can write hashtag
-        onView(withId(R.id.create_post_button)).perform(click());
-        //--------------------------Create post is finished and check post in feed fragment---------------
-        onView(withId(R.id.navigation_feed)).perform(click());
-        onView(withText(activityType)).check(matches(isDisplayed()));
-//        onView(withText(activityType)).check(matches(isDisplayed())); will do to check hashtag
     }
 }
