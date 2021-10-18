@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Scanner;
 
 import timber.log.Timber;
@@ -42,30 +43,22 @@ public class ScheduledTask extends Worker {
             String workType = getInputData().getString("type");
             assert workType != null;
             if(workType.equals("activity_post")) {
+                String xmlPath = getInputData().getString("xmlFilePath");
                 // upload snapshot
                 String imageUrl =  FirebaseStorageRepository.getInstance()
                         .uploadSnapshotFromLocal(getInputData().getString("snapshotFilePath"),
                                 getInputData().getString("snapshotFilename") )
                         .getPath();
                 // create new post object
-                Post newPost = new PostXMLParser().parse(getInputData().getString("xmlFilePath"));
+                Post newPost = new PostXMLParser().parse(xmlPath);
                 newPost.setImageUrl(imageUrl);
-                PostRepository.getInstance().createOne(newPost);
-
-//                Post newPost = new Post( UserRepository.getInstance().getOne(getInputData().getString("uid")),
-//                        getInputData().getString("username"),
-//                        getInputData().getInt("isPublic", 0),
-//                        getInputData().getString("profilePicUrl"),
-//                        new Date(),
-//                        getInputData().getString("postDescription"),
-//                        "",
-//                        getInputData().getDouble("latitude", 0.0),
-//                        getInputData().getDouble("longitude", 0.0),
-//                        getHashTagsFromTextInput( getInputData().getString("postDescription")),
-//                        0,
-//                        imageUrl,
-//                        new ArrayList<>(0));
                 // upload post to database storage
+                PostRepository.getInstance().createOne(newPost);
+                //delete local file
+                File fileObj = new File(Objects.requireNonNull(xmlPath));
+                if (!fileObj.delete()) {
+                    Timber.w("xml file is not deleted at %s", xmlPath);
+                }
 
             } else if(workType.equals("like_post")) {
                 PostIDUserID data = parseLikeFile(getInputData().getString("like_data_filepath"));
