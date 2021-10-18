@@ -178,7 +178,16 @@ public class PostRepository extends FirestoreRepository<Post> {
             .addOnFailureListener(Timber::e)
             .addOnSuccessListener(task -> Timber.i("Like event recorded: %s -> %s", uid, post));
   }
-
+  public void scheduleLike(String postId, String uid) {
+    WriteBatch batch = firestore.batch();
+    DocumentReference docRef = this.collection.document(postId);
+    DocumentReference userRef = UserRepository.getInstance().getOne(uid);
+    docRef.update("likeCount", FieldValue.increment(1));
+    docRef.update("likedBy", FieldValue.arrayUnion(userRef));
+    batch.commit()
+            .addOnFailureListener(Timber::e)
+            .addOnSuccessListener(task -> Timber.i("Scheduled Like event recorded: %s -> %s", uid, postId));
+  }
   public void unlike(Post post, String uid) {
     WriteBatch batch = firestore.batch();
     DocumentReference docRef = this.collection.document(post.getId());

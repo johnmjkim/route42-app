@@ -22,8 +22,7 @@ import javax.xml.transform.TransformerException;
 
 import timber.log.Timber;
 
-public class SchedulablePost implements  Schedulable<Post>{
-    public static CharSequence[] delayOptions = new CharSequence[]{"1", "5", "30", "60"};
+public class SchedulablePost implements  Schedulable{
     private UUID workId = null;
     private WorkManager workManager = null;
     private final String baseFilename = "scheduled_post";
@@ -57,7 +56,7 @@ public class SchedulablePost implements  Schedulable<Post>{
     public void schedule(Context context, int scheduledDelay)  {
         //create dom and save as xml file
         try{
-            Timber.i("Trying");
+//            Timber.i("Trying");
             Document postDOM =  XMLCreator.createPostXML(this);
             XMLCreator.saveLocalXMLFromDOM(postDOM,context.getFilesDir().getPath()  + "/" + storageFilename);
             WorkRequest workRequest = new OneTimeWorkRequest.Builder(ScheduledTask.class)

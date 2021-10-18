@@ -117,7 +117,7 @@ public class ActiveMapFragment extends MapFragment {
         activeMapViewModel.setActivityData(userActivityData);
         activeMapViewModel.setSnapshotFileName(storageFilename);
         // save map snapshot to local
-        FileOutputStream out = getContext().openFileOutput(localFilename, 0);
+        FileOutputStream out = requireContext().openFileOutput(localFilename, 0);
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
 
         Bundle bundle = new Bundle();

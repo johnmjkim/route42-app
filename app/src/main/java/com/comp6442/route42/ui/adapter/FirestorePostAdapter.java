@@ -1,11 +1,13 @@
 package com.comp6442.route42.ui.adapter;
 
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,6 +19,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
+import com.comp6442.route42.data.model.SchedulablePost;
+import com.comp6442.route42.data.model.ScheduleableLike;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.fragment.PointMapFragment;
@@ -25,8 +29,10 @@ import com.comp6442.route42.ui.fragment.RouteMapFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +42,7 @@ import timber.log.Timber;
 public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, FirestorePostAdapter.PostViewHolder> {
   private final String loggedInUID;
   private List<Post> posts = new ArrayList<>();
+  private int scheduledDelay = 0;
 
   public FirestorePostAdapter(@NonNull FirestoreRecyclerOptions<Post> options, String loggedInUID) {
     super(options);
@@ -161,7 +168,21 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       viewHolder.like.setVisibility(View.VISIBLE);
       Timber.i("UnLiked");
     });
+    // allow users to schedule a delayed like by long clicking.
+    viewHolder.like.setOnLongClickListener(view -> {
+      MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
+              new ContextThemeWrapper(view.getContext(), R.style.AlertDialog_AppCompat)
+      );
+      dialogBuilder.setTitle("Select Delay (Minutes)")
+              .setItems(ScheduleableLike.delayOptions, (dialogInterface, i) -> {
+                scheduledDelay = Integer.parseInt((String) ScheduleableLike.delayOptions[i]);
+                Toast.makeText(view.getContext(), "Set like delay to " + scheduledDelay + " minute(s).", Toast.LENGTH_SHORT).show();
+                ScheduleableLike scheduleableLike = new ScheduleableLike(loggedInUID, post.getId());
+                scheduleableLike.schedule(view.getContext(), scheduledDelay );
+              }).create().show();
+      return true;
 
+    });
     if (postIsLiked) {
       viewHolder.like.setVisibility(View.GONE);
       viewHolder.unlike.setVisibility(View.VISIBLE);
@@ -170,7 +191,6 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       viewHolder.like.setVisibility(View.VISIBLE);
     }
   }
-
   private void setLikeCountTextView(Post post, PostViewHolder viewHolder) {
     viewHolder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
     setLikeButtons(

@@ -52,7 +52,7 @@ public class CreatePostFragment extends Fragment {
   private PostRepository postRepository;
   private SwitchMaterial scheduleSwitchButton;
   private MaterialButton createPostButton;
-  private int scheduledDelay =0;
+  private int scheduledDelay = 0;
 
 
   @Override
@@ -163,7 +163,7 @@ public class CreatePostFragment extends Fragment {
               latitude,
               longitude
       )
-              .schedule(requireContext(), 1);
+              .schedule(requireContext(), scheduledDelay);
     } else {
       Post newPost = new Post( UserRepository.getInstance().getOne(uid),
               liveUser.getUserName(),
