@@ -136,7 +136,7 @@ With Route42, users can:
 - ViewModel
 	- What: An intermediate observable class which enables data to persist independent of fragment lifecycle and attaching listeners to data changes.  
 	- Where: `ActiveMapViewModel` and `UserViewModel`
-	- Why: By storing data in a view model class, data is not deleted when views are destroyed (e.g. when the user navigates to another page, or when the phone is rotated). Also, by listening to changes to `LiveData` members of the view model, views can update directly to changes in persistent data stored in Firebase, through the `LiveData` class. This improves separation of UI layer from the data layer, as database references only exist in the view model class. 
+	- Why: By storing data in a view model class, data is not deleted when views are destroyed (e.g. when the user navigates to another page, or when the phone is rotated). Also, by listening to changes to `LiveData` members of the view model, views can update directly to changes in persistent data stored in Firebase, through listening to the `LiveData` class. This improves separation of UI layer from the data layer, as the UI is not dependent on any repository classes.
 
 - Multi-threading / background execution
 
