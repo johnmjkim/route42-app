@@ -107,19 +107,15 @@ public class MainTest {
         onView(withText("CYCLING")).perform(click());
         try {//make delay to get data from active_map_fragment
             Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         if(checkAccess(onView(withText("Allow Route42 to access this device's location")))){
             onView(withText("While using the app")).perform(click());
         }
-        onView(withId(R.id.activity_button)).perform(click());
-        onView(withText("Start")).perform(click());
-        try {//make delay to get data from active_map_fragment
-            Thread.sleep(10000);
+            onView(withId(R.id.activity_button)).perform(click());
+            onView(withText("Start")).perform(click());
+            Thread.sleep(10000);//make delay to get data from active_map_fragment
             onView(withId(R.id.activity_button)).perform(click());
             onView(withText("End Activity")).perform(click());
-            Thread.sleep(500);
+            Thread.sleep(500);//make delay
             onView(withId(R.id.post_description_input)).perform(typeText("CancelTest"), closeSoftKeyboard());
             onView(withId(R.id.cancel_post_button)).perform(click());
             onView(withId(R.id.navigation_feed)).perform(click()).check(matches(isDisplayed()));
@@ -130,14 +126,14 @@ public class MainTest {
     }
 
     @Test
-    public void SearchPost(){
+    public void SearchPost(){//have to fix
 //        createPost("#hash","CYCLING");
         onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
         onView(withText("#hash")).check(matches(isDisplayed())); // not sure for this
     }
 
     @Test
-    public void PushLikeUnlike(){
+    public void PushLikeUnlike(){//have to fix
 //        createPost("#hash","CYCLING");
         onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
         int num = R.id.like_count_text;
@@ -148,7 +144,7 @@ public class MainTest {
     }
 
     @Test
-    public void blockUnBlockCheck(){
+    public void blockUnBlockCheck(){//have to fix
 //        createPost("#hash","CYCLING");
         onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
         onView(withId(R.id.card_username)).perform(click());
@@ -156,7 +152,7 @@ public class MainTest {
         onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isNotChecked()));//check not blocked
     }
     @Test
-    public void followUnfollowCheck(){
+    public void followUnfollowCheck(){//have to fix
 //        createPost("#hash","CYCLING");
         onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
         onView(withId(R.id.card_username)).perform(click());
@@ -178,21 +174,20 @@ public class MainTest {
         onView(withText(activityType)).perform(click());//choose activity type
         try{
             Thread.sleep(300);//make delay to check the dialog
-        if(checkAccess(onView(withText("Allow Route42 to access this device's location")))){
+        if(checkAccess(onView(withText("Allow Route42 to access this device's location")))){//if app asks permission, click it
             onView(withText("While using the app")).perform(click());
         }
             Thread.sleep(1000);//make delay to get data from active_map_fragment
             onView(withId(R.id.activity_button)).perform(click());
             onView(withText("Start")).perform(click());
-            Thread.sleep(10000); //make delay to get data from active_map_fragment
+            Thread.sleep(10000); //make delay to start duration
             //--------------------------Active_map_fragment------------------------------------------------
             onView(withId(R.id.constraintLayout)).check(matches(isDisplayed()));
             onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
             onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
             onView(withId(R.id.linearLayout)).check(matches(isDisplayed()));
-            onView(withId(R.id.map_fragment2)).check(matches(isDisplayed())); //until this line, check components are exist
-            Thread.sleep(100);//make delay to get data from active_map_fragment
-
+            onView(withId(R.id.map_fragment2)).check(matches(isDisplayed())); //until this line, component check
+            Thread.sleep(100);
             onView(withId(R.id.activity_button)).perform(click());
             onView(withText("End Activity")).perform(click());
             //--------------------------Create_post_fragment-------------------------------------------------
