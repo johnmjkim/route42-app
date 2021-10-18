@@ -1,6 +1,5 @@
 package com.comp6442.route42.data.model;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.work.Data;
@@ -9,11 +8,12 @@ import androidx.work.Operation;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
-import com.comp6442.route42.utils.XMLCreator;
+import com.comp6442.route42.utils.xmlresource.PostXMLCreator;
 import com.comp6442.route42.utils.tasks.ScheduledTask;
 
 import org.w3c.dom.Document;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -26,11 +26,44 @@ public class SchedulablePost implements  Schedulable{
     private UUID workId = null;
     private WorkManager workManager = null;
     private final String baseFilename = "scheduled_post";
-    private final String storageFilename = baseFilename + new Date().toString() + ".xml";
+    private final String storageFilename = baseFilename + "_" + new Timestamp(System.currentTimeMillis()).getTime() + ".xml";
     private final String snapshotFilePath ;
     private final String snapshotFilename;
     private final String uid;
     private final String userName;
+
+    public String getUid() {
+        return uid;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public int getIsPublic() {
+        return isPublic;
+    }
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public String getPostDescription() {
+        return postDescription;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
     private final int isPublic;
     private final String profilePicUrl;
     private final String postDescription ;
@@ -51,14 +84,13 @@ public class SchedulablePost implements  Schedulable{
         this.longitude = longitude;
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     public void schedule(Context context, int scheduledDelay)  {
         //create dom and save as xml file
         try{
-//            Timber.i("Trying");
-            Document postDOM =  XMLCreator.createPostXML(this);
-            XMLCreator.saveLocalXMLFromDOM(postDOM,context.getFilesDir().getPath()  + "/" + storageFilename);
+            Document postDOM =  PostXMLCreator.createPostXML(this);
+            String xmlFilePath = context.getFilesDir().getPath()  + "/" + storageFilename;
+            PostXMLCreator.saveLocalXMLFromDOM(postDOM,xmlFilePath);
             WorkRequest workRequest = new OneTimeWorkRequest.Builder(ScheduledTask.class)
                     .setInitialDelay(scheduledDelay, TimeUnit.MINUTES)
                     .setInputData(
@@ -66,23 +98,18 @@ public class SchedulablePost implements  Schedulable{
                                     .putString("type", "activity_post")
                                     .putString("snapshotFilePath", this.snapshotFilePath)
                                     .putString("snapshotFilename", this.snapshotFilename)
-                                    .putString("uid", uid)
-                                    .putString("username", userName)
-                                    .putInt("isPublic", isPublic)
-                                    .putString("profilePicUrl" , profilePicUrl)
-                                    .putString("postDescription", postDescription)
-                                    .putString("locationName",  locationName)
-                                    .putDouble("latitude" , latitude)
-                                    .putDouble("longitude" , longitude)
+                                    .putString("xmlFilePath", xmlFilePath)
                                     .build()
                     )
                     .build();
             workId =  workRequest.getId();
             workManager =  WorkManager.getInstance(context);
             workManager.enqueue(workRequest);
+            Timber.i("scheduled work request");
         } catch (TransformerException e) {
-
+                Timber.e(e);
         } catch (Exception e) {
+            Timber.e(e);
 
         }
 

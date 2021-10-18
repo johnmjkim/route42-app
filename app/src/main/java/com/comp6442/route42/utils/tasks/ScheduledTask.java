@@ -12,8 +12,10 @@ import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
+import com.comp6442.route42.utils.xmlresource.PostXMLParser;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,10 +27,10 @@ public class ScheduledTask extends Worker {
     public ScheduledTask(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
-    private class PostUserPair {
+    private class PostIDUserID {
         public final String uid;
         public final String postid;
-        private PostUserPair(String uid, String postid) {
+        private PostIDUserID(String uid, String postid) {
             this.uid = uid;
             this.postid = postid;
         }
@@ -46,45 +48,56 @@ public class ScheduledTask extends Worker {
                                 getInputData().getString("snapshotFilename") )
                         .getPath();
                 // create new post object
-                Post newPost = new Post( UserRepository.getInstance().getOne(getInputData().getString("uid")),
-                        getInputData().getString("username"),
-                        getInputData().getInt("isPublic", 0),
-                        getInputData().getString("profilePicUrl"),
-                        new Date(),
-                        getInputData().getString("postDescription"),
-                        "",
-                        getInputData().getDouble("latitude", 0.0),
-                        getInputData().getDouble("longitude", 0.0),
-                        getHashTagsFromTextInput( getInputData().getString("postDescription")),
-                        0,
-                        imageUrl,
-                        new ArrayList<>(0));
-                // upload post to database storage
+                Post newPost = new PostXMLParser().parse(getInputData().getString("xmlFilePath"));
+                newPost.setImageUrl(imageUrl);
                 PostRepository.getInstance().createOne(newPost);
 
+//                Post newPost = new Post( UserRepository.getInstance().getOne(getInputData().getString("uid")),
+//                        getInputData().getString("username"),
+//                        getInputData().getInt("isPublic", 0),
+//                        getInputData().getString("profilePicUrl"),
+//                        new Date(),
+//                        getInputData().getString("postDescription"),
+//                        "",
+//                        getInputData().getDouble("latitude", 0.0),
+//                        getInputData().getDouble("longitude", 0.0),
+//                        getHashTagsFromTextInput( getInputData().getString("postDescription")),
+//                        0,
+//                        imageUrl,
+//                        new ArrayList<>(0));
+                // upload post to database storage
+
             } else if(workType.equals("like_post")) {
-                PostUserPair data = parseLikeFile(getInputData().getString("like_data_filepath"));
+                PostIDUserID data = parseLikeFile(getInputData().getString("like_data_filepath"));
                 assert data != null;
                 PostRepository.getInstance().scheduleLike(data.postid, data.uid);
             }
-
         }
-
         return Result.success();
     }
-    private PostUserPair parseLikeFile(String filePath) {
-        File myObj = new File(filePath);
+
+    /**
+     * Utility method for doWork();
+     * parses text file containing post and user information for the Like.
+     * @param filePath file path to text file
+     * @return object with postID and userID
+     */
+    private PostIDUserID parseLikeFile(String filePath) {
+        File fileObj = new File(filePath);
         try {
-            if(myObj.exists() ) {
-                Scanner reader = new Scanner(myObj);
+            if (fileObj.exists()) {
+                Scanner reader = new Scanner(fileObj);
                 String data = reader.nextLine();
                 String[] pair = data.split(",");
                 reader.close();
-                return new PostUserPair(pair[0],pair[1]);
+                boolean fileIsDeleted = fileObj.delete();
+                if (!fileIsDeleted) {
+                    Timber.w("file is not deleted at %s", filePath);
+                }
+                return new PostIDUserID(pair[0], pair[1]);
 
-            } else throw new FileNotFoundException("File not found at "+ filePath);
-        }
-        catch (FileNotFoundException e) {
+            } else throw new FileNotFoundException("File not found at " + filePath);
+        } catch (FileNotFoundException e) {
             Timber.e(e);
             return null;
         }

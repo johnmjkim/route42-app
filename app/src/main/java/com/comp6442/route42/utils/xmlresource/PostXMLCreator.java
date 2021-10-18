@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils;
+package com.comp6442.route42.utils.xmlresource;
 
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.SchedulablePost;
@@ -22,7 +22,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import timber.log.Timber;
 
-public class XMLCreator {
+public class PostXMLCreator {
 
     /**
      * Takes an object and outputs an xml formatted string of the object's members.
@@ -37,12 +37,14 @@ public class XMLCreator {
             postDoc = postDocBuilder.newDocument();
             Element rootEl  = postDoc.createElementNS("", "ActivityPost");
             postDoc.appendChild(rootEl);
-//            rootEl.appendChild(createTextElement(postDoc, "uid", post.getUid().toString()));
-//            rootEl.appendChild(createTextElement(postDoc, "profilePicUrl", post.getProfilePicUrl()));
-//            rootEl.appendChild(createTextElement(postDoc, "postDescription", post.getPostDescription()));
-//            rootEl.appendChild(createTextElement(postDoc, "Latitude", post.getLatitude().toString()));
-//            rootEl.appendChild(createTextElement(postDoc, "Longitude", post.getLongitude().toString()));
-//            rootEl.appendChild(createTextElement(postDoc, "imageUrl", post.getImageUrl()));
+            rootEl.appendChild(createTextElement(postDoc, "uid", post.getUid()));
+            rootEl.appendChild(createTextElement(postDoc, "profilePicUrl", post.getProfilePicUrl()));
+            rootEl.appendChild(createTextElement(postDoc, "postDescription", post.getPostDescription()));
+            rootEl.appendChild(createTextElement(postDoc, "userName", post.getUserName()));
+            rootEl.appendChild(createTextElement(postDoc, "isPublic", String.valueOf(post.getIsPublic())));
+            rootEl.appendChild(createTextElement(postDoc, "locationName", post.getLocationName()));
+            rootEl.appendChild(createTextElement(postDoc, "Latitude", String.valueOf(post.getLatitude())));
+            rootEl.appendChild(createTextElement(postDoc, "Longitude", String.valueOf( post.getLongitude())));
             return postDoc;
         }catch (Exception e) {
             Timber.e(e);
@@ -52,7 +54,7 @@ public class XMLCreator {
     public static void saveLocalXMLFromDOM(Document dom, String storagePath) throws TransformerException {
         try {
             Transformer t = TransformerFactory.newInstance().newTransformer();
-            Timber.i("storage path" + storagePath);
+            Timber.i("XMLstorage path" + storagePath);
             Result out = new StreamResult(new File(storagePath));
             t.transform(new DOMSource(dom), out);
         } catch (TransformerConfigurationException e) {
