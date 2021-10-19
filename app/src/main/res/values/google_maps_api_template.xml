@@ -11,6 +11,6 @@
     -->
     <!--    <string name="mapbox_api_key" translatable="false" templateMergeStrategy="preserve">YOUR_KEY_HERE</string>-->
 
-    <!--    https://developers.google.com/maps/documentation/android-sdk/get-api-key-->
+    <!--    https://developers.google.com/maps/documentation/android-sdk/get-api-key -->
     <!--    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">YOUR_KEY_HERE</string>-->
 </resources>
