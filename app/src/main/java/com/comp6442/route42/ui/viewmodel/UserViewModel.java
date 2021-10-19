@@ -20,6 +20,10 @@ public class UserViewModel extends ViewModel {
   // user whose profile is loaded
   private final MutableLiveData<User> profileUser = new MutableLiveData<>();
 
+  public UserViewModel() {
+
+  }
+
   //the ViewModel only exposes immutable LiveData objects to the observers.
   public LiveData<User> getLiveUser() {
     return liveUser;

@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.util.Date;
 
 public class ActiveMapViewModelTest {
+
     @Test
     public void MapViewTest(){
         long elapsedTime = 0;
