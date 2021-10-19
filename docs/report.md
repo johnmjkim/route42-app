@@ -65,16 +65,24 @@ To schedule a like, the user long-clicks the like button and selects the time de
 ##### Pausing a workout
 If the user needs to pause the workout, they can manually do so. Otherwise, navigating away from the `Activity` screen will automatically pause it for them.
 
-### UML
-
-![ClassDiagramExample](./images/ClassDiagramExample.png)
-[Link](https://app.creately.com/diagram/LZ01bGYEWO5)
+## Diagrams
 
 ### Architecture
 
 <img src="report.assets/Architecture.png" alt="Architecture" style="zoom:67%;" />
 
 [Link](https://app.creately.com/diagram/K2ScahytOcK)
+
+### Mobile App
+
+
+[Link](https://app.creately.com/diagram/nceK9AN0i3a/)
+
+### REST API
+
+![REST API](report.assets/UML%20REST%20API.png)
+
+[Link](https://app.creately.com/diagram/LZ01bGYEWO5/)
 
 ## Design Decisions
 
