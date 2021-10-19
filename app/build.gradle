@@ -145,7 +145,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     testImplementation 'org.mockito:mockito-core:2.22.0'
     implementation "androidx.profileinstaller:profileinstaller:1.1.0-alpha04"
-}
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.0'
+    }
 android {
 
     testOptions {
