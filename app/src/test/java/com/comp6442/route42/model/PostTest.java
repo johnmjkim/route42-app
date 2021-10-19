@@ -19,11 +19,11 @@ public class PostTest {
   List likedBy = new ArrayList();
   Date date;
 
-    @Test
-    public void checkName() {
-      post.setUserName("abigail47");
-      Assert.assertEquals(post.getUserName(),"abigail47");
-    }
+  @Test
+  public void checkName() {
+    post.setUserName("abigail47");
+    Assert.assertEquals(post.getUserName(),"abigail47");
+  }
 
   @Test
   public void checkHashTag() {
