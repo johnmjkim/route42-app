@@ -158,18 +158,19 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 
 ### **Grammars**
 
-Search Engine
-
-
-
 *Production Rules* <br>
-\<Non-Terminal> ::= \<some output>
+\<Term> ::=  \<Factor> | \<Term> + \<Term> | \<Term> + \<Connector>
 <br>
-\<Non-Terminal> ::= \<some output>
+\<Factor> ::= \<Keyword> | \<bracket>
+<br>
+\<Connector> ::= \<and> | \<or>
+<br>
 
 *[How do you design the grammar? What are the advantages of your designs?]*
-
+Our grammar is simple and obvious. Dividing input data into factors and connectors to understand it easily.
+This is using for search data so this grammar can be used it from the left side. 
 *If there are several grammars, list them all under this section and what they relate to.*
+
 
 ### **Tokenizer and Parsers**
 
