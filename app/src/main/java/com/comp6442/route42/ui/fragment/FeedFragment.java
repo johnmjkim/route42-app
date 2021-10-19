@@ -22,17 +22,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.api.SearchService;
-import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.FirestorePostAdapter;
-import com.comp6442.route42.ui.PostAdapter;
+import com.comp6442.route42.ui.adapter.FirestorePostAdapter;
+import com.comp6442.route42.ui.adapter.PostAdapter;
+import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.JsonSyntaxException;
 
 import java.util.List;
@@ -57,8 +55,7 @@ public class FeedFragment extends Fragment {
   private NestedScrollView scrollview;
   private RecyclerView recyclerView;
   private PostAdapter postAdapter;
-  private FirestorePostAdapter adapter;
-  // private FirestorePostAdapter firestorePostAdapter;
+  private FirestorePostAdapter firestorePostAdapter;
   private LinearLayoutManager layoutManager;
   private BottomNavigationView bottomNavView;
 
@@ -92,14 +89,13 @@ public class FeedFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     return inflater.inflate(R.layout.fragment_feed, container, false);
   }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    Timber.d("breadcrumb");
 
     if (savedInstanceState != null) {
       Timber.i("Restoring fragment state");
@@ -118,20 +114,18 @@ public class FeedFragment extends Fragment {
               .setQuery(query, Post.class)
               .build();
 
-      adapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
-
+      firestorePostAdapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setLayoutManager(layoutManager);
-      recyclerView.setAdapter(adapter);
+      recyclerView.setAdapter(firestorePostAdapter);
       recyclerView.setHasFixedSize(false);
-
-      adapter.startListening();
+      firestorePostAdapter.startListening();
 
       initFeed(view);
       initSearch(view, user);
       initSwipeRefresher(view);
     } else {
-      Timber.e("uid is null");
+      Timber.w("uid is %s", this.uid);
     }
   }
 
@@ -251,7 +245,7 @@ public class FeedFragment extends Fragment {
   public void onStop() {
     super.onStop();
     Timber.d("breadcrumb");
-    if (adapter != null) adapter.stopListening();
+    if (firestorePostAdapter != null) firestorePostAdapter.stopListening();
   }
 
   @Override
