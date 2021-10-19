@@ -9,11 +9,11 @@ import com.comp6442.route42.data.model.Point;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
+import org.mockito.Mock;
 
 public class PointTest {
     Point point;
+    @Mock
     Parcel parcelInput, parcelOutput;
     Double lat = -33.865;
     Double lon = 151.209;

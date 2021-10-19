@@ -28,7 +28,7 @@ public class UserTest {
     }
 
     private void setInformation() {
-        user.setId("/users/f2ecbd83-66e1-49e7-bea5-52f8aaa14a83");
+        user.setId("f2ecbd83-66e1-49e7-bea5-52f8aaa14a83");
         user.setUserName("testuser");
         user.setEmail("test@gmail.com");
         user.setPassword("123456");
@@ -62,7 +62,7 @@ public class UserTest {
 
     @Test
     public void infoTest() {
-        Assert.assertEquals(user.getId(), "/users/f2ecbd83-66e1-49e7-bea5-52f8aaa14a83");
+        Assert.assertEquals(user.getId(), "f2ecbd83-66e1-49e7-bea5-52f8aaa14a83");
         Assert.assertEquals(user.getUserName(), "testuser");
         Assert.assertEquals(user.getEmail(), "test@gmail.com");
         Assert.assertEquals(user.getPassword(), "123456");
@@ -71,13 +71,13 @@ public class UserTest {
     }
     @Test
     public void toStringTest() {
-        User user1 = new User("/users/f2ecbd83-66e1-49e7-bea5-52f8aaa14a83",
+        User user1 = new User("f2ecbd83-66e1-49e7-bea5-52f8aaa14a83",
                 "test@gmail.com", "blue", followingList,
                 followerList, "123456", 0,
                 "https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200",
                 blockedByList, blockedList);
 
-      Assert.assertEquals("User{uid='/users/f2ecbd83-66e1-49e7-bea5-52f8aaa14a83', email='test@gmail.com', userName='blue', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', blockedBy=[hops, clinton, clare], following=[Paul, Kent, Mike], followers=[Abi, Gail, Geese], password='123456'}", user1.toString());
+      Assert.assertEquals("User{uid='f2ecbd83-66e1-49e7-bea5-52f8aaa14a83', email='test@gmail.com', userName='blue', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', blockedBy=[hops, clinton, clare], following=[Paul, Kent, Mike], followers=[Abi, Gail, Geese], password='123456'}", user1.toString());
     }
 
 }
