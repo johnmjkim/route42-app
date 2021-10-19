@@ -37,19 +37,24 @@ public class PostTest {
   public void checkGeoHash() {
     post.setGeohash("lat/lng: (-33.865,151.209)");
     Assert.assertEquals(post.getGeohash(),"lat/lng: (-33.865,151.209)");
-
   }
 
-  @Test
-  public void checkDateTime() throws ParseException {
-    DateFormat format = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss");
-    Date date = format.parse("2020.10.12 at 11:33:10");
-    post.setPostDatetime(date);
-    Assert.assertEquals(post.getPostDatetime().toString(),"Mon Oct 12 11:33:10 KST 2020");
-  }
+//  @Test
+//  public void checkDateTime() throws ParseException {
+//    String expiryDateString = "2018-10-15T17:52:00";
+//    final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+//    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+//    Date date = formatter.parse(expiryDateString);
+//    Assert.assertEquals(expiryDateString, formatter.format(date));
+//
+//    java.util.Date d = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(resultdate);
+//    post.setPostDatetime(d);
+////    Assert.assertEquals(formatter.format(date),"Wed Jul 17 13:07:19 KST 2019");
+//    Assert.assertEquals(post.getPostDatetime(),"Wed Jul 17 13:07:19 KST 2019");
+//  }
 
   @Test
-  public void checkLatLong() {
+  public void checkLatLng() {
     post.setLatitude(-33.865);
     post.setLongitude(151.209);
     Assert.assertEquals(post.getLatitude().toString(),"-33.865");

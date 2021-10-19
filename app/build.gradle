@@ -146,6 +146,12 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.22.0'
     implementation "androidx.profileinstaller:profileinstaller:1.1.0-alpha04"
 }
+android {
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
 
 configurations.all {
     resolutionStrategy.dependencySubstitution {
