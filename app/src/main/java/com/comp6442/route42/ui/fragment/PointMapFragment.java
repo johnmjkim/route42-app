@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.api.KNearestNeighbourService;
+import com.comp6442.route42.api.WithinRadiusNeighbourService;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.firebase.geofire.GeoFireUtils;
@@ -120,6 +121,19 @@ public class PointMapFragment extends MapFragment {
     Timber.i("Beginning KNN geoQuery with K: %d location: %s", k, location.toString());
     KNearestNeighbourService knn = new KNearestNeighbourService(k, location.latitude, location.longitude);
     Future<List<Post>> future = executor.submit(knn);
+
+    try {
+      return future.get();
+    } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
+      Timber.e(e);
+      return new ArrayList<>();
+    }
+  }
+
+  private List<Post> getWithinRadiusNeighbor(double radius, LatLng location) {
+    Timber.i("Beginning WRN geoQuery with Radius: %f location: %s", radius, location.toString());
+    WithinRadiusNeighbourService wrn = new WithinRadiusNeighbourService(radius, location.latitude, location.longitude);
+    Future<List<Post>> future = executor.submit(wrn);
 
     try {
       return future.get();
