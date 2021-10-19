@@ -1,7 +1,5 @@
 package com.comp6442.route42.model;
-
 import com.comp6442.route42.data.model.User;
-import com.google.firebase.firestore.DocumentReference;
 
 import org.junit.Assert;
 import org.junit.Before;
