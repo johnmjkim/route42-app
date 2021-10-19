@@ -22,7 +22,7 @@ public abstract class RestApiService {
     // if BuildConfig.EMULATOR is True, assumes rest api is also running locally on port 8080 at localhost
     // replace 192.168.... with your own machine's local IP address
     // for Mac, use the command `ifconfig | grep 192.168`
-    String url = (BuildConfig.EMULATOR) ? "http://192.168.0.2:8080/" : "http://13.211.169.204:8080/";
+    String url = (BuildConfig.EMULATOR) ? "http://192.168.219.104:8080/" : "http://13.211.169.204:8080/";
     HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
     OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
