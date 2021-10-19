@@ -1,21 +1,12 @@
 package com.comp6442.route42.data;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-
-import androidx.lifecycle.MutableLiveData;
-
-import com.comp6442.route42.R;
-import com.comp6442.route42.data.ActiveMapViewModel;
+import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.BaseActivity;
-import com.comp6442.route42.utils.MockLocation;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
