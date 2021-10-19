@@ -67,11 +67,11 @@ public class UserTest {
     @Test
     public void toStringTest() {
 
-          User user1 = new User("/users/f2ecbd83-66e1-49e7-bea5-52f8aaa14a83",
-                  "test@gmail.com", "blue", followingList,
-                  followerList, "123456", 0,
-                  "https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200",
-                  bannedByList, banList);
+        User user1 = new User("/users/f2ecbd83-66e1-49e7-bea5-52f8aaa14a83",
+                "test@gmail.com", "blue", followingList,
+                followerList, "123456", 0,
+                "https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200",
+                bannedByList, banList);
 
         Assert.assertEquals(user1.toString(), "User{uid='/users/f2ecbd83-66e1-49e7-bea5-52f8aaa14a83', email='test@gmail.com', userName='blue', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', blockedBy=[], following=[], followers=[], password='123456'}");
     }
