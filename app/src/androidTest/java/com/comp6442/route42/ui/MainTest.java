@@ -13,10 +13,15 @@ import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import android.view.View;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -29,6 +34,7 @@ import com.comp6442.route42.ui.activity.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -81,27 +87,27 @@ public class MainTest {
         onView(withId(R.id.sign_out_button)).perform(click());
     }
     @Test
-    public void CreateCyclingPost(){
+    public void createCyclingPost(){
         createPost("#hash","CYCLING");
         onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
 
     }
 
     @Test
-    public void CreateRunningPost(){
+    public void createRunningPost(){
         createPost("#hash","RUNNING");
         onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void CreateWalkingPost(){
+    public void createWalkingPost(){
         createPost("#hash","WALKING");
         onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
 
     }
 
     @Test
-    public void CancelPost(){
+    public void cancelPost(){
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));
         onView(withText("CYCLING")).perform(click());
@@ -132,33 +138,49 @@ public class MainTest {
 //        onView(withText("#hash")).check(matches(isDisplayed())); // not sure for this
 //    }
 //
-//    @Test
-//    public void PushLikeUnlike(){//have to fix            v
-//        createPost("#hash","CYCLING");
-//        onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
-//        int num = R.id.like_count_text;
-//        onView(withId(R.id.like_button)).perform(click());
-//        Assert.assertEquals(R.id.like_count_text,num+1); //check count increasement
-//        onView(withId(R.id.unlike_button)).perform(click());
-//        Assert.assertEquals(R.id.like_count_text,num); //check count decreasement
-//    }
-//
-//    @Test
-//    public void blockUnBlockCheck(){//have to              v
-////        createPost("#hash","CYCLING");
-//        onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
-//        onView(withId(R.id.card_username)).perform(click());
-//        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check blocked
-//        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isNotChecked()));//check not blocked
-//    }
-//    @Test
-//    public void followUnfollowCheck(){//have to fix         v
-////        createPost("#hash","CYCLING");
-//        onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
-//        onView(withId(R.id.card_username)).perform(click());
-//        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isChecked()));//check blocked
-//        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isNotChecked()));//check not blocked
-//    }
+    @Test
+    public void pushLikeUnlike() throws InterruptedException {
+        onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.like_button)));
+        Thread.sleep(500);
+        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.unlike_button)));
+    }
+
+    @Test
+    public void blockUnBlockCheck() throws InterruptedException {
+        onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
+        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check blocked
+        Thread.sleep(500);
+        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isNotChecked()));//check not blocked
+    }
+    @Test
+    public void followUnfollowCheck() throws InterruptedException {
+        onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
+        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isChecked()));//check followed
+        Thread.sleep(500);
+        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isNotChecked()));//check not followed
+    }
+    @Test
+    public void followBlockCheck() throws InterruptedException {
+        onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
+        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isChecked()));//check followed
+        Thread.sleep(500);
+        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check not followed
+        onView(withId(R.id.profile_follow_switch)).check(matches(isNotChecked()));//check not followed
+    }
+    @Test
+    public void blockFollowCheck() throws InterruptedException {
+        onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
+        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check followed
+        Thread.sleep(500);
+        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isNotChecked()));//check not followed
+        onView(withId(R.id.profile_follow_switch)).check(matches(isNotChecked()));//check not followed
+    }
+
 
 
     protected boolean checkAccess(ViewInteraction textView) {
@@ -201,5 +223,30 @@ public class MainTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
+    }
+    public static class MyViewAction {
+
+        public static ViewAction clickChildViewWithId(final int id) {
+            return new ViewAction() {
+                @Override
+                public Matcher<View> getConstraints() {
+                    return null;
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Click on a child view with specified id.";
+                }
+
+                @Override
+                public void perform(UiController uiController, View view) {
+                    View v = view.findViewById(id);
+                    v.performClick();
+                }
+            };
+        }
+
     }
 }
