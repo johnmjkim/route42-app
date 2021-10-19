@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   private String uid;
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     uid = getIntent().getStringExtra("uid");
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   }
 
   @Override
-  protected void onDestroy() {
+  public void onDestroy() {
     super.onDestroy();
     //detach listeners when Activity destroyed
     firebaseListenerRegs.forEach(ListenerRegistration::remove);
