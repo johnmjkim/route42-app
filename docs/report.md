@@ -39,25 +39,33 @@
 
 **Targets Users: Workout Enthusiasts**
 
-With Route42, users can:
+Route42 is a social networking app for athletes of various levels. With Route42, users can:
 
-1. Record various workouts, including walking, running, and cycling.
+1. Record workouts, including walking, running, and cycling.
 2. Track performance metrics and see the recorded workouts in an interactive map.
 3. Follow other users, and view and like other people's workouts.
+4. Search for posts by username, hashtags, and proximity to the user's location
 
-[To-do: insert screengrabs]
+==TODO add screenshots==
 
 ### Use Case Example
 
-1. Bambang runs at ANU running club, and wants to record and share his daily runs.
-2. Once ready, he starts the `run` activity on the app
-3. The app tracks Bambang's location and route, and display it on a map. Performance metrics are displayed in real time.
-4. After finishing his run, Bambang ends the `run` activity on the app.
-5. The app will display a post template for sharing the completed activity.
-6. Bambang may write a description and add hashtags like #ANUrunning before sharing it.
-7. The created post is viewable by other users on their feeds immediately after posting. 
+1. Athletic Activity Tracking and Sharing
+	1. Michael runs at ANU running club, and wants to record and share his daily runs.
+	2. Once ready, he starts the `run` activity on the app
+	3. The app tracks Michael's location and route, and display it on a map. Performance metrics are displayed in real time.
+	4. After finishing his run, Michael ends the `run` activity on the app.
+	5. The app will display a post template for sharing the completed activity.
+	6. Michael may write a description and add hashtags like `#ANUrunning` before sharing it. The app will extract the hashtags and tag the post for you.
+	7. The created post can immediately be viewed by other users on their feeds. 
+	8. Michael can also select his past posts or posts created by others and see an interactive map of the route associated with the post.
+2. Social networking and searching
+	1. Emily is an avid runner who recently started competing in marathons. Emily wants to connect with other aspiring athletes.
+	2. Emily can search for posts on Route42 app by username and hashtags, and look at other athletes and their workouts and routes.
+	3. Emily can also search for posts by geographical proximity, and the app will visualize the places where others logged their workouts on an interactive map.
 
 ##### Scheduled Actions
+
 If the user does not have an active internet connection, the app allows scheduling of posts and likes.
 To schedule a post, the user checks the `schedule` button and selects the time delay.
 To schedule a like, the user long-clicks the like button and selects the time delay.
@@ -75,8 +83,9 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 
 ### Mobile App
 
+<img src="report.assets/Route42%20UML.png" alt="Route42 UML" style="zoom:80%;" />
 
-[Link](https://app.creately.com/diagram/nceK9AN0i3a/)
+[Link](https://lucid.app/lucidchart/d393dc76-9233-4176-90cd-def360405cbf/edit?invitationId=inv_ca06d23e-a397-4482-a2fc-3623c77f8ec2)
 
 ### REST API
 
@@ -100,8 +109,6 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 		- `QueryTreeNode` is used to extract the hierarchical structure of nodes, each representing a binary operator and two expressions.
 	- Why:
 		- It allows efficient parsing of tokens, and allows us to express various operations in a recursive manner, making the code easy to read and maintain.
-
-
 
 ### **Design Patterns**
 
@@ -148,8 +155,6 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
   - Where: `PhotoMapFragment`, `ScheduleablePost` , `SchedulableLike`
   - Why: When making the REST API call to `search/knn`, the communication is handled by a background worker thread. This ensures the UI thread (the main thread) does not freeze and remains responsive.
   Scheduled actions involving IO operations and network calls are also handled in the background to minimize load on the UI thread.
-
-
 
 ### **Grammars**
 
@@ -270,4 +275,3 @@ Firebase Integration
 
 	timeline update as the remote database is updated without restarting the application. E.g. User A makes a post, user B on a separate instance of the application sees user A’s post appear on their timeline without restarting their application. (very hard)
 
-## Appendix
