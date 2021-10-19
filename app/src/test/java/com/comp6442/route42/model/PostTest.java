@@ -1,14 +1,18 @@
 package com.comp6442.route42.model;
 
 import com.comp6442.route42.data.model.Post;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.DocumentReference;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -17,26 +21,57 @@ public class PostTest {
   Post post = new Post();
   List hashTagList = new ArrayList();
   List likedBy = new ArrayList();
+  Double lat = -33.865;
+  Double lon = 151.209;
   Date date;
+
+  private void setRelations() {
+    likedBy.addAll(Arrays.asList("Chris", "Robin", "Kyle"));
+    post.setLikeCount(10);
+    post.setLikedBy(likedBy);
+  }
+
+  private void setPostInformation() {
+    hashTagList.addAll(Arrays.asList("#morning", "#evening"));
+    post.setUserName("abigail47");
+    post.setHashtags(hashTagList);
+    post.setPostDescription("Station");
+    post.setProfilePicUrl("https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200");
+    post.setImageUrl("https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400");
+    post.setIsPublic(0);
+  }
+
+  private void setGeoInformation() {
+    post.setLatitude(lat);
+    post.setLongitude(lon);
+    post.setGeohash(String.valueOf("lat/lng: (" + lat + "," + lon + ")"));
+    post.setLocationName("Sydney");
+  }
+
+  private void setInformation() {
+    setPostInformation();
+    setGeoInformation();
+  }
+
+  @Before
+  public void setupTest() {
+    setRelations();
+    setInformation();
+  }
 
   @Test
   public void checkName() {
-    post.setUserName("abigail47");
-    Assert.assertEquals(post.getUserName(),"abigail47");
+    Assert.assertEquals("abigail47", post.getUserName());
   }
 
   @Test
   public void checkHashTag() {
-    hashTagList.add("#morning");
-    hashTagList.add("#evening");
-    post.setHashtags(hashTagList);
-    Assert.assertEquals(post.getHashtags(),hashTagList);
+    Assert.assertEquals(hashTagList, post.getHashtags());
   }
 
   @Test
   public void checkGeoHash() {
-    post.setGeohash("lat/lng: (-33.865,151.209)");
-    Assert.assertEquals(post.getGeohash(),"lat/lng: (-33.865,151.209)");
+    Assert.assertEquals("lat/lng: (-33.865,151.209)", post.getGeohash());
   }
 
 //  @Test
@@ -55,57 +90,39 @@ public class PostTest {
 
   @Test
   public void checkLatLng() {
-    post.setLatitude(-33.865);
-    post.setLongitude(151.209);
-    Assert.assertEquals(post.getLatitude().toString(),"-33.865");
-    Assert.assertEquals(post.getLongitude().toString(),"151.209");
-    Assert.assertEquals(post.getLatLng().toString(),"lat/lng: (-33.865,151.209)");
-    Assert.assertEquals(post.getGeohash(),"r3gx2g5414");
-
+    LatLng latLng = new LatLng(lat, lon);
+    Assert.assertEquals(latLng, post.getLatLng());
   }
 
   @Test
   public void checkDescription() {
-    post.setPostDescription("Station");
-    Assert.assertEquals(post.getPostDescription(),"Station");
+    Assert.assertEquals("Station", post.getPostDescription());
   }
 
   @Test
   public void checkLocation() {
-    post.setLocationName("Sydney");
-    Assert.assertEquals(post.getLocationName(),"Sydney");
+    Assert.assertEquals("Sydney", post.getLocationName());
   }
 
   @Test
   public void checkLikeCount() {
-    post.setLikeCount(10);
-    Assert.assertEquals(post.getLikeCount(),10);
+    Assert.assertEquals(10, post.getLikeCount());
   }
 
   @Test
   public void checkLikedBy() {
-    likedBy.add("Chris");
-    likedBy.add("Robin");
-    likedBy.add("Kyle");
-
-    post.setLikedBy(likedBy);
-    Assert.assertEquals(post.getLikedBy(),likedBy);
+    Assert.assertEquals(likedBy, post.getLikedBy());
   }
-
-
 
   @Test
   public void checkUrl() {
-    post.setProfilePicUrl("https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200");
-    post.setImageUrl("https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400");
-    Assert.assertEquals(post.getProfilePicUrl(),"https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200");
-    Assert.assertEquals(post.getImageUrl(),"https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400");
+    Assert.assertEquals("https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200", post.getProfilePicUrl());
+    Assert.assertEquals("https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400", post.getImageUrl());
 
   }
   @Test
   public void checkPublic() {
-    post.setIsPublic(0);
-    Assert.assertEquals(post.getIsPublic(),0);
+    Assert.assertEquals(0, post.getIsPublic());
   }
 
 //  @Test
