@@ -21,4 +21,7 @@ public interface RestApiClient {
 
   @GET("search/knn")
   public Call<List<Post>> getKNearestNeighbors(@Query("k") int k, @Query("lat") Double lat, @Query("lon") Double lon);
+
+  @GET("search/rnn")
+  public Call<List<Post>> getWithinRadiusNeighbors(@Query("radius") Double radius, @Query("lat") Double lat, @Query("lon") Double lon);
 }
