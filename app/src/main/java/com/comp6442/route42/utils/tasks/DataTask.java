@@ -42,7 +42,21 @@ public abstract class DataTask<T extends Model> implements Runnable {
     Timber.i("Initialized task to insert documents into collection: %s", collectionName);
   }
 
-  public String readTextFile(InputStream inputStream) {
+  @Override
+  public void run() {
+    if (this.mAuth.getCurrentUser() == null) {
+      this.mAuth.signInWithEmailAndPassword(
+              BuildConfig.testUserEmail,
+              BuildConfig.testUserPassword
+      );
+    }
+    if (this.mAuth.getCurrentUser() == null) Timber.w("Not signed in");
+    else {
+      createDocuments();
+    }
+  }
+
+  protected String readTextFile(InputStream inputStream) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     byte[] buf = new byte[1024];
@@ -57,19 +71,6 @@ public abstract class DataTask<T extends Model> implements Runnable {
     return outputStream.toString();
   }
 
-  @Override
-  public void run() {
-    if (this.mAuth.getCurrentUser() == null) {
-      this.mAuth.signInWithEmailAndPassword(
-              BuildConfig.testUserEmail,
-              BuildConfig.testUserPassword
-      );
-    }
-    if (this.mAuth.getCurrentUser() == null) Timber.w("Not signed in");
-    else {
-      createDocuments();
-    }
-  }
 
   protected void createDocuments() {
     this.repository.setMany(items);

@@ -198,6 +198,13 @@ public class ProfileFragment extends Fragment {
     Timber.d("breadcrumb");
   }
 
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    //detach listeners when Activity destroyed
+    firebaseListenerRegs.forEach(ListenerRegistration::remove);
+  }
+
   /* onDetach() is always called after any Lifecycle state changes. */
   @Override
   public void onDetach() {
@@ -346,13 +353,6 @@ public class ProfileFragment extends Fragment {
     if (mAuth.getCurrentUser() != null) mAuth.signOut();
     Timber.i("Taking user to sign-in screen");
     startActivity(new Intent(getActivity(), LogInActivity.class));
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-    //detach listeners when Activity destroyed
-    firebaseListenerRegs.forEach(ListenerRegistration::remove);
   }
 
   public void renderProfile(User profileUser, View view) {

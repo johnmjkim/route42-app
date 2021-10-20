@@ -1,4 +1,4 @@
-package com.comp6442.route42.ui.fragment;
+package com.comp6442.route42.ui.fragment.map;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;

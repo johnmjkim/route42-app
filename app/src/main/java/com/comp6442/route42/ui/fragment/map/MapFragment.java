@@ -1,4 +1,4 @@
-package com.comp6442.route42.ui.fragment;
+package com.comp6442.route42.ui.fragment.map;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.comp6442.route42.R;
+import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
