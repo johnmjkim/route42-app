@@ -26,8 +26,6 @@ import timber.log.Timber;
  * Implements SAX Default Parser
  */
 public class PostXMLParser {
-    public PostXMLParser() {
-    }
 
     private class PostParserHandler extends DefaultHandler {
         private Post post;
@@ -103,6 +101,8 @@ public class PostXMLParser {
 //            Timber.i(post.toString());
             return post;
         }
+    }
+    public PostXMLParser() {
     }
 
     /**

@@ -1,5 +1,4 @@
 package com.comp6442.route42.data.model;
-import android.content.Context;
 
 import android.os.Build;
 import android.os.Parcel;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
+
 @IgnoreExtraProperties
 public class Post extends Model implements Parcelable {
   public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -45,7 +45,8 @@ public class Post extends Model implements Parcelable {
   private String locationName;
   private Double latitude;
   private Double longitude;
-  private List<Point> route = new ArrayList<>();;
+  private List<Point> route = new ArrayList<>();
+  ;
   private String geohash = "";
   private List<String> hashtags = new ArrayList<>();
   private int likeCount = 0;
@@ -285,27 +286,26 @@ public class Post extends Model implements Parcelable {
     String currentTag = "";
 
     textInput = textInput.toLowerCase().trim();
-    for (int i=0; i<textInput.length(); i++) {
+    for (int i = 0; i < textInput.length(); i++) {
       char c = textInput.charAt(i);
-      if(c == '#') {
-        if ( currentTag.length()>0) {
+      if (c == '#') {
+        if (currentTag.length() > 0) {
           hashTags.add(currentTag.trim());
           currentTag = "";
         }
-        currentTag+= c;
+        currentTag += c;
 
-      } else if (currentTag.length()>0 && Pattern.matches("[:space:]" , Character.toString(c))) {
+      } else if (currentTag.length() > 0 && Pattern.matches("[:space:]", Character.toString(c))) {
         hashTags.add(currentTag.trim());
         currentTag = "";
-      }
-      else if (currentTag.length()>0 && Pattern.matches("\\p{Punct}" , Character.toString(c)) ) {
+      } else if (currentTag.length() > 0 && Pattern.matches("\\p{Punct}", Character.toString(c))) {
         hashTags.add(currentTag.trim());
         currentTag = "";
-      } else if (currentTag.length()>0) {
+      } else if (currentTag.length() > 0) {
         currentTag += c;
       }
     }
-    if (currentTag.length()>0) {
+    if (currentTag.length() > 0) {
       hashTags.add(currentTag.trim());
     }
     return hashTags;

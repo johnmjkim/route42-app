@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-public class ScheduleableLike implements  Schedulable{
+public class ScheduleableLike implements Schedulable {
     private UUID workId = null;
     private WorkManager workManager = null;
     private final String uid;
@@ -30,25 +30,25 @@ public class ScheduleableLike implements  Schedulable{
     }
 
     @Override
-    public void schedule(Context context, int scheduledDelay)  {
+    public void schedule(Context context, int scheduledDelay) {
         try {
             String baseFilename = "scheduled_like";
-            String storageFilename = baseFilename  + ".txt";
-            FileOutputStream outputStream= context.openFileOutput(storageFilename, 0);
-            String writeString = uid + "," + postId ;
-            outputStream.write(writeString.getBytes(StandardCharsets.UTF_8)) ;
+            String storageFilename = baseFilename + ".txt";
+            FileOutputStream outputStream = context.openFileOutput(storageFilename, 0);
+            String writeString = uid + "," + postId;
+            outputStream.write(writeString.getBytes(StandardCharsets.UTF_8));
             outputStream.close();
-             WorkRequest workRequest = new OneTimeWorkRequest.Builder(ScheduledTask.class)
+            WorkRequest workRequest = new OneTimeWorkRequest.Builder(ScheduledTask.class)
                     .setInitialDelay(scheduledDelay, TimeUnit.MINUTES)
                     .setInputData(
                             new Data.Builder()
                                     .putString("type", "like_post")
-                                    .putString("like_data_filepath",context.getFilesDir().getPath() + "/" + storageFilename)
+                                    .putString("like_data_filepath", context.getFilesDir().getPath() + "/" + storageFilename)
                                     .build()
                     )
                     .build();
-            workId =  workRequest.getId();
-            workManager =  WorkManager.getInstance(context);
+            workId = workRequest.getId();
+            workManager = WorkManager.getInstance(context);
             workManager.enqueue(workRequest);
         } catch (IOException e) {
             Timber.e(e);
@@ -58,8 +58,8 @@ public class ScheduleableLike implements  Schedulable{
 
     @Override
     public void cancel() {
-        if(workId != null && workManager != null) {
-            Operation cancelWorkOperation =  workManager.cancelWorkById(workId);
+        if (workId != null && workManager != null) {
+            Operation cancelWorkOperation = workManager.cancelWorkById(workId);
             cancelWorkOperation.getResult();
         }
     }
