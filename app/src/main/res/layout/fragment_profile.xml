@@ -172,18 +172,18 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="383dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/show_blocked_users_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="120dp"
+                        android:layout_marginStart="150dp"
                         android:layout_marginTop="0dp"
-                        android:layout_marginEnd="20dp"
-                        android:text="Blocked By"
+                        android:layout_marginEnd="10dp"
+                        android:text="Blocked"
                         android:textSize="12sp"
                         app:backgroundTint="@color/teal_200" />
 
