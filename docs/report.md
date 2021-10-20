@@ -209,7 +209,7 @@ EXAMPLES
 
 *[Where are the known errors and bugs? What consequences might they lead to?]*
 
-*Here is an example:*
+1. Search functionality can handle partially valid and invalid search queries. (medium)
 
 1. *Bug 1:*
 
@@ -223,13 +223,15 @@ EXAMPLES
 
 ## Testing Summary
 
-*Here is an example:*
+- Number of test cases: 13
+	- UI Tests : 2
+	- Unit Tests : 11
 
-*Number of test cases: ...*
+- Code coverage: ...
 
-*Code coverage: ...*
-
-*Types of tests created: ...*
+- Types of tests created: ...
+	- UI Tests : 2
+	- Unit Tests : 2
 
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
 
