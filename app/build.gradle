@@ -34,7 +34,11 @@ android {
         buildConfigField("boolean", "skipLogin", "false")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
-        buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
+
+        // firestore
+        buildConfigField("String", "EMULATOR_ADDRESS", "\"10.0.2.2\"")
+        buildConfigField("int", "FIREBASE_FIRESTORE_PORT", "8090")
+        buildConfigField("int", "FIREBASE_STORAGE_PORT", "9199")
 
         // for demo
         buildConfigField("boolean", "DEMO", "false")
