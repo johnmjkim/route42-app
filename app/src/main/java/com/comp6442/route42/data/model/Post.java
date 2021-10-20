@@ -280,19 +280,30 @@ public class Post extends Model implements Parcelable {
   }
 
   public static List<String> getHashTagsFromTextInput(String textInput) {
+    // TODO fix(done), #test returns #t in previous code
     List<String> hashTags = new ArrayList<>();
-
     String currentTag = "";
-
     textInput = textInput.toLowerCase().trim();
     for (int i=0; i<textInput.length(); i++) {
       char c = textInput.charAt(i);
       if(c == '#') {
-        if ( currentTag.length()>0) {
-          hashTags.add(currentTag.trim());
-          currentTag = "";
+          for(int j=i;j<textInput.length();j++){
+            if(textInput.charAt(j)==' '){
+              i=j;
+              break;
+            }
+            if(textInput.charAt(j)==','){
+              i=j;
+              break;
+            }
+            currentTag+= textInput.charAt(j);
         }
-        currentTag+= c;
+//        if(c == '#') {
+//          if ( currentTag.length()>0) {
+//            hashTags.add(currentTag.trim());
+//            currentTag = "";
+//          }
+//          currentTag+= c;
 
       } else if (currentTag.length()>0 && Pattern.matches("[:space:]" , Character.toString(c))) {
         hashTags.add(currentTag.trim());
@@ -301,9 +312,10 @@ public class Post extends Model implements Parcelable {
       else if (currentTag.length()>0 && Pattern.matches("\\p{Punct}" , Character.toString(c)) ) {
         hashTags.add(currentTag.trim());
         currentTag = "";
-      } else if (currentTag.length()>0) {
-        currentTag += c;
       }
+//      else if (currentTag.length()>0) {
+//        currentTag += c;
+//      }
     }
     if (currentTag.length()>0) {
       hashTags.add(currentTag.trim());
