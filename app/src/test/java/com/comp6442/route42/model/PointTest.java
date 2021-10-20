@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 public class PointTest {
-    Point point;
+    Point point,point1;
     @Mock
     Parcel parcelInput, parcelOutput;
     Double lat = -33.865;
@@ -21,6 +21,7 @@ public class PointTest {
     @Before
     public void setupTest() {
         point = new Point(lat, lon);
+        point1 = new Point();
         parcelOutput = mock(Parcel.class);
         parcelInput = mock(Parcel.class);
         parcelInput.writeDoubleArray(new double[]{lat, lon});

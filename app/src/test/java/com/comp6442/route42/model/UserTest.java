@@ -61,6 +61,11 @@ public class UserTest {
     }
 
     @Test
+    public void idTest() {
+        Assert.assertEquals(user.getId(), "f2ecbd83-66e1-49e7-bea5-52f8aaa14a83");
+    }
+
+    @Test
     public void infoTest() {
         Assert.assertEquals(user.getId(), "f2ecbd83-66e1-49e7-bea5-52f8aaa14a83");
         Assert.assertEquals(user.getUserName(), "testuser");
