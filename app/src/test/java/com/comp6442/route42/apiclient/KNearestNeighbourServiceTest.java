@@ -18,7 +18,7 @@ public class KNearestNeighbourServiceTest {
 
     @Test
     public void callTest() throws Exception {
-        Assert.assertEquals(null, kNearestNeighbourService.call());
+        Assert.assertNull(kNearestNeighbourService.call());
     }
 
     @Test

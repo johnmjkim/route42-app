@@ -48,23 +48,23 @@ public class BaseActivityTest {
     public void cyclingTest() throws ParseException {
 
         BaseActivity cyclingBase = new BaseActivity(locations,10, Activity.Activity_Type.CYCLING);
-        Assert.assertEquals(cyclingBase.getCalories(),0.0,0.00001);
-        Assert.assertEquals(cyclingBase.getDistance(),0.0,0.00001);
-        Assert.assertEquals(cyclingBase.getSpeed(),0.0,0.00001);
-        Assert.assertEquals(cyclingBase.getPostString(),
+        Assert.assertEquals(0.0, cyclingBase.getCalories(),0.00001);
+        Assert.assertEquals(0.0, cyclingBase.getDistance(),0.00001);
+        Assert.assertEquals(0.0, cyclingBase.getSpeed(),0.00001);
+        Assert.assertEquals(
                 "Check out my cycling activity stats:\n" +
                 "Distance: 0.0 m\n" +
                 "Duration: 10 s\n" +
                 "Average speed: 0.0 m/s\n" +
                 "Calories: 0 kcal\n" +
-                " #myworkouts");
+                " #myworkouts", cyclingBase.getPostString());
 
-        Assert.assertEquals(cyclingBase.toString(),"Distance: 0m\n"+"Duration:10.0s\n"+"Calories: 0");
+        Assert.assertEquals("Distance: 0m\n"+"Duration:10.0s\n"+"Calories: 0", cyclingBase.toString());
         String expiryDateString = "2018-10-15T17:52:00";
         String expiryDateString1 = "2018-10-15T19:52:00";
         final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         java.util.Date date = formatter.parse(expiryDateString);
         java.util.Date date1 = formatter.parse(expiryDateString1);
-        Assert.assertEquals(BaseActivity.getElapsedTimeSeconds(date1,date),7200);
+        Assert.assertEquals(7200, BaseActivity.getElapsedTimeSeconds(date1,date));
     };
 }

@@ -17,6 +17,6 @@ public class PostServiceTest {
 
     @Test
     public void callTest() throws Exception {
-        Assert.assertEquals(null, postService.call());
+        Assert.assertNull(postService.call());
     }
 }

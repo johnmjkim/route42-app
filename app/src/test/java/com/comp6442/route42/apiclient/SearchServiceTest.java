@@ -17,7 +17,7 @@ public class SearchServiceTest {
         //----Check query sentence but retrofit and api result is randomly changed so check it partially
         SearchService search = new SearchService("#Run");
         // "SearchService{retrofit=retrofit2.Retrofit@40e05db1, api=retrofit2.Retrofit$1@40e6a4fb, query='#Run'}";
-        Assert.assertEquals(search.call(),null);//no result
+        Assert.assertNull(search.call());//no result
         Assert.assertTrue(search.toString().contains("SearchService{"));
         Assert.assertTrue(search.toString().contains("retrofit=retrofit2."));
         Assert.assertTrue(search.toString().contains(", api=retrofit2.Retrofit"));
