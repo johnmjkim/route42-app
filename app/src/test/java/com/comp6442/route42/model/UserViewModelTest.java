@@ -50,21 +50,20 @@ public class UserViewModelTest {
     public void setupTest() {
         setRelations();
         setInformation();
-        userViewModel.loadLiveUser("9d4d5084-7547-4e96-97c6-908b3a0ca3b8");
+//        userViewModel.loadLiveUser("9d4d5084-7547-4e96-97c6-908b3a0ca3b8");
     }
 
-//    @Test
-//    public void liveUserTest() {
+    @Test
+    public void liveUserTest() {
 //        userViewModel.setLiveUser(user);
 //        liveUser.setValue(user);
 //        Assert.assertEquals(liveUser.getValue(), userViewModel.getLiveUser());
-//    }
+    }
 
-//    @Test
-//    public void profileUserTest() {
+    @Test
+    public void profileUserTest() {
 //        userViewModel.setProfileUser(user);
 //        profileUser.setValue(user);
 //        Assert.assertEquals(profileUser.getValue(), userViewModel.getProfileUser());
-//        System.out.println(userViewModel);
-//    }
+    }
 }
