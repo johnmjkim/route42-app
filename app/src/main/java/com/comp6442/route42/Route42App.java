@@ -80,7 +80,7 @@ public class Route42App extends Application {
   /**
    * Create test user, and insert sample data if loadData flag is set to true
    */
-  public void createTestUser() {
+  private void createTestUser() {
     Timber.i("Creating test user.");
     User testUser = new User(
             null,

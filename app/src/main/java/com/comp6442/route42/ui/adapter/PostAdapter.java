@@ -19,9 +19,9 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.PointMapFragment;
+import com.comp6442.route42.ui.fragment.map.PointMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
-import com.comp6442.route42.ui.fragment.RouteMapFragment;
+import com.comp6442.route42.ui.fragment.map.RouteMapFragment;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.storage.StorageReference;
 
