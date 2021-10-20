@@ -25,17 +25,17 @@ import timber.log.Timber;
 public class PostXMLCreator {
 
     /**
-     * Takes an object and outputs an xml formatted string of the object's members.
-     * @return XML - Formatted string
+     * Takes a Post object and builds a DOM and transform it and saves an .xml file.
+     * @return boolean indicating successful creation
      */
-    public static Document createPostXML(SchedulablePost post) throws Exception {
+    public boolean create(SchedulablePost post, String storagePath) throws Exception {
         DocumentBuilderFactory postBuilderFac = DocumentBuilderFactory.newInstance();
-        DocumentBuilder postDocBuilder ;
-        Document postDoc ;
+        DocumentBuilder postDocBuilder;
+        Document postDoc;
         try {
             postDocBuilder = postBuilderFac.newDocumentBuilder();
             postDoc = postDocBuilder.newDocument();
-            Element rootEl  = postDoc.createElementNS("", "ActivityPost");
+            Element rootEl = postDoc.createElementNS("", "ActivityPost");
             postDoc.appendChild(rootEl);
             rootEl.appendChild(createTextElement(postDoc, "uid", post.getUid()));
             rootEl.appendChild(createTextElement(postDoc, "profilePicUrl", post.getProfilePicUrl()));
@@ -44,25 +44,28 @@ public class PostXMLCreator {
             rootEl.appendChild(createTextElement(postDoc, "isPublic", String.valueOf(post.getIsPublic())));
             rootEl.appendChild(createTextElement(postDoc, "locationName", post.getLocationName()));
             rootEl.appendChild(createTextElement(postDoc, "Latitude", String.valueOf(post.getLatitude())));
-            rootEl.appendChild(createTextElement(postDoc, "Longitude", String.valueOf( post.getLongitude())));
-            return postDoc;
-        }catch (Exception e) {
+            rootEl.appendChild(createTextElement(postDoc, "Longitude", String.valueOf(post.getLongitude())));
+            saveLocalXMLFromDOM(postDoc, storagePath);
+            return true;
+        } catch (Exception e) {
             Timber.e(e);
-            throw new Exception(e);
+            return false;
         }
     }
-    public static void saveLocalXMLFromDOM(Document dom, String storagePath) throws TransformerException {
+
+    private void saveLocalXMLFromDOM(Document dom, String storagePath) throws TransformerException {
         try {
             Transformer t = TransformerFactory.newInstance().newTransformer();
-            Timber.i("XMLstorage path" + storagePath);
             Result out = new StreamResult(new File(storagePath));
             t.transform(new DOMSource(dom), out);
         } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
+            Timber.e(e);
+            throw e;
         }
 
     }
-    private static Node createTextElement(Document  doc, String name, String value) {
+
+    private Node createTextElement(Document doc, String name, String value) {
         Element node = doc.createElement(name);
         node.appendChild(doc.createTextNode(value));
         return node;

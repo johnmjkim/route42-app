@@ -87,9 +87,8 @@ public class SchedulablePost implements Schedulable {
     public void schedule(Context context, int scheduledDelay) {
         //create dom and save as xml file
         try {
-            Document postDOM = PostXMLCreator.createPostXML(this);
             String xmlFilePath = context.getFilesDir().getPath() + "/" + storageFilename;
-            PostXMLCreator.saveLocalXMLFromDOM(postDOM, xmlFilePath);
+            new PostXMLCreator().create(this, xmlFilePath);
             WorkRequest workRequest = new OneTimeWorkRequest.Builder(ScheduledTask.class)
                     .setInitialDelay(scheduledDelay, TimeUnit.MINUTES)
                     .setInputData(
@@ -105,11 +104,8 @@ public class SchedulablePost implements Schedulable {
             workManager = WorkManager.getInstance(context);
             workManager.enqueue(workRequest);
             Timber.i("scheduled work request");
-        } catch (TransformerException e) {
-            Timber.e(e);
         } catch (Exception e) {
             Timber.e(e);
-
         }
 
     }
