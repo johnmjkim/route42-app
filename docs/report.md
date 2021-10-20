@@ -233,6 +233,14 @@ EXAMPLES
 	- UI Tests : 2
 	- Unit Tests : 2
 
+| UI/Unit Tests  |  Test Name  | Test Description | Code Coverage |
+| :---           |   :----:    |      :----:      |          ---: |
+| UI             |  LoginTest  | - desc 1         | N/A           |
+| UI             |  MainTest   | - desc 2         | N/A           |
+| Unit           |  UnitTest1  | - desc 1         | 70%          |
+| Unit           |  UnitTest2  | - desc 2         | 80%           |
+
+
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
 
 ## Implemented Features
