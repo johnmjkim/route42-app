@@ -20,7 +20,11 @@ android {
         buildConfigField("boolean", "skipLogin", "true")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
-        buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
+
+        // firestore
+        buildConfigField("String", "EMULATOR_ADDRESS", "\"10.0.2.2\"")
+        buildConfigField("int", "FIREBASE_FIRESTORE_PORT", "8090")
+        buildConfigField("int", "FIREBASE_STORAGE_PORT", "9199")
 
         // for demo
         buildConfigField("boolean", "DEMO", "false")
@@ -68,9 +72,12 @@ dependencies {
 
     // UI
     implementation 'com.google.android.material:material:1.4.0'
-
+    //Worker thread support
+    def work_version = "2.7.0"
+    implementation "androidx.work:work-runtime:$work_version"
     // ----------- Navigation Component ------------
     def nav_version = "2.3.5"
+
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
