@@ -139,7 +139,7 @@ public class FeedFragment extends Fragment {
     });
   }
 
-  public void initFeed(View view) {
+  private void initFeed(View view) {
     // hide search view on scroll
     bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
 
@@ -165,7 +165,7 @@ public class FeedFragment extends Fragment {
     });
   }
 
-  public void initSearch(View view, User user) {
+  private void initSearch(View view, User user) {
     // search
     SearchView searchView = view.findViewById(R.id.search_view);
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -207,7 +207,7 @@ public class FeedFragment extends Fragment {
     });
   }
 
-  public FirestorePostAdapter queryFirestore(User user, String queryText) {
+  private FirestorePostAdapter queryFirestore(User user, String queryText) {
     Query query;
     if (TextUtils.isEmpty(queryText)) {
       query = PostRepository.getInstance().getVisiblePosts(user, 20);

@@ -22,7 +22,7 @@ public class TaskCreatePostsDemo extends TaskCreatePosts {
     );
   }
 
-  public void createPostsMiniBatch(int batchSize, int limit) {
+  private void createPostsMiniBatch(int batchSize, int limit) {
 
     int prevIdx = idx;
     idx += batchSize;

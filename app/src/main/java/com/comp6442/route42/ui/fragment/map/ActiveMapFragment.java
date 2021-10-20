@@ -1,4 +1,4 @@
-package com.comp6442.route42.ui.fragment;
+package com.comp6442.route42.ui.fragment.map;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -24,6 +24,7 @@ import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.BaseActivity;
+import com.comp6442.route42.ui.fragment.CreatePostFragment;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
 import com.comp6442.route42.utils.MockLocation;
 import com.google.android.gms.location.LocationAvailability;
@@ -98,9 +99,7 @@ public class ActiveMapFragment extends MapFragment {
     //set metrics
     activityMetricsText = view.findViewById(R.id.activity_metrics_text);
     FloatingActionButton activityButton = view.findViewById(R.id.activity_button);
-    activityButton.setOnClickListener(click -> {
-      activityBtnClickHandler();
-    });
+    activityButton.setOnClickListener(click -> createActivityBtnClickHandler());
   }
 
   private void endUserActivity() {
@@ -228,7 +227,7 @@ public class ActiveMapFragment extends MapFragment {
     activityMetricsText.setText(userActivityData.toString());
   }
 
-  public void activityBtnClickHandler() {
+  private void createActivityBtnClickHandler() {
     String[] dialogItems;
     if (requestingLocationUpdates)  {
       dialogItems = new String[]{"Pause", "End Activity"};
