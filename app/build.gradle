@@ -31,7 +31,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "EMULATOR", "true")
         buildConfigField("boolean", "loadData", "true")
-        buildConfigField("boolean", "skipLogin", "false")
+        buildConfigField("boolean", "skipLogin", "true")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
 
