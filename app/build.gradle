@@ -31,7 +31,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "EMULATOR", "true")
         buildConfigField("boolean", "loadData", "true")
-        buildConfigField("boolean", "skipLogin", "true")
+        buildConfigField("boolean", "skipLogin", "false")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
 
@@ -153,6 +153,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.22.0'
     implementation "androidx.profileinstaller:profileinstaller:1.1.0-alpha04"
     androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
     }
 android {
 

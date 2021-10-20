@@ -1,41 +1,38 @@
 package com.comp6442.route42.ui;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.core.StringContains.containsString;
 
+import android.content.res.Resources;
 import android.view.View;
-import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import com.comp6442.route42.R;
-import com.comp6442.route42.Route42App;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
-import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.ui.activity.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.Assert;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,11 +46,11 @@ public class MainTest {
     private FirebaseAuth mAuth;
 
     @Before
-    public void Login(){
+    public void Login() {
 //        ActivityScenario scenario = activityRule.getScenario(); // not sure how can I use this
         mAuth = FirebaseAuthLiveData.getInstance().getAuth();
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        if(firebaseUser==null) {//if not login, do login
+        if (firebaseUser == null) {//if not login, do login
             onView(withId(R.id.login_form_email)).perform(typeText("foo@bar.com"), closeSoftKeyboard());
             onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
             onView(withId(R.id.login_button)).perform(click());
@@ -86,49 +83,64 @@ public class MainTest {
         onView(withId(R.id.navigation_profile)).perform(click()).check(matches(withId(R.id.navigation_profile)));
         onView(withId(R.id.sign_out_button)).perform(click());
     }
-    @Test
-    public void createCyclingPost(){
-        createPost("#hash","CYCLING");
-        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
 
+    @Test
+    public void createCyclingPost() throws InterruptedException {
+        createPost("cycle","CYCLING");
+        onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("cycle")))));
     }
 
     @Test
-    public void createRunningPost(){
-        createPost("#hash","RUNNING");
-        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
+    public void createRunningPost() throws InterruptedException {
+        createPost("run","RUNNING");
+        onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("run")))));
     }
 
     @Test
-    public void createWalkingPost(){
-        createPost("#hash","WALKING");
-        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
-
+    public void createWalkingPost() throws InterruptedException {
+        createPost("walk","WALKING");
+        onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("walk")))));
     }
 
     @Test
-    public void cancelPost(){
+    public void cancelPost() throws InterruptedException {
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));
         onView(withText("CYCLING")).perform(click());
-        try {//make delay to get data from active_map_fragment
-            Thread.sleep(500);
-        if(checkAccess(onView(withText("Allow Route42 to access this device's location")))){
-            onView(withText("While using the app")).perform(click());
-        }
-            onView(withId(R.id.activity_button)).perform(click());
-            onView(withText("Start")).perform(click());
-            Thread.sleep(10000);//make delay to get data from active_map_fragment
-            onView(withId(R.id.activity_button)).perform(click());
-            onView(withText("End Activity")).perform(click());
-            Thread.sleep(500);//make delay
-            onView(withId(R.id.post_description_input)).perform(typeText("CancelTest"), closeSoftKeyboard());
-            onView(withId(R.id.cancel_post_button)).perform(click());
-            onView(withId(R.id.navigation_feed)).perform(click()).check(matches(isDisplayed()));
-            onView(withText("CancelTest")).check(doesNotExist());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        //make delay to get data from active_map_fragment
+        Thread.sleep(500);
+        onView(withId(R.id.activity_button)).perform(click());
+        Thread.sleep(10000);//make delay to get data from active_map_fragment
+        onView(withId(R.id.activity_button)).perform(click());
+        onView(withText("End Activity")).perform(click());
+        Thread.sleep(500);//make delay
+        onView(withId(R.id.post_description_input)).perform(typeText("CancelTest"), closeSoftKeyboard());
+        onView(withId(R.id.cancel_post_button)).perform(click());
+        onView(withId(R.id.navigation_feed)).perform(click()).check(matches(isDisplayed()));
+        onView(withText("CancelTest")).check(doesNotExist());
+
+    }
+
+    @Test
+    public void schedulePost() throws InterruptedException {
+        onView(withId(R.id.Btn_Create_Activity)).perform(click());
+        onView(withText("Choose Activity Type")).check(matches(isDisplayed()));
+        onView(withText("CYCLING")).perform(click());
+        Thread.sleep(500);
+        onView(withId(R.id.activity_button)).perform(click());
+        Thread.sleep(10000);//make delay to get data from active_map_fragment
+        onView(withId(R.id.activity_button)).perform(click());
+        onView(withText("End Activity")).perform(click());
+        Thread.sleep(500);//make delay
+        onView(withId(R.id.post_description_input)).perform(typeText("#delayTest"), closeSoftKeyboard());
+        onView(withId(R.id.create_post_schedule_switch)).perform(click());
+        onView(withText("Select Delay (Minutes)")).check(matches(isDisplayed()));
+        onView(withText("1")).perform(click());
+        onView(withId(R.id.create_post_button)).perform(click());
+        Thread.sleep(60000);
+        onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        onView(withId(R.id.navigation_profile)).perform(click()).check(matches(withId(R.id.navigation_profile)));
+        onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("delayTest")))));
     }
 
 //    @Test
@@ -154,6 +166,7 @@ public class MainTest {
         Thread.sleep(500);
         onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isNotChecked()));//check not blocked
     }
+
     @Test
     public void followUnfollowCheck() throws InterruptedException {
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
@@ -162,6 +175,7 @@ public class MainTest {
         Thread.sleep(500);
         onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isNotChecked()));//check not followed
     }
+
     @Test
     public void followBlockCheck() throws InterruptedException {
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
@@ -171,6 +185,7 @@ public class MainTest {
         onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check not followed
         onView(withId(R.id.profile_follow_switch)).check(matches(isNotChecked()));//check not followed
     }
+
     @Test
     public void blockFollowCheck() throws InterruptedException {
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
@@ -181,51 +196,33 @@ public class MainTest {
         onView(withId(R.id.profile_follow_switch)).check(matches(isNotChecked()));//check not followed
     }
 
-
-
-    protected boolean checkAccess(ViewInteraction textView) {
-        String text = textView.toString();
-        return text.matches("Allow Route42 to access this device's location");
-    }
-
-    public void createPost(String keyword,String activityType){// create post
+    public void createPost(String keyword, String activityType) throws InterruptedException {// create post
         //--------------------------Start to make post-------------------------------------------------
 
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));//check dialog is on
         onView(withText(activityType)).perform(click());//choose activity type
-        try{
-            Thread.sleep(300);//make delay to check the dialog
-        if(checkAccess(onView(withText("Allow Route42 to access this device's location")))){//if app asks permission, click it
-            onView(withText("While using the app")).perform(click());
-        }
-            Thread.sleep(1000);//make delay to get data from active_map_fragment
-            onView(withId(R.id.activity_button)).perform(click());
-            onView(withText("Start")).perform(click());
-            Thread.sleep(10000); //make delay to start duration
-            //--------------------------Active_map_fragment------------------------------------------------
-            onView(withId(R.id.constraintLayout)).check(matches(isDisplayed()));
-            onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
-            onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
-            onView(withId(R.id.linearLayout)).check(matches(isDisplayed()));
-            onView(withId(R.id.map_fragment2)).check(matches(isDisplayed())); //until this line, component check
-            Thread.sleep(100);
-            onView(withId(R.id.activity_button)).perform(click());
-            onView(withText("End Activity")).perform(click());
-            //--------------------------Create_post_fragment-------------------------------------------------
-            Thread.sleep(500);//make delay to get data from active_map_fragment
-            //--------------------------Write description and then create post------------------------------- will update when we can make hashtag function
-            onView(withId(R.id.post_description_input)).perform(typeText(activityType), closeSoftKeyboard()); //add activitytype to distinguish the post for test
+        Thread.sleep(300);//make delay to check the dialog
+        Thread.sleep(1000);//make delay to get data from active_map_fragment
+        onView(withId(R.id.activity_button)).perform(click());
+        Thread.sleep(5000); //make delay to start duration
+        //--------------------------Active_map_fragment------------------------------------------------
+        onView(withId(R.id.constraintLayout)).check(matches(isDisplayed()));
+        onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
+        onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
+        onView(withId(R.id.linearLayout)).check(matches(isDisplayed()));
+        onView(withId(R.id.map_fragment2)).check(matches(isDisplayed())); //until this line, component check
+        Thread.sleep(100);
+        onView(withId(R.id.activity_button)).perform(click());
+        onView(withText("End Activity")).perform(click());
+        //--------------------------Create_post_fragment-------------------------------------------------
+        Thread.sleep(500);//make delay to get data from active_map_fragment
+        //--------------------------Write description and then create post------------------------------- will update when we can make hashtag function
+        onView(withId(R.id.post_description_input)).perform(typeText("#" + keyword), closeSoftKeyboard()); //add activitytype to distinguish the post for test
 //        onView(withId(R.id.post_description_input)).perform(typeText(keyword), closeSoftKeyboard());//will update it when I can write hashtag
-            onView(withId(R.id.create_post_button)).perform(click());
-            //--------------------------Create post is finished and check post in feed fragment---------------
-            onView(withId(R.id.navigation_feed)).perform(click());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
+        onView(withId(R.id.create_post_button)).perform(click());
     }
+
     public static class MyViewAction {
 
         public static ViewAction clickChildViewWithId(final int id) {
@@ -247,6 +244,63 @@ public class MainTest {
                 }
             };
         }
+    }
+    public class RecyclerViewMatcher {
 
+        private final int recyclerViewId;
+
+        public RecyclerViewMatcher(int recyclerViewId) {
+            this.recyclerViewId = recyclerViewId;
+        }
+
+        public Matcher<View> atPosition(final int position) {
+            return atPositionOnView(position, -1);
+        }
+
+        public Matcher<View> atPositionOnView(final int position, final int targetViewId) {
+
+            return new TypeSafeMatcher<View>() {
+                Resources resources = null;
+                View childView;
+
+                public void describeTo(Description description) {
+                    String idDescription = Integer.toString(recyclerViewId);
+                    if (this.resources != null) {
+                        try {
+                            idDescription = this.resources.getResourceName(recyclerViewId);
+                        } catch (Resources.NotFoundException var4) {
+                            idDescription = String.format("%s (resource name not found)", recyclerViewId);
+                        }
+                    }
+
+                    description.appendText("RecyclerView with id: " + idDescription + " at position: " + position);
+                }
+
+                public boolean matchesSafely(View view) {
+
+                    this.resources = view.getResources();
+
+                    if (childView == null) {
+                        RecyclerView recyclerView =
+                                (RecyclerView) view.getRootView().findViewById(recyclerViewId);
+                        if (recyclerView != null && recyclerView.getId() == recyclerViewId) {
+                            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+                            if (viewHolder != null) {
+                                childView = viewHolder.itemView;
+                            }
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    if (targetViewId == -1) {
+                        return view == childView;
+                    } else {
+                        View targetView = childView.findViewById(targetViewId);
+                        return view == targetView;
+                    }
+                }
+            };
+        }
     }
 }
