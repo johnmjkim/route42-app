@@ -227,18 +227,14 @@ EXAMPLES
 	- UI Tests : 2
 	- Unit Tests : 11
 
-- Code coverage: ...
-
 - Types of tests created: ...
-	- UI Tests : 2
-	- Unit Tests : 2
 
 | UI/Unit Tests  |  Test Name  | Test Description | Code Coverage |
-| :---           |   :----:    |      :----:      |          ---: |
-| UI             |  LoginTest  | - desc 1         | N/A           |
-| UI             |  MainTest   | - desc 2         | N/A           |
-| Unit           |  UnitTest1  | - desc 1         | 70%          |
-| Unit           |  UnitTest2  | - desc 2         | 80%           |
+|      :---:     |    :----:   |      :----:      |    :---:      |
+| UI             |  LoginTest  | <ul><li>item1</li><li>item2</li></ul>         | N/A           |
+| UI             |  MainTest   | <ul><li>item1</li><li>item2</li></ul>         | N/A           |
+| Unit           |  UnitTest1  | <ul><li>item1</li><li>item2</li></ul>         | 70%           |
+| Unit           |  UnitTest2  | <ul><li>item1</li><li>item2</li></ul>         | 80%           |
 
 
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
