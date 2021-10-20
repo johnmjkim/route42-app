@@ -40,6 +40,10 @@
 28. Hash passwords before storing in Firebase
 29. Added refresh on swipe down to FeedFragment
 30. Add toast when search result has no query
+31. Schedulable actions
+    - user can schedule a post or a like 
+    - scheduled worker parses .xml and .txt files and performs database upload
+    
 
 # Requirements
 - Android Gradle Plugin Version 7.0.1
