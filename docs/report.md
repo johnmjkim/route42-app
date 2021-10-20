@@ -223,6 +223,16 @@ EXAMPLES
 
 ## Testing Summary
 
+*Here is an example:*
+
+*Number of test cases: ...*
+
+*Code coverage: ...*
+
+*Types of tests created: ...*
+
+*Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
+
 ## Implemented Features
 
 - Easy: 6
