@@ -1,6 +1,5 @@
 package com.comp6442.route42.data.repository;
 
-import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.firebase.geofire.GeoFireUtils;
@@ -13,7 +12,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,22 +46,22 @@ public class PostRepository extends FirestoreRepository<Post> {
     if (user.getBlockedBy().size() > 0 && user.getBlocked().size() > 0) {
       return this.collection
               .whereEqualTo("isPublic", 1)
-              .whereNotIn("uid", user.getBlockedBy())
-              .whereNotIn("uid", user.getBlocked())
+              .whereNotIn("uid", user.getBlockedBy().subList(0, Math.min(10, user.getBlockedBy().size())))
+              .whereNotIn("uid", user.getBlocked().subList(0, Math.min(10, user.getBlocked().size())))
               .orderBy("uid", Query.Direction.ASCENDING)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
     } else if (user.getBlocked().size() > 0) {
       return this.collection
               .whereEqualTo("isPublic", 1)
-              .whereNotIn("uid", user.getBlocked())
+              .whereNotIn("uid", user.getBlocked().subList(0, Math.min(10, user.getBlocked().size())))
               .orderBy("uid", Query.Direction.ASCENDING)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
     } else if (user.getBlockedBy().size() > 0) {
       return this.collection
               .whereEqualTo("isPublic", 1)
-              .whereNotIn("uid", user.getBlockedBy())
+              .whereNotIn("uid", user.getBlockedBy().subList(0, Math.min(10, user.getBlockedBy().size())))
               .orderBy("uid", Query.Direction.ASCENDING)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
