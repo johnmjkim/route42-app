@@ -177,7 +177,7 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 
 *[Where do you use tokenisers and parsers? How are they built? What are the advantages of the designs?]*
 
-Every token either contains an operator and two expressions, or a key and value. Example #1 below is an example of a token that has the key `hashtags` and value `["test"]`. Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
+Every token either contains an operator and two expressions, or a key and value.<br>Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. <br>Example 1 below is an example of a token that has the key `hashtags` and value `["test"]`. <br>For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
 
 ```
 EXAMPLES
