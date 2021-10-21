@@ -27,7 +27,7 @@ import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
-import com.comp6442.route42.ui.viewmodel.UserViewModel;
+import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -37,22 +37,22 @@ import java.util.Date;
 
 public class CreatePostFragment extends Fragment {
 
-    private EditText postDescriptionInput;
-    private String uid;
-    private UserViewModel userViewModel;
-    private ActiveMapViewModel activeMapViewModel;
-    private PostRepository postRepository;
-    private SwitchMaterial scheduleSwitchButton;
-    private MaterialButton createPostButton;
-    private int scheduledDelay = 0;
+  private EditText postDescriptionInput;
+  private String uid;
+  private LiveUserViewModel liveUserVM;
+  private ActiveMapViewModel activeMapViewModel;
+  private PostRepository postRepository;
+  private SwitchMaterial scheduleSwitchButton;
+  private MaterialButton createPostButton;
+  private int scheduledDelay = 0;
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        assert getArguments() != null;
-        uid = getArguments().getString("uid");
-        requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    assert getArguments() != null;
+    uid = getArguments().getString("uid");
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
 
     }
 
@@ -63,16 +63,15 @@ public class CreatePostFragment extends Fragment {
     }
 
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
-        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-        userViewModel.loadProfileUser(this.uid);
-        scheduleSwitchButton = requireView().findViewById(R.id.create_post_schedule_switch);
-        createPostButton = view.findViewById(R.id.create_post_button);
-        postRepository = PostRepository.getInstance();
-        ImageView postImage = view.findViewById(R.id.create_post_image);
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
+    liveUserVM = new ViewModelProvider(requireActivity()).get(LiveUserViewModel.class);
+    scheduleSwitchButton = requireView().findViewById(R.id.create_post_schedule_switch);
+    createPostButton = view.findViewById(R.id.create_post_button);
+    postRepository = PostRepository.getInstance();
+    ImageView postImage = view.findViewById(R.id.create_post_image);
 
         assert getArguments() != null;
         Bitmap myBitmap = BitmapFactory.decodeFile(requireContext().getFilesDir().getPath() + "/" + getArguments().getString("local_filename"));
@@ -140,7 +139,7 @@ public class CreatePostFragment extends Fragment {
      * Creates new Post given map snapshot and the activity data collected.
      */
     private void createActivityPost() {
-        User liveUser = userViewModel.getLiveUser().getValue();
+        User liveUser = liveUserVM.getUser().getValue();
         assert liveUser != null;
         String postDescription = postDescriptionInput.getText().toString().trim();
         Double latitude = activeMapViewModel.getDeviceLocation().getValue().getLatitude();

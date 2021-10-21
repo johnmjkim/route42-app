@@ -22,6 +22,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
+import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
+import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
 import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
@@ -49,7 +51,8 @@ public class ProfileFragment extends Fragment {
   private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
   private FirebaseAuth mAuth;
   private String uid;
-  private UserViewModel viewModel;
+  private LiveUserViewModel liveUserVM ;
+  private ProfileUserViewModel profileUserVM;
   private TextView userNameView, followerCountView, followingCountView;
   private SwitchMaterial blockSwitch, followSwitch;
   private MaterialButton messageButton, signOutButton, showBlockedUsersButton;
@@ -98,7 +101,7 @@ public class ProfileFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     Timber.d("breadcrumb");
-    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     return inflater.inflate(R.layout.fragment_profile, container, false);
   }
 
@@ -110,7 +113,8 @@ public class ProfileFragment extends Fragment {
     // BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
     // bottomNavView.animate().translationY(0).setDuration(250);
 
-    viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+    liveUserVM = new ViewModelProvider(requireActivity()).get(LiveUserViewModel.class);
+    profileUserVM = new ViewModelProvider(requireActivity()).get(ProfileUserViewModel.class);
 
     // set view variables
     userNameView = view.findViewById(R.id.profile_username);
@@ -136,7 +140,8 @@ public class ProfileFragment extends Fragment {
       final Observer<User> userObserver = updatedProfileUser -> {
         Timber.i("userObserver notified: %s", updatedProfileUser);
         if (updatedProfileUser == null) return;
-        User currentProfileUser = this.viewModel.getProfileUser().getValue();
+        User currentProfileUser = this.profileUserVM.getUser().getValue();
+        assert currentProfileUser != null;
         if (currentProfileUser.getId().equals(updatedProfileUser.getId())) {
           renderProfile(updatedProfileUser, view);
         }
@@ -144,25 +149,25 @@ public class ProfileFragment extends Fragment {
       };
 
       // initialize profileUser, observe change to the profileUser data, and get a registration
-      viewModel.loadProfileUser(this.uid);
-      viewModel.getProfileUser().observe(getViewLifecycleOwner(), userObserver);
-      firebaseListenerRegs.add(viewModel.addSnapshotListenerToProfileUser(this.uid));
+      profileUserVM.loadProfileUser(this.uid);
+      profileUserVM.getUser().observe(getViewLifecycleOwner(), userObserver);
+      firebaseListenerRegs.add(profileUserVM.addSnapshotListener(this.uid));
     } else {
       Timber.w("uid is null");
     }
   }
-
+  /* It is strongly recommended to tie Lifecycle-aware components to the STARTED state of a
+      fragment, as this state guarantees that the fragment's view is available, if one was created,
+      and that it is safe to perform a FragmentTransaction on the child FragmentManager of the fragment.
+      If the fragment's view is non-null, the fragment's view Lifecycle is moved to STARTED
+      immediately after the fragment's Lifecycle is moved to STARTED.
+      When the fragment becomes STARTED, the onStart() callback is invoked.
+      * */
   @Override
   public void onStart() {
     super.onStart();
     Timber.d("breadcrumb");
-    /* It is strongly recommended to tie Lifecycle-aware components to the STARTED state of a
-    fragment, as this state guarantees that the fragment's view is available, if one was created,
-    and that it is safe to perform a FragmentTransaction on the child FragmentManager of the fragment.
-    If the fragment's view is non-null, the fragment's view Lifecycle is moved to STARTED
-    immediately after the fragment's Lifecycle is moved to STARTED.
-    When the fragment becomes STARTED, the onStart() callback is invoked.
-    * */
+
   }
 
   /* When your activity is no longer visible to the user, it has entered the Stopped state,
@@ -200,15 +205,16 @@ public class ProfileFragment extends Fragment {
 
   @Override
   public void onDestroy() {
+    firebaseListenerRegs.forEach(ListenerRegistration::remove);
     super.onDestroy();
     //detach listeners when Activity destroyed
-    firebaseListenerRegs.forEach(ListenerRegistration::remove);
   }
 
   /* onDetach() is always called after any Lifecycle state changes. */
   @Override
   public void onDetach() {
     super.onDetach();
+    firebaseListenerRegs.forEach(ListenerRegistration::remove);
     Timber.d("breadcrumb");
   }
 
@@ -294,8 +300,9 @@ public class ProfileFragment extends Fragment {
 
   private void setFollowSwitch(User user) {
     assert this.uid != null && user.getId() != null;
+    String loggedInUserUid = liveUserVM.getUser().getValue().getId();
 
-    String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+//    String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
     followSwitch.setOnCheckedChangeListener(null);
 
     // check if loggedInUser already follows profileUser
@@ -317,8 +324,8 @@ public class ProfileFragment extends Fragment {
 
   private void setBlockSwitch(User user) {
     assert this.uid != null && user.getId() != null;
-
-    String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+    String loggedInUserUid = liveUserVM.getUser().getValue().getId();
+//    String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
     blockSwitch.setOnCheckedChangeListener(null);
 
     // check if loggedInUser already blocked profileUser
@@ -370,11 +377,11 @@ public class ProfileFragment extends Fragment {
     setFollowingCount(profileUser);
     setFollowSwitch(profileUser);
     setBlockSwitch(profileUser);
-    User liveUser = viewModel.getLiveUser().getValue();
+    User liveUser = liveUserVM.getUser().getValue();
     assert liveUser != null && liveUser.getId() != null;
     Timber.i("Firebase current uid: %s\t\tthis.uid: %s", liveUser.getId(), uid);
     Timber.i("Current LiveUser: %s", liveUser);
-    Timber.i("Current ProfileUser: %s", viewModel.getProfileUser().getValue());
+    Timber.i("Current ProfileUser: %s", profileUserVM.getUser().getValue());
 
     int visibility;
 
@@ -421,7 +428,7 @@ public class ProfileFragment extends Fragment {
             .setQuery(query, Post.class)
             .build();
 
-    adapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
+    adapter = new FirestorePostAdapter(postsOptions, liveUserVM.getUser().getValue().getId());
     layoutManager = new LinearLayoutManager(getActivity());
     layoutManager.setReverseLayout(false);
     layoutManager.setStackFromEnd(false);

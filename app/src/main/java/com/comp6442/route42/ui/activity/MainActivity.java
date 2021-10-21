@@ -19,6 +19,8 @@ import com.comp6442.route42.ui.fragment.ProfileFragment;
 import com.comp6442.route42.ui.fragment.map.ActiveMapFragment;
 import com.comp6442.route42.ui.fragment.map.PointMapFragment;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
+import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
+import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
 import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -35,7 +37,7 @@ import timber.log.Timber;
  * */
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener {
   private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
-  private UserViewModel userViewModel;
+  private UserViewModel profileUserVM, liveUserVM;
   private BottomNavigationView bottomNav;
   private MenuItem lastSelected = null;
   private String uid;
@@ -50,9 +52,10 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // Re-created activities receive the same MyViewModel instance created by the first activity.
     // If the activity is re-created, it receives the same MyViewModel instance that was created by the first activity.
     // When the owner activity is finished, the framework calls the ViewModel objects's onCleared() method so that it can clean up resources.
-    userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-    userViewModel.addSnapshotListenerToLiveUser(uid);
+    liveUserVM = new ViewModelProvider(this).get(LiveUserViewModel.class);
+    firebaseListenerRegs.add( liveUserVM.addSnapshotListener(uid));
 
+    profileUserVM = new ViewModelProvider(this).get(ProfileUserViewModel.class);
     setCreateActivityBtn();
 
     // bottom navigation
@@ -140,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     switch (item.getItemId()) {
       case R.id.navigation_profile:
         fragment = new ProfileFragment();
-        userViewModel.setProfileUser(userViewModel.getLiveUser().getValue());
+        profileUserVM.setUser(liveUserVM.getUser().getValue());
         break;
       case R.id.navigation_feed:
         fragment = new FeedFragment();
