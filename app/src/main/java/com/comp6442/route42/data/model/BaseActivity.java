@@ -47,6 +47,10 @@ public class BaseActivity implements Activity{
         return speed;
     }
 
+    public long getElapsedTime() {
+        return elapsedTime;
+    }
+
     /**
      * Calculates the distance travelled during the activity.
      * @return distance, in meters

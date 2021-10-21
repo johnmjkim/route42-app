@@ -4,14 +4,20 @@ import static org.mockito.Mockito.mock;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
+@RunWith(Parameterized.class)
 public class BaseActivityTest {
     private final List<LatLng> locations = Arrays.asList(
             new LatLng(-35.25932077515105, 149.11459641897002),
@@ -40,27 +46,67 @@ public class BaseActivityTest {
             new LatLng(-35.265768324490594, 149.1301746876148),
             new LatLng(-35.26114296066338, 149.135453274511)
     );
+    private long elapsedTime = 10;
+    private BaseActivity baseActivity;
+    private Activity activity;
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{{Activity.Activity_Type.RUNNING, 1}, {Activity.Activity_Type.WALKING, 2}, {Activity.Activity_Type.CYCLING, 0}});
+    }
+    //first entry of each array
+    @Parameterized.Parameter(0)
+    public Activity.Activity_Type activityType;
+
+    //first entry of each array
+    @Parameterized.Parameter(1)
+    public int icon;
+
+    @Before
+    public void setupTest() {
+        baseActivity = new BaseActivity(locations, elapsedTime, activityType);
+    }
+
     @Test
-    public void cyclingTest() throws ParseException {
+    public void returnValuesTest() {
+        Assert.assertEquals(activityType, Activity.Activity_Type.valueOf(activityType.getValue()));
+    }
 
-        BaseActivity cyclingBase = new BaseActivity(locations,10, Activity.Activity_Type.CYCLING);
-        Assert.assertEquals(0.0, cyclingBase.getCalories(),0.00001);
-        Assert.assertEquals(0.0, cyclingBase.getDistance(),0.00001);
-        Assert.assertEquals(0.0, cyclingBase.getSpeed(),0.00001);
-        Assert.assertEquals(
-                "Check out my cycling activity stats:\n" +
-                "Distance: 0.0 m\n" +
-                "Duration: 10 s\n" +
-                "Average speed: 0.0 m/s\n" +
-                "Calories: 0 kcal\n" +
-                " #myworkouts", cyclingBase.getPostString());
+    @Test
+    public void iconResourceTest() {
+        Assert.assertEquals(icon, activityType.getValue());
+    }
 
-        Assert.assertEquals("Distance: 0m\n"+"Duration:10.0s\n"+"Calories: 0", cyclingBase.toString());
+    @Test
+    public void activityTest() {
+        Assert.assertEquals(0.0, baseActivity.getCalories(),0.00001);
+        Assert.assertEquals(0.0, baseActivity.getDistance(),0.00001);
+        Assert.assertEquals(0.0, baseActivity.getSpeed(),0.00001);
+    }
+
+    @Test
+    public void getElapsedTimeSecondsTests() throws ParseException{
         String expiryDateString = "2018-10-15T17:52:00";
         String expiryDateString1 = "2018-10-15T19:52:00";
         final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         java.util.Date date = formatter.parse(expiryDateString);
         java.util.Date date1 = formatter.parse(expiryDateString1);
         Assert.assertEquals(7200, BaseActivity.getElapsedTimeSeconds(date1,date));
-    };
+    }
+
+    @Test
+    public void getStringTest() {
+        Assert.assertEquals("Check out my " + activityType.toString().toLowerCase() + " activity stats:\n" +
+                "Distance: " + String.format("%.01f", baseActivity.getDistance()) + " m" +
+                "\nDuration: " + String.format("%.00f", (float) baseActivity.getElapsedTime()) + " s" +
+                "\nAverage speed: " + String.format("%.01f",  baseActivity.getSpeed())  + " m/s" +
+                "\nCalories: " + baseActivity.getCalories() + " kcal" +
+                "\n #myworkouts", baseActivity.getPostString());
+
+        Assert.assertEquals("Distance: " + String.format("%.00f", baseActivity.getDistance()) +  "m" +
+                        "\nDuration:" + String.format("%.01f", (float) baseActivity.getElapsedTime()) + "s"+
+                        "\nCalories: " + baseActivity.getCalories()
+                , baseActivity.toString());
+    }
 }
+
