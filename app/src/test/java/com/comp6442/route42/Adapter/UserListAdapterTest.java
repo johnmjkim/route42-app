@@ -34,10 +34,4 @@ public class UserListAdapterTest {
         UserListAdapter.ViewHolder viewHolder = new UserListAdapter.ViewHolder(view);
         Assert.assertNotNull(viewHolder);
     }
-
-//    @Test
-//    public void createViewHolderTest() { //need to update more test
-//        viewgroup = mock(ViewGroup.class);
-//        Assert.assertNotNull(userList.onCreateViewHolder(viewgroup,0));
-//    }
 }
