@@ -224,12 +224,12 @@ EXAMPLES
 ## Testing Summary
 
 - Number of test cases: 13
-	- UI Tests : 2
-	- Unit Tests : 11
+	- UI Tests : 15
+	- Unit Tests : ??(update later)
 
 - Types of tests created: ...
 
-| UI/Unit Tests  |  Test Name  | Test Description | Code Coverage |
+| UI/Unit Tests  |  Class Name  | Test Description | Code Coverage |
 |      :---:     |    :----:   |      :---      |     :----:     |
 | UI             |  LoginTest  | <ul><li>check login with correct and wrong id and password</li></ul> | N/A           |
 | UI             |  MainTest   | <ul><li>switch the page throughout navigation bar</li><li>create posts and check the post is properly made</li><li>cancel making a post</li><li>making a schduled post</li><li>like and unlike the post</li><li> block and unblock user</li><li>follow and unfollow user</li><li>block following user</li><li>follow blocked user</li></ul> | N/A           |
