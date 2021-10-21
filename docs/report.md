@@ -231,18 +231,20 @@ EXAMPLES
 
 | UI/Unit Tests  |  Class Name  | Test Description | Code Coverage | Numbers of Tests |
 |      :---:     |    :----:   |      :---      |     :----:     |     :----:     |
-| UI             |  LoginTest  | <ul><li>Check login with correct and wrong id and password</li></ul> | N/A           | #of tests |
+| UI             |  LoginTest  | <ul><li>Check login with correct and wrong id and password</li></ul> | N/A           | 2 |
 | UI             |  MainTest   | <ul><li>Switch the page throughout navigation bar</li><li>create posts and check the post is properly made</li><li>cancel making a post</li><li>making a schduled post</li><li>like and unlike the post</li><li> block and unblock user</li><li>follow and unfollow user</li><li>block following user</li><li>follow blocked user</li></ul> | N/A           | #of tests |
-| Unit           |  KNearestNeighbourServiceTest  | <ul><li>Test call method of rest-api service post</li><li>Test printing Strings</li></ul> | 70%           | #of tests |
-| Unit           |  QueryStringTest  | <ul><li>Test query is properly made</li></ul> | 100%           | #of tests |
-| Unit           |  SearchServiceTest  | <ul><li>Test search input data is properly made to the query</li><li>Calling query</li></ul> | 100%           | #of tests |
-| Unit           |  ActiveMapViewModelTest  | <ul><li>Check activity data and types</li><li>Check elapsed time</li><li>Check last update time</li><li>Check reset function</li><li>Check pastlocation</li><li>Check snapshot file name</li></ul> | 73%           | #of tests |
-| Unit           |  BaseActivityTest  | <ul><li>Check factors</li></ul> | 100%           | #of tests |
-| Unit           |  PointTest  | <ul><li>Check latitude and longitude</li></ul> | 75%           | #of tests |
-| Unit           |  PostTest  | <ul><li>Check factors</li><li>Check extracting hashtags from input text</li></ul> | 86%           | #of tests |
-| Unit           |  UserTest  | <ul><li>Check factors</li></ul> | 92%           | #of tests |
-| Unit           |  UserViewModelTest  | <ul><li>Tests method of getUser and setUser</li> | 75%           | #of tests |
-| Unit           |  CryptoTest  | <ul><li>Check Encryption</li></ul> | 100%           | #of tests |
+| Unit           |  KNearestNeighbourServiceTest  | <ul><li>Test call method of rest-api service post</li><li>Test printing Strings</li></ul> | 70%           | 2 |
+| Unit           |  QueryStringTest  | <ul><li>Test query is properly made</li></ul> | 100%           | 2 |
+| Unit           |  SearchServiceTest  | <ul><li>Test search input data is properly made to the query</li><li>Calling query</li></ul> | 100%           | 1 |
+| Unit           |  CryptoTest  | <ul><li>Check Encryption</li></ul> | 100%           | 3 |
+| Unit           |  UserListAdapterTest  | <ul><li>?</li></ul> | ?           | ? |
+| Unit           |  BaseActivityTest  | <ul><li>Check factors</li></ul> | 100%           | 1 |
+| Unit           |  PointTest  | <ul><li>Check latitude and longitude</li></ul> | 75%           | 4 |
+| Unit           |  UserTest  | <ul><li>Check factors</li></ul> | 92%           | 7 |
+| Unit           |  SchedulableTest  | <ul><li>?</li></ul> | ?           | ? |
+| Unit           |  UserViewModelTest  | <ul><li>Tests method of getUser and setUser</li> | 75%           | 2 |
+| Unit           |  PostTest  | <ul><li>Check factors</li><li>Check extracting hashtags from input text</li></ul> | 86%           | 17 |
+| Unit           |  ActiveMapViewModelTest  | <ul><li>Check activity data and types</li><li>Check elapsed time</li><li>Check last update time</li><li>Check reset function</li><li>Check pastlocation</li><li>Check snapshot file name</li></ul> | 73%           | 7 |
 
 
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
