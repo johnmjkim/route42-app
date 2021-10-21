@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 public class PointTest {
-    Point point,point1;
+    Point point, pointnull;
     @Mock
     Parcel parcelInput, parcelOutput;
     Double lat = -33.865;
@@ -19,7 +19,7 @@ public class PointTest {
     @Before
     public void setupTest() {
         point = new Point(lat, lon);
-        point1 = new Point();
+        pointnull = new Point(null, null);
         parcelOutput = mock(Parcel.class);
         parcelInput = mock(Parcel.class);
         parcelInput.writeDoubleArray(new double[]{lat, lon});
@@ -33,7 +33,11 @@ public class PointTest {
 
     @Test
     public void toStringTest() {
-        Assert.assertEquals("Point{, latitude=-33.865, longitude=151.209}", point.toString());
+        Assert.assertEquals("Point{, latitude=" +
+                lat +
+                ", longitude=" +
+                lon +
+                "}", point.toString());
     }
 
     @Test
@@ -46,5 +50,8 @@ public class PointTest {
         point.writeToParcel(parcelOutput, 0);
         Assert.assertEquals(parcelInput.readDouble(), parcelOutput.readDouble(),1e-8);
         Assert.assertEquals(parcelInput.readDouble(), parcelOutput.readDouble(),1e-8);
+        pointnull.writeToParcel(parcelOutput, 0);
+        Assert.assertEquals(parcelInput.readDouble(), parcelOutput.readDouble(), 1e-8);
+        Assert.assertEquals(parcelInput.readDouble(), parcelOutput.readDouble(), 1e-8);
     }
 }

@@ -2,6 +2,8 @@ package com.comp6442.route42.data.model;
 
 import static org.mockito.Mockito.mock;
 
+import android.os.Parcel;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.DocumentReference;
 
@@ -21,6 +23,7 @@ public class PostTest {
   Double lon = 151.209;
   DocumentReference documentReference;
   Date date = new Date();
+  Parcel parcelOutput;
 
   private void setRelations() {
     likedBy.addAll(Arrays.asList("Chris", "Robin", "Kyle"));
@@ -61,6 +64,7 @@ public class PostTest {
   public void setupTest() {
     setRelations();
     setInformation();
+    parcelOutput = mock(Parcel.class);
   }
 
   @Test
@@ -144,6 +148,25 @@ public class PostTest {
   @Test
   public void checkPublic() {
     Assert.assertEquals(0, post.getIsPublic());
+  }
+
+  @Test
+  public void constructionTest() {
+    Post constructPost = new Post(
+            post.getId(),
+            post.getUid(),
+            post.getUserName(),
+            post.getIsPublic(),
+            post.getProfilePicUrl(),
+            post.getPostDatetime(),
+            post.getPostDescription(),
+            post.getLocationName(),
+            post.getLatitude(),
+            post.getLongitude(),
+            post.getHashtags(),
+            post.getLikeCount(),
+            post.getImageUrl(),
+            post.getLikedBy());
   }
 
   @Test
