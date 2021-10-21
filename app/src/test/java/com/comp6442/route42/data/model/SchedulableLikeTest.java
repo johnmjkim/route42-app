@@ -4,13 +4,15 @@ import static org.mockito.Mockito.mock;
 
 import android.content.Context;
 
+import com.comp6442.route42.utils.tasks.scheduled_tasks.LikeScheduler;
+
 import org.junit.After;
 import org.junit.Before;
 
 public class SchedulableLikeTest {
     private final String uid = "d259b635-1d89-482f-82e5-686582d38cea";
     private final String postId = "Testuser";
-    ScheduleableLike scheduleableLike =  new ScheduleableLike(uid,postId);
+    LikeScheduler scheduleableLike =  new LikeScheduler(uid,postId);
     Context context = mock(Context.class);
 
     @Before

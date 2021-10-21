@@ -6,6 +6,8 @@ import android.content.Context;
 
 import androidx.work.WorkManager;
 
+import com.comp6442.route42.utils.tasks.scheduled_tasks.PostScheduler;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,7 +33,7 @@ public class SchedulablePostTest {
     private final Double latitude = -33.865;
     private final Double longitude = 151.209;
     Context context = mock(Context.class);
-    SchedulablePost schedulablePost = new SchedulablePost(snapshotFilePath, snapshotFilename, uid, userName, isPublic, profilePicUrl, postDescription, locationName, latitude, longitude);
+    PostScheduler schedulablePost = new PostScheduler(snapshotFilePath, snapshotFilename, uid, userName, isPublic, profilePicUrl, postDescription, locationName, latitude, longitude);
 
     @Before
     public void setUp() {
