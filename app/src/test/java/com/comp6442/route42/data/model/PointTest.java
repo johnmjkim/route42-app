@@ -1,10 +1,8 @@
-package com.comp6442.route42.model;
+package com.comp6442.route42.data.model;
 
 import static org.mockito.Mockito.mock;
 
 import android.os.Parcel;
-
-import com.comp6442.route42.data.model.Point;
 
 import org.junit.Assert;
 import org.junit.Before;

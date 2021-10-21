@@ -1,4 +1,4 @@
-package com.comp6442.route42.data;
+package com.comp6442.route42.ui.viewmodel;
 
 import static org.mockito.Mockito.mock;
 

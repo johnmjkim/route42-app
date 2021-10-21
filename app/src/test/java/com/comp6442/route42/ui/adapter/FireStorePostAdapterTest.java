@@ -1,4 +1,4 @@
-package com.comp6442.route42.Adapter;
+package com.comp6442.route42.ui.adapter;
 
 import static org.mockito.Mockito.mock;
 import android.view.View;

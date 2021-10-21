@@ -1,16 +1,14 @@
-package com.comp6442.route42.model;
+package com.comp6442.route42.data.model;
 
 import static org.mockito.Mockito.mock;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
 import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 

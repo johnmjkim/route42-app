@@ -1,11 +1,8 @@
-package com.comp6442.route42.model;
+package com.comp6442.route42.data.model;
 
 import static org.mockito.Mockito.mock;
 
-import com.comp6442.route42.data.model.Activity;
-import com.comp6442.route42.data.model.BaseActivity;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.type.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class BaseActivityTest {
     private final List<LatLng> locations = Arrays.asList(

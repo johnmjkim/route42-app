@@ -1,7 +1,7 @@
-package com.comp6442.route42.model;
+package com.comp6442.route42.data.model;
 
 import static org.mockito.Mockito.mock;
-import com.comp6442.route42.data.model.Post;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.DocumentReference;
 

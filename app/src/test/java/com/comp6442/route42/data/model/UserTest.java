@@ -1,5 +1,4 @@
-package com.comp6442.route42.model;
-import com.comp6442.route42.data.model.User;
+package com.comp6442.route42.data.model;
 
 import org.junit.Assert;
 import org.junit.Before;

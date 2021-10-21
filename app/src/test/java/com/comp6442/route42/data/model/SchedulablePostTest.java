@@ -1,12 +1,10 @@
-package com.comp6442.route42.model;
+package com.comp6442.route42.data.model;
 
 import static org.mockito.Mockito.mock;
 
 import android.content.Context;
 
 import androidx.work.WorkManager;
-
-import com.comp6442.route42.data.model.SchedulablePost;
 
 import org.junit.After;
 import org.junit.Assert;
