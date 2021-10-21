@@ -138,7 +138,9 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
         public void onClick(View view) {
           Fragment fragment = new PointMapFragment();
           Bundle bundle = new Bundle();
-          bundle.putParcelable("post", post);
+          ArrayList<Post> data = new ArrayList<>();
+          data.add(post);
+          bundle.putParcelableArrayList("posts", data);
           fragment.setArguments(bundle);
           ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
                   .beginTransaction()
