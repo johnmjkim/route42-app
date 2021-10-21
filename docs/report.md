@@ -177,7 +177,7 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 
 *[Where do you use tokenisers and parsers? How are they built? What are the advantages of the designs?]*
 
-Every token either contains an operator and two expressions, or a key and value. Example #1 below is an example of a token that has the key `hashtags` and value `["test"]`. Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
+Every token either contains an operator and two expressions, or a key and value.<br>Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. <br>Example 1 below is an example of a token that has the key `hashtags` and value `["test"]`. <br>For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
 
 ```
 EXAMPLES
@@ -209,7 +209,7 @@ EXAMPLES
 
 *[Where are the known errors and bugs? What consequences might they lead to?]*
 
-*Here is an example:*
+1. Search functionality can handle partially valid and invalid search queries. (medium)
 
 1. *Bug 1:*
 
@@ -223,13 +223,27 @@ EXAMPLES
 
 ## Testing Summary
 
-*Here is an example:*
+- Number of test cases: 13
+	- UI Tests : 15
+	- Unit Tests : ??(update later)
 
-*Number of test cases: ...*
+- Types of tests created: ...
 
-*Code coverage: ...*
+| UI/Unit Tests  |  Class Name  | Test Description | Code Coverage |
+|      :---:     |    :----:   |      :---      |     :----:     |
+| UI             |  LoginTest  | <ul><li>check login with correct and wrong id and password</li></ul> | N/A           |
+| UI             |  MainTest   | <ul><li>switch the page throughout navigation bar</li><li>create posts and check the post is properly made</li><li>cancel making a post</li><li>making a schduled post</li><li>like and unlike the post</li><li> block and unblock user</li><li>follow and unfollow user</li><li>block following user</li><li>follow blocked user</li></ul> | N/A           |
+| Unit           |  KNearestNeighboutServiceTest  | <ul><li>item1</li><li>item2</li></ul> | 70%           |
+| Unit           |  QueryStringTest  | <ul><li>Test query is properly made</li></ul> | 100%           |
+| Unit           |  SearchServiceTest  | <ul><li>Test search input data is properly made to the query</li><li>Calling query</li></ul> | 100%           |
+| Unit           |  ActiveMapViewModelTest  | <ul><li>Check activity data and types</li><li>Check elapsed time</li><li>Check last update time</li><li>Check reset function</li><li>Check pastlocation</li><li>Check snapshot file name</li></ul> | 73%           |
+| Unit           |  BaseActivityTest  | <ul><li>Check factors</li></ul> | 100%           |
+| Unit           |  PointTest  | <ul><li>Check latitude and longitude</li></ul> | 75%           |
+| Unit           |  PostTest  | <ul><li>Check factors</li><li>Check extracting hashtags from input text</li></ul> | 86%           |
+| Unit           |  UserTest  | <ul><li>Check factors</li></ul> | 92%           |
+| Unit           |  UserViewModelTest  | <ul><li>item1</li><li>item2</li></ul> | 7%           |
+| Unit           |  CryptoTest  | <ul><li>Check Encryption</li></ul> | 100%           |
 
-*Types of tests created: ...*
 
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
 
