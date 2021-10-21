@@ -28,7 +28,6 @@ import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.adapter.FirestorePostAdapter;
 import com.comp6442.route42.ui.adapter.PostAdapter;
 import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
-import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.Query;
@@ -103,7 +102,7 @@ public class FeedFragment extends Fragment {
       this.uid = savedInstanceState.getString("uid");
     }
 
-   liveUserViewModel = new ViewModelProvider(requireActivity()).get(LiveUserViewModel.class);
+    liveUserViewModel = new ViewModelProvider(requireActivity()).get(LiveUserViewModel.class);
     if (this.uid != null) {
       User user = liveUserViewModel.getUser().getValue();
 
@@ -133,7 +132,7 @@ public class FeedFragment extends Fragment {
   private void initSwipeRefresher(View view) {
     SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_container);
     swipeRefreshLayout.setOnRefreshListener(() -> {
-      if(searchView.getQuery().length() > 0) searchView.setQuery(searchView.getQuery(), true);
+      if (searchView.getQuery().length() > 0) searchView.setQuery(searchView.getQuery(), true);
 
       // Notify swipeRefreshLayout that the refresh has finished
       swipeRefreshLayout.setRefreshing(false);
@@ -187,11 +186,11 @@ public class FeedFragment extends Fragment {
               recyclerView.setAdapter(postAdapter);
               postAdapter.notifyDataSetChanged();
             } else {// let users know there was no hit for the query
-              Toast.makeText(view.getContext(),"Query did not return any items",Toast.LENGTH_SHORT).show();
+              Toast.makeText(view.getContext(), "Query did not return any items", Toast.LENGTH_SHORT).show();
             }
 
             // hide keyboard
-            InputMethodManager imm = (InputMethodManager)requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
           } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
             Timber.e(e);

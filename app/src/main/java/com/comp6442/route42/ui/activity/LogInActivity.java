@@ -63,7 +63,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
   }
 
   @SuppressLint("TimberArgCount")
-  private void signIn(String email, String password)  {
+  private void signIn(String email, String password) {
     mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, task -> {
               if (task.isSuccessful()) {

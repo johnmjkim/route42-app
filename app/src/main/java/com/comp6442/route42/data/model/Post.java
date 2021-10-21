@@ -46,7 +46,6 @@ public class Post extends Model implements Parcelable {
   private Double latitude;
   private Double longitude;
   private List<Point> route = new ArrayList<>();
-  ;
   private String geohash = "";
   private List<String> hashtags = new ArrayList<>();
   private int likeCount = 0;
@@ -113,6 +112,37 @@ public class Post extends Model implements Parcelable {
     this.hashtags = in.createStringArrayList();
     this.postDatetime = new Date((Long) in.readValue(Long.class.getClassLoader()));
     in.createStringArrayList().forEach(s -> this.likedBy.add(FirebaseFirestore.getInstance().document(s)));
+  }
+
+  public static List<String> getHashTagsFromTextInput(String textInput) {
+    List<String> hashTags = new ArrayList<>();
+
+    String currentTag = "";
+
+    textInput = textInput.toLowerCase().trim();
+    for (int i = 0; i < textInput.length(); i++) {
+      char c = textInput.charAt(i);
+      if (c == '#') {
+        if (currentTag.length() > 0) {
+          hashTags.add(currentTag.trim());
+          currentTag = "";
+        }
+        currentTag += c;
+
+      } else if (currentTag.length() > 0 && Pattern.matches("[:space:]", Character.toString(c))) {
+        hashTags.add(currentTag.trim());
+        currentTag = "";
+      } else if (currentTag.length() > 0 && Pattern.matches("\\p{Punct}", Character.toString(c))) {
+        hashTags.add(currentTag.trim());
+        currentTag = "";
+      } else if (currentTag.length() > 0) {
+        currentTag += c;
+      }
+    }
+    if (currentTag.length() > 0) {
+      hashTags.add(currentTag.trim());
+    }
+    return hashTags;
   }
 
   @Override
@@ -255,7 +285,6 @@ public class Post extends Model implements Parcelable {
     this.likedBy = likedBy;
   }
 
-
   public List<Point> getRoute() {
     return route;
   }
@@ -279,38 +308,6 @@ public class Post extends Model implements Parcelable {
   public void setGeohash() {
     this.geohash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(latitude, longitude));
   }
-
-  public static List<String> getHashTagsFromTextInput(String textInput) {
-    List<String> hashTags = new ArrayList<>();
-
-    String currentTag = "";
-
-    textInput = textInput.toLowerCase().trim();
-    for (int i = 0; i < textInput.length(); i++) {
-      char c = textInput.charAt(i);
-      if (c == '#') {
-        if (currentTag.length() > 0) {
-          hashTags.add(currentTag.trim());
-          currentTag = "";
-        }
-        currentTag += c;
-
-      } else if (currentTag.length() > 0 && Pattern.matches("[:space:]", Character.toString(c))) {
-        hashTags.add(currentTag.trim());
-        currentTag = "";
-      } else if (currentTag.length() > 0 && Pattern.matches("\\p{Punct}", Character.toString(c))) {
-        hashTags.add(currentTag.trim());
-        currentTag = "";
-      } else if (currentTag.length() > 0) {
-        currentTag += c;
-      }
-    }
-    if (currentTag.length() > 0) {
-      hashTags.add(currentTag.trim());
-    }
-    return hashTags;
-  }
-
 
   @NonNull
   @Override

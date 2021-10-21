@@ -22,16 +22,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
-import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
-import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
-import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
-import com.comp6442.route42.ui.adapter.FirestorePostAdapter;
 import com.comp6442.route42.ui.activity.LogInActivity;
+import com.comp6442.route42.ui.adapter.FirestorePostAdapter;
+import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
+import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
@@ -51,7 +50,7 @@ public class ProfileFragment extends Fragment {
   private final List<ListenerRegistration> firebaseListenerRegs = new ArrayList<>();
   private FirebaseAuth mAuth;
   private String uid;
-  private LiveUserViewModel liveUserVM ;
+  private LiveUserViewModel liveUserVM;
   private ProfileUserViewModel profileUserVM;
   private TextView userNameView, followerCountView, followingCountView;
   private SwitchMaterial blockSwitch, followSwitch;
@@ -156,6 +155,7 @@ public class ProfileFragment extends Fragment {
       Timber.w("uid is null");
     }
   }
+
   /* It is strongly recommended to tie Lifecycle-aware components to the STARTED state of a
       fragment, as this state guarantees that the fragment's view is available, if one was created,
       and that it is safe to perform a FragmentTransaction on the child FragmentManager of the fragment.

@@ -19,19 +19,18 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
-import com.comp6442.route42.utils.tasks.scheduled_tasks.LikeScheduler;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.map.PointMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
+import com.comp6442.route42.ui.fragment.map.PointMapFragment;
 import com.comp6442.route42.ui.fragment.map.RouteMapFragment;
+import com.comp6442.route42.utils.tasks.scheduled_tasks.LikeScheduler;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
               .circleCrop()
               .into(viewHolder.userIcon);
     }
-    if(post.getImageUrl().startsWith("http")) {
+    if (post.getImageUrl().startsWith("http")) {
       Glide.with(viewHolder.imageView.getContext())
               .load(post.getImageUrl())
               .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -180,7 +179,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
                 scheduledDelay = Integer.parseInt((String) LikeScheduler.delayOptions[i]);
                 Toast.makeText(view.getContext(), "Set like delay to " + scheduledDelay + " minute(s).", Toast.LENGTH_SHORT).show();
                 LikeScheduler likeScheduler = new LikeScheduler(loggedInUID, post.getId());
-                likeScheduler.schedule(view.getContext(), scheduledDelay );
+                likeScheduler.schedule(view.getContext(), scheduledDelay);
               }).create().show();
       return true;
 
@@ -193,6 +192,7 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
       viewHolder.like.setVisibility(View.VISIBLE);
     }
   }
+
   private void setLikeCountTextView(Post post, PostViewHolder viewHolder) {
     viewHolder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
     setLikeButtons(

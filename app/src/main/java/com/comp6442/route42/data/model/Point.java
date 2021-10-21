@@ -10,6 +10,17 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class Point implements Parcelable {
 
+  public static final Creator<Point> CREATOR = new Creator<Point>() {
+    @Override
+    public Point createFromParcel(Parcel in) {
+      return new Point(in);
+    }
+
+    @Override
+    public Point[] newArray(int size) {
+      return new Point[size];
+    }
+  };
   private Double latitude;
   private Double longitude;
 
@@ -33,18 +44,6 @@ public class Point implements Parcelable {
       longitude = in.readDouble();
     }
   }
-
-  public static final Creator<Point> CREATOR = new Creator<Point>() {
-    @Override
-    public Point createFromParcel(Parcel in) {
-      return new Point(in);
-    }
-
-    @Override
-    public Point[] newArray(int size) {
-      return new Point[size];
-    }
-  };
 
   @NonNull
   public Double getLatitude() {

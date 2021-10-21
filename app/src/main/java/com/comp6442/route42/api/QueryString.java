@@ -3,8 +3,8 @@ package com.comp6442.route42.api;
 import androidx.annotation.NonNull;
 
 public class QueryString {
-  private String query;
   private final int limit;
+  private String query;
 
   public QueryString(String query, int limit) {
     this.query = query;

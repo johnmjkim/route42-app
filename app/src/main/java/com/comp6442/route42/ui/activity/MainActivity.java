@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     // If the activity is re-created, it receives the same MyViewModel instance that was created by the first activity.
     // When the owner activity is finished, the framework calls the ViewModel objects's onCleared() method so that it can clean up resources.
     liveUserVM = new ViewModelProvider(this).get(LiveUserViewModel.class);
-    firebaseListenerRegs.add( liveUserVM.addSnapshotListener(uid));
+    firebaseListenerRegs.add(liveUserVM.addSnapshotListener(uid));
 
     profileUserVM = new ViewModelProvider(this).get(ProfileUserViewModel.class);
     setCreateActivityBtn();
