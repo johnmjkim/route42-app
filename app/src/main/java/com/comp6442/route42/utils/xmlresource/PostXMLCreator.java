@@ -1,7 +1,6 @@
 package com.comp6442.route42.utils.xmlresource;
 
-import com.comp6442.route42.data.model.Post;
-import com.comp6442.route42.data.model.SchedulablePost;
+import com.comp6442.route42.utils.tasks.scheduled_tasks.PostScheduler;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -11,7 +10,6 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -28,7 +26,7 @@ public class PostXMLCreator {
      * Takes a Post object and builds a DOM and transform it and saves an .xml file.
      * @return boolean indicating successful creation
      */
-    public boolean create(SchedulablePost post, String storagePath) throws Exception {
+    public static boolean create(PostScheduler post, String storagePath) throws Exception {
         DocumentBuilderFactory postBuilderFac = DocumentBuilderFactory.newInstance();
         DocumentBuilder postDocBuilder;
         Document postDoc;
@@ -53,7 +51,7 @@ public class PostXMLCreator {
         }
     }
 
-    private void saveLocalXMLFromDOM(Document dom, String storagePath) throws TransformerException {
+    private static void saveLocalXMLFromDOM(Document dom, String storagePath) throws TransformerException {
         try {
             Transformer t = TransformerFactory.newInstance().newTransformer();
             Result out = new StreamResult(new File(storagePath));
@@ -65,7 +63,7 @@ public class PostXMLCreator {
 
     }
 
-    private Node createTextElement(Document doc, String name, String value) {
+    private static Node createTextElement(Document doc, String name, String value) {
         Element node = doc.createElement(name);
         node.appendChild(doc.createTextNode(value));
         return node;
