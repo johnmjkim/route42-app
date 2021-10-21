@@ -230,11 +230,19 @@ EXAMPLES
 - Types of tests created: ...
 
 | UI/Unit Tests  |  Test Name  | Test Description | Code Coverage |
-|      :---:     |    :----:   |      :----:      |     :---:     |
-| UI             |  LoginTest  | <ul><li>item1</li><li>item2</li></ul> | N/A           |
-| UI             |  MainTest   | <ul><li>item1</li><li>item2</li></ul> | N/A           |
-| Unit           |  UnitTest1  | <ul><li>item1</li><li>item2</li></ul> | 70%           |
-| Unit           |  UnitTest2  | <ul><li>item1</li><li>item2</li></ul> | 80%           |
+|      :---:     |    :----:   |      :---      |     :----:     |
+| UI             |  LoginTest  | <ul><li>check login with correct and wrong id and password</li></ul> | N/A           |
+| UI             |  MainTest   | <ul><li>switch the page throughout navigation bar</li><li>create posts and check the post is properly made</li><li>cancel making a post</li><li>making a schduled post</li><li>like and unlike the post</li><li> block and unblock user</li><li>follow and unfollow user</li><li>block following user</li><li>follow blocked user</li></ul> | N/A           |
+| Unit           |  KNearestNeighboutServiceTest  | <ul><li>item1</li><li>item2</li></ul> | 70%           |
+| Unit           |  QueryStringTest  | <ul><li>Test query is properly made</li></ul> | 100%           |
+| Unit           |  SearchServiceTest  | <ul><li>Test search input data is properly made to the query</li><li>Calling query</li></ul> | 100%           |
+| Unit           |  ActiveMapViewModelTest  | <ul><li>Check activity data and types</li><li>Check elapsed time</li><li>Check last update time</li><li>Check reset function</li><li>Check pastlocation</li><li>Check snapshot file name</li></ul> | 73%           |
+| Unit           |  BaseActivityTest  | <ul><li>Check factors</li></ul> | 100%           |
+| Unit           |  PointTest  | <ul><li>Check latitude and longitude</li></ul> | 75%           |
+| Unit           |  PostTest  | <ul><li>Check factors</li><li>Check extracting hashtags from input text</li></ul> | 86%           |
+| Unit           |  UserTest  | <ul><li>Check factors</li></ul> | 92%           |
+| Unit           |  UserViewModelTest  | <ul><li>item1</li><li>item2</li></ul> | 7%           |
+| Unit           |  CryptoTest  | <ul><li>Check Encryption</li></ul> | 100%           |
 
 
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
