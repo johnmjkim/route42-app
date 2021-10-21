@@ -19,8 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
-import com.comp6442.route42.data.model.SchedulablePost;
-import com.comp6442.route42.data.model.ScheduleableLike;
+import com.comp6442.route42.utils.tasks.scheduled_tasks.LikeScheduler;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.fragment.map.PointMapFragment;
@@ -174,11 +173,11 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
               new ContextThemeWrapper(view.getContext(), R.style.AlertDialog_AppCompat)
       );
       dialogBuilder.setTitle("Select Delay (Minutes)")
-              .setItems(ScheduleableLike.delayOptions, (dialogInterface, i) -> {
-                scheduledDelay = Integer.parseInt((String) ScheduleableLike.delayOptions[i]);
+              .setItems(LikeScheduler.delayOptions, (dialogInterface, i) -> {
+                scheduledDelay = Integer.parseInt((String) LikeScheduler.delayOptions[i]);
                 Toast.makeText(view.getContext(), "Set like delay to " + scheduledDelay + " minute(s).", Toast.LENGTH_SHORT).show();
-                ScheduleableLike scheduleableLike = new ScheduleableLike(loggedInUID, post.getId());
-                scheduleableLike.schedule(view.getContext(), scheduledDelay );
+                LikeScheduler likeScheduler = new LikeScheduler(loggedInUID, post.getId());
+                likeScheduler.schedule(view.getContext(), scheduledDelay );
               }).create().show();
       return true;
 
