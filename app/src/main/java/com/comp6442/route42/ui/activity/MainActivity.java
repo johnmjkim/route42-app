@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   private void createActivityBtnClickHandler() {
     boolean activityExists = new ViewModelProvider(this).get(ActiveMapViewModel.class).getElapsedTime() > 0;
     MainActivity self = this;
-    if (activityExists) {
+    if (!activityExists) {
       AlertDialog alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(this, R.style.AlertDialog_AppCompat))
               .setTitle("Choose Activity Type")
               .setItems(Activity.Activity_Type.getValues(), (dialogInterface, i) -> {
