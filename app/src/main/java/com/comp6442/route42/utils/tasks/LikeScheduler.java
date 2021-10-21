@@ -1,4 +1,4 @@
-package com.comp6442.route42.data.model;
+package com.comp6442.route42.utils.tasks;
 
 import android.content.Context;
 
@@ -9,6 +9,7 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import com.comp6442.route42.utils.tasks.ScheduledTask;
+import com.comp6442.route42.utils.tasks.Scheduler;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,13 +19,13 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-public class ScheduleableLike implements Schedulable {
+public class LikeScheduler implements Scheduler {
     private UUID workId = null;
     private WorkManager workManager = null;
     private final String uid;
     private final String postId;
 
-    public ScheduleableLike(String uid, String postId) {
+    public LikeScheduler(String uid, String postId) {
         this.uid = uid;
         this.postId = postId;
     }
