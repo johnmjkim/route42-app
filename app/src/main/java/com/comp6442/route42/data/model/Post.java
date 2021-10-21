@@ -288,11 +288,7 @@ public class Post extends Model implements Parcelable {
       char c = textInput.charAt(i);
       if(c == '#') {
           for(int j=i;j<textInput.length();j++){
-            if(textInput.charAt(j)==' '){
-              i=j;
-              break;
-            }
-            if(textInput.charAt(j)==','){
+            if(textInput.charAt(j)==' '||textInput.charAt(j)==','||textInput.charAt(j)=='\n'){
               i=j;
               break;
             }
