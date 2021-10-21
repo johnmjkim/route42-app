@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils.tasks;
+package com.comp6442.route42.utils.tasks.scheduled_tasks;
 
 import android.content.Context;
 
@@ -8,10 +8,7 @@ import androidx.work.Operation;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
-import com.comp6442.route42.data.model.Post;
-import com.comp6442.route42.utils.tasks.Scheduler;
 import com.comp6442.route42.utils.xmlresource.PostXMLCreator;
-import com.comp6442.route42.utils.tasks.ScheduledTask;
 
 import java.sql.Timestamp;
 import java.util.UUID;

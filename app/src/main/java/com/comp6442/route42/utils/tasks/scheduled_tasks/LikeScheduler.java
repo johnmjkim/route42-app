@@ -1,4 +1,4 @@
-package com.comp6442.route42.utils.tasks;
+package com.comp6442.route42.utils.tasks.scheduled_tasks;
 
 import android.content.Context;
 
@@ -7,9 +7,6 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.Operation;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
-
-import com.comp6442.route42.utils.tasks.ScheduledTask;
-import com.comp6442.route42.utils.tasks.Scheduler;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

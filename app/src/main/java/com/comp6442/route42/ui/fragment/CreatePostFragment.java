@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.Post;
-import com.comp6442.route42.utils.tasks.PostScheduler;
+import com.comp6442.route42.utils.tasks.scheduled_tasks.PostScheduler;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
