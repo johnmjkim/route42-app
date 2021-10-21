@@ -86,20 +86,24 @@ public class MainTest {
 
     @Test
     public void createCyclingPost() throws InterruptedException {
-        createPost("cycle","CYCLING");
+        createPost("#cycle #bicycle","CYCLING");
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("cycle")))));
+        onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("bicycle")))));
     }
 
     @Test
     public void createRunningPost() throws InterruptedException {
-        createPost("run","RUNNING");
+        createPost("#run #course","RUNNING");
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("run")))));
+        onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("course")))));
     }
 
     @Test
     public void createWalkingPost() throws InterruptedException {
-        createPost("walk","WALKING");
+
+        createPost("#walk #join","WALKING");
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("walk")))));
+        onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("join")))));
     }
 
     @Test
@@ -202,10 +206,9 @@ public class MainTest {
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));//check dialog is on
         onView(withText(activityType)).perform(click());//choose activity type
-        Thread.sleep(300);//make delay to check the dialog
-        Thread.sleep(1000);//make delay to get data from active_map_fragment
+        Thread.sleep(500);//make delay to get data from active_map_fragment
         onView(withId(R.id.activity_button)).perform(click());
-        Thread.sleep(5000); //make delay to start duration
+        Thread.sleep(4000); //make delay to start duration
         //--------------------------Active_map_fragment------------------------------------------------
         onView(withId(R.id.constraintLayout)).check(matches(isDisplayed()));
         onView(withId(R.id.activity_icon)).check(matches(isDisplayed()));
@@ -217,13 +220,11 @@ public class MainTest {
         onView(withText("End Activity")).perform(click());
         //--------------------------Create_post_fragment-------------------------------------------------
         Thread.sleep(500);//make delay to get data from active_map_fragment
-        //--------------------------Write description and then create post------------------------------- will update when we can make hashtag function
-        onView(withId(R.id.post_description_input)).perform(typeText("#" + keyword), closeSoftKeyboard()); //add activitytype to distinguish the post for test
-//        onView(withId(R.id.post_description_input)).perform(typeText(keyword), closeSoftKeyboard());//will update it when I can write hashtag
+        onView(withId(R.id.post_description_input)).perform(typeText(keyword), closeSoftKeyboard()); //add hashtags to distinguish the post for test
         onView(withId(R.id.create_post_button)).perform(click());
     }
 
-    public static class MyViewAction {
+    public static class MyViewAction {//reference1
 
         public static ViewAction clickChildViewWithId(final int id) {
             return new ViewAction() {
