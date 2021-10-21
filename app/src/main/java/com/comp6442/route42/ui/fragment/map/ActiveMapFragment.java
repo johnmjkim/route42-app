@@ -57,11 +57,11 @@ public class ActiveMapFragment extends MapFragment {
   private final int LINE_WIDTH = 25;
   private final int ROUTE_COLOR = Color.BLUE;
   private final int PADDING = 300;
+  private final int LOCATION_UPDATE_INTERVAL_MS = 3000;
   private boolean requestingLocationUpdates = false;
   private ActiveMapViewModel activeMapViewModel;
   private TextView activityMetricsText;
   private LocationCallback locationCallBack;
-    private final int LOCATION_UPDATE_INTERVAL_MS = 3000;
 
   public ActiveMapFragment() {
     super(R.id.map_fragment2, R.raw.style_json_activity_map);
@@ -200,16 +200,16 @@ public class ActiveMapFragment extends MapFragment {
 
     // Set the map's camera position to the current location of the device.
     if (location != null) {
-        Point currentLocation = Point.fromLocation(location);
+      Point currentLocation = Point.fromLocation(location);
 
-        // add current location marker
-        googleMap.clear();
-        googleMap.addMarker(
-                new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                        .position(currentLocation.toLatLng())
-                        .title("User")
-        );
+      // add current location marker
+      googleMap.clear();
+      googleMap.addMarker(
+              new MarkerOptions()
+                      .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                      .position(currentLocation.toLatLng())
+                      .title("User")
+      );
 
       // track user using camera
       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -273,7 +273,7 @@ public class ActiveMapFragment extends MapFragment {
       requestingLocationUpdates = true;
       // request location every 1000 millis from the provider
       LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(LOCATION_UPDATE_INTERVAL_MS).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+      locationRequest.setInterval(LOCATION_UPDATE_INTERVAL_MS).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
       fusedLocationProviderClient.setMockMode(demoMode);
       fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
     } catch (SecurityException e) {
