@@ -15,57 +15,24 @@ import timber.log.Timber;
 
 // ViewModels are independent of configuration changes and are cleared when activity/fragment is destroyed
 public class UserViewModel extends ViewModel {
-  // logged in user
-  private final MutableLiveData<User> liveUser = new MutableLiveData<>();
-  // user whose profile is loaded
-  private final MutableLiveData<User> profileUser = new MutableLiveData<>();
-
+  private final MutableLiveData<User> user = new MutableLiveData<>();
   //the ViewModel only exposes immutable LiveData objects to the observers.
-  public LiveData<User> getLiveUser() {
-    return liveUser;
+  public LiveData<User> getUser() {
+    return user;
   }
 
-  public void setLiveUser(User user) {
-    this.liveUser.setValue(user);
+  public void setUser(User user) {
+    if(user != null) this.user.setValue(user);
   }
 
-  public void loadLiveUser(String uid) {
-    Task<DocumentSnapshot> task = UserRepository.getInstance().getOne(uid).get();
-    task.addOnSuccessListener(snapshot -> {
-      String source = snapshot != null && snapshot.getMetadata().hasPendingWrites() ? "Local" : "Server";
-      User user = snapshot.toObject(User.class);
 
-      // only react to server-side changes in the document snapshot
-      if (source.equals("Server")) {
-        setLiveUser(user);
-        Timber.i("UserVM : loaded profile user : %s", user);
-      } else {
-        Timber.w("Snapshot Change observed: Source=%s data=%s", source, user);
-      }
-    }).addOnFailureListener(Timber::e);
-  }
-
-  /**
-   * syncs this viewModel data with corresponding Firebase document
-   */
-  public ListenerRegistration addSnapshotListenerToProfileUser(String uid) {
-    DocumentReference docPath = UserRepository.getInstance().getOne(uid);
-    return docPath.addSnapshotListener((value, error) -> {
-      if (error == null) {
-        setProfileUser(value.toObject(User.class));
-        Timber.i("added snapshot listener to uid: %s", uid);
-        return;
-      }
-      Timber.e(error);
-    });
-  }
-
-  public ListenerRegistration addSnapshotListenerToLiveUser(String uid) {
+  public ListenerRegistration addSnapshotListener(String uid) {
     if (uid != null) {
       DocumentReference docPath = UserRepository.getInstance().getOne(uid);
       return docPath.addSnapshotListener((value, error) -> {
         if (error == null) {
-          setLiveUser(value.toObject(User.class));
+          assert value != null;
+          setUser(value.toObject(User.class));
           Timber.i("added snapshot listener to uid: %s", uid);
           return;
         }
@@ -75,20 +42,4 @@ public class UserViewModel extends ViewModel {
   }
 
 
-  public LiveData<User> getProfileUser() {
-    return profileUser;
-  }
-
-  public void setProfileUser(User user) {
-    this.profileUser.setValue(user);
-  }
-
-  public void loadProfileUser(String uid) {
-    UserRepository.getInstance().getOne(uid).get()
-            .addOnSuccessListener(snapshot -> {
-              User user = snapshot.toObject(User.class);
-              setProfileUser(user);
-              Timber.i("UserVM : loaded profile user : %s", user);
-            }).addOnFailureListener(Timber::e);
-  }
 }
