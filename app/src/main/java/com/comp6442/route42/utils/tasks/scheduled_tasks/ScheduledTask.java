@@ -1,6 +1,4 @@
-package com.comp6442.route42.utils.tasks;
-
-import static com.comp6442.route42.data.model.Post.getHashTagsFromTextInput;
+package com.comp6442.route42.utils.tasks.scheduled_tasks;
 
 import android.content.Context;
 
@@ -11,14 +9,10 @@ import androidx.work.WorkerParameters;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.utils.xmlresource.PostXMLParser;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-package com.comp6442.route42.data.model;
+package com.comp6442.route42.utils.tasks.scheduled_tasks;
 
 import android.content.Context;
 
@@ -9,20 +9,14 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import com.comp6442.route42.utils.xmlresource.PostXMLCreator;
-import com.comp6442.route42.utils.tasks.ScheduledTask;
-
-import org.w3c.dom.Document;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.transform.TransformerException;
-
 import timber.log.Timber;
 
-public class SchedulablePost implements Schedulable {
+public class PostScheduler implements Scheduler {
     private UUID workId = null;
     private WorkManager workManager = null;
     private final String baseFilename = "scheduled_post";
@@ -38,7 +32,7 @@ public class SchedulablePost implements Schedulable {
     private final Double latitude;
     private final Double longitude;
 
-    public SchedulablePost(String snapshotFilePath, String snapshotFilename, String uid, String userName, int isPublic, String profilePicUrl, String postDescription, String locationName, Double latitude, Double longitude) {
+    public PostScheduler(String snapshotFilePath, String snapshotFilename, String uid, String userName, int isPublic, String profilePicUrl, String postDescription, String locationName, Double latitude, Double longitude) {
         this.snapshotFilePath = snapshotFilePath;
         this.snapshotFilename = snapshotFilename;
         this.uid = uid;
@@ -88,7 +82,7 @@ public class SchedulablePost implements Schedulable {
         //create dom and save as xml file
         try {
             String xmlFilePath = context.getFilesDir().getPath() + "/" + storageFilename;
-            new PostXMLCreator().create(this, xmlFilePath);
+            PostXMLCreator.create(this, xmlFilePath);
             WorkRequest workRequest = new OneTimeWorkRequest.Builder(ScheduledTask.class)
                     .setInitialDelay(scheduledDelay, TimeUnit.MINUTES)
                     .setInputData(
