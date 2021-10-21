@@ -3,15 +3,14 @@ package com.comp6442.route42.model;
 import static org.mockito.Mockito.mock;
 
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.data.model.User;
-import com.comp6442.route42.ui.activity.MainActivity;
-import com.comp6442.route42.ui.viewmodel.UserViewModel;
-import com.google.firebase.FirebaseApp;
+import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
+import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -20,10 +19,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class UserViewModelTest {
-    UserViewModel userViewModel = new UserViewModel();
+
+    LiveUserViewModel liveUserVM;
+    ProfileUserViewModel profileUserVM;
+
     @Mock
     User user = mock(User.class);
-    MainActivity mainActivity = mock(MainActivity.class);
 
     List followerList = new ArrayList();
     List followingList = new ArrayList();
@@ -57,15 +58,24 @@ public class UserViewModelTest {
     public void setupTest() {
         setRelations();
         setInformation();
+        liveUserVM = new LiveUserViewModel();
+        profileUserVM = new ProfileUserViewModel();
+
     }
 
     @Test
     public void liveUserTest() {
-        Assert.assertNull(userViewModel.getLiveUser().getValue());
+        Assert.assertNull(liveUserVM.getUser().getValue());
+        liveUserVM.addSnapshotListener(user.getId());
+        liveUserVM.setUser(null);
+        Assert.assertNull(liveUserVM.getUser().getValue());
     }
 
     @Test
     public void profileUserTest() {
-        Assert.assertNull(userViewModel.getProfileUser().getValue());
+        Assert.assertNull(profileUserVM.getUser().getValue());
+        profileUserVM.addSnapshotListener(user.getId());
+        profileUserVM.setUser(null);
+        Assert.assertNull(profileUserVM.getUser().getValue());
     }
 }
