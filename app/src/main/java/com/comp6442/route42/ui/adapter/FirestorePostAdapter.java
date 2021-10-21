@@ -100,21 +100,22 @@ public class FirestorePostAdapter extends FirestoreRecyclerAdapter<Post, Firesto
               .into(viewHolder.imageView);
     }
 
-    viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Fragment fragment = new RouteMapFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("post", post);
-        fragment.setArguments(bundle);
-        ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_container_view, fragment)
-                .addToBackStack(this.getClass().getCanonicalName())
-                .commit();
-      }
-    });
-
+    if (post.getRoute().size() > 0) {
+      viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new RouteMapFragment();
+          Bundle bundle = new Bundle();
+          bundle.putParcelable("post", post);
+          fragment.setArguments(bundle);
+          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
+    }
     Timber.d("OnBindView complete.");
   }
 
