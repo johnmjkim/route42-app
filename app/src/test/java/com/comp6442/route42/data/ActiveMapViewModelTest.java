@@ -46,11 +46,11 @@ public class ActiveMapViewModelTest {
     @Test
     public void typeTest() {
         activeMapViewModel.setActivityType(Activity.Activity_Type.RUNNING);//type check
-        Assert.assertEquals(activeMapViewModel.getActivityType(), Activity.Activity_Type.RUNNING);
+        Assert.assertEquals(Activity.Activity_Type.RUNNING, activeMapViewModel.getActivityType());
         activeMapViewModel.setActivityType(Activity.Activity_Type.CYCLING);//type check
-        Assert.assertEquals(activeMapViewModel.getActivityType(), Activity.Activity_Type.CYCLING);
+        Assert.assertEquals(Activity.Activity_Type.CYCLING, activeMapViewModel.getActivityType());
         activeMapViewModel.setActivityType(Activity.Activity_Type.WALKING);//type check
-        Assert.assertEquals(activeMapViewModel.getActivityType(), Activity.Activity_Type.WALKING);
+        Assert.assertEquals(Activity.Activity_Type.WALKING, activeMapViewModel.getActivityType());
     }
     @Test
     public void elapsedTimeTest() {
@@ -61,7 +61,7 @@ public class ActiveMapViewModelTest {
 
     @Test
     public void lastUpdateTimeTest() {
-        Assert.assertSame(activeMapViewModel.getLastUpdateTime(), date1);
+        Assert.assertSame(date1, activeMapViewModel.getLastUpdateTime());
     }
 
     @Test
@@ -78,18 +78,18 @@ public class ActiveMapViewModelTest {
 
     @Test
     public void pastLocationTest() {
-        Assert.assertEquals(activeMapViewModel.hasPastLocations(),true);
-        Assert.assertEquals(activeMapViewModel.getPastLocations(),pastLocation);
+        Assert.assertTrue(activeMapViewModel.hasPastLocations());
+        Assert.assertEquals(pastLocation, activeMapViewModel.getPastLocations());
     }
 
     @Test
     public void snapShotFileNameTest() {
-        Assert.assertEquals(activeMapViewModel.getSnapshotFileName(),"TestLocation");
+        Assert.assertEquals("TestLocation", activeMapViewModel.getSnapshotFileName());
     }
 
     @Test
     public void activityTest() {
         activeMapViewModel.setActivityData(activity);
-        Assert.assertEquals(activeMapViewModel.getActivityData(),activity);
+        Assert.assertEquals(activity, activeMapViewModel.getActivityData());
     }
 }
