@@ -24,6 +24,7 @@ import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.BaseActivity;
+import com.comp6442.route42.data.model.Point;
 import com.comp6442.route42.ui.fragment.CreatePostFragment;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
 import com.comp6442.route42.utils.MockLocation;
@@ -60,6 +61,7 @@ public class ActiveMapFragment extends MapFragment {
   private ActiveMapViewModel activeMapViewModel;
   private TextView activityMetricsText;
   private LocationCallback locationCallBack;
+    private final int LOCATION_UPDATE_INTERVAL_MS = 3000;
 
   public ActiveMapFragment() {
     super(R.id.map_fragment2, R.raw.style_json_activity_map);
@@ -161,7 +163,6 @@ public class ActiveMapFragment extends MapFragment {
 
   private void renderSnapshotMap(Location location) {
     // Set the map's camera position to the current location of the device.
-
     if (location != null) {
       LatLng locationLatLng = MockLocation.latLngFromLocation(location);
       // add current location marker
@@ -199,15 +200,20 @@ public class ActiveMapFragment extends MapFragment {
 
     // Set the map's camera position to the current location of the device.
     if (location != null) {
-      LatLng locationLatLng = MockLocation.latLngFromLocation(location);
+        Point currentLocation = Point.fromLocation(location);
 
-      // add current location marker
-      googleMap.clear();
-      googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
+        // add current location marker
+        googleMap.clear();
+        googleMap.addMarker(
+                new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                        .position(currentLocation.toLatLng())
+                        .title("User")
+        );
 
       // track user using camera
       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-              locationLatLng, 20));
+              currentLocation.toLatLng(), 20));
     }
     // update activity view model
     if (activeMapViewModel.getLastUpdateTime() != null) {
@@ -258,7 +264,6 @@ public class ActiveMapFragment extends MapFragment {
   private void stopLocationUpdates() {
     fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
     requestingLocationUpdates = false;
-
     activeMapViewModel.setLastUpdateTime(null);
   }
 
@@ -268,8 +273,7 @@ public class ActiveMapFragment extends MapFragment {
       requestingLocationUpdates = true;
       // request location every 1000 millis from the provider
       LocationRequest locationRequest = LocationRequest.create();
-      long intervalMillis = 1000;
-      locationRequest.setInterval(intervalMillis).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(LOCATION_UPDATE_INTERVAL_MS).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
       fusedLocationProviderClient.setMockMode(demoMode);
       fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
     } catch (SecurityException e) {
