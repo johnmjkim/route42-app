@@ -22,7 +22,23 @@ public class KNearestNeighbourServiceTest {
     }
 
     @Test
+    public void getValues() {
+        Assert.assertEquals(k, kNearestNeighbourService.getK());
+        Assert.assertEquals(lat, kNearestNeighbourService.getLat());
+        Assert.assertEquals(lon, kNearestNeighbourService.getLon());
+    }
+
+    @Test
     public void toStringTest() {
-        Assert.assertEquals("KNearestNeighbourService{k=5, lat=-35.25932077515105, lon=149.11459641897002}", kNearestNeighbourService.toString());
+        Assert.assertTrue(kNearestNeighbourService.toString().contains(String.valueOf(k)));
+        Assert.assertTrue(kNearestNeighbourService.toString().contains(String.valueOf(lat)));
+        Assert.assertTrue(kNearestNeighbourService.toString().contains(String.valueOf(lon)));
+        Assert.assertEquals("KNearestNeighbourService{k=" +
+                k +
+                ", lat=" +
+                lat +
+                ", lon=" +
+                lon +
+                "}", kNearestNeighbourService.toString());
     }
 }
