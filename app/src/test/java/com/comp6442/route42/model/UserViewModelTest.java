@@ -10,6 +10,7 @@ import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class UserViewModelTest {
+
     LiveUserViewModel liveUserVM;
     ProfileUserViewModel profileUserVM;
 
@@ -58,15 +60,22 @@ public class UserViewModelTest {
         setInformation();
         liveUserVM = new LiveUserViewModel();
         profileUserVM = new ProfileUserViewModel();
+
     }
 
     @Test
     public void liveUserTest() {
         Assert.assertNull(liveUserVM.getUser().getValue());
+        liveUserVM.addSnapshotListener(user.getId());
+        liveUserVM.setUser(null);
+        Assert.assertNull(liveUserVM.getUser().getValue());
     }
 
     @Test
     public void profileUserTest() {
+        Assert.assertNull(profileUserVM.getUser().getValue());
+        profileUserVM.addSnapshotListener(user.getId());
+        profileUserVM.setUser(null);
         Assert.assertNull(profileUserVM.getUser().getValue());
     }
 }
