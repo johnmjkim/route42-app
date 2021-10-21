@@ -27,6 +27,7 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.ui.adapter.FirestorePostAdapter;
 import com.comp6442.route42.ui.adapter.PostAdapter;
+import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
 import com.comp6442.route42.ui.viewmodel.UserViewModel;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -50,7 +51,7 @@ public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private String uid;
-  private UserViewModel viewModel;
+  private LiveUserViewModel liveUserViewModel;
   private SearchView searchView;
   private NestedScrollView scrollview;
   private RecyclerView recyclerView;
@@ -102,9 +103,9 @@ public class FeedFragment extends Fragment {
       this.uid = savedInstanceState.getString("uid");
     }
 
-    viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+   liveUserViewModel = new ViewModelProvider(requireActivity()).get(LiveUserViewModel.class);
     if (this.uid != null) {
-      User user = viewModel.getLiveUser().getValue();
+      User user = liveUserViewModel.getUser().getValue();
 
       assert user != null;
 
@@ -114,7 +115,7 @@ public class FeedFragment extends Fragment {
               .setQuery(query, Post.class)
               .build();
 
-      firestorePostAdapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
+      firestorePostAdapter = new FirestorePostAdapter(postsOptions, liveUserViewModel.getUser().getValue().getId());
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(firestorePostAdapter);
@@ -182,7 +183,7 @@ public class FeedFragment extends Fragment {
               Timber.i("Response received from API: %d items", posts.size());
               Timber.d(posts.toString());
 
-              postAdapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+              postAdapter = new PostAdapter(posts, liveUserViewModel.getUser().getValue().getId());
               recyclerView.setAdapter(postAdapter);
               postAdapter.notifyDataSetChanged();
             } else {// let users know there was no hit for the query
@@ -217,7 +218,7 @@ public class FeedFragment extends Fragment {
     FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
             .setQuery(query, Post.class)
             .build();
-    FirestorePostAdapter adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+    FirestorePostAdapter adapter = new FirestorePostAdapter(posts, liveUserViewModel.getUser().getValue().getId());
     recyclerView.setAdapter(adapter);
     Timber.i("PostAdapter bound to RecyclerView with size %d for query: %s", adapter.getItemCount(), queryText);
     query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));

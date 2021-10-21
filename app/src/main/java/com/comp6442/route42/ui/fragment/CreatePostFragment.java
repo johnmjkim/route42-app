@@ -6,18 +6,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -29,13 +26,10 @@ import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
 import com.comp6442.route42.data.repository.UserRepository;
-import com.comp6442.route42.ui.activity.MainActivity;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
-import com.comp6442.route42.ui.viewmodel.UserViewModel;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -47,7 +41,7 @@ public class CreatePostFragment extends Fragment {
 
   private EditText postDescriptionInput;
   private String uid;
-  private UserViewModel userViewModel;
+  private LiveUserViewModel liveUserVM;
   private ActiveMapViewModel activeMapViewModel;
   private PostRepository postRepository;
   private SwitchMaterial scheduleSwitchButton;
@@ -59,7 +53,7 @@ public class CreatePostFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     uid = getArguments().getString("uid");
-    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.INVISIBLE);
 
   }
 
@@ -74,8 +68,7 @@ public class CreatePostFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
-    userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-    userViewModel.loadProfileUser(this.uid);
+    liveUserVM = new ViewModelProvider(requireActivity()).get(LiveUserViewModel.class);
     scheduleSwitchButton = requireView().findViewById(R.id.create_post_schedule_switch);
     createPostButton = view.findViewById(R.id.create_post_button);
     postRepository = PostRepository.getInstance();
@@ -96,8 +89,8 @@ public class CreatePostFragment extends Fragment {
    * Sets behavior of the post scheduler switch.
    */
   private void setSwitchButton() {
-    scheduleSwitchButton.setOnCheckedChangeListener((buttonView,isChecked) -> {
-      if(isChecked) {
+    scheduleSwitchButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+      if (isChecked) {
         Timber.i("scheduled post");
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
                 new ContextThemeWrapper(requireActivity(), R.style.AlertDialog_AppCompat)
@@ -142,17 +135,18 @@ public class CreatePostFragment extends Fragment {
               .commit();
     });
   }
+
   /**
    * Creates new Post given map snapshot and the activity data collected.
    */
   private void createActivityPost() {
-    User liveUser = userViewModel.getLiveUser().getValue();
+    User liveUser = liveUserVM.getUser().getValue();
     assert liveUser != null;
     String postDescription = postDescriptionInput.getText().toString().trim();
     Double latitude = activeMapViewModel.getDeviceLocation().getValue().getLatitude();
     Double longitude = activeMapViewModel.getDeviceLocation().getValue().getLongitude();
     String snapshotPath = getContext().getFilesDir().getPath() + "/" + getArguments().getString("local_filename");
-    if(scheduleSwitchButton.isChecked()) {
+    if (scheduleSwitchButton.isChecked()) {
       new SchedulablePost(snapshotPath, activeMapViewModel.getSnapshotFileName(),
               uid,
               liveUser.getUserName(),
@@ -165,7 +159,7 @@ public class CreatePostFragment extends Fragment {
       )
               .schedule(requireContext(), scheduledDelay);
     } else {
-      Post newPost = new Post( UserRepository.getInstance().getOne(uid),
+      Post newPost = new Post(UserRepository.getInstance().getOne(uid),
               liveUser.getUserName(),
               liveUser.getIsPublic(),
               liveUser.getProfilePicUrl(),
@@ -184,11 +178,11 @@ public class CreatePostFragment extends Fragment {
   }
 
 
-  private void savePost(Post newPost)  {
+  private void savePost(Post newPost) {
     String pathToFile = getContext().getFilesDir().getPath() + "/" + getArguments().getString("local_filename");
     String storedFileName = getArguments().getString("storage_filename");
     FirebaseStorageRepository.getInstance()
-            .uploadSnapshotFromLocal(pathToFile,storedFileName );
+            .uploadSnapshotFromLocal(pathToFile, storedFileName);
     postRepository.createOne(newPost);
   }
 
