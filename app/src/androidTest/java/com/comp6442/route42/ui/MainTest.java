@@ -12,13 +12,19 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.core.StringContains.containsString;
 
 import android.content.res.Resources;
 import android.view.View;
+import android.widget.Checkable;
+import android.widget.Switch;
+
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -30,6 +36,7 @@ import com.comp6442.route42.ui.activity.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -147,7 +154,7 @@ public class MainTest {
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("delayTest")))));
     }
 
-//    @Test
+    //    @Test
 //    public void SearchPost(){//have to fix
 //        createPost("#hash","CYCLING");
 //        onView(withId(R.id.search_view)).perform(typeText("#hash"), closeSoftKeyboard());
@@ -166,27 +173,28 @@ public class MainTest {
     public void blockUnBlockCheck() throws InterruptedException {
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
-        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check blocked
+        onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check blocked
         Thread.sleep(500);
-        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isNotChecked()));//check not blocked
+        onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(false)).check(matches(isNotChecked()));//check not blocked
     }
 
     @Test
     public void followUnfollowCheck() throws InterruptedException {
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
-        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isChecked()));//check followed
+        onView(withId(R.id.profile_follow_switch)).perform(click(), setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
-        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isNotChecked()));//check not followed
+        onView(withId(R.id.profile_follow_switch)).perform(click(),setChecked(false)).check(matches(isNotChecked()));//check followed
+
     }
 
     @Test
     public void followBlockCheck() throws InterruptedException {
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
-        onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isChecked()));//check followed
+        onView(withId(R.id.profile_follow_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
-        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check not followed
+        onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//blocked
         onView(withId(R.id.profile_follow_switch)).check(matches(isNotChecked()));//check not followed
     }
 
@@ -194,11 +202,11 @@ public class MainTest {
     public void blockFollowCheck() throws InterruptedException {
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
-        onView(withId(R.id.profile_block_switch)).perform(click()).check(matches(isChecked()));//check followed
+        onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
         onView(withId(R.id.profile_follow_switch)).perform(click()).check(matches(isNotChecked()));//check not followed
-        onView(withId(R.id.profile_follow_switch)).check(matches(isNotChecked()));//check not followed
     }
+
 
     public void createPost(String keyword, String activityType) throws InterruptedException {// create post
         //--------------------------Start to make post-------------------------------------------------
@@ -246,6 +254,8 @@ public class MainTest {
             };
         }
     }
+
+
     public class RecyclerViewMatcher {
 
         private final int recyclerViewId;
@@ -303,5 +313,37 @@ public class MainTest {
                 }
             };
         }
+    }
+    public static ViewAction setChecked(final boolean checked) {
+        return new ViewAction() {
+            @Override
+            public BaseMatcher<View> getConstraints() {
+                return new BaseMatcher<View>() {
+                    @Override
+                    public boolean matches(Object item) {
+                        return isA(Checkable.class).matches(item);
+                    }
+
+                    @Override
+                    public void describeMismatch(Object item, Description mismatchDescription) {
+                    }
+
+                    @Override
+                    public void describeTo(Description description) {
+                    }
+                };
+            }
+
+            @Override
+            public String getDescription() {
+                return null;
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                Checkable checkableView = (Checkable) view;
+                checkableView.setChecked(checked);
+            }
+        };
     }
 }
