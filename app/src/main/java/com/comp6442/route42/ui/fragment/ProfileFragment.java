@@ -227,7 +227,7 @@ public class ProfileFragment extends Fragment {
         Glide.with(profilePic.getContext())
                 .load(user.getProfilePicUrl())
                 .placeholder(R.drawable.unknown_user)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .skipMemoryCache(false)
                 .circleCrop()
                 .into(profilePic);
@@ -238,7 +238,7 @@ public class ProfileFragment extends Fragment {
         Glide.with(profilePic.getContext())
                 .load(profilePicRef)
                 .placeholder(R.drawable.unknown_user)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .skipMemoryCache(false)
                 .circleCrop()
                 .into(profilePic);
