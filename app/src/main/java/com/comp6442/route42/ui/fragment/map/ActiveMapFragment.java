@@ -24,6 +24,7 @@ import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.BaseActivity;
+import com.comp6442.route42.data.model.Point;
 import com.comp6442.route42.ui.fragment.CreatePostFragment;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
 import com.comp6442.route42.utils.MockLocation;
@@ -37,6 +38,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
@@ -44,6 +46,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +65,7 @@ public class ActiveMapFragment extends MapFragment {
     super(R.id.map_fragment2, R.raw.style_json_activity_map);
     this.demoMode = BuildConfig.DEMO;
   }
+
   @Override
   public void onCreate(Bundle savedStateInstance) {
     super.onCreate(savedStateInstance);
@@ -68,6 +73,7 @@ public class ActiveMapFragment extends MapFragment {
     activeMapViewModel.setActivityType(Activity.Activity_Type.valueOf(getArguments().getInt("activity")));
     setGetLocationCallBack();
   }
+
   @Override
   public View onCreateView(
           @NonNull LayoutInflater inflater,
@@ -82,9 +88,9 @@ public class ActiveMapFragment extends MapFragment {
     super.onViewCreated(view, savedInstanceState);
     if (demoMode) {
       @SuppressLint("MissingPermission") Observer<Location> deviceLocationObserver = updatedLocation -> {
-         //update the mock location in the provider
-                    Timber.i("updated mock location to %s", updatedLocation.toString());
-                     fusedLocationProviderClient.setMockLocation(updatedLocation);
+        //update the mock location in the provider
+        Timber.i("updated mock location to %s", updatedLocation.toString());
+        fusedLocationProviderClient.setMockLocation(updatedLocation);
       };
       activeMapViewModel.setMockDeviceLocation();
       activeMapViewModel.getDeviceLocation().observe(getViewLifecycleOwner(), deviceLocationObserver);
@@ -103,6 +109,7 @@ public class ActiveMapFragment extends MapFragment {
   }
 
   private void endUserActivity() {
+    stopLocationUpdates();
     GoogleMap.SnapshotReadyCallback snapshotCallback = bitmap -> {
       try {
         String baseFilename = "activity_route";
@@ -121,8 +128,8 @@ public class ActiveMapFragment extends MapFragment {
 
         Bundle bundle = new Bundle();
         bundle.putString("uid", getArguments().getString("uid"));
-        bundle.putString("local_filename",  localFilename);
-        bundle.putString("storage_filename",  storageFilename);
+        bundle.putString("local_filename", localFilename);
+        bundle.putString("storage_filename", storageFilename);
         Fragment fragment = new CreatePostFragment();
         fragment.setArguments(bundle);
         requireActivity()
@@ -136,6 +143,7 @@ public class ActiveMapFragment extends MapFragment {
     };
 
     renderSnapshotMap(activeMapViewModel.getDeviceLocation().getValue());
+
     googleMap.setOnMapLoadedCallback(() -> {
       googleMap.snapshot(snapshotCallback);
       googleMap.setOnMapLoadedCallback(null);
@@ -151,14 +159,28 @@ public class ActiveMapFragment extends MapFragment {
 
   private void renderSnapshotMap(Location location) {
     // Set the map's camera position to the current location of the device.
-    int MAP_ZOOM_LEVEL = 18;
+    int MAP_ZOOM_LEVEL = 15;
     int LINE_WIDTH = 25;
-    int ROUTE_COLOR = Color.BLUE;
-    int PADDING = 300;
+    int ROUTE_COLOR = Color.rgb(54, 54, 255);
+    int PADDING = 100;
     if (location != null) {
-      LatLng locationLatLng = MockLocation.latLngFromLocation(location);
+      LatLng locationLatLng = Point.latLngFromLocation(location);
       // add current location marker
       googleMap.clear();
+      InputStream is = requireContext().getResources().openRawResource(R.raw.style_json_activity_map_snapshot);
+      int size = 0;
+
+      try {
+        size = is.available();
+        byte[] buffer = new byte[size];
+        is.read(buffer);
+        is.close();
+        String json = new String(buffer, "UTF-8");
+        googleMap.setMapStyle(new MapStyleOptions(json));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
       googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
       // add activity route polyline
       if (activeMapViewModel.hasPastLocations()) {
@@ -166,7 +188,6 @@ public class ActiveMapFragment extends MapFragment {
         googleMap.addPolyline(
                 new PolylineOptions()
                         .endCap(new RoundCap())
-                        .clickable(false)
                         .addAll(activeMapViewModel.getPastLocations())
                         .width(LINE_WIDTH)
                         .color(ROUTE_COLOR)
@@ -177,20 +198,22 @@ public class ActiveMapFragment extends MapFragment {
       }
     }
   }
+
   private LatLngBounds getMapBounds(List<LatLng> routePoints) {
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
-    for (int i=0; i< routePoints.size(); i++) {
+    for (int i = 0; i < routePoints.size(); i++) {
       builder.include(routePoints.get(i));
     }
     return builder.build();
   }
+
   @Override
   protected void renderMap(Location location) {
-    Timber.i("Received location from fusedLocationProvider: %s", location);
+    renderMetrics();
 
     // Set the map's camera position to the current location of the device.
     if (location != null) {
-      LatLng locationLatLng = MockLocation.latLngFromLocation(location);
+      LatLng locationLatLng = Point.latLngFromLocation(location);
 
       // add current location marker
       googleMap.clear();
@@ -198,7 +221,7 @@ public class ActiveMapFragment extends MapFragment {
 
       // track user using camera
       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-              locationLatLng, 20));
+              locationLatLng, 18));
     }
     // update activity view model
     if (activeMapViewModel.getLastUpdateTime() != null) {
@@ -209,16 +232,15 @@ public class ActiveMapFragment extends MapFragment {
       activeMapViewModel.setLastUpdateTime(new Date());
       googleMap.addPolyline(
               new PolylineOptions()
-                      .endCap(new RoundCap())
-                      .clickable(false)
                       .addAll(activeMapViewModel.getPastLocations())
                       .width(25)
                       .color(Color.BLUE)
       );
     }
 
+  }
 
-
+  private void renderMetrics() {
     Activity userActivityData = new BaseActivity(
             activeMapViewModel.getPastLocations(),
             activeMapViewModel.getElapsedTime(),
@@ -229,7 +251,7 @@ public class ActiveMapFragment extends MapFragment {
 
   private void createActivityBtnClickHandler() {
     String[] dialogItems;
-    if (requestingLocationUpdates)  {
+    if (requestingLocationUpdates) {
       dialogItems = new String[]{"Pause", "End Activity"};
       MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(
               new ContextThemeWrapper(requireActivity(), R.style.AlertDialog_AppCompat)
@@ -239,11 +261,10 @@ public class ActiveMapFragment extends MapFragment {
               .setItems(dialogItems, (dialogInterface, i) -> {
                 if (i == 1) endUserActivity();
                 else if (i == 0) {
-                   stopLocationUpdates();
+                  stopLocationUpdates();
                 }
               }).create().show();
     } else {
-      //simply start requesting updates
       startLocationUpdates();
     }
   }
@@ -251,7 +272,6 @@ public class ActiveMapFragment extends MapFragment {
   private void stopLocationUpdates() {
     fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
     requestingLocationUpdates = false;
-
     activeMapViewModel.setLastUpdateTime(null);
   }
 
@@ -259,9 +279,9 @@ public class ActiveMapFragment extends MapFragment {
     try {
       Timber.i("getDeviceLocation: getting the devices current location");
       requestingLocationUpdates = true;
-      // request location every 1000 millis from the provider
+      // request location every n millis from the provider
       LocationRequest locationRequest = LocationRequest.create();
-      long intervalMillis = 1000;
+      long intervalMillis = 2000;
       locationRequest.setInterval(intervalMillis).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
       fusedLocationProviderClient.setMockMode(demoMode);
       fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
@@ -287,20 +307,18 @@ public class ActiveMapFragment extends MapFragment {
         if (demoMode) {
           activeMapViewModel.setMockDeviceLocation();
           fusedLocationProviderClient.setMockLocation(activeMapViewModel.getDeviceLocation().getValue());
-        }
-        else
+        } else
           activeMapViewModel.setDeviceLocation(locationResult.getLastLocation());
         renderMap(locationResult.getLastLocation());
-        Timber.i("location result ready");
       }
 
       @Override
       public void onLocationAvailability(@NonNull LocationAvailability locationAvailability) {
         super.onLocationAvailability(locationAvailability);
-        Timber.i("location available");
       }
     };
   }
+
   @Override
   public void onResume() {
     super.onResume();

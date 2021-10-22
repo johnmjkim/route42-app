@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
@@ -84,5 +85,8 @@ public class Point implements Parcelable {
       parcel.writeByte((byte) 1);
       parcel.writeDouble(longitude);
     }
+  }
+  public static LatLng latLngFromLocation(android.location.Location location) {
+    return  new LatLng(location.getLatitude(), location.getLongitude());
   }
 }
