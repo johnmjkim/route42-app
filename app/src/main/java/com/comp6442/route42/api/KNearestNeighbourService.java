@@ -23,6 +23,18 @@ public class KNearestNeighbourService extends RestApiService implements Callable
     this.lon = lon;
   }
 
+  public int getK() {
+    return this.k;
+  }
+
+  public Double getLat() {
+    return this.lat;
+  }
+
+  public Double getLon() {
+    return this.lon;
+  }
+
   @NonNull
   @Override
   public String toString() {

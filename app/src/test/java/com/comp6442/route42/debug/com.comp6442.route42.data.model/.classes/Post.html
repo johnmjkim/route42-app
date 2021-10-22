@@ -1,0 +1,470 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+    <title>Coverage Report :: Post</title>
+    <style type="text/css">
+    @import "../../.css/coverage.css";
+
+    </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+    <div class="breadCrumbs">
+        [ <a href="../../index.html">all classes</a> ]
+        [ <a href="../index.html">com.comp6442.route42.data.model</a> ]
+    </div>
+
+    <h1>Coverage Summary for Class: Post (com.comp6442.route42.data.model)</h1>
+
+    <table class="coverageStats">
+
+        <tr>
+            <th class="name">Class</th>
+            <th class="coverageStat
+">
+                Method, %
+            </th>
+            <th class="coverageStat
+">
+                Line, %
+            </th>
+        </tr>
+        <tr>
+            <td class="name">Post</td>
+            <td class="coverageStat">
+  <span class="percent">
+    90.2%
+  </span>
+                <span class="absValue">
+    (37/ 41)
+  </span>
+            </td>
+            <td class="coverageStat">
+  <span class="percent">
+    70.1%
+  </span>
+                <span class="absValue">
+    (108/ 154)
+  </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="name">Post$1</td>
+            <td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+                <span class="absValue">
+    (1/ 3)
+  </span>
+            </td>
+            <td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+                <span class="absValue">
+    (1/ 3)
+  </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="name"><strong>total</strong></td>
+            <td class="coverageStat">
+  <span class="percent">
+    86.4%
+  </span>
+                <span class="absValue">
+    (38/ 44)
+  </span>
+            </td>
+            <td class="coverageStat">
+  <span class="percent">
+    69.4%
+  </span>
+                <span class="absValue">
+    (109/ 157)
+  </span>
+            </td>
+        </tr>
+    </table>
+
+    <br/>
+    <br/>
+
+
+    <div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.data.model;
+        <i>2</i>&nbsp;
+        <i>3</i>&nbsp;import android.os.Build;
+        <i>4</i>&nbsp;import android.os.Parcel;
+        <i>5</i>&nbsp;import android.os.Parcelable;
+        <i>6</i>&nbsp;
+        <i>7</i>&nbsp;import androidx.annotation.NonNull;
+        <i>8</i>&nbsp;import androidx.annotation.RequiresApi;
+        <i>9</i>&nbsp;
+        <i>10</i>&nbsp;import com.firebase.geofire.GeoFireUtils;
+        <i>11</i>&nbsp;import com.firebase.geofire.GeoLocation;
+        <i>12</i>&nbsp;import com.google.android.gms.maps.model.LatLng;
+        <i>13</i>&nbsp;import com.google.firebase.firestore.DocumentReference;
+        <i>14</i>&nbsp;import com.google.firebase.firestore.FirebaseFirestore;
+        <i>15</i>&nbsp;import com.google.firebase.firestore.IgnoreExtraProperties;
+        <i>16</i>&nbsp;import com.google.firebase.firestore.ServerTimestamp;
+        <i>17</i>&nbsp;
+        <i>18</i>&nbsp;import java.util.ArrayList;
+        <i>19</i>&nbsp;import java.util.Date;
+        <i>20</i>&nbsp;import java.util.List;
+        <i>21</i>&nbsp;import java.util.regex.Pattern;
+        <i>22</i>&nbsp;
+        <i>23</i>&nbsp;@IgnoreExtraProperties
+        <i>24</i>&nbsp;public class Post extends Model implements Parcelable {
+        <b class="fc"><i>25</i>&nbsp; public static final Creator&lt;Post&gt; CREATOR = new Creator&lt;Post&gt;()
+            {</b>
+        <i>26</i>&nbsp; @RequiresApi(api = Build.VERSION_CODES.Q)
+        <i>27</i>&nbsp; @Override
+        <i>28</i>&nbsp; public Post createFromParcel(Parcel in) {
+        <b class="nc"><i>29</i>&nbsp; return new Post(in);</b>
+        <i>30</i>&nbsp; }
+        <i>31</i>&nbsp;
+        <i>32</i>&nbsp; @Override
+        <i>33</i>&nbsp; public Post[] newArray(int size) {
+        <b class="nc"><i>34</i>&nbsp; return new Post[size];</b>
+        <i>35</i>&nbsp; }
+        <i>36</i>&nbsp; };
+        <i>37</i>&nbsp;
+        <i>38</i>&nbsp; private DocumentReference uid;
+        <i>39</i>&nbsp; private String userName;
+        <i>40</i>&nbsp; private int isPublic;
+        <i>41</i>&nbsp; private String profilePicUrl;
+        <i>42</i>&nbsp; @ServerTimestamp
+        <i>43</i>&nbsp; private Date postDatetime;
+        <b class="fc"><i>44</i>&nbsp; private String postDescription = &quot;&quot;;</b>
+        <i>45</i>&nbsp; private String locationName;
+        <i>46</i>&nbsp; private Double latitude;
+        <i>47</i>&nbsp; private Double longitude;
+        <b class="fc"><i>48</i>&nbsp; private List&lt;Point&gt; route = new ArrayList&lt;&gt;();</b>
+        <b class="fc"><i>49</i>&nbsp; private String geohash = &quot;&quot;;</b>
+        <b class="fc"><i>50</i>&nbsp; private List&lt;String&gt; hashtags = new ArrayList&lt;&gt;();</b>
+        <b class="fc"><i>51</i>&nbsp; private int likeCount = 0;</b>
+        <i>52</i>&nbsp; private String imageUrl;
+        <b class="fc"><i>53</i>&nbsp; private List&lt;DocumentReference&gt; likedBy = new ArrayList&lt;&gt;();</b>
+        <i>54</i>&nbsp;
+        <b class="fc"><i>55</i>&nbsp; public Post() {</b>
+        <b class="fc"><i>56</i>&nbsp; }</b>
+        <i>57</i>&nbsp;
+        <b class="fc"><i>58</i>&nbsp; public Post(String id, DocumentReference uid, String userName,
+            int isPublic, String profilePicUrl, Date postDatetime, String postDescription, String
+            locationName, Double latitude, Double longitude, List&lt;String&gt; hashtags, int
+            likeCount, String imageUrl, List&lt;DocumentReference&gt; likedBy) {</b>
+        <b class="fc"><i>59</i>&nbsp; this.id = id;</b>
+        <b class="fc"><i>60</i>&nbsp; this.uid = uid;</b>
+        <b class="fc"><i>61</i>&nbsp; this.userName = userName;</b>
+        <b class="fc"><i>62</i>&nbsp; this.isPublic = isPublic;</b>
+        <b class="fc"><i>63</i>&nbsp; this.profilePicUrl = profilePicUrl;</b>
+        <b class="fc"><i>64</i>&nbsp; this.postDatetime = postDatetime;</b>
+        <b class="fc"><i>65</i>&nbsp; this.postDescription = postDescription;</b>
+        <b class="fc"><i>66</i>&nbsp; this.locationName = locationName;</b>
+        <b class="fc"><i>67</i>&nbsp; this.latitude = latitude;</b>
+        <b class="fc"><i>68</i>&nbsp; this.longitude = longitude;</b>
+        <b class="fc"><i>69</i>&nbsp; this.hashtags = hashtags;</b>
+        <b class="fc"><i>70</i>&nbsp; this.likeCount = likeCount;</b>
+        <b class="fc"><i>71</i>&nbsp; this.imageUrl = imageUrl;</b>
+        <b class="fc"><i>72</i>&nbsp; this.likedBy = likedBy;</b>
+        <b class="fc"><i>73</i>&nbsp; setGeohash();</b>
+        <b class="fc"><i>74</i>&nbsp; }</b>
+        <i>75</i>&nbsp;
+        <i>76</i>&nbsp; public Post(DocumentReference uid, String userName, int isPublic, String
+        profilePicUrl, Date postDatetime,
+        <i>77</i>&nbsp; String postDescription, String locationName, Double latitude, Double
+        longitude, List&lt;String&gt; hashtags,
+        <i>78</i>&nbsp; int likeCount, String imageUrl, List&lt;DocumentReference&gt; likedBy) {
+        <b class="fc"><i>79</i>&nbsp; super();</b>
+        <b class="fc"><i>80</i>&nbsp; this.uid = uid;</b>
+        <b class="fc"><i>81</i>&nbsp; this.userName = userName;</b>
+        <b class="fc"><i>82</i>&nbsp; this.isPublic = isPublic;</b>
+        <b class="fc"><i>83</i>&nbsp; this.profilePicUrl = profilePicUrl;</b>
+        <b class="fc"><i>84</i>&nbsp; this.postDatetime = postDatetime;</b>
+        <b class="fc"><i>85</i>&nbsp; this.postDescription = postDescription;</b>
+        <b class="fc"><i>86</i>&nbsp; this.locationName = locationName;</b>
+        <b class="fc"><i>87</i>&nbsp; this.latitude = latitude;</b>
+        <b class="fc"><i>88</i>&nbsp; this.longitude = longitude;</b>
+        <b class="fc"><i>89</i>&nbsp; this.hashtags = hashtags;</b>
+        <b class="fc"><i>90</i>&nbsp; this.likeCount = likeCount;</b>
+        <b class="fc"><i>91</i>&nbsp; this.imageUrl = imageUrl;</b>
+        <b class="fc"><i>92</i>&nbsp; this.likedBy = likedBy;</b>
+        <b class="fc"><i>93</i>&nbsp; setGeohash();</b>
+        <b class="fc"><i>94</i>&nbsp; }</b>
+        <i>95</i>&nbsp;
+        <i>96</i>&nbsp; @RequiresApi(api = Build.VERSION_CODES.Q)
+        <b class="nc"><i>97</i>&nbsp; protected Post(Parcel in) {</b>
+        <b class="nc"><i>98</i>&nbsp; this.id = in.readString();</b>
+        <b class="nc"><i>99</i>&nbsp; this.uid =
+            FirebaseFirestore.getInstance().document(in.readString());</b>
+        <b class="nc"><i>100</i>&nbsp; this.userName = in.readString();</b>
+        <b class="nc"><i>101</i>&nbsp; this.postDescription = in.readString();</b>
+        <b class="nc"><i>102</i>&nbsp; this.profilePicUrl = in.readString();</b>
+        <b class="nc"><i>103</i>&nbsp; this.imageUrl = in.readString();</b>
+        <b class="nc"><i>104</i>&nbsp; this.isPublic = in.readInt();</b>
+        <b class="nc"><i>105</i>&nbsp; this.likeCount = in.readInt();</b>
+        <b class="nc"><i>106</i>&nbsp; this.locationName = in.readString();</b>
+        <b class="nc"><i>107</i>&nbsp; this.locationName = in.readString();</b>
+        <b class="nc"><i>108</i>&nbsp; this.latitude = in.readDouble();</b>
+        <b class="nc"><i>109</i>&nbsp; this.longitude = in.readDouble();</b>
+        <b class="nc"><i>110</i>&nbsp; this.route = in.readParcelableList(new ArrayList&lt;&gt;(),
+            Point.class.getClassLoader());</b>
+        <b class="nc"><i>111</i>&nbsp; this.geohash = in.readString();</b>
+        <b class="nc"><i>112</i>&nbsp; this.hashtags = in.createStringArrayList();</b>
+        <b class="nc"><i>113</i>&nbsp; this.postDatetime = new Date((Long)
+            in.readValue(Long.class.getClassLoader()));</b>
+        <b class="nc"><i>114</i>&nbsp; in.createStringArrayList().forEach(s -&gt;
+            this.likedBy.add(FirebaseFirestore.getInstance().document(s)));</b>
+        <b class="nc"><i>115</i>&nbsp; }</b>
+        <i>116</i>&nbsp;
+        <i>117</i>&nbsp; public static List&lt;String&gt; getHashTagsFromTextInput(String textInput)
+        {
+        <i>118</i>&nbsp; // TODO fix(done), #test returns #t in previous code
+        <b class="fc"><i>119</i>&nbsp; List&lt;String&gt; hashTags = new ArrayList&lt;&gt;();</b>
+        <b class="fc"><i>120</i>&nbsp; String currentTag = &quot;&quot;;</b>
+        <b class="fc"><i>121</i>&nbsp; textInput = textInput.toLowerCase().trim();</b>
+        <b class="fc"><i>122</i>&nbsp; for (int i=0; i&lt;textInput.length(); i++) {</b>
+        <b class="fc"><i>123</i>&nbsp; char c = textInput.charAt(i);</b>
+        <b class="fc"><i>124</i>&nbsp; if(c == &#39;#&#39;) {</b>
+        <b class="fc"><i>125</i>&nbsp; for(int j=i;j&lt;textInput.length();j++){</b>
+        <b class="fc"><i>126</i>&nbsp; if(textInput.charAt(j)==&#39; &#39;||textInput.charAt(j)==&#39;,&#39;||textInput.charAt(j)==&#39;\n&#39;){</b>
+        <b class="fc"><i>127</i>&nbsp; i=j;</b>
+        <b class="fc"><i>128</i>&nbsp; break;</b>
+        <i>129</i>&nbsp; }
+        <b class="fc"><i>130</i>&nbsp; currentTag+= textInput.charAt(j);</b>
+        <i>131</i>&nbsp; }
+        <i>132</i>&nbsp;// if(c == &#39;#&#39;) {
+        <i>133</i>&nbsp;// if ( currentTag.length()&gt;0) {
+        <i>134</i>&nbsp;// hashTags.add(currentTag.trim());
+        <i>135</i>&nbsp;// currentTag = &quot;&quot;;
+        <i>136</i>&nbsp;// }
+        <i>137</i>&nbsp;// currentTag+= c;
+        <i>138</i>&nbsp;
+        <b class="fc"><i>139</i>&nbsp; } else if (currentTag.length()&gt;0 &amp;&amp;
+            Pattern.matches(&quot;[:space:]&quot; , Character.toString(c))) {</b>
+        <b class="fc"><i>140</i>&nbsp; hashTags.add(currentTag.trim());</b>
+        <b class="fc"><i>141</i>&nbsp; currentTag = &quot;&quot;;</b>
+        <i>142</i>&nbsp; }
+        <b class="fc"><i>143</i>&nbsp; else if (currentTag.length()&gt;0 &amp;&amp; Pattern.matches(&quot;\\p{Punct}&quot;
+            , Character.toString(c)) ) {</b>
+        <b class="nc"><i>144</i>&nbsp; hashTags.add(currentTag.trim());</b>
+        <b class="nc"><i>145</i>&nbsp; currentTag = &quot;&quot;;</b>
+        <i>146</i>&nbsp; }
+        <i>147</i>&nbsp;// else if (currentTag.length()&gt;0) {
+        <i>148</i>&nbsp;// currentTag += c;
+        <i>149</i>&nbsp;// }
+        <i>150</i>&nbsp; }
+        <b class="fc"><i>151</i>&nbsp; if (currentTag.length()&gt;0) {</b>
+        <b class="nc"><i>152</i>&nbsp; hashTags.add(currentTag.trim());</b>
+        <i>153</i>&nbsp; }
+        <b class="fc"><i>154</i>&nbsp; return hashTags;</b>
+        <i>155</i>&nbsp; }
+        <i>156</i>&nbsp;
+        <i>157</i>&nbsp; @Override
+        <i>158</i>&nbsp; public int describeContents() {
+        <b class="fc"><i>159</i>&nbsp; return 0;</b>
+        <i>160</i>&nbsp; }
+        <i>161</i>&nbsp;
+        <i>162</i>&nbsp; @RequiresApi(api = Build.VERSION_CODES.Q)
+        <i>163</i>&nbsp; @Override
+        <i>164</i>&nbsp; public void writeToParcel(Parcel parcel, int i) {
+        <b class="nc"><i>165</i>&nbsp; parcel.writeString(this.id);</b>
+        <b class="nc"><i>166</i>&nbsp; parcel.writeString(this.uid.getPath());</b>
+        <b class="nc"><i>167</i>&nbsp; parcel.writeString(this.userName);</b>
+        <b class="nc"><i>168</i>&nbsp; parcel.writeString(this.postDescription);</b>
+        <b class="nc"><i>169</i>&nbsp; parcel.writeString(this.profilePicUrl);</b>
+        <b class="nc"><i>170</i>&nbsp; parcel.writeString(this.imageUrl);</b>
+        <b class="nc"><i>171</i>&nbsp; parcel.writeInt(this.isPublic);</b>
+        <b class="nc"><i>172</i>&nbsp; parcel.writeInt(this.likeCount);</b>
+        <b class="nc"><i>173</i>&nbsp; parcel.writeString(this.locationName);</b>
+        <b class="nc"><i>174</i>&nbsp; parcel.writeDouble(this.latitude);</b>
+        <b class="nc"><i>175</i>&nbsp; parcel.writeDouble(this.longitude);</b>
+        <b class="nc"><i>176</i>&nbsp; parcel.writeParcelableList(this.route,
+            PARCELABLE_WRITE_RETURN_VALUE);</b>
+        <b class="nc"><i>177</i>&nbsp; parcel.writeString(this.geohash);</b>
+        <b class="nc"><i>178</i>&nbsp; parcel.writeStringList(this.hashtags);</b>
+        <i>179</i>&nbsp;
+        <b class="nc"><i>180</i>&nbsp; if (this.postDatetime != null) {</b>
+        <b class="nc"><i>181</i>&nbsp; parcel.writeLong(postDatetime.getTime());</b>
+        <i>182</i>&nbsp; } else {
+        <b class="nc"><i>183</i>&nbsp; parcel.writeValue(null);</b>
+        <i>184</i>&nbsp; }
+        <i>185</i>&nbsp;
+        <b class="nc"><i>186</i>&nbsp; List&lt;String&gt; likedBySerialized = new ArrayList&lt;&gt;();</b>
+        <b class="nc"><i>187</i>&nbsp; for (DocumentReference docRef : this.likedBy)
+            likedBySerialized.add(docRef.getPath());</b>
+        <b class="nc"><i>188</i>&nbsp; parcel.writeStringList(likedBySerialized);</b>
+        <b class="nc"><i>189</i>&nbsp; }</b>
+        <i>190</i>&nbsp;
+        <i>191</i>&nbsp; public DocumentReference getUid() {
+        <b class="fc"><i>192</i>&nbsp; return uid;</b>
+        <i>193</i>&nbsp; }
+        <i>194</i>&nbsp;
+        <i>195</i>&nbsp; public void setUid(DocumentReference uid) {
+        <b class="fc"><i>196</i>&nbsp; this.uid = uid;</b>
+        <b class="fc"><i>197</i>&nbsp; }</b>
+        <i>198</i>&nbsp;
+        <i>199</i>&nbsp; public String getUserName() {
+        <b class="fc"><i>200</i>&nbsp; return userName;</b>
+        <i>201</i>&nbsp; }
+        <i>202</i>&nbsp;
+        <i>203</i>&nbsp; public void setUserName(String userName) {
+        <b class="fc"><i>204</i>&nbsp; this.userName = userName;</b>
+        <b class="fc"><i>205</i>&nbsp; }</b>
+        <i>206</i>&nbsp;
+        <i>207</i>&nbsp; public int getIsPublic() {
+        <b class="fc"><i>208</i>&nbsp; return isPublic;</b>
+        <i>209</i>&nbsp; }
+        <i>210</i>&nbsp;
+        <i>211</i>&nbsp; public void setIsPublic(int isPublic) {
+        <b class="fc"><i>212</i>&nbsp; this.isPublic = isPublic;</b>
+        <b class="fc"><i>213</i>&nbsp; }</b>
+        <i>214</i>&nbsp;
+        <i>215</i>&nbsp; public String getProfilePicUrl() {
+        <b class="fc"><i>216</i>&nbsp; return profilePicUrl;</b>
+        <i>217</i>&nbsp; }
+        <i>218</i>&nbsp;
+        <i>219</i>&nbsp; public void setProfilePicUrl(String profilePicUrl) {
+        <b class="fc"><i>220</i>&nbsp; this.profilePicUrl = profilePicUrl;</b>
+        <b class="fc"><i>221</i>&nbsp; }</b>
+        <i>222</i>&nbsp;
+        <i>223</i>&nbsp; public Date getPostDatetime() {
+        <b class="fc"><i>224</i>&nbsp; return postDatetime;</b>
+        <i>225</i>&nbsp; }
+        <i>226</i>&nbsp;
+        <i>227</i>&nbsp; public void setPostDatetime(Date postDatetime) {
+        <b class="fc"><i>228</i>&nbsp; this.postDatetime = postDatetime;</b>
+        <b class="fc"><i>229</i>&nbsp; }</b>
+        <i>230</i>&nbsp;
+        <i>231</i>&nbsp; public String getPostDescription() {
+        <b class="fc"><i>232</i>&nbsp; return postDescription;</b>
+        <i>233</i>&nbsp; }
+        <i>234</i>&nbsp;
+        <i>235</i>&nbsp; public void setPostDescription(String postDescription) {
+        <b class="fc"><i>236</i>&nbsp; this.postDescription = postDescription;</b>
+        <b class="fc"><i>237</i>&nbsp; }</b>
+        <i>238</i>&nbsp;
+        <i>239</i>&nbsp; public String getLocationName() {
+        <b class="fc"><i>240</i>&nbsp; return locationName;</b>
+        <i>241</i>&nbsp; }
+        <i>242</i>&nbsp;
+        <i>243</i>&nbsp; public void setLocationName(String locationName) {
+        <b class="fc"><i>244</i>&nbsp; this.locationName = locationName;</b>
+        <b class="fc"><i>245</i>&nbsp; }</b>
+        <i>246</i>&nbsp;
+        <i>247</i>&nbsp; public Double getLatitude() {
+        <b class="fc"><i>248</i>&nbsp; return latitude;</b>
+        <i>249</i>&nbsp; }
+        <i>250</i>&nbsp;
+        <i>251</i>&nbsp; public void setLatitude(Double latitude) {
+        <b class="fc"><i>252</i>&nbsp; this.latitude = latitude;</b>
+        <b class="fc"><i>253</i>&nbsp; if (this.latitude != null &amp;&amp; this.longitude != null)
+            setGeohash();</b>
+        <b class="fc"><i>254</i>&nbsp; }</b>
+        <i>255</i>&nbsp;
+        <i>256</i>&nbsp; public Double getLongitude() {
+        <b class="fc"><i>257</i>&nbsp; return longitude;</b>
+        <i>258</i>&nbsp; }
+        <i>259</i>&nbsp;
+        <i>260</i>&nbsp; public void setLongitude(Double longitude) {
+        <b class="fc"><i>261</i>&nbsp; this.longitude = longitude;</b>
+        <b class="fc"><i>262</i>&nbsp; if (this.latitude != null &amp;&amp; this.longitude != null)
+            setGeohash();</b>
+        <b class="fc"><i>263</i>&nbsp; }</b>
+        <i>264</i>&nbsp;
+        <i>265</i>&nbsp; public List&lt;String&gt; getHashtags() {
+        <b class="fc"><i>266</i>&nbsp; return hashtags;</b>
+        <i>267</i>&nbsp; }
+        <i>268</i>&nbsp;
+        <i>269</i>&nbsp; public void setHashtags(List&lt;String&gt; hashtags) {
+        <b class="fc"><i>270</i>&nbsp; this.hashtags = hashtags;</b>
+        <b class="fc"><i>271</i>&nbsp; }</b>
+        <i>272</i>&nbsp;
+        <i>273</i>&nbsp; public int getLikeCount() {
+        <b class="fc"><i>274</i>&nbsp; return likeCount;</b>
+        <i>275</i>&nbsp; }
+        <i>276</i>&nbsp;
+        <i>277</i>&nbsp; public void setLikeCount(int likeCount) {
+        <b class="fc"><i>278</i>&nbsp; this.likeCount = likeCount;</b>
+        <b class="fc"><i>279</i>&nbsp; }</b>
+        <i>280</i>&nbsp;
+        <i>281</i>&nbsp; public String getImageUrl() {
+        <b class="fc"><i>282</i>&nbsp; return imageUrl;</b>
+        <i>283</i>&nbsp; }
+        <i>284</i>&nbsp;
+        <i>285</i>&nbsp; public void setImageUrl(String imageUrl) {
+        <b class="fc"><i>286</i>&nbsp; this.imageUrl = imageUrl;</b>
+        <b class="fc"><i>287</i>&nbsp; }</b>
+        <i>288</i>&nbsp;
+        <i>289</i>&nbsp; public List&lt;DocumentReference&gt; getLikedBy() {
+        <b class="fc"><i>290</i>&nbsp; return likedBy;</b>
+        <i>291</i>&nbsp; }
+        <i>292</i>&nbsp;
+        <i>293</i>&nbsp; public void setLikedBy(List&lt;DocumentReference&gt; likedBy) {
+        <b class="fc"><i>294</i>&nbsp; this.likedBy = likedBy;</b>
+        <b class="fc"><i>295</i>&nbsp; }</b>
+        <i>296</i>&nbsp;
+        <i>297</i>&nbsp; public List&lt;Point&gt; getRoute() {
+        <b class="nc"><i>298</i>&nbsp; return route;</b>
+        <i>299</i>&nbsp; }
+        <i>300</i>&nbsp;
+        <i>301</i>&nbsp; public void setRoute(List&lt;Point&gt; route) {
+        <b class="nc"><i>302</i>&nbsp; this.route = route;</b>
+        <b class="nc"><i>303</i>&nbsp; }</b>
+        <i>304</i>&nbsp;
+        <i>305</i>&nbsp; public String getGeohash() {
+        <b class="fc"><i>306</i>&nbsp; return geohash;</b>
+        <i>307</i>&nbsp; }
+        <i>308</i>&nbsp;
+        <i>309</i>&nbsp; public void setGeohash(String geohash) {
+        <b class="fc"><i>310</i>&nbsp; this.geohash = geohash;</b>
+        <b class="fc"><i>311</i>&nbsp; }</b>
+        <i>312</i>&nbsp;
+        <i>313</i>&nbsp; public LatLng getLatLng() {
+        <b class="fc"><i>314</i>&nbsp; return new LatLng(this.latitude, this.longitude);</b>
+        <i>315</i>&nbsp; }
+        <i>316</i>&nbsp;
+        <i>317</i>&nbsp; public void setGeohash() {
+        <b class="fc"><i>318</i>&nbsp; this.geohash = GeoFireUtils.getGeoHashForLocation(new
+            GeoLocation(latitude, longitude));</b>
+        <b class="fc"><i>319</i>&nbsp; }</b>
+        <i>320</i>&nbsp;
+        <i>321</i>&nbsp; @NonNull
+        <i>322</i>&nbsp; @Override
+        <i>323</i>&nbsp; public String toString() {
+        <b class="fc"><i>324</i>&nbsp; return &quot;Post{&quot; +</b>
+        <i>325</i>&nbsp; &quot;id=&#39;&quot; + id + &#39;\&#39;&#39; +
+        <i>326</i>&nbsp; &quot;, uid=&quot; + uid +
+        <i>327</i>&nbsp; &quot;, userName=&#39;&quot; + userName + &#39;\&#39;&#39; +
+        <i>328</i>&nbsp; &quot;, isPublic=&quot; + isPublic +
+        <i>329</i>&nbsp; &quot;, profilePicUrl=&#39;&quot; + profilePicUrl + &#39;\&#39;&#39; +
+        <i>330</i>&nbsp; &quot;, postDatetime=&quot; + postDatetime +
+        <i>331</i>&nbsp; &quot;, postDescription=&#39;&quot; + postDescription + &#39;\&#39;&#39; +
+        <i>332</i>&nbsp; &quot;, locationName=&#39;&quot; + locationName + &#39;\&#39;&#39; +
+        <i>333</i>&nbsp; &quot;, latitude=&quot; + latitude +
+        <i>334</i>&nbsp; &quot;, longitude=&quot; + longitude +
+        <i>335</i>&nbsp; &quot;, route=&quot; + route +
+        <i>336</i>&nbsp; &quot;, geohash=&#39;&quot; + geohash + &#39;\&#39;&#39; +
+        <i>337</i>&nbsp; &quot;, hashtags=&quot; + hashtags +
+        <i>338</i>&nbsp; &quot;, likeCount=&quot; + likeCount +
+        <i>339</i>&nbsp; &quot;, imageUrl=&#39;&quot; + imageUrl + &#39;\&#39;&#39; +
+        <i>340</i>&nbsp; &quot;, likedBy=&quot; + likedBy +
+        <i>341</i>&nbsp; &#39;}&#39;;
+        <i>342</i>&nbsp; }
+        <i>343</i>&nbsp;
+        <i>344</i>&nbsp;
+        <i>345</i>&nbsp;}
+    </div>
+</div>
+
+<div class="footer">
+
+    <div style="float:right;">generated on 2021-10-22 13:46</div>
+</div>
+</body>
+</html>
