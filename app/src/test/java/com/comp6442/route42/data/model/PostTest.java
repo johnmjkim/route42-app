@@ -140,10 +140,10 @@ public class PostTest {
     hashtags.add("#test1");
     hashtags.add("#test2");
     hashtags.add("#test3");
-    Assert.assertEquals(Post.getHashTagsFromString("test1 test2 #test3"), hashtags);
+    Assert.assertEquals(Post.getHashTagsFromTextInput("#test1 #test2 #test3"), hashtags);
     hashtags.add("#test4");
     hashtags.add("#test5");
-    Assert.assertEquals(Post.getHashTagsFromString("test1 test2 #test3, test4 #test5"), hashtags);
+    Assert.assertEquals(Post.getHashTagsFromTextInput("#test1 #test2 #test3, #test4 #test5"), hashtags);
   }
 
   @Test

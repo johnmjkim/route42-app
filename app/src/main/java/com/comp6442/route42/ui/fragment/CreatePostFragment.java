@@ -178,7 +178,7 @@ public class CreatePostFragment extends Fragment {
               "",
               latitude,
               longitude,
-              Post.getHashTagsFromString(postDescription),
+              Post.getHashTagsFromTextInput(postDescription),
               0,
               "snapshots/" + activeMapViewModel.getSnapshotFileName(),
               new ArrayList<>(0));
