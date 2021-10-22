@@ -18,99 +18,103 @@ import java.util.List;
 
 public class ActiveMapViewModel extends ViewModel {
 
-    private  MutableLiveData<Location> deviceLocation = new MutableLiveData<>();
-    private MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
-    private List<LatLng> pastLocations = new ArrayList<>();
-    private Activity activityData = null;
-    private String snapshotFileName =  null;
-    private long elapsedTime = 0;
+  private MutableLiveData<Location> deviceLocation = new MutableLiveData<>();
+  private MockLocation mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
+  private List<LatLng> pastLocations = new ArrayList<>();
+  private Activity activityData = null;
+  private String snapshotFileName = null;
+  private long elapsedTime = 0;
+  private Activity.Activity_Type activityType = null;
+  private Date lastUpdateTime = null;
 
-    public Activity.Activity_Type getActivityType() {
-        return activityType;
-    }
+  public ActiveMapViewModel() {
+  }
 
-    public void setActivityType(Activity.Activity_Type activityType) {
-        this.activityType = activityType;
-    }
+  public Activity.Activity_Type getActivityType() {
+    return activityType;
+  }
 
-    private Activity.Activity_Type activityType = null;
-    private Date lastUpdateTime = null;
+  public void setActivityType(Activity.Activity_Type activityType) {
+    this.activityType = activityType;
+  }
 
-    public ActiveMapViewModel() {
-    }
-    /**
-     * Resets the data collected within an active map fragment.
-     */
-    public void reset() {
-        deviceLocation = new MutableLiveData<>();
-        mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
-        pastLocations = new ArrayList<>();
-        activityData = null;
-        snapshotFileName =  null;
-        elapsedTime = 0;
-        lastUpdateTime = null;
-        activityType = null;
-    }
-    public long getElapsedTime() {
-        return elapsedTime;
-    }
+  /**
+   * Resets the data collected within an active map fragment.
+   */
+  public void reset() {
+    deviceLocation = new MutableLiveData<>();
+    mockLocations = new MockLocation(Activity.Activity_Type.RUNNING);
+    pastLocations = new ArrayList<>();
+    activityData = null;
+    snapshotFileName = null;
+    elapsedTime = 0;
+    lastUpdateTime = null;
+    activityType = null;
+  }
 
-    public void updateElapsedTime() {
-        this.elapsedTime = elapsedTime + BaseActivity.getElapsedTimeSeconds(new Date(), lastUpdateTime);
-    }
+  public long getElapsedTime() {
+    return elapsedTime;
+  }
 
-    public Date getLastUpdateTime() {
-        return lastUpdateTime;
-    }
+  public void updateElapsedTime() {
+    this.elapsedTime = elapsedTime + BaseActivity.getElapsedTimeSeconds(new Date(), lastUpdateTime);
+  }
 
-    public void setLastUpdateTime(@Nullable Date time) {
-        this.lastUpdateTime = time;
-    }
+  public Date getLastUpdateTime() {
+    return lastUpdateTime;
+  }
 
-    public LiveData<Location> getDeviceLocation() {
-        return deviceLocation;
-    }
-    public void setDeviceLocation(Location newLocation) {
-        if(deviceLocation.getValue() != null)
-            addPastLocation(deviceLocation.getValue());
-        deviceLocation.setValue(newLocation);
-    }
+  public void setLastUpdateTime(@Nullable Date time) {
+    this.lastUpdateTime = time;
+  }
 
-    public void setMockDeviceLocation() {
-        Location location = new Location("");
-        LatLng mockLoc = mockLocations.next();
-        location.setLongitude(mockLoc.longitude);
-        location.setLatitude(mockLoc.latitude);
-        setDeviceLocation(location);
-    }
+  public LiveData<Location> getDeviceLocation() {
+    return deviceLocation;
+  }
 
-    private void addPastLocation(Location location) {
-        pastLocations.add(new LatLng(location.getLatitude(),location.getLongitude()));
-    }
+  public void setDeviceLocation(Location newLocation) {
+    if (deviceLocation.getValue() != null)
+      addPastLocation(deviceLocation.getValue());
+    deviceLocation.setValue(newLocation);
+  }
 
-    public List<LatLng> getPastLocations() {
-        return pastLocations;
-    }
-    public boolean hasPastLocations() {
-        return pastLocations.size()>0;
-    }
+  public void setMockDeviceLocation() {
+    Location location = new Location("");
+    LatLng mockLoc = mockLocations.next();
+    location.setLongitude(mockLoc.longitude);
+    location.setLatitude(mockLoc.latitude);
+    setDeviceLocation(location);
+  }
 
-    public void setPastLocations(List<LatLng> pastLocations) {
-        this.pastLocations = pastLocations;
-    }
+  private void addPastLocation(Location location) {
+    pastLocations.add(new LatLng(location.getLatitude(), location.getLongitude()));
+  }
 
-    public Activity getActivityData() {
-        return activityData;
-    }
+  public List<LatLng> getPastLocations() {
+    return pastLocations;
+  }
 
-    public void setActivityData(Activity activityData) {
-        this.activityData = activityData;
-    }
-    public String getSnapshotFileName() {
-        return snapshotFileName;
-    }
+  public void setPastLocations(List<LatLng> pastLocations) {
+    this.pastLocations = pastLocations;
+  }
 
-    public void setSnapshotFileName(String snapshotFileName) {
-        this.snapshotFileName = snapshotFileName;
-    }
+  public boolean hasPastLocations() {
+    return pastLocations.size() > 0;
+  }
+
+  public Activity getActivityData() {
+    return activityData;
+  }
+
+  public void setActivityData(Activity activityData) {
+    this.activityData = activityData;
+  }
+
+  public String getSnapshotFileName() {
+    return snapshotFileName;
+  }
+
+  public void setSnapshotFileName(String snapshotFileName) {
+    this.snapshotFileName = snapshotFileName;
+  }
 }

@@ -93,6 +93,7 @@ public class PointMapFragment extends MapFragment {
    * posts.size() == 0 && userLocation != null: geo search based on user location (points)
    * posts.size() >= 1: render posts as points
    */
+  @Override
   protected void renderMap(Location location) {
     Timber.i("Rendering map");
 

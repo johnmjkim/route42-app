@@ -1,6 +1,6 @@
 # [Team Name: 42]
 
-## Team Meeting [number] - Week [6] - [August 31] (8-10PM)
+## Team Meeting [number] - Teaching Break [1] - [September 7] (11AM-13PM)
 - Lead/scribe: Kai Hirota
 - Present: John, Paul, Theo
 - Absent: None

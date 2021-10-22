@@ -30,8 +30,8 @@ android {
         // for demo
         buildConfigField("boolean", "DEMO", "false")
         buildConfigField("int", "batchSize", "1")
-        buildConfigField("int", "intervalLengthInSeconds", "4")
-        buildConfigField("int", "demoPostLimit", "500") // also controls how many posts are inserted when loadData is true
+        buildConfigField("int", "intervalLengthInSeconds", "5")
+        buildConfigField("int", "demoPostLimit", "100") // how many posts to create in demo mode
     }
 
     buildTypes {
