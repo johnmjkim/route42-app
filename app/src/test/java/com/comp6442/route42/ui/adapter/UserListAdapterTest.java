@@ -1,7 +1,5 @@
 package com.comp6442.route42.ui.adapter;
 
-import static org.mockito.Mockito.mock;
-
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -9,6 +7,7 @@ import com.comp6442.route42.data.model.User;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +32,7 @@ public class UserListAdapterTest {
 
   @Test
   public void checkViewHolder() {
-    view = mock(View.class);
+    view = Mockito.mock(View.class);
     UserListAdapter.ViewHolder viewHolder = new UserListAdapter.ViewHolder(view);
     Assert.assertNotNull(viewHolder);
   }

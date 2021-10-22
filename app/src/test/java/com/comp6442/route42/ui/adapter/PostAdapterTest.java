@@ -1,7 +1,5 @@
 package com.comp6442.route42.ui.adapter;
 
-import static org.mockito.Mockito.mock;
-
 import android.view.View;
 
 import com.comp6442.route42.data.model.Post;
@@ -10,6 +8,7 @@ import com.google.firebase.firestore.DocumentReference;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +56,7 @@ public class PostAdapterTest {
   }
 
   private void setDocumentReference() {
-    documentReference = mock(DocumentReference.class);
+    documentReference = Mockito.mock(DocumentReference.class);
     post.setUid(documentReference);
   }
 
@@ -92,7 +91,7 @@ public class PostAdapterTest {
 
   @Test
   public void checkViewHolder() {
-    View view = mock(View.class);
+    View view = Mockito.mock(View.class);
     PostAdapter.PostViewHolder postViewHolder = new PostAdapter.PostViewHolder(view);
     Assert.assertNotNull(postViewHolder);
   }

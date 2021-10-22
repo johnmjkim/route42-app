@@ -16,9 +16,11 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @IgnoreExtraProperties
 public class Post extends Model implements Parcelable {
@@ -115,43 +117,11 @@ public class Post extends Model implements Parcelable {
   }
 
   public static List<String> getHashTagsFromTextInput(String textInput) {
-    // TODO fix(done), #test returns #t in previous code
-    List<String> hashTags = new ArrayList<>();
-    String currentTag = "";
-    textInput = textInput.toLowerCase().trim();
-    for (int i=0; i<textInput.length(); i++) {
-      char c = textInput.charAt(i);
-      if(c == '#') {
-        for(int j=i;j<textInput.length();j++){
-          if(textInput.charAt(j)==' '||textInput.charAt(j)==','||textInput.charAt(j)=='\n'){
-            i=j;
-            break;
-          }
-          currentTag+= textInput.charAt(j);
-        }
-//        if(c == '#') {
-//          if ( currentTag.length()>0) {
-//            hashTags.add(currentTag.trim());
-//            currentTag = "";
-//          }
-//          currentTag+= c;
-
-      } else if (currentTag.length()>0 && Pattern.matches("[:space:]" , Character.toString(c))) {
-        hashTags.add(currentTag.trim());
-        currentTag = "";
-      }
-      else if (currentTag.length()>0 && Pattern.matches("\\p{Punct}" , Character.toString(c)) ) {
-        hashTags.add(currentTag.trim());
-        currentTag = "";
-      }
-//      else if (currentTag.length()>0) {
-//        currentTag += c;
-//      }
-    }
-    if (currentTag.length()>0) {
-      hashTags.add(currentTag.trim());
-    }
-    return hashTags;
+    return Arrays.stream(
+            textInput.toLowerCase()
+                    .replaceAll("[^a-zA-Z0-9]", " ")
+                    .split(" ")
+    ).map(s -> "#" + s).collect(Collectors.toList());
   }
 
   @Override

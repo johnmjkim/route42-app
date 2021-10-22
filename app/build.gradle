@@ -135,7 +135,7 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
     testImplementation 'junit:junit:4.+'
-    testImplementation 'org.mockito:mockito-core:2.22.0'
+    testImplementation 'org.mockito:mockito-core:3.9.0'
     implementation "androidx.profileinstaller:profileinstaller:1.1.0-alpha04"
     androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'

@@ -1,7 +1,5 @@
 package com.comp6442.route42.data.model;
 
-import static org.mockito.Mockito.mock;
-
 import android.os.Parcel;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -10,6 +8,8 @@ import com.google.firebase.firestore.DocumentReference;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -45,12 +45,12 @@ public class PostTest {
   private void setGeoInformation() {
     post.setLatitude(lat);
     post.setLongitude(lon);
-    post.setGeohash(String.valueOf("lat/lng: (" + lat + "," + lon + ")"));
+    post.setGeohash("lat/lng: (" + lat + "," + lon + ")");
     post.setLocationName("Sydney");
   }
 
   private void setDocumentReference() {
-    documentReference = mock(DocumentReference.class);
+    documentReference = Mockito.mock(DocumentReference.class);
     post.setUid(documentReference);
   }
 
@@ -64,7 +64,7 @@ public class PostTest {
   public void setupTest() {
     setRelations();
     setInformation();
-    parcelOutput = mock(Parcel.class);
+    parcelOutput = Mockito.mock(Parcel.class);
   }
 
   @Test
@@ -84,13 +84,14 @@ public class PostTest {
 
   @Test
   public void checkLongitude() {
-    Assert.assertEquals(151.209, post.getLongitude(),0.001);
+    Assert.assertEquals(151.209, post.getLongitude(), 0.001);
   }
 
   @Test
   public void checkLatitude() {
-    Assert.assertEquals(-33.865, post.getLatitude(),0.001);
+    Assert.assertEquals(-33.865, post.getLatitude(), 0.001);
   }
+
   @Test
   public void checkUid() {
     Assert.assertEquals(documentReference, post.getUid());
@@ -105,6 +106,7 @@ public class PostTest {
   public void checkDateTime() {
     Assert.assertEquals(date, post.getPostDatetime());
   }
+
   //writetoparcel
   @Test
   public void checkLatLng() {
@@ -133,18 +135,20 @@ public class PostTest {
   }
 
   @Test
-  public void HashtagCheck(){
+  public void HashtagCheck() {
     String testcase1 = "test1 test2 #test3";
     String testcase2 = "test1 test2 #test3, test4 #test5";
-    Assert.assertEquals(Post.getHashTagsFromTextInput(testcase1).toString(),"[#test3]");
-    Assert.assertEquals(Post.getHashTagsFromTextInput(testcase2).toString(),"[#test3, #test5]");
+    Assert.assertEquals(Post.getHashTagsFromTextInput(testcase1).toString(), "[#test3]");
+    Assert.assertEquals(Post.getHashTagsFromTextInput(testcase2).toString(), "[#test3, #test5]");
   }
+
   @Test
   public void checkUrl() {
     Assert.assertEquals("https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200", post.getProfilePicUrl());
     Assert.assertEquals("https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400", post.getImageUrl());
 
   }
+
   @Test
   public void checkPublic() {
     Assert.assertEquals(0, post.getIsPublic());
@@ -175,14 +179,11 @@ public class PostTest {
             "https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200",
             date, "Station", "Sydney", -33.865, 151.209, hashTagList, 10,
             "https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400", likedBy);
-    Assert.assertEquals(post1.toString(), "Post{id='"+post.getId()+"', uid="+documentReference+", userName='hyro', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', postDatetime=" + date +", postDescription='Station', locationName='Sydney', latitude=-33.865, longitude=151.209, route=[], geohash='r3gx2g5414', hashtags=[#morning, #evening], likeCount=10, imageUrl='https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400', likedBy=[Chris, Robin, Kyle]}");
+    Assert.assertEquals(post1.toString(), "Post{id='" + post.getId() + "', uid=" + documentReference + ", userName='hyro', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', postDatetime=" + date + ", postDescription='Station', locationName='Sydney', latitude=-33.865, longitude=151.209, route=[], geohash='r3gx2g5414', hashtags=[#morning, #evening], likeCount=10, imageUrl='https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400', likedBy=[Chris, Robin, Kyle]}");
 
     Post post2 = new Post(documentReference, "hiro", 0, "https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200",
-            date, "Station", "Sydney",  -33.865, 151.209, hashTagList, 10,
+            date, "Station", "Sydney", -33.865, 151.209, hashTagList, 10,
             "https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400", likedBy);
-    Assert.assertEquals(post2.toString(), "Post{id='"+post2.getId()+"', uid="+documentReference+", userName='hiro', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', postDatetime=" + date +", postDescription='Station', locationName='Sydney', latitude=-33.865, longitude=151.209, route=[], geohash='r3gx2g5414', hashtags=[#morning, #evening], likeCount=10, imageUrl='https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400', likedBy=[Chris, Robin, Kyle]}");
-
+    Assert.assertEquals(post2.toString(), "Post{id='" + post2.getId() + "', uid=" + documentReference + ", userName='hiro', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', postDatetime=" + date + ", postDescription='Station', locationName='Sydney', latitude=-33.865, longitude=151.209, route=[], geohash='r3gx2g5414', hashtags=[#morning, #evening], likeCount=10, imageUrl='https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400', likedBy=[Chris, Robin, Kyle]}");
   }
-
-
 }
