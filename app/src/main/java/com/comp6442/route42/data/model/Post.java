@@ -75,7 +75,7 @@ public class Post extends Model implements Parcelable {
   }
 
   public Post(DocumentReference uid, String userName, int isPublic, String profilePicUrl, Date postDatetime,
-              String postDescription, String locationName, Double latitude, Double longitude, List<String> hashtags,
+              String postDescription, List<Point> route, String locationName, Double latitude, Double longitude, List<String> hashtags,
               int likeCount, String imageUrl, List<DocumentReference> likedBy) {
     super();
     this.uid = uid;
@@ -115,15 +115,14 @@ public class Post extends Model implements Parcelable {
     in.createStringArrayList().forEach(s -> this.likedBy.add(FirebaseFirestore.getInstance().document(s)));
   }
 
-  public static List<String> getHashTagsFromString(String str) {
-
+  public static List<String> getHashTagsFromTextInput(String str) {
     return Arrays.stream(
             str.toLowerCase()
                     .replaceAll("[^a-zA-Z0-9]", " ")
                     .split(" ")
     ).filter(s -> !s.trim().isEmpty())
-    .map(s -> "#" + s)
-    .collect(Collectors.toList());
+            .map(s -> "#" + s)
+            .collect(Collectors.toList());
   }
 
   @Override
