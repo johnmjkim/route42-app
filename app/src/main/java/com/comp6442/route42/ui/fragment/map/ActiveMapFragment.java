@@ -27,7 +27,6 @@ import com.comp6442.route42.data.model.BaseActivity;
 import com.comp6442.route42.data.model.Point;
 import com.comp6442.route42.ui.fragment.CreatePostFragment;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
-import com.comp6442.route42.utils.MockLocation;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -60,6 +59,7 @@ public class ActiveMapFragment extends MapFragment {
   private ActiveMapViewModel activeMapViewModel;
   private TextView activityMetricsText;
   private LocationCallback locationCallBack;
+  private static final int MAP_ZOOM_LEVEL = 15;
 
   public ActiveMapFragment() {
     super(R.id.map_fragment2, R.raw.style_json_activity_map);
@@ -81,7 +81,6 @@ public class ActiveMapFragment extends MapFragment {
           @Nullable Bundle savedInstanceState) {
     return inflater.inflate(R.layout.active_map_fragment, container, false);
   }
-
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -159,7 +158,6 @@ public class ActiveMapFragment extends MapFragment {
 
   private void renderSnapshotMap(Location location) {
     // Set the map's camera position to the current location of the device.
-    int MAP_ZOOM_LEVEL = 15;
     int LINE_WIDTH = 25;
     int ROUTE_COLOR = Color.rgb(54, 54, 255);
     int PADDING = 100;
@@ -181,7 +179,11 @@ public class ActiveMapFragment extends MapFragment {
         e.printStackTrace();
       }
 
-      googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
+      googleMap.addMarker(
+              new MarkerOptions()
+                      .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                      .position(locationLatLng)
+                      .title("User"));
       // add activity route polyline
       if (activeMapViewModel.hasPastLocations()) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getMapBounds(activeMapViewModel.getPastLocations()), PADDING));
@@ -193,8 +195,7 @@ public class ActiveMapFragment extends MapFragment {
                         .color(ROUTE_COLOR)
         );
       } else {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                locationLatLng, MAP_ZOOM_LEVEL));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, MAP_ZOOM_LEVEL));
       }
     }
   }
@@ -217,11 +218,15 @@ public class ActiveMapFragment extends MapFragment {
 
       // add current location marker
       googleMap.clear();
-      googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
+      googleMap.addMarker(
+              new MarkerOptions()
+                      .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                      .position(locationLatLng)
+                      .title("User")
+      );
 
       // track user using camera
-      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-              locationLatLng, 18));
+      googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, MAP_ZOOM_LEVEL));
     }
     // update activity view model
     if (activeMapViewModel.getLastUpdateTime() != null) {

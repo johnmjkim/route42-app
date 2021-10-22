@@ -34,6 +34,9 @@
 - Conflicts will be resolved through civil discussion and democratic voting process involving all parties interested in the matter.
 	- For example, if someone wants to change the direction or the concept of the app, everyone must be involved in the decision-making. If someone wants to change a small class in the project, then that can be done either through voting, or by mutual agreement upon directly discussing with the person who created the class.
 	
+- Task assignments: Trello Kanban board
+
+	<img src="report.assets/trello2.png" alt="trello2" style="zoom:50%;" />
 
 ## Application Description
 
@@ -46,7 +49,11 @@ Route42 is a social networking app for athletes of various levels. With Route42,
 3. Follow other users, and view and like other people's workouts.
 4. Search for posts by username, hashtags, and proximity to the user's location
 
-==TODO add screenshots==
+<img src="Report.assets/screenshots/screens.png" alt="screens" style="zoom:60%;" />
+
+Image: Feed, Activity logging, Profile, Route, and Nearest Neighbor Search screens (Left to Right)
+
+
 
 ### Use Case Example
 
