@@ -18,11 +18,6 @@ public class SchedulableLikeTest {
   public void scheduleLike() {
     scheduleableLike.schedule(context, 30);
   }
-//    @Test
-//    public void test1(){
-//        not sure what we can test on this
-//    }
-
 
   @After
   public void cancel() {

@@ -1,3 +1,7 @@
+# About
+
+See [Design Document](docs/report.md)
+
 # Changelog
 
 1. Set up initial repository and gradle project.
