@@ -54,18 +54,18 @@ Route42 is a social networking app for athletes of various levels. With Route42,
 	1. Michael runs at ANU running club, and wants to record and share his daily runs.
 	2. Once ready, he starts the `run` activity on the app
 	
-	<img src="Report.assets/add_activity.jpg" alt="Add activity" style="zoom:67%;" />
+	<img src="Report.assets/add_activity.jpg" alt="Add activity" style="zoom:50%;" />
    
 	3. The app tracks Michael's location and route, and display it on a map. Performance metrics are displayed in real time.
 	4. After finishing his run, Michael ends the `run` activity on the app.
 	5. The app will display a post template for sharing the completed activity.
    
-	<img src="Report.assets/toggle_schedule.jpg" alt="Add activity" style="zoom:67%;" />
+	<img src="Report.assets/toggle_schedule.jpg" alt="Add activity" style="zoom:50%;" />
    
 	6. Michael may write a description and add hashtags like `#ANUrunning` before sharing it. The app will extract the hashtags and tag the post for you.
 	7. The created post can immediately be viewed by other users on their feeds. 
    
-	<img src="Report.assets/post_created.jpg" alt="Add activity" style="zoom:67%;" />
+	<img src="Report.assets/post_created.jpg" alt="Add activity" style="zoom:50%;" />
    
 	8. Michael can also select his past posts or posts created by others and see an interactive map of the route associated with the post.
    
