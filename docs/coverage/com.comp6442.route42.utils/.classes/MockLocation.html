@@ -1,0 +1,211 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MockLocation</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.comp6442.route42.utils</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MockLocation (com.comp6442.route42.utils)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MockLocation</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    58.1%
+  </span>
+  <span class="absValue">
+    (25/ 43)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MockLocation$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59.1%
+  </span>
+  <span class="absValue">
+    (26/ 44)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.utils;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import android.location.Location;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import com.comp6442.route42.data.model.Activity;
+<i>6</i>&nbsp;import com.google.android.gms.maps.model.LatLng;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;import java.util.Arrays;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.time.*;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import timber.log.Timber;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;public class MockLocation {
+<b class="fc"><i>16</i>&nbsp;    private final List&lt;LatLng&gt; locations =Arrays.asList(</b>
+<i>17</i>&nbsp;            new LatLng(-35.25932077515105, 149.11459641897002),
+<i>18</i>&nbsp;            new LatLng(-35.25918060533768, 149.11596970986986),
+<i>19</i>&nbsp;            new LatLng(-35.25939085996682, 149.11824422292267),
+<i>20</i>&nbsp;            new LatLng(-35.26096775229834, 149.11790090019772),
+<i>21</i>&nbsp;            new LatLng(-35.2608626270975, 149.11627011725417),
+<i>22</i>&nbsp;            new LatLng(-35.26159850063965, 149.11446767294817),
+<i>23</i>&nbsp;            new LatLng(-35.26156345919392, 149.11425309624508),
+<i>24</i>&nbsp;            new LatLng(-35.26447184762463, 149.1140814348826),
+<i>25</i>&nbsp;            new LatLng(-35.26468208852564, 149.1156263871449),
+<i>26</i>&nbsp;            new LatLng(-35.26464704841336, 149.11863046098824),
+<i>27</i>&nbsp;            new LatLng(-35.25942590235197, 149.11978917518496),
+<i>28</i>&nbsp;            new LatLng(-35.264436807421426, 149.11910252973504),
+<i>29</i>&nbsp;            new LatLng(-35.26506752876069, 149.12223534960026),
+<i>30</i>&nbsp;            new LatLng(-35.259636156344726, 149.12326531777512),
+<i>31</i>&nbsp;            new LatLng(-35.26019683099199, 149.12807183592446),
+<i>32</i>&nbsp;            new LatLng(-35.26534784777999, 149.12266450300643),
+<i>33</i>&nbsp;            new LatLng(-35.26552304667459, 149.1274710211558),
+<i>34</i>&nbsp;            new LatLng(-35.26009170479109, 149.12871556603378),
+<i>35</i>&nbsp;            new LatLng(-35.26058229256188, 149.13090424840533),
+<i>36</i>&nbsp;            new LatLng(-35.26089766884627, 149.1360970046203),
+<i>37</i>&nbsp;            new LatLng(-35.26653919279271, 149.13515286712666),
+<i>38</i>&nbsp;            new LatLng(-35.26601360156408, 149.13000302625235),
+<i>39</i>&nbsp;            new LatLng(-35.260617334431856, 149.13086133306473),
+<i>40</i>&nbsp;            new LatLng(-35.265768324490594, 149.1301746876148),
+<i>41</i>&nbsp;            new LatLng(-35.26114296066338, 149.135453274511)
+<i>42</i>&nbsp;    );
+<b class="fc"><i>43</i>&nbsp;    private final List&lt;Duration&gt; locationTimes = new ArrayList&lt;&gt;(locations.size());</b>
+<b class="fc"><i>44</i>&nbsp;    private int currentIdx = 0;</b>
+<i>45</i>&nbsp;    private int prevIdx;
+<i>46</i>&nbsp;    private final Instant startTime;
+<i>47</i>&nbsp;
+<b class="fc"><i>48</i>&nbsp;    public MockLocation(Activity.Activity_Type activityType) {</b>
+<b class="fc"><i>49</i>&nbsp;        double motorSpeed = 40.0;</b>
+<b class="fc"><i>50</i>&nbsp;        double cycleSpeed = 15.0;</b>
+<b class="fc"><i>51</i>&nbsp;        double walkSpeed = 3.0;</b>
+<b class="fc"><i>52</i>&nbsp;        double runSpeed = 9.0;</b>
+<i>53</i>&nbsp;        double speed;
+<b class="fc"><i>54</i>&nbsp;        switch (activityType) {</b>
+<i>55</i>&nbsp;            case CYCLING:
+<b class="nc"><i>56</i>&nbsp;                speed = cycleSpeed;</b>
+<b class="nc"><i>57</i>&nbsp;                break;</b>
+<i>58</i>&nbsp;            case RUNNING:
+<b class="fc"><i>59</i>&nbsp;                speed = runSpeed;</b>
+<b class="fc"><i>60</i>&nbsp;                break;</b>
+<i>61</i>&nbsp;            case WALKING:
+<b class="nc"><i>62</i>&nbsp;                speed = walkSpeed;</b>
+<b class="nc"><i>63</i>&nbsp;                break;</b>
+<i>64</i>&nbsp;            default:
+<b class="nc"><i>65</i>&nbsp;                speed = motorSpeed;</b>
+<i>66</i>&nbsp;        }
+<b class="fc"><i>67</i>&nbsp;        this.startTime = Instant.now();</b>
+<b class="fc"><i>68</i>&nbsp;        double totalDistance = 0.0;</b>
+<i>69</i>&nbsp;        // initialize location times array
+<b class="fc"><i>70</i>&nbsp;        for (int i=0; i&lt;locations.size() ; i++) {</b>
+<b class="fc"><i>71</i>&nbsp;            if (i==0) {</b>
+<b class="fc"><i>72</i>&nbsp;                locationTimes.add( Duration.ofSeconds(0));</b>
+<b class="fc"><i>73</i>&nbsp;                continue;</b>
+<i>74</i>&nbsp;            }
+<b class="fc"><i>75</i>&nbsp;            LatLng l1 = locations.get(i);</b>
+<b class="fc"><i>76</i>&nbsp;            LatLng l2 = locations.get(i-1);</b>
+<b class="fc"><i>77</i>&nbsp;            float[] p2pDistance = new float[3];</b>
+<b class="fc"><i>78</i>&nbsp;            Location.distanceBetween(l1.latitude, l1.longitude, l2.latitude,l2.longitude, p2pDistance);</b>
+<b class="fc"><i>79</i>&nbsp;            totalDistance += p2pDistance[0];</b>
+<b class="fc"><i>80</i>&nbsp;            Duration elapsedTimeAtPoint =  Duration.ofSeconds((long) (totalDistance/ speed));</b>
+<b class="fc"><i>81</i>&nbsp;            locationTimes.add( elapsedTimeAtPoint);</b>
+<i>82</i>&nbsp;        }
+<b class="fc"><i>83</i>&nbsp;    }</b>
+<i>84</i>&nbsp;    public LatLng next() {
+<b class="nc"><i>85</i>&nbsp;        Instant currentTime = Instant.now();</b>
+<b class="nc"><i>86</i>&nbsp;        long elapsedSeconds =  currentTime.getEpochSecond() - startTime.getEpochSecond();</b>
+<b class="nc"><i>87</i>&nbsp;        while ( Duration.ofSeconds(elapsedSeconds).compareTo(locationTimes.get(currentIdx)) &gt;=0) {</b>
+<b class="nc"><i>88</i>&nbsp;            prevIdx = currentIdx;</b>
+<b class="nc"><i>89</i>&nbsp;            currentIdx = (currentIdx % locations.size()) + 1;</b>
+<i>90</i>&nbsp;        }
+<b class="nc"><i>91</i>&nbsp;        Timber.i(&quot;elapsedSeconds: %s&quot;, elapsedSeconds);</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;        long nextPointElapsedSeconds = locationTimes.get(currentIdx).getSeconds();</b>
+<b class="nc"><i>94</i>&nbsp;        long previousPointElapsedSeconds = locationTimes.get(prevIdx).getSeconds();</b>
+<b class="nc"><i>95</i>&nbsp;        float percentageBetweenConsecutivePts = (float)(elapsedSeconds - previousPointElapsedSeconds) / (nextPointElapsedSeconds - previousPointElapsedSeconds);</b>
+<b class="nc"><i>96</i>&nbsp;        Timber.i(&quot;percent between points %s&quot;, percentageBetweenConsecutivePts);</b>
+<b class="nc"><i>97</i>&nbsp;        double longitude = locations.get(prevIdx).longitude + percentageBetweenConsecutivePts * (locations.get(currentIdx).longitude - locations.get(prevIdx).longitude);</b>
+<b class="nc"><i>98</i>&nbsp;        double latitude = locations.get(prevIdx).latitude + percentageBetweenConsecutivePts * (locations.get(currentIdx).latitude - locations.get(prevIdx).latitude);</b>
+<b class="nc"><i>99</i>&nbsp;        return new LatLng(latitude, longitude);</b>
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-10-22 21:46</div>
+</div>
+</body>
+</html>

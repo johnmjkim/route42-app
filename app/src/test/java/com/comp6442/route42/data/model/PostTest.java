@@ -107,7 +107,6 @@ public class PostTest {
     Assert.assertEquals(date, post.getPostDatetime());
   }
 
-  //writetoparcel
   @Test
   public void checkLatLng() {
     LatLng latLng = new LatLng(lat, lon);

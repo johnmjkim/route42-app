@@ -1,0 +1,359 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PostAdapter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.comp6442.route42.ui.adapter</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PostAdapter (com.comp6442.route42.ui.adapter)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PostAdapter</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (5/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.9%
+  </span>
+  <span class="absValue">
+    (10/ 101)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PostAdapter$PostViewHolder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/ 13)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    37.5%
+  </span>
+  <span class="absValue">
+    (6/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20.2%
+  </span>
+  <span class="absValue">
+    (23/ 114)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.ui.adapter;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import android.os.Bundle;
+<i>4</i>&nbsp;import android.view.LayoutInflater;
+<i>5</i>&nbsp;import android.view.View;
+<i>6</i>&nbsp;import android.view.ViewGroup;
+<i>7</i>&nbsp;import android.widget.ImageView;
+<i>8</i>&nbsp;import android.widget.TextView;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import androidx.annotation.NonNull;
+<i>11</i>&nbsp;import androidx.fragment.app.Fragment;
+<i>12</i>&nbsp;import androidx.fragment.app.FragmentActivity;
+<i>13</i>&nbsp;import androidx.recyclerview.widget.RecyclerView;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import com.bumptech.glide.Glide;
+<i>16</i>&nbsp;import com.bumptech.glide.load.engine.DiskCacheStrategy;
+<i>17</i>&nbsp;import com.comp6442.route42.R;
+<i>18</i>&nbsp;import com.comp6442.route42.data.FirebaseAuthLiveData;
+<i>19</i>&nbsp;import com.comp6442.route42.data.model.Post;
+<i>20</i>&nbsp;import com.comp6442.route42.data.repository.FirebaseStorageRepository;
+<i>21</i>&nbsp;import com.comp6442.route42.data.repository.PostRepository;
+<i>22</i>&nbsp;import com.comp6442.route42.ui.fragment.ProfileFragment;
+<i>23</i>&nbsp;import com.comp6442.route42.ui.fragment.map.PointMapFragment;
+<i>24</i>&nbsp;import com.comp6442.route42.ui.fragment.map.RouteMapFragment;
+<i>25</i>&nbsp;import com.google.android.material.card.MaterialCardView;
+<i>26</i>&nbsp;import com.google.firebase.storage.StorageReference;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;import java.util.ArrayList;
+<i>29</i>&nbsp;import java.util.List;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;import timber.log.Timber;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;public class PostAdapter extends RecyclerView.Adapter&lt;PostAdapter.PostViewHolder&gt; {
+<i>34</i>&nbsp;  private final String loggedInUID;
+<b class="fc"><i>35</i>&nbsp;  private List&lt;Post&gt; posts = new ArrayList&lt;&gt;();</b>
+<i>36</i>&nbsp;
+<b class="fc"><i>37</i>&nbsp;  public PostAdapter(List&lt;Post&gt; posts, String loggedInUID) {</b>
+<b class="fc"><i>38</i>&nbsp;    this.posts = posts;</b>
+<b class="fc"><i>39</i>&nbsp;    this.loggedInUID = loggedInUID;</b>
+<b class="fc"><i>40</i>&nbsp;  }</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;  // Create new views (invoked by the layout manager)
+<i>43</i>&nbsp;  @NonNull
+<i>44</i>&nbsp;  @Override
+<i>45</i>&nbsp;  public PostViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+<b class="nc"><i>46</i>&nbsp;    View view = LayoutInflater.from(viewGroup.getContext())</b>
+<b class="nc"><i>47</i>&nbsp;            .inflate(R.layout.post_card, viewGroup, false);</b>
+<b class="nc"><i>48</i>&nbsp;    Timber.d(&quot;PostAdapter created.&quot;);</b>
+<b class="nc"><i>49</i>&nbsp;    return new PostViewHolder(view);</b>
+<i>50</i>&nbsp;  }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;  // Replace the contents of a view (invoked by the layout manager)
+<i>53</i>&nbsp;  @Override
+<i>54</i>&nbsp;  public void onBindViewHolder(@NonNull PostViewHolder viewHolder, final int position) {
+<b class="nc"><i>55</i>&nbsp;    Post post = posts.get(position);</b>
+<b class="nc"><i>56</i>&nbsp;    setViewBehavior(post, viewHolder);</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    // set profile pic
+<b class="nc"><i>59</i>&nbsp;    Timber.i(&quot;Fetched post: %s&quot;, post);</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;    if (post.getProfilePicUrl().startsWith(&quot;http&quot;)) {</b>
+<b class="nc"><i>62</i>&nbsp;      Glide.with(viewHolder.imageView.getContext())</b>
+<b class="nc"><i>63</i>&nbsp;              .load(post.getProfilePicUrl())</b>
+<b class="nc"><i>64</i>&nbsp;              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)</b>
+<b class="nc"><i>65</i>&nbsp;              .skipMemoryCache(false)</b>
+<b class="nc"><i>66</i>&nbsp;              .circleCrop()</b>
+<b class="nc"><i>67</i>&nbsp;              .into(viewHolder.userIcon);</b>
+<i>68</i>&nbsp;    } else {
+<i>69</i>&nbsp;      // Get reference to the image file in Cloud Storage, download route image, use stock photo if fail
+<b class="nc"><i>70</i>&nbsp;      StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(post.getProfilePicUrl());</b>
+<i>71</i>&nbsp;
+<b class="nc"><i>72</i>&nbsp;      Glide.with(viewHolder.userIcon.getContext())</b>
+<b class="nc"><i>73</i>&nbsp;              .load(profilePicRef)</b>
+<b class="nc"><i>74</i>&nbsp;              .placeholder(R.drawable.unknown_user)</b>
+<b class="nc"><i>75</i>&nbsp;              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)</b>
+<b class="nc"><i>76</i>&nbsp;              .skipMemoryCache(false)</b>
+<b class="nc"><i>77</i>&nbsp;              .circleCrop()</b>
+<b class="nc"><i>78</i>&nbsp;              .into(viewHolder.userIcon);</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    // set post photo
+<b class="nc"><i>82</i>&nbsp;    if (post.getImageUrl().startsWith(&quot;http&quot;)) {</b>
+<b class="nc"><i>83</i>&nbsp;      Glide.with(viewHolder.imageView.getContext())</b>
+<b class="nc"><i>84</i>&nbsp;              .load(post.getImageUrl())</b>
+<b class="nc"><i>85</i>&nbsp;              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)</b>
+<b class="nc"><i>86</i>&nbsp;              .skipMemoryCache(false)</b>
+<b class="nc"><i>87</i>&nbsp;              .centerCrop()</b>
+<b class="nc"><i>88</i>&nbsp;              .into(viewHolder.imageView);</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    } else {
+<b class="nc"><i>91</i>&nbsp;      StorageReference postImageRef = FirebaseStorageRepository.getInstance().get(post.getImageUrl());</b>
+<b class="nc"><i>92</i>&nbsp;      Glide.with(viewHolder.imageView.getContext())</b>
+<b class="nc"><i>93</i>&nbsp;              .load(postImageRef)</b>
+<b class="nc"><i>94</i>&nbsp;              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)</b>
+<b class="nc"><i>95</i>&nbsp;              .skipMemoryCache(false)</b>
+<b class="nc"><i>96</i>&nbsp;              .centerCrop()</b>
+<b class="nc"><i>97</i>&nbsp;              .into(viewHolder.imageView);</b>
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;    if (post.getRoute().size() &gt; 0) {</b>
+<b class="nc"><i>101</i>&nbsp;      viewHolder.imageView.setOnClickListener(new View.OnClickListener() {</b>
+<i>102</i>&nbsp;        @Override
+<i>103</i>&nbsp;        public void onClick(View view) {
+<i>104</i>&nbsp;          Fragment fragment = new RouteMapFragment();
+<i>105</i>&nbsp;          Bundle bundle = new Bundle();
+<i>106</i>&nbsp;          bundle.putParcelable(&quot;post&quot;, post);
+<i>107</i>&nbsp;          fragment.setArguments(bundle);
+<i>108</i>&nbsp;          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+<i>109</i>&nbsp;                  .beginTransaction()
+<i>110</i>&nbsp;                  .add(R.id.fragment_container_view, fragment)
+<i>111</i>&nbsp;                  .addToBackStack(this.getClass().getCanonicalName())
+<i>112</i>&nbsp;                  .commit();
+<i>113</i>&nbsp;        }
+<i>114</i>&nbsp;      });
+<i>115</i>&nbsp;    }
+<i>116</i>&nbsp;
+<b class="nc"><i>117</i>&nbsp;    Timber.d(&quot;OnBindView complete.&quot;);</b>
+<b class="nc"><i>118</i>&nbsp;  }</b>
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;  private void setViewBehavior(Post post, PostViewHolder viewHolder) {
+<b class="nc"><i>121</i>&nbsp;    Timber.d(&quot;breadcrumb&quot;);</b>
+<i>122</i>&nbsp;    // Add listener and navigate to the user&#39;s profile on click
+<b class="nc"><i>123</i>&nbsp;    setUserNameView(post, viewHolder);</b>
+<b class="nc"><i>124</i>&nbsp;    setLikeCountTextView(post, viewHolder);</b>
+<i>125</i>&nbsp;
+<b class="nc"><i>126</i>&nbsp;    viewHolder.userNameView.setText(post.getUserName());</b>
+<b class="nc"><i>127</i>&nbsp;    viewHolder.descriptionView.setText(post.getPostDescription());</b>
+<i>128</i>&nbsp;
+<b class="nc"><i>129</i>&nbsp;    if (post.getHashtags().size() &gt; 0)</b>
+<b class="nc"><i>130</i>&nbsp;      viewHolder.hashtagsTextView.setText(String.join(&quot; &quot;, post.getHashtags()));</b>
+<i>131</i>&nbsp;
+<b class="nc"><i>132</i>&nbsp;    if (post.getLocationName() != null) {</b>
+<b class="nc"><i>133</i>&nbsp;      viewHolder.locationTextView.setText(post.getLocationName());</b>
+<b class="nc"><i>134</i>&nbsp;      viewHolder.locationTextView.setOnClickListener(new View.OnClickListener() {</b>
+<i>135</i>&nbsp;        @Override
+<i>136</i>&nbsp;        public void onClick(View view) {
+<i>137</i>&nbsp;          Fragment fragment = new PointMapFragment();
+<i>138</i>&nbsp;          ArrayList&lt;Post&gt; posts = new ArrayList&lt;&gt;();
+<i>139</i>&nbsp;          posts.add(post);
+<i>140</i>&nbsp;          Bundle bundle = new Bundle();
+<i>141</i>&nbsp;          bundle.putParcelableArrayList(&quot;posts&quot;, posts);
+<i>142</i>&nbsp;          fragment.setArguments(bundle);
+<i>143</i>&nbsp;          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+<i>144</i>&nbsp;                  .beginTransaction()
+<i>145</i>&nbsp;                  .add(R.id.fragment_container_view, fragment)
+<i>146</i>&nbsp;                  .addToBackStack(this.getClass().getCanonicalName())
+<i>147</i>&nbsp;                  .commit();
+<i>148</i>&nbsp;        }
+<i>149</i>&nbsp;      });
+<i>150</i>&nbsp;    } else {
+<b class="nc"><i>151</i>&nbsp;      viewHolder.locationTextView.setText(&quot; &quot;);</b>
+<b class="nc"><i>152</i>&nbsp;      viewHolder.locationTextView.setText(&quot;&quot;);</b>
+<i>153</i>&nbsp;    }
+<i>154</i>&nbsp;
+<b class="nc"><i>155</i>&nbsp;    Timber.d(&quot;OnBindView complete.&quot;);</b>
+<b class="nc"><i>156</i>&nbsp;  }</b>
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;  private void setLikeButtons(Post post, PostViewHolder viewHolder, boolean postIsLiked) {
+<b class="nc"><i>159</i>&nbsp;    viewHolder.like.setOnClickListener(view -&gt; {</b>
+<b class="nc"><i>160</i>&nbsp;      PostRepository.getInstance().like(post, loggedInUID);</b>
+<b class="nc"><i>161</i>&nbsp;      viewHolder.like.setVisibility(View.GONE);</b>
+<b class="nc"><i>162</i>&nbsp;      viewHolder.unlike.setVisibility(View.VISIBLE);</b>
+<b class="nc"><i>163</i>&nbsp;      Timber.i(&quot;Liked&quot;);</b>
+<b class="nc"><i>164</i>&nbsp;    });</b>
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;    viewHolder.unlike.setOnClickListener(view -&gt; {</b>
+<b class="nc"><i>167</i>&nbsp;      PostRepository.getInstance().unlike(post, loggedInUID);</b>
+<b class="nc"><i>168</i>&nbsp;      viewHolder.unlike.setVisibility(View.GONE);</b>
+<b class="nc"><i>169</i>&nbsp;      viewHolder.like.setVisibility(View.VISIBLE);</b>
+<b class="nc"><i>170</i>&nbsp;      Timber.i(&quot;UnLiked&quot;);</b>
+<b class="nc"><i>171</i>&nbsp;    });</b>
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;    if (postIsLiked) {</b>
+<b class="nc"><i>174</i>&nbsp;      viewHolder.like.setVisibility(View.GONE);</b>
+<b class="nc"><i>175</i>&nbsp;      viewHolder.unlike.setVisibility(View.VISIBLE);</b>
+<i>176</i>&nbsp;    } else {
+<b class="nc"><i>177</i>&nbsp;      viewHolder.unlike.setVisibility(View.GONE);</b>
+<b class="nc"><i>178</i>&nbsp;      viewHolder.like.setVisibility(View.VISIBLE);</b>
+<i>179</i>&nbsp;    }
+<b class="nc"><i>180</i>&nbsp;  }</b>
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;  private void setLikeCountTextView(Post post, PostViewHolder viewHolder) {
+<b class="nc"><i>183</i>&nbsp;    viewHolder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));</b>
+<b class="nc"><i>184</i>&nbsp;    setLikeButtons(</b>
+<i>185</i>&nbsp;            post,
+<i>186</i>&nbsp;            viewHolder,
+<b class="nc"><i>187</i>&nbsp;            post.getLikedBy().stream().anyMatch(</b>
+<b class="nc"><i>188</i>&nbsp;                    userRef -&gt; userRef.getId().equals(</b>
+<b class="nc"><i>189</i>&nbsp;                            FirebaseAuthLiveData.getInstance().getAuth().getUid()</b>
+<i>190</i>&nbsp;                    )
+<i>191</i>&nbsp;            )
+<i>192</i>&nbsp;    );
+<b class="nc"><i>193</i>&nbsp;  }</b>
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;  private void setUserNameView(Post post, PostViewHolder viewHolder) {
+<b class="nc"><i>196</i>&nbsp;    viewHolder.userNameView.setOnClickListener(view -&gt; {</b>
+<b class="nc"><i>197</i>&nbsp;      Fragment fragment = new ProfileFragment();</b>
+<b class="nc"><i>198</i>&nbsp;      Bundle bundle = new Bundle();</b>
+<b class="nc"><i>199</i>&nbsp;      bundle.putString(&quot;uid&quot;, post.getUid().getId());</b>
+<i>200</i>&nbsp;
+<b class="nc"><i>201</i>&nbsp;      Timber.i(&quot;Taking user to Profile: %s&quot;, post.getUid().get());</b>
+<b class="nc"><i>202</i>&nbsp;      fragment.setArguments(bundle);</b>
+<b class="nc"><i>203</i>&nbsp;      ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()</b>
+<b class="nc"><i>204</i>&nbsp;              .beginTransaction()</b>
+<b class="nc"><i>205</i>&nbsp;              .add(R.id.fragment_container_view, fragment)</b>
+<b class="nc"><i>206</i>&nbsp;              .addToBackStack(this.getClass().getCanonicalName())</b>
+<b class="nc"><i>207</i>&nbsp;              .commit();</b>
+<b class="nc"><i>208</i>&nbsp;    });</b>
+<b class="nc"><i>209</i>&nbsp;  }</b>
+<i>210</i>&nbsp;
+<i>211</i>&nbsp;  // Return the size of your dataset (invoked by the layout manager)
+<i>212</i>&nbsp;  @Override
+<i>213</i>&nbsp;  public int getItemCount() {
+<b class="fc"><i>214</i>&nbsp;    return posts.size();</b>
+<i>215</i>&nbsp;  }
+<i>216</i>&nbsp;
+<i>217</i>&nbsp;  public String getLoggedInUID() {
+<b class="fc"><i>218</i>&nbsp;    return loggedInUID;</b>
+<i>219</i>&nbsp;  }
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;  public List&lt;Post&gt; getPosts() {
+<b class="fc"><i>222</i>&nbsp;    return posts;</b>
+<i>223</i>&nbsp;  }
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;  public void setPosts(List&lt;Post&gt; posts) {
+<b class="fc"><i>226</i>&nbsp;    this.posts = posts;</b>
+<b class="fc"><i>227</i>&nbsp;  }</b>
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;  public static class PostViewHolder extends RecyclerView.ViewHolder {
+<i>230</i>&nbsp;    public ImageView userIcon, imageView, like, unlike, locationPin;
+<i>231</i>&nbsp;    public TextView userNameView, hashtagsTextView, descriptionView, likeCountTextView, locationTextView;
+<i>232</i>&nbsp;    public MaterialCardView materialCardView;
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;    public PostViewHolder(View view) {
+<b class="fc"><i>235</i>&nbsp;      super(view);</b>
+<b class="fc"><i>236</i>&nbsp;      userIcon = view.findViewById(R.id.card_profile_pic);</b>
+<b class="fc"><i>237</i>&nbsp;      imageView = view.findViewById(R.id.card_main_image);</b>
+<b class="fc"><i>238</i>&nbsp;      like = view.findViewById(R.id.like_button);</b>
+<b class="fc"><i>239</i>&nbsp;      unlike = view.findViewById(R.id.unlike_button);</b>
+<i>240</i>&nbsp;
+<b class="fc"><i>241</i>&nbsp;      materialCardView = view.findViewById(R.id.post_card);</b>
+<b class="fc"><i>242</i>&nbsp;      userNameView = view.findViewById(R.id.card_username);</b>
+<b class="fc"><i>243</i>&nbsp;      hashtagsTextView = view.findViewById(R.id.card_hashtags);</b>
+<b class="fc"><i>244</i>&nbsp;      descriptionView = view.findViewById(R.id.card_description);</b>
+<b class="fc"><i>245</i>&nbsp;      likeCountTextView = view.findViewById(R.id.like_count_text);</b>
+<b class="fc"><i>246</i>&nbsp;      locationTextView = view.findViewById(R.id.location);</b>
+<b class="fc"><i>247</i>&nbsp;      locationPin = view.findViewById(R.id.pin);</b>
+<b class="fc"><i>248</i>&nbsp;    }</b>
+<i>249</i>&nbsp;  }
+<i>250</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-10-22 21:46</div>
+</div>
+</body>
+</html>

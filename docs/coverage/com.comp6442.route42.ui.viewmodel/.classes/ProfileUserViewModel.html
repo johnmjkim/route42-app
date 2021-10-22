@@ -1,0 +1,113 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ProfileUserViewModel</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.comp6442.route42.ui.viewmodel</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ProfileUserViewModel (com.comp6442.route42.ui.viewmodel)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProfileUserViewModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (1/ 11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.ui.viewmodel;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.comp6442.route42.data.model.User;
+<i>4</i>&nbsp;import com.comp6442.route42.data.repository.UserRepository;
+<i>5</i>&nbsp;import com.google.android.gms.tasks.Task;
+<i>6</i>&nbsp;import com.google.firebase.firestore.DocumentSnapshot;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import timber.log.Timber;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;// ViewModels are independent of configuration changes and are cleared when activity/fragment is destroyed
+<b class="fc"><i>11</i>&nbsp;public class ProfileUserViewModel extends UserViewModel {</b>
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;  public void loadProfileUser(String uid) {
+<b class="nc"><i>14</i>&nbsp;    Task&lt;DocumentSnapshot&gt; task = UserRepository.getInstance().getOne(uid).get();</b>
+<b class="nc"><i>15</i>&nbsp;    task.addOnSuccessListener(snapshot -&gt; {</b>
+<b class="nc"><i>16</i>&nbsp;      String source = snapshot != null &amp;&amp; snapshot.getMetadata().hasPendingWrites() ? &quot;Local&quot; : &quot;Server&quot;;</b>
+<b class="nc"><i>17</i>&nbsp;      User user = snapshot.toObject(User.class);</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;      // only react to server-side changes in the document snapshot
+<b class="nc"><i>20</i>&nbsp;      if (source.equals(&quot;Server&quot;)) {</b>
+<b class="nc"><i>21</i>&nbsp;        setUser(user);</b>
+<b class="nc"><i>22</i>&nbsp;        Timber.i(&quot;UserVM : loaded profile user : %s&quot;, user);</b>
+<i>23</i>&nbsp;      } else {
+<b class="nc"><i>24</i>&nbsp;        Timber.w(&quot;Snapshot Change observed: Source=%s data=%s&quot;, source, user);</b>
+<i>25</i>&nbsp;      }
+<b class="nc"><i>26</i>&nbsp;    }).addOnFailureListener(Timber::e);</b>
+<b class="nc"><i>27</i>&nbsp;  }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-10-22 21:46</div>
+</div>
+</body>
+</html>

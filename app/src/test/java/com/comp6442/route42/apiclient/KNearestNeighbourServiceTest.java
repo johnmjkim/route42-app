@@ -12,11 +12,6 @@ public class KNearestNeighbourServiceTest {
   KNearestNeighbourService kNearestNeighbourService = new KNearestNeighbourService(k, lat, lon);
 
   @Test
-  public void callTest() throws Exception {
-    Assert.assertNull(kNearestNeighbourService.call());
-  }
-
-  @Test
   public void getValues() {
     Assert.assertEquals(k, kNearestNeighbourService.getK());
     Assert.assertEquals(lat, kNearestNeighbourService.getLat());

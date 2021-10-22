@@ -1,0 +1,320 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: User</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.comp6442.route42.data.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: User (com.comp6442.route42.data.model)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">User</td>
+<td class="coverageStat">
+  <span class="percent">
+    96.3%
+  </span>
+  <span class="absValue">
+    (26/ 27)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.4%
+  </span>
+  <span class="absValue">
+    (59/ 66)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$4r5mbNfz</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$6QfIXJZo</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$7Q45V0pa</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$845iLOv7</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$AvzRoc5U</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$eDfZc6XR</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$FUAATUir</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$GQetkwkx</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$iE12MXC0</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$ikz7Vhri</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$M7cUzN2A</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$OtjWbyrb</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$QApb8ZXi</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$qGGgwsvD</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$R71DSVls</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$RBXx3ILz</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$RFif211b</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$sxENItCs</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$w7RLopwV</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$wNqcyjpq</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$WWgSQhHm</td>
+  </tr>
+  <tr>
+    <td class="name">User$MockitoMock$1308113501$auxiliary$zAGiMOwh</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    96.3%
+  </span>
+  <span class="absValue">
+    (26/ 27)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.4%
+  </span>
+  <span class="absValue">
+    (59/ 66)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.data.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import androidx.annotation.NonNull;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import com.google.firebase.firestore.DocumentReference;
+<i>6</i>&nbsp;import com.google.firebase.firestore.Exclude;
+<i>7</i>&nbsp;import com.google.firebase.firestore.IgnoreExtraProperties;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;@IgnoreExtraProperties
+<i>13</i>&nbsp;public class User extends Model {
+<i>14</i>&nbsp;  private String email;
+<i>15</i>&nbsp;  private String userName;
+<b class="fc"><i>16</i>&nbsp;  private int isPublic = 1;</b>
+<i>17</i>&nbsp;  private String profilePicUrl;
+<b class="fc"><i>18</i>&nbsp;  private List&lt;DocumentReference&gt; following = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>19</i>&nbsp;  private List&lt;DocumentReference&gt; followers = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>20</i>&nbsp;  private List&lt;DocumentReference&gt; blockedBy = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>21</i>&nbsp;  private List&lt;DocumentReference&gt; blocked = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>22</i>&nbsp;  @Exclude</b>
+<i>23</i>&nbsp;  private String password = null;
+<i>24</i>&nbsp;
+<b class="fc"><i>25</i>&nbsp;  public User() {</b>
+<i>26</i>&nbsp;
+<b class="fc"><i>27</i>&nbsp;  }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;  /* Assign a random UUID */
+<i>30</i>&nbsp;  public User(@NonNull String email, @NonNull String userName) {
+<b class="fc"><i>31</i>&nbsp;    super();</b>
+<b class="fc"><i>32</i>&nbsp;    setEmail(email);</b>
+<b class="fc"><i>33</i>&nbsp;    setUserName(userName);</b>
+<b class="fc"><i>34</i>&nbsp;  }</b>
+<i>35</i>&nbsp;
+<b class="fc"><i>36</i>&nbsp;  public User(String id, @NonNull String email, @NonNull String userName) {</b>
+<b class="fc"><i>37</i>&nbsp;    setId(id);</b>
+<b class="fc"><i>38</i>&nbsp;    setEmail(email);</b>
+<b class="fc"><i>39</i>&nbsp;    setUserName(userName);</b>
+<b class="fc"><i>40</i>&nbsp;  }</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;  public User(String id, @NonNull String email, @NonNull String userName, String password) {
+<b class="fc"><i>43</i>&nbsp;    this(id, email, userName);</b>
+<b class="fc"><i>44</i>&nbsp;    setPassword(password);</b>
+<b class="fc"><i>45</i>&nbsp;  }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;  public User(String id, @NonNull String email, @NonNull String userName, List&lt;DocumentReference&gt; following, List&lt;DocumentReference&gt; followers, String password, int isPublic, String profilePicUrl, List&lt;DocumentReference&gt; blockedBy) {
+<b class="nc"><i>48</i>&nbsp;    this(id, email, userName, password);</b>
+<b class="nc"><i>49</i>&nbsp;    setFollowing(following);</b>
+<b class="nc"><i>50</i>&nbsp;    setFollowers(followers);</b>
+<b class="nc"><i>51</i>&nbsp;    setIsPublic(isPublic);</b>
+<b class="nc"><i>52</i>&nbsp;    setProfilePicUrl(profilePicUrl);</b>
+<b class="nc"><i>53</i>&nbsp;    setBlockedBy(blockedBy);</b>
+<b class="nc"><i>54</i>&nbsp;  }</b>
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;  public User(String id, @NonNull String email, @NonNull String userName, List&lt;DocumentReference&gt; following, List&lt;DocumentReference&gt; followers, String password, int isPublic, String profilePicUrl, List&lt;DocumentReference&gt; blockedBy, List&lt;DocumentReference&gt; blocked) {
+<b class="fc"><i>57</i>&nbsp;    this(id, email, userName, password);</b>
+<b class="fc"><i>58</i>&nbsp;    setFollowing(following);</b>
+<b class="fc"><i>59</i>&nbsp;    setFollowers(followers);</b>
+<b class="fc"><i>60</i>&nbsp;    setIsPublic(isPublic);</b>
+<b class="fc"><i>61</i>&nbsp;    setProfilePicUrl(profilePicUrl);</b>
+<b class="fc"><i>62</i>&nbsp;    setBlockedBy(blockedBy);</b>
+<b class="fc"><i>63</i>&nbsp;    setBlocked(blocked);</b>
+<b class="fc"><i>64</i>&nbsp;  }</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;  @NonNull
+<i>67</i>&nbsp;  @Override
+<i>68</i>&nbsp;  public String toString() {
+<b class="fc"><i>69</i>&nbsp;    return &quot;User{&quot; +</b>
+<i>70</i>&nbsp;            &quot;uid=&#39;&quot; + id + &#39;\&#39;&#39; +
+<i>71</i>&nbsp;            &quot;, email=&#39;&quot; + email + &#39;\&#39;&#39; +
+<i>72</i>&nbsp;            &quot;, userName=&#39;&quot; + userName + &#39;\&#39;&#39; +
+<i>73</i>&nbsp;            &quot;, isPublic=&quot; + isPublic +
+<i>74</i>&nbsp;            &quot;, profilePicUrl=&#39;&quot; + profilePicUrl + &#39;\&#39;&#39; +
+<i>75</i>&nbsp;            &quot;, blockedBy=&quot; + blockedBy +
+<i>76</i>&nbsp;            &quot;, following=&quot; + following +
+<i>77</i>&nbsp;            &quot;, followers=&quot; + followers +
+<i>78</i>&nbsp;            &quot;, password=&#39;&quot; + password + &#39;\&#39;&#39; +
+<i>79</i>&nbsp;            &#39;}&#39;;
+<i>80</i>&nbsp;  }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;  public String getId() {
+<b class="fc"><i>83</i>&nbsp;    return id;</b>
+<i>84</i>&nbsp;  }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;  public void setId(String id) {
+<b class="fc"><i>87</i>&nbsp;    this.id = id;</b>
+<b class="fc"><i>88</i>&nbsp;  }</b>
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;  public String getEmail() {
+<b class="fc"><i>91</i>&nbsp;    return email;</b>
+<i>92</i>&nbsp;  }
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;  public void setEmail(String email) {
+<b class="fc"><i>95</i>&nbsp;    this.email = email;</b>
+<b class="fc"><i>96</i>&nbsp;  }</b>
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;  public String getUserName() {
+<b class="fc"><i>99</i>&nbsp;    return userName;</b>
+<i>100</i>&nbsp;  }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;  public void setUserName(String userName) {
+<b class="fc"><i>103</i>&nbsp;    this.userName = userName;</b>
+<b class="fc"><i>104</i>&nbsp;  }</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;  public int getIsPublic() {
+<b class="fc"><i>107</i>&nbsp;    return isPublic;</b>
+<i>108</i>&nbsp;  }
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;  public void setIsPublic(int isPublic) {
+<b class="fc"><i>111</i>&nbsp;    this.isPublic = isPublic;</b>
+<b class="fc"><i>112</i>&nbsp;  }</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;  public String getProfilePicUrl() {
+<b class="fc"><i>115</i>&nbsp;    return profilePicUrl;</b>
+<i>116</i>&nbsp;  }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;  public void setProfilePicUrl(String profilePicUrl) {
+<b class="fc"><i>119</i>&nbsp;    this.profilePicUrl = profilePicUrl;</b>
+<b class="fc"><i>120</i>&nbsp;  }</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;  public List&lt;DocumentReference&gt; getBlockedBy() {
+<b class="fc"><i>123</i>&nbsp;    return blockedBy;</b>
+<i>124</i>&nbsp;  }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;  public void setBlockedBy(List&lt;DocumentReference&gt; blockedBy) {
+<b class="fc"><i>127</i>&nbsp;    this.blockedBy = blockedBy;</b>
+<b class="fc"><i>128</i>&nbsp;  }</b>
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;  public List&lt;DocumentReference&gt; getFollowing() {
+<b class="fc"><i>131</i>&nbsp;    return following;</b>
+<i>132</i>&nbsp;  }
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;  public void setFollowing(List&lt;DocumentReference&gt; following) {
+<b class="fc"><i>135</i>&nbsp;    this.following = following;</b>
+<b class="fc"><i>136</i>&nbsp;  }</b>
+<i>137</i>&nbsp;
+<i>138</i>&nbsp;  public List&lt;DocumentReference&gt; getFollowers() {
+<b class="fc"><i>139</i>&nbsp;    return followers;</b>
+<i>140</i>&nbsp;  }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;  public void setFollowers(List&lt;DocumentReference&gt; followers) {
+<b class="fc"><i>143</i>&nbsp;    this.followers = followers;</b>
+<b class="fc"><i>144</i>&nbsp;  }</b>
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;  public String getPassword() {
+<b class="fc"><i>147</i>&nbsp;    return password;</b>
+<i>148</i>&nbsp;  }
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;  public void setPassword(String password) {
+<b class="fc"><i>151</i>&nbsp;    this.password = password;</b>
+<b class="fc"><i>152</i>&nbsp;  }</b>
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;  public List&lt;DocumentReference&gt; getBlocked() {
+<b class="fc"><i>155</i>&nbsp;    return blocked;</b>
+<i>156</i>&nbsp;  }
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;  public void setBlocked(List&lt;DocumentReference&gt; blocked) {
+<b class="fc"><i>159</i>&nbsp;    this.blocked = blocked;</b>
+<b class="fc"><i>160</i>&nbsp;  }</b>
+<i>161</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-10-22 21:46</div>
+</div>
+</body>
+</html>
