@@ -44,7 +44,11 @@ public class PostXMLCreator {
             rootEl.appendChild(routeEl);
             if(!post.getRoute().isEmpty()) {
                 post.getRoute().forEach(point -> {
-                    rou
+                    Element routePoint = postDoc.createElement("route_point");
+                    routePoint.appendChild(createTextElement(postDoc,"route_point_latitude", post.getLatitude().toString()));
+                    routePoint.appendChild(createTextElement(postDoc,"route_point_longitude", post.getLongitude().toString()));
+                    routeEl.appendChild(routePoint);
+
                 });
             }
             rootEl.appendChild(createTextElement(postDoc, "locationName", post.getLocationName()));

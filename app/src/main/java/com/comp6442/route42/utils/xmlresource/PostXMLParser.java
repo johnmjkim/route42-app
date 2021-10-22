@@ -60,15 +60,19 @@ public class PostXMLParser {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             String value = elementContents.toString();
             if(value.length() == 0) return;
-            switch (currentElement().toLowerCase()) {
+            switch (currentElement()) {
                 case "route_point_latitude":
                     latitude = Double.parseDouble(value);
+                    break;
                 case "route_point_longitude":
                     longitude = Double.parseDouble(value);
+                    break;
                 case "route_point":
                     route.add(new Point(longitude, latitude));
+                    break;
                 case "route":
                     post.setRoute(route);
+                    break;
                 case "uid":
                     DocumentReference userRef = UserRepository.getInstance().getOne(value);
                     post.setUid(userRef);
@@ -107,11 +111,10 @@ public class PostXMLParser {
         }
 
         private String currentElement() {
-            return this.elementStack.peek();
+            return this.elementStack.peek().toLowerCase();
         }
 
         public Post getPost() {
-//            Timber.i(post.toString());
             return post;
         }
     }
