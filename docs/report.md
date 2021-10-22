@@ -251,11 +251,18 @@ EXAMPLES
   - Others 
 	- Codes that are not for logical parts are as below
 	  - [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui)
-	  - data repository
-	  - utils tasks, xmlresource
-	  - built-in classes CustomLogger, MockLocation, MyGlideModule
+		
+		- All UI classes can be covered by Espresso UI Tests 
+		  
+	  - [Data Repository](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/repository) and [Firebase Authentication Live Data](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/FirebaseAuthLiveData.java)
+		
+		- All data repository can only be tested with mocking firebase.
+		- Firebase/Firestore cannot be mocked for unit tests.
 
-[Meeting 1 - 31st August](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/aug31.md)
+	  - All [Utilities](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils) except [Crypto.java](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/Crypto.java)
+		
+		- 
+		  
 
 ## Implemented Features
 
