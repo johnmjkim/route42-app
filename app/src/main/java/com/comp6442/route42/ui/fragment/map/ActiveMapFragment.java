@@ -24,6 +24,7 @@ import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Activity;
 import com.comp6442.route42.data.model.BaseActivity;
+import com.comp6442.route42.data.model.Point;
 import com.comp6442.route42.ui.fragment.CreatePostFragment;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
 import com.comp6442.route42.utils.MockLocation;
@@ -37,6 +38,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
@@ -44,6 +46,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -52,10 +56,6 @@ import timber.log.Timber;
 
 public class ActiveMapFragment extends MapFragment {
   private final boolean demoMode;
-  private final int MAP_ZOOM_LEVEL = 18;
-  private final int LINE_WIDTH = 25;
-  private final int ROUTE_COLOR = Color.BLUE;
-  private final int PADDING = 300;
   private boolean requestingLocationUpdates = false;
   private ActiveMapViewModel activeMapViewModel;
   private TextView activityMetricsText;
@@ -69,7 +69,6 @@ public class ActiveMapFragment extends MapFragment {
   @Override
   public void onCreate(Bundle savedStateInstance) {
     super.onCreate(savedStateInstance);
-    //attach view model to fragment
     activeMapViewModel = new ViewModelProvider(requireActivity()).get(ActiveMapViewModel.class);
     activeMapViewModel.setActivityType(Activity.Activity_Type.valueOf(getArguments().getInt("activity")));
     setGetLocationCallBack();
@@ -90,14 +89,14 @@ public class ActiveMapFragment extends MapFragment {
     if (demoMode) {
       @SuppressLint("MissingPermission") Observer<Location> deviceLocationObserver = updatedLocation -> {
         //update the mock location in the provider
-//                    Timber.i("updated mock location to %s", updatedLocation.toString());
+        Timber.i("updated mock location to %s", updatedLocation.toString());
         fusedLocationProviderClient.setMockLocation(updatedLocation);
       };
       activeMapViewModel.setMockDeviceLocation();
       activeMapViewModel.getDeviceLocation().observe(getViewLifecycleOwner(), deviceLocationObserver);
     }
 
-    //set activity icon
+    //set active icon
     ImageView activityIconView = view.findViewById(R.id.activity_icon);
     Glide.with(activityIconView.getContext())
             .load(Activity.Activity_Type.getIconResource(getArguments().getInt("activity")))
@@ -110,9 +109,9 @@ public class ActiveMapFragment extends MapFragment {
   }
 
   private void endUserActivity() {
+    stopLocationUpdates();
     GoogleMap.SnapshotReadyCallback snapshotCallback = bitmap -> {
       try {
-        // Data collected is compiled into an Activity object and saved in the view model.
         String baseFilename = "activity_route";
         String localFilename = baseFilename + ".png";
         String storageFilename = baseFilename + new Date().toString() + ".png";
@@ -125,11 +124,9 @@ public class ActiveMapFragment extends MapFragment {
         activeMapViewModel.setSnapshotFileName(storageFilename);
         // save map snapshot to local
         FileOutputStream out = requireContext().openFileOutput(localFilename, 0);
-        assert bitmap != null;
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-        // redirect user to Create Post
+
         Bundle bundle = new Bundle();
-        assert getArguments() != null;
         bundle.putString("uid", getArguments().getString("uid"));
         bundle.putString("local_filename", localFilename);
         bundle.putString("storage_filename", storageFilename);
@@ -146,6 +143,7 @@ public class ActiveMapFragment extends MapFragment {
     };
 
     renderSnapshotMap(activeMapViewModel.getDeviceLocation().getValue());
+
     googleMap.setOnMapLoadedCallback(() -> {
       googleMap.snapshot(snapshotCallback);
       googleMap.setOnMapLoadedCallback(null);
@@ -161,11 +159,28 @@ public class ActiveMapFragment extends MapFragment {
 
   private void renderSnapshotMap(Location location) {
     // Set the map's camera position to the current location of the device.
-
+    int MAP_ZOOM_LEVEL = 15;
+    int LINE_WIDTH = 25;
+    int ROUTE_COLOR = Color.rgb(54, 54, 255);
+    int PADDING = 100;
     if (location != null) {
-      LatLng locationLatLng = MockLocation.latLngFromLocation(location);
+      LatLng locationLatLng = Point.latLngFromLocation(location);
       // add current location marker
       googleMap.clear();
+      InputStream is = requireContext().getResources().openRawResource(R.raw.style_json_activity_map_snapshot);
+      int size = 0;
+
+      try {
+        size = is.available();
+        byte[] buffer = new byte[size];
+        is.read(buffer);
+        is.close();
+        String json = new String(buffer, "UTF-8");
+        googleMap.setMapStyle(new MapStyleOptions(json));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
       googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).position(locationLatLng).title("User"));
       // add activity route polyline
       if (activeMapViewModel.hasPastLocations()) {
@@ -173,7 +188,6 @@ public class ActiveMapFragment extends MapFragment {
         googleMap.addPolyline(
                 new PolylineOptions()
                         .endCap(new RoundCap())
-                        .clickable(false)
                         .addAll(activeMapViewModel.getPastLocations())
                         .width(LINE_WIDTH)
                         .color(ROUTE_COLOR)
@@ -195,11 +209,11 @@ public class ActiveMapFragment extends MapFragment {
 
   @Override
   protected void renderMap(Location location) {
-    Timber.i("Received location from fusedLocationProvider: %s", location);
+    renderMetrics();
 
     // Set the map's camera position to the current location of the device.
     if (location != null) {
-      LatLng locationLatLng = MockLocation.latLngFromLocation(location);
+      LatLng locationLatLng = Point.latLngFromLocation(location);
 
       // add current location marker
       googleMap.clear();
@@ -207,7 +221,7 @@ public class ActiveMapFragment extends MapFragment {
 
       // track user using camera
       googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-              locationLatLng, 20));
+              locationLatLng, 18));
     }
     // update activity view model
     if (activeMapViewModel.getLastUpdateTime() != null) {
@@ -218,15 +232,15 @@ public class ActiveMapFragment extends MapFragment {
       activeMapViewModel.setLastUpdateTime(new Date());
       googleMap.addPolyline(
               new PolylineOptions()
-                      .endCap(new RoundCap())
-                      .clickable(false)
                       .addAll(activeMapViewModel.getPastLocations())
                       .width(25)
                       .color(Color.BLUE)
       );
     }
 
+  }
 
+  private void renderMetrics() {
     Activity userActivityData = new BaseActivity(
             activeMapViewModel.getPastLocations(),
             activeMapViewModel.getElapsedTime(),
@@ -258,7 +272,6 @@ public class ActiveMapFragment extends MapFragment {
   private void stopLocationUpdates() {
     fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
     requestingLocationUpdates = false;
-
     activeMapViewModel.setLastUpdateTime(null);
   }
 
@@ -266,9 +279,9 @@ public class ActiveMapFragment extends MapFragment {
     try {
       Timber.i("getDeviceLocation: getting the devices current location");
       requestingLocationUpdates = true;
-      // request location every 1000 millis from the provider
+      // request location every n millis from the provider
       LocationRequest locationRequest = LocationRequest.create();
-      long intervalMillis = 1000;
+      long intervalMillis = 2000;
       locationRequest.setInterval(intervalMillis).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
       fusedLocationProviderClient.setMockMode(demoMode);
       fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
@@ -297,13 +310,11 @@ public class ActiveMapFragment extends MapFragment {
         } else
           activeMapViewModel.setDeviceLocation(locationResult.getLastLocation());
         renderMap(locationResult.getLastLocation());
-//                Timber.i("location result ready");
       }
 
       @Override
       public void onLocationAvailability(@NonNull LocationAvailability locationAvailability) {
         super.onLocationAvailability(locationAvailability);
-//                Timber.i("location available");
       }
     };
   }
@@ -325,5 +336,6 @@ public class ActiveMapFragment extends MapFragment {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
+    stopLocationUpdates();
   }
 }
