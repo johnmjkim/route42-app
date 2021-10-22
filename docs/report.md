@@ -230,6 +230,16 @@ EXAMPLES
   - [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui)
   - written by Paul
 
+MyViewAction
+
+//reference1 https://stackoverflow.com/questions/28476507/using-espresso-to-click-view-inside-recyclerview-item
+
+RecyclerViewMatcher
+
+//reference2 https://github.com/levibostian/RecyclerViewMatcher
+
+SetChecked
+
 - Overall Coverage Summary 
   - Unit Test cases : 15
   - All unit tests for logic parts (models/objects) are covered with coverage exceeding 70% of all codes related to logical parts (models/objects). Models/objects codes and their coverages are all shown below.
