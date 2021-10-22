@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,9 +41,6 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     b1 = findViewById(R.id.login_button);
     b1.setEnabled(true);
     b1.setOnClickListener(LogInActivity.this);
-
-    // ActionBar toolbar = getSupportActionBar();
-    // toolbar.hide();
   }
 
   @Override
@@ -67,7 +63,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
   }
 
   @SuppressLint("TimberArgCount")
-  private void signIn(String email, String password)  {
+  private void signIn(String email, String password) {
     mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, task -> {
               if (task.isSuccessful()) {

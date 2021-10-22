@@ -9,7 +9,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 public class PostService extends RestApiService implements Callable<Post> {
-  private String postId;
+  private final String postId;
 
   public PostService(String postId) {
     super();

@@ -15,6 +15,7 @@ import com.comp6442.route42.ui.activity.MainActivity;
 import com.comp6442.route42.utils.Crypto;
 import com.comp6442.route42.utils.CustomLogger;
 import com.comp6442.route42.utils.tasks.TaskCreatePosts;
+import com.comp6442.route42.utils.tasks.TaskCreatePostsDemo;
 import com.comp6442.route42.utils.tasks.TaskCreateUsers;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,27 +48,25 @@ public class Route42App extends Application {
       Timber.i("Application starting");
     }
 
-    if (BuildConfig.loadData) {
-      try {
-        createTestUser();
+    try {
+      createTestUser();
+    } catch (Exception e) {
+      Timber.e("Could not create test user: %s", e.getMessage());
+    }
 
-        if (BuildConfig.skipLogin) {
-          mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, Crypto.encryptAndEncode(BuildConfig.testUserPassword))
-                  .addOnSuccessListener(authResult -> {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.putExtra("uid", mAuth.getUid());
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                  });
-        } else {
-          if (mAuth.getCurrentUser() != null) mAuth.signOut();
-          Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
-          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          startActivity(intent);
-        }
-      } catch (Exception e) {
-        Timber.e("Could not create test user: %s", e.getMessage());
-      }
+    if (BuildConfig.skipLogin) {
+      mAuth.signInWithEmailAndPassword(BuildConfig.testUserEmail, Crypto.encryptAndEncode(BuildConfig.testUserPassword))
+              .addOnSuccessListener(authResult -> {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("uid", mAuth.getUid());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+              });
+    } else {
+      if (mAuth.getCurrentUser() != null) mAuth.signOut();
+      Intent intent = new Intent(getApplicationContext(), LogInActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(intent);
     }
   }
 
@@ -81,7 +80,7 @@ public class Route42App extends Application {
   /**
    * Create test user, and insert sample data if loadData flag is set to true
    */
-  public void createTestUser() throws Exception {
+  private void createTestUser() {
     Timber.i("Creating test user.");
     User testUser = new User(
             null,
@@ -102,33 +101,30 @@ public class Route42App extends Application {
 
                 testUser.setId(firebaseUser.getUid());
                 UserRepository.getInstance().setOne(testUser);
-
                 Timber.i("Created test user in Firebase Auth.");
-                if (BuildConfig.loadData) insertData();
               } else {
                 Timber.w("Failed to create test user in Firebase Auth");
               }
+              insertData();
             });
   }
 
   private void insertData() {
-    Timber.i("Loading sample data");
+    if (BuildConfig.loadData) {
+      Timber.i("Loading sample user and post data");
+      executor.execute(new TaskCreateUsers(this, R.raw.users));
+      executor.execute(new TaskCreatePosts(this, R.raw.posts));
+    }
 
-    TaskCreateUsers insertUsers = new TaskCreateUsers(this, BuildConfig.EMULATOR);
-    TaskCreatePosts livePostTask = new TaskCreatePosts(this, BuildConfig.EMULATOR, BuildConfig.DEMO);
-
-    executor.execute(insertUsers);
-
-    if (!BuildConfig.DEMO) executor.schedule(livePostTask, 5, TimeUnit.SECONDS);
-    else {
+    if (BuildConfig.DEMO) {
       Timber.i("Simulating realtime posts: create %d posts every %d seconds until %d posts are created",
               BuildConfig.batchSize,
               BuildConfig.intervalLengthInSeconds,
               BuildConfig.demoPostLimit
       );
       executor.scheduleAtFixedRate(
-              livePostTask,
-              2, // initial delay
+              new TaskCreatePostsDemo(this, R.raw.posts_demo),
+              0,
               BuildConfig.intervalLengthInSeconds,
               TimeUnit.SECONDS
       );

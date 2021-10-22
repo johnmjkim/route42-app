@@ -16,9 +16,10 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @IgnoreExtraProperties
 public class Post extends Model implements Parcelable {
@@ -45,7 +46,7 @@ public class Post extends Model implements Parcelable {
   private String locationName;
   private Double latitude;
   private Double longitude;
-  private List<Point> route = new ArrayList<>();;
+  private List<Point> route = new ArrayList<>();
   private String geohash = "";
   private List<String> hashtags = new ArrayList<>();
   private int likeCount = 0;
@@ -74,7 +75,7 @@ public class Post extends Model implements Parcelable {
   }
 
   public Post(DocumentReference uid, String userName, int isPublic, String profilePicUrl, Date postDatetime,
-              String postDescription, String locationName, Double latitude, Double longitude, List<String> hashtags,
+              String postDescription, List<Point> route, String locationName, Double latitude, Double longitude, List<String> hashtags,
               int likeCount, String imageUrl, List<DocumentReference> likedBy) {
     super();
     this.uid = uid;
@@ -112,6 +113,16 @@ public class Post extends Model implements Parcelable {
     this.hashtags = in.createStringArrayList();
     this.postDatetime = new Date((Long) in.readValue(Long.class.getClassLoader()));
     in.createStringArrayList().forEach(s -> this.likedBy.add(FirebaseFirestore.getInstance().document(s)));
+  }
+
+  public static List<String> getHashTagsFromTextInput(String str) {
+    return Arrays.stream(
+            str.toLowerCase()
+                    .replaceAll("[^a-zA-Z0-9]", " ")
+                    .split(" ")
+    ).filter(s -> !s.trim().isEmpty())
+            .map(s -> "#" + s)
+            .collect(Collectors.toList());
   }
 
   @Override
@@ -254,7 +265,6 @@ public class Post extends Model implements Parcelable {
     this.likedBy = likedBy;
   }
 
-
   public List<Point> getRoute() {
     return route;
   }
@@ -279,39 +289,6 @@ public class Post extends Model implements Parcelable {
     this.geohash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(latitude, longitude));
   }
 
-  public static List<String> getHashTagsFromTextInput(String textInput) {
-    List<String> hashTags = new ArrayList<>();
-
-    String currentTag = "";
-
-    textInput = textInput.toLowerCase().trim();
-    for (int i=0; i<textInput.length(); i++) {
-      char c = textInput.charAt(i);
-      if(c == '#') {
-        if ( currentTag.length()>0) {
-          hashTags.add(currentTag.trim());
-          currentTag = "";
-        }
-        currentTag+= c;
-
-      } else if (currentTag.length()>0 && Pattern.matches("[:space:]" , Character.toString(c))) {
-        hashTags.add(currentTag.trim());
-        currentTag = "";
-      }
-      else if (currentTag.length()>0 && Pattern.matches("\\p{Punct}" , Character.toString(c)) ) {
-        hashTags.add(currentTag.trim());
-        currentTag = "";
-      } else if (currentTag.length()>0) {
-        currentTag += c;
-      }
-    }
-    if (currentTag.length()>0) {
-      hashTags.add(currentTag.trim());
-    }
-    return hashTags;
-  }
-
-
   @NonNull
   @Override
   public String toString() {
@@ -334,4 +311,6 @@ public class Post extends Model implements Parcelable {
             ", likedBy=" + likedBy +
             '}';
   }
+
+
 }

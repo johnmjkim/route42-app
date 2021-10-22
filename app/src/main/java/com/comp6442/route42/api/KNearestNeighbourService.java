@@ -13,13 +13,26 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class KNearestNeighbourService extends RestApiService implements Callable<List<Post>> {
-  private int k;
-  private Double lat, lon;
+  private final int k;
+  private final Double lat;
+  private final Double lon;
 
   public KNearestNeighbourService(int k, Double lat, Double lon) {
     this.k = k;
     this.lat = lat;
     this.lon = lon;
+  }
+
+  public int getK() {
+    return this.k;
+  }
+
+  public Double getLat() {
+    return this.lat;
+  }
+
+  public Double getLon() {
+    return this.lon;
   }
 
   @NonNull

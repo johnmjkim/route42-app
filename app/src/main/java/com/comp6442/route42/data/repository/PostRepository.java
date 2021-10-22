@@ -1,6 +1,5 @@
 package com.comp6442.route42.data.repository;
 
-import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.firebase.geofire.GeoFireUtils;
@@ -13,7 +12,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,46 +30,9 @@ public class PostRepository extends FirestoreRepository<Post> {
     super("posts", Post.class);
   }
 
-  public static PostRepository getInstance() {
-    if (PostRepository.instance == null) {
-      PostRepository.instance = new PostRepository();
-    }
-    return PostRepository.instance;
-  }
-
-  public static Gson getJsonDeserializer() {
-    return new GsonBuilder().registerTypeAdapter(Timestamp.class, (JsonDeserializer<Timestamp>) (json, type, context) -> {
-      String tsString = json.toString();
-      int decimalIdx = (tsString.contains(".")) ? tsString.indexOf(".") : tsString.length();
-      return new Timestamp(
-              Long.parseLong(tsString.substring(0, decimalIdx)),
-              (decimalIdx != tsString.length()) ? Integer.parseInt(tsString.substring(decimalIdx + 1)) : 0
-      );
-    }).registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, type, context) -> {
-      String tsString = json.toString();
-      return new Date(Long.parseLong(tsString));
-    }).registerTypeAdapter(Double.class, (JsonDeserializer<Double>) (json, type, context) -> {
-      return json.getAsDouble();
-    }).registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
-      String str = json.toString();
-      if (str.contains("\"")) str = str.replaceAll("^\"|\"$", "");
-      return UserRepository.getInstance().getOne(str);
-    }).create();
-  }
-
-  public DocumentReference getOne(String postId) {
-    return this.collection.document(postId);
-  }
-
-  public Query getMany(String uid) {
-    DocumentReference docRef = UserRepository.getInstance().getOne(uid);
-    return this.collection.whereEqualTo("uid", docRef)
-            .orderBy("postDatetime", Query.Direction.DESCENDING);
-  }
-
   public Query getMany(String uid, int limit) {
     DocumentReference docRef = UserRepository.getInstance().getOne(uid);
-    return this.collection.whereEqualTo("uid", docRef)
+    return super.collection.whereEqualTo("uid", docRef)
             .orderBy("postDatetime", Query.Direction.DESCENDING)
             .limit(limit);
   }
@@ -85,22 +46,22 @@ public class PostRepository extends FirestoreRepository<Post> {
     if (user.getBlockedBy().size() > 0 && user.getBlocked().size() > 0) {
       return this.collection
               .whereEqualTo("isPublic", 1)
-              .whereNotIn("uid", user.getBlockedBy())
-              .whereNotIn("uid", user.getBlocked())
+              .whereNotIn("uid", user.getBlockedBy().subList(0, Math.min(10, user.getBlockedBy().size())))
+              .whereNotIn("uid", user.getBlocked().subList(0, Math.min(10, user.getBlocked().size())))
               .orderBy("uid", Query.Direction.ASCENDING)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
     } else if (user.getBlocked().size() > 0) {
       return this.collection
               .whereEqualTo("isPublic", 1)
-              .whereNotIn("uid", user.getBlocked())
+              .whereNotIn("uid", user.getBlocked().subList(0, Math.min(10, user.getBlocked().size())))
               .orderBy("uid", Query.Direction.ASCENDING)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
     } else if (user.getBlockedBy().size() > 0) {
       return this.collection
               .whereEqualTo("isPublic", 1)
-              .whereNotIn("uid", user.getBlockedBy())
+              .whereNotIn("uid", user.getBlockedBy().subList(0, Math.min(10, user.getBlockedBy().size())))
               .orderBy("uid", Query.Direction.ASCENDING)
               .orderBy("postDatetime", Query.Direction.DESCENDING)
               .limit(limit);
@@ -159,14 +120,6 @@ public class PostRepository extends FirestoreRepository<Post> {
     return tasks;
   }
 
-  public void createOne(Post post) {
-    // add post only if id does not exist in collection
-    this.collection.document(post.getId())
-            .set(post)
-            .addOnSuccessListener(unused -> Timber.i("Insert succeeded: %s", post.toString()))
-            .addOnFailureListener(Timber::e);
-  }
-
   public void like(Post post, String uid) {
     WriteBatch batch = firestore.batch();
     DocumentReference docRef = this.collection.document(post.getId());
@@ -178,7 +131,16 @@ public class PostRepository extends FirestoreRepository<Post> {
             .addOnFailureListener(Timber::e)
             .addOnSuccessListener(task -> Timber.i("Like event recorded: %s -> %s", uid, post));
   }
-
+  public void scheduleLike(String postId, String uid) {
+    WriteBatch batch = firestore.batch();
+    DocumentReference docRef = this.collection.document(postId);
+    DocumentReference userRef = UserRepository.getInstance().getOne(uid);
+    docRef.update("likeCount", FieldValue.increment(1));
+    docRef.update("likedBy", FieldValue.arrayUnion(userRef));
+    batch.commit()
+            .addOnFailureListener(Timber::e)
+            .addOnSuccessListener(task -> Timber.i("Scheduled Like event recorded: %s -> %s", uid, postId));
+  }
   public void unlike(Post post, String uid) {
     WriteBatch batch = firestore.batch();
     DocumentReference docRef = this.collection.document(post.getId());
@@ -191,44 +153,30 @@ public class PostRepository extends FirestoreRepository<Post> {
             .addOnSuccessListener(task -> Timber.i("Unlike event recorded: %s -> %s", uid, post));
   }
 
-  public void createMany(List<Post> posts) {
-    // batch size limit is 500 documents
-    int idx = 0;
-    while (idx < posts.size()) {
-      int counter = 0;
-      WriteBatch batch = firestore.batch();
-
-      while (counter < BuildConfig.FIRESTORE_BATCH_SIZE && idx < posts.size()) {
-        Post post = posts.get(idx);
-        DocumentReference postRef = this.collection.document(post.getId());
-        batch.set(postRef, post);
-        counter++;
-        idx++;
-      }
-
-      batch.commit()
-              .addOnFailureListener(Timber::e)
-              .addOnSuccessListener(task -> Timber.i("Batch write complete: posts"));
+  public static PostRepository getInstance() {
+    if (PostRepository.instance == null) {
+      PostRepository.instance = new PostRepository();
     }
+    return PostRepository.instance;
   }
 
-  public void setMany(List<Post> posts) {
-    int idx = 0;
-    while (idx < posts.size()) {
-      int counter = 0;
-      WriteBatch batch = firestore.batch();
-
-      while (counter < BuildConfig.FIRESTORE_BATCH_SIZE && idx < posts.size()) {
-        Post post = posts.get(idx);
-        DocumentReference postRef = this.collection.document(post.getId());
-        batch.set(postRef, post, SetOptions.merge());
-        counter++;
-        idx++;
-      }
-
-      batch.commit()
-              .addOnFailureListener(Timber::e)
-              .addOnSuccessListener(task -> Timber.i("Batch set complete: posts"));
-    }
+  public static Gson getJsonDeserializer() {
+    return new GsonBuilder().registerTypeAdapter(Timestamp.class, (JsonDeserializer<Timestamp>) (json, type, context) -> {
+      String tsString = json.toString();
+      int decimalIdx = (tsString.contains(".")) ? tsString.indexOf(".") : tsString.length();
+      return new Timestamp(
+              Long.parseLong(tsString.substring(0, decimalIdx)),
+              (decimalIdx != tsString.length()) ? Integer.parseInt(tsString.substring(decimalIdx + 1)) : 0
+      );
+    }).registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, type, context) -> {
+      String tsString = json.toString();
+      return new Date(Long.parseLong(tsString));
+    }).registerTypeAdapter(Double.class, (JsonDeserializer<Double>) (json, type, context) -> {
+      return json.getAsDouble();
+    }).registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
+      String str = json.toString();
+      if (str.contains("\"")) str = str.replaceAll("^\"|\"$", "");
+      return UserRepository.getInstance().getOne(str);
+    }).create();
   }
 }

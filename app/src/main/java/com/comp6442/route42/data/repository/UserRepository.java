@@ -1,17 +1,13 @@
 package com.comp6442.route42.data.repository;
 
-import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 
-import java.util.List;
 import java.util.Objects;
 
 import timber.log.Timber;
@@ -23,90 +19,12 @@ public final class UserRepository extends FirestoreRepository<User> {
     super("users", User.class);
   }
 
-  public static UserRepository getInstance() {
-    if (UserRepository.instance == null) {
-      UserRepository.instance = new UserRepository();
-    }
-    return UserRepository.instance;
-  }
-
-  public static Gson getJsonDeserializer() {
-    return new GsonBuilder().registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
-      String str = json.toString();
-      if (str.contains("\"")) str = str.replaceAll("^\"|\"$", "");
-      return UserRepository.getInstance().getOne(str);
-    }).create();
-  }
-
-  public DocumentReference getOne(String uid) {
-    return this.collection.document(uid);
-  }
-
   public void createOne(FirebaseUser firebaseUser) {
     // add user only if uid does not exist in user collection
-    createOne(new User(
+    super.createOne(new User(
             Objects.requireNonNull(firebaseUser.getUid()),
             Objects.requireNonNull(firebaseUser.getEmail())
     ));
-  }
-
-  public void createOne(User user) {
-    // add user only if uid does not exist in user collection
-    this.collection.document(user.getId())
-            .set(user)
-            .addOnFailureListener(Timber::e);
-  }
-
-  public void createMany(List<User> users) {
-    // create if not exists
-    int idx = 0;
-    while (idx < users.size()) {
-      int counter = 0;
-      // Get a new write batch
-      WriteBatch batch = firestore.batch();
-
-      while (counter < BuildConfig.FIRESTORE_BATCH_SIZE && idx < users.size()) {
-        User user = users.get(idx);
-        DocumentReference ref = this.collection.document(user.getId());
-        batch.set(ref, user);
-        counter++;
-        idx++;
-      }
-      // Commit the batch
-      batch.commit()
-              .addOnFailureListener(Timber::e)
-              .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
-    }
-  }
-
-  public void setOne(User user) {
-    // create if not exists
-    this.collection.document(user.getId())
-            .set(user, SetOptions.merge())
-            .addOnFailureListener(Timber::e);
-  }
-
-  public void setMany(List<User> users) {
-    // create if not exists
-    // batch size limit is 500 documents
-    int idx = 0;
-    while (idx < users.size()) {
-      int counter = 0;
-      // Get a new write batch
-      WriteBatch batch = firestore.batch();
-
-      while (counter < BuildConfig.FIRESTORE_BATCH_SIZE && idx < users.size()) {
-        User user = users.get(idx);
-        DocumentReference ref = this.collection.document(user.getId());
-        batch.set(ref, user, SetOptions.merge());
-        counter++;
-        idx++;
-      }
-      // Commit the batch
-      batch.commit()
-              .addOnFailureListener(Timber::e)
-              .addOnSuccessListener(task -> Timber.i("Batch write complete: users"));
-    }
   }
 
   /**
@@ -162,5 +80,18 @@ public final class UserRepository extends FirestoreRepository<User> {
     });
   }
 
+  public static UserRepository getInstance() {
+    if (UserRepository.instance == null) {
+      UserRepository.instance = new UserRepository();
+    }
+    return UserRepository.instance;
+  }
 
+  public static Gson getJsonDeserializer() {
+    return new GsonBuilder().registerTypeAdapter(DocumentReference.class, (JsonDeserializer<DocumentReference>) (json, type, context) -> {
+      String str = json.toString();
+      if (str.contains("\"")) str = str.replaceAll("^\"|\"$", "");
+      return UserRepository.getInstance().getOne(str);
+    }).create();
+  }
 }

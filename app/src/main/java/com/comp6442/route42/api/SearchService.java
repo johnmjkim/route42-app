@@ -13,7 +13,7 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SearchService extends RestApiService implements Callable<List<Post>> {
-  private String query;
+  private final String query;
 
   public SearchService(String query) {
     super();

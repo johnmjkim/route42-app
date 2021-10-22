@@ -22,12 +22,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.api.SearchService;
-import com.comp6442.route42.data.UserViewModel;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.FirestorePostAdapter;
-import com.comp6442.route42.ui.PostAdapter;
+import com.comp6442.route42.ui.adapter.FirestorePostAdapter;
+import com.comp6442.route42.ui.adapter.PostAdapter;
+import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.Query;
@@ -50,7 +50,7 @@ public class FeedFragment extends Fragment {
   private static final String ARG_PARAM1 = "uid";
   private static final ExecutorService executor = Executors.newSingleThreadExecutor();
   private String uid;
-  private UserViewModel viewModel;
+  private LiveUserViewModel liveUserViewModel;
   private SearchView searchView;
   private NestedScrollView scrollview;
   private RecyclerView recyclerView;
@@ -102,9 +102,9 @@ public class FeedFragment extends Fragment {
       this.uid = savedInstanceState.getString("uid");
     }
 
-    viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+    liveUserViewModel = new ViewModelProvider(requireActivity()).get(LiveUserViewModel.class);
     if (this.uid != null) {
-      User user = viewModel.getLiveUser().getValue();
+      User user = liveUserViewModel.getUser().getValue();
 
       assert user != null;
 
@@ -114,7 +114,7 @@ public class FeedFragment extends Fragment {
               .setQuery(query, Post.class)
               .build();
 
-      firestorePostAdapter = new FirestorePostAdapter(postsOptions, viewModel.getLiveUser().getValue().getId());
+      firestorePostAdapter = new FirestorePostAdapter(postsOptions, liveUserViewModel.getUser().getValue().getId());
       recyclerView = view.findViewById(R.id.recycler_view);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setAdapter(firestorePostAdapter);
@@ -132,14 +132,14 @@ public class FeedFragment extends Fragment {
   private void initSwipeRefresher(View view) {
     SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_container);
     swipeRefreshLayout.setOnRefreshListener(() -> {
-      if(searchView.getQuery().length() > 0) searchView.setQuery(searchView.getQuery(), true);
+      if (searchView.getQuery().length() > 0) searchView.setQuery(searchView.getQuery(), true);
 
       // Notify swipeRefreshLayout that the refresh has finished
       swipeRefreshLayout.setRefreshing(false);
     });
   }
 
-  public void initFeed(View view) {
+  private void initFeed(View view) {
     // hide search view on scroll
     bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
 
@@ -165,7 +165,7 @@ public class FeedFragment extends Fragment {
     });
   }
 
-  public void initSearch(View view, User user) {
+  private void initSearch(View view, User user) {
     // search
     SearchView searchView = view.findViewById(R.id.search_view);
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -182,15 +182,15 @@ public class FeedFragment extends Fragment {
               Timber.i("Response received from API: %d items", posts.size());
               Timber.d(posts.toString());
 
-              postAdapter = new PostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+              postAdapter = new PostAdapter(posts, liveUserViewModel.getUser().getValue().getId());
               recyclerView.setAdapter(postAdapter);
               postAdapter.notifyDataSetChanged();
             } else {// let users know there was no hit for the query
-              Toast.makeText(view.getContext(),"Query did not return any items",Toast.LENGTH_SHORT).show();
+              Toast.makeText(view.getContext(), "Query did not return any items", Toast.LENGTH_SHORT).show();
             }
 
             // hide keyboard
-            InputMethodManager imm = (InputMethodManager)requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
           } catch (InterruptedException | ExecutionException | JsonSyntaxException e) {
             Timber.e(e);
@@ -207,7 +207,7 @@ public class FeedFragment extends Fragment {
     });
   }
 
-  public FirestorePostAdapter queryFirestore(User user, String queryText) {
+  private FirestorePostAdapter queryFirestore(User user, String queryText) {
     Query query;
     if (TextUtils.isEmpty(queryText)) {
       query = PostRepository.getInstance().getVisiblePosts(user, 20);
@@ -217,7 +217,7 @@ public class FeedFragment extends Fragment {
     FirestoreRecyclerOptions<Post> posts = new FirestoreRecyclerOptions.Builder<Post>()
             .setQuery(query, Post.class)
             .build();
-    FirestorePostAdapter adapter = new FirestorePostAdapter(posts, viewModel.getLiveUser().getValue().getId());
+    FirestorePostAdapter adapter = new FirestorePostAdapter(posts, liveUserViewModel.getUser().getValue().getId());
     recyclerView.setAdapter(adapter);
     Timber.i("PostAdapter bound to RecyclerView with size %d for query: %s", adapter.getItemCount(), queryText);
     query.get().addOnSuccessListener(queryDocumentSnapshots -> Timber.i("%d items found", queryDocumentSnapshots.getDocuments().size()));

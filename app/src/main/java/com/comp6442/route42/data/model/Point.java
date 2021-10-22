@@ -1,15 +1,28 @@
 package com.comp6442.route42.data.model;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class Point implements Parcelable {
 
+  public static final Creator<Point> CREATOR = new Creator<Point>() {
+    @Override
+    public Point createFromParcel(Parcel in) {
+      return new Point(in);
+    }
+
+    @Override
+    public Point[] newArray(int size) {
+      return new Point[size];
+    }
+  };
   private Double latitude;
   private Double longitude;
 
@@ -33,18 +46,6 @@ public class Point implements Parcelable {
       longitude = in.readDouble();
     }
   }
-
-  public static final Creator<Point> CREATOR = new Creator<Point>() {
-    @Override
-    public Point createFromParcel(Parcel in) {
-      return new Point(in);
-    }
-
-    @Override
-    public Point[] newArray(int size) {
-      return new Point[size];
-    }
-  };
 
   @NonNull
   public Double getLatitude() {
@@ -84,5 +85,19 @@ public class Point implements Parcelable {
       parcel.writeByte((byte) 1);
       parcel.writeDouble(longitude);
     }
+  }
+
+  public LatLng toLatLng() {
+    return new LatLng(this.latitude, this.longitude);
+  }
+
+  public static Point fromLocation(Location location) {
+    return new Point(location.getLatitude(), location.getLongitude());
+  }
+  public static Point fromLatLng(LatLng location) {
+    return new Point(location.latitude, location.longitude);
+  }
+  public static LatLng latLngFromLocation(android.location.Location location) {
+    return  new LatLng(location.getLatitude(), location.getLongitude());
   }
 }
