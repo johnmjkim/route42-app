@@ -240,7 +240,7 @@ Node(
 ## Implemented Features
 
 - Easy: 6
-- Medium: 6
+- Medium: 5
 - Hard: 1
 - Very Hard: 1
 
@@ -254,7 +254,7 @@ Greater Data Usage, Handling and Sophistication
 1. Read data instances from multiple local files in different formats (JSON, XML or Bespoken). (easy)
 2. User profile activity containing a media file (image, animation (e.g. gif), video). (easy)
 3. Use GPS information. (easy)
-4. User statistics. Provide users with the ability to see a report of total views, total followers, total posts, total likes, in a graphical manner. (medium)
+
 
 User Interactivity
 1. The ability to micro-interact with 'posts' (e.g. like, report, etc.) [stored in-memory]. (easy)
