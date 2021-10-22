@@ -227,18 +227,16 @@ EXAMPLES
 ## Testing Summary
 
 - Espresso UI Test
-  - [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui)
-  - written by Paul
-
-MyViewAction
-
-//reference1 https://stackoverflow.com/questions/28476507/using-espresso-to-click-view-inside-recyclerview-item
-
-RecyclerViewMatcher
-
-//reference2 https://github.com/levibostian/RecyclerViewMatcher
-
-SetChecked
+  - [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui) 
+  - *your description for Espresso UI Test*
+	
+  - Part of methods for UI Tests uses references listed as below:
+	- [MyViewAction](https://stackoverflow.com/questions/28476507/using-espresso-to-click-view-inside-recyclerview-item)
+	  - *your description for MyViewAction*
+	- [RecyclerViewMatcher](https://github.com/levibostian/RecyclerViewMatcher)
+	  - *your description for MyViewAction*
+	- [setChecked](https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked)
+	  - *your description for MyViewAction*
 
 - Overall Coverage Summary 
   - Unit Test cases : 15
@@ -260,19 +258,13 @@ SetChecked
 
   - Others 
 	- Codes that are not for logical parts are as below
-	  - [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui)
-		
-		- All UI classes can be covered by Espresso UI Tests 
-		  
-	  - [Data Repository](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/repository) and [Firebase Authentication Live Data](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/FirebaseAuthLiveData.java)
-		
+	  - All classes and submodules in [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui) module
+		- All UI classes can be covered by Espresso UI Tests
+	  - All classes [Data Repository](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/repository) module and [Firebase Authentication Live Data](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/FirebaseAuthLiveData.java)
 		- All data repository can only be tested with mocking firebase.
 		- Firebase/Firestore cannot be mocked for unit tests.
-
-	  - All [Utilities](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils) except [Crypto.java](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/Crypto.java)
-		
-		- 
-		  
+	  - All classes [Utilities](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils) module except [Crypto.java](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/Crypto.java)
+		- They are built-in classes
 
 ## Implemented Features
 
