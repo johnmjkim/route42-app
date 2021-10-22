@@ -1,0 +1,194 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FirestoreRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.comp6442.route42.data.repository</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FirestoreRepository (com.comp6442.route42.data.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FirestoreRepository</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 55)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.data.repository;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.comp6442.route42.BuildConfig;
+<i>4</i>&nbsp;import com.comp6442.route42.data.model.Model;
+<i>5</i>&nbsp;import com.google.firebase.firestore.CollectionReference;
+<i>6</i>&nbsp;import com.google.firebase.firestore.DocumentReference;
+<i>7</i>&nbsp;import com.google.firebase.firestore.FirebaseFirestore;
+<i>8</i>&nbsp;import com.google.firebase.firestore.FirebaseFirestoreSettings;
+<i>9</i>&nbsp;import com.google.firebase.firestore.SetOptions;
+<i>10</i>&nbsp;import com.google.firebase.firestore.WriteBatch;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.util.List;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import timber.log.Timber;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;public abstract class FirestoreRepository&lt;T extends Model&gt; extends Repository&lt;T&gt; {
+<i>17</i>&nbsp;  protected static FirebaseFirestore firestore;
+<i>18</i>&nbsp;  protected CollectionReference collection;
+<i>19</i>&nbsp;  protected String collectionName;
+<i>20</i>&nbsp;  protected static final int FIREBASE_FIRESTORE_BATCH_LIMIT = 500;
+<i>21</i>&nbsp;
+<b class="nc"><i>22</i>&nbsp;  public FirestoreRepository(String collectionName, Class&lt;T&gt; cType) {</b>
+<b class="nc"><i>23</i>&nbsp;    this.classType = cType;</b>
+<i>24</i>&nbsp;
+<b class="nc"><i>25</i>&nbsp;    if (firestore == null) {</b>
+<b class="nc"><i>26</i>&nbsp;      firestore = FirebaseFirestore.getInstance();</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;      if (BuildConfig.EMULATOR) {
+<i>29</i>&nbsp;        try {
+<i>30</i>&nbsp;          firestore.useEmulator(BuildConfig.EMULATOR_ADDRESS, BuildConfig.FIREBASE_FIRESTORE_PORT);
+<i>31</i>&nbsp;        } catch (IllegalStateException exc) {
+<i>32</i>&nbsp;          Timber.d(exc);
+<i>33</i>&nbsp;        }
+<i>34</i>&nbsp;      }
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;      FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()</b>
+<b class="nc"><i>37</i>&nbsp;              .setPersistenceEnabled(false)</b>
+<b class="nc"><i>38</i>&nbsp;              .build();</b>
+<i>39</i>&nbsp;
+<b class="nc"><i>40</i>&nbsp;      firestore.setFirestoreSettings(settings);</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;    this.collection = firestore.collection(collectionName);</b>
+<b class="nc"><i>44</i>&nbsp;    this.collectionName = collectionName;</b>
+<b class="nc"><i>45</i>&nbsp;  }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;  public DocumentReference getOne(String uid) {
+<b class="nc"><i>48</i>&nbsp;    return this.collection.document(uid);</b>
+<i>49</i>&nbsp;  }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;  public void createOne(T item) {
+<i>52</i>&nbsp;    // add only if id does not exist in collection
+<b class="nc"><i>53</i>&nbsp;    this.collection.document(item.getId())</b>
+<b class="nc"><i>54</i>&nbsp;            .set(item)</b>
+<b class="nc"><i>55</i>&nbsp;            .addOnSuccessListener(unused -&gt; Timber.i(&quot;Write complete: %s&quot;, item.toString()))</b>
+<b class="nc"><i>56</i>&nbsp;            .addOnFailureListener(Timber::e);</b>
+<b class="nc"><i>57</i>&nbsp;  }</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;  public void createMany(List&lt;T&gt; items) {
+<b class="nc"><i>60</i>&nbsp;    int idx = 0;</b>
+<b class="nc"><i>61</i>&nbsp;    while (idx &lt; items.size()) {</b>
+<b class="nc"><i>62</i>&nbsp;      int counter = 0;</b>
+<b class="nc"><i>63</i>&nbsp;      WriteBatch batch = firestore.batch();</b>
+<i>64</i>&nbsp;
+<b class="nc"><i>65</i>&nbsp;      while (counter &lt; FIREBASE_FIRESTORE_BATCH_LIMIT &amp;&amp; idx &lt; items.size()) {</b>
+<b class="nc"><i>66</i>&nbsp;        T item = items.get(idx);</b>
+<b class="nc"><i>67</i>&nbsp;        DocumentReference postRef = this.collection.document(item.getId());</b>
+<b class="nc"><i>68</i>&nbsp;        batch.set(postRef, item);</b>
+<b class="nc"><i>69</i>&nbsp;        counter++;</b>
+<b class="nc"><i>70</i>&nbsp;        idx++;</b>
+<b class="nc"><i>71</i>&nbsp;      }</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;      // Commit the batch
+<b class="nc"><i>74</i>&nbsp;      int finalIdx = idx;</b>
+<b class="nc"><i>75</i>&nbsp;      batch.commit()</b>
+<b class="nc"><i>76</i>&nbsp;              .addOnSuccessListener(unused -&gt; Timber.i(&quot;Batch write complete: %s %d items&quot;, this.collectionName, finalIdx))</b>
+<b class="nc"><i>77</i>&nbsp;              .addOnFailureListener(Timber::e);</b>
+<b class="nc"><i>78</i>&nbsp;    }</b>
+<b class="nc"><i>79</i>&nbsp;  }</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;  public void setOne(T item) {
+<i>82</i>&nbsp;    // create if not exists
+<b class="nc"><i>83</i>&nbsp;    this.collection.document(item.getId())</b>
+<b class="nc"><i>84</i>&nbsp;            .set(item, SetOptions.merge())</b>
+<b class="nc"><i>85</i>&nbsp;            .addOnFailureListener(Timber::e);</b>
+<b class="nc"><i>86</i>&nbsp;  }</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;  public void setMany(List&lt;T&gt; items) {
+<i>89</i>&nbsp;    // create if not exists
+<b class="nc"><i>90</i>&nbsp;    int idx = 0;</b>
+<b class="nc"><i>91</i>&nbsp;    while (idx &lt; items.size()) {</b>
+<b class="nc"><i>92</i>&nbsp;      int counter = 0;</b>
+<i>93</i>&nbsp;      // Get a new write batch
+<b class="nc"><i>94</i>&nbsp;      WriteBatch batch = firestore.batch();</b>
+<i>95</i>&nbsp;
+<b class="nc"><i>96</i>&nbsp;      while (counter &lt; FIREBASE_FIRESTORE_BATCH_LIMIT &amp;&amp; idx &lt; items.size()) {</b>
+<b class="nc"><i>97</i>&nbsp;        T item = items.get(idx);</b>
+<b class="nc"><i>98</i>&nbsp;        DocumentReference ref = this.collection.document(item.getId());</b>
+<b class="nc"><i>99</i>&nbsp;        batch.set(ref, item, SetOptions.merge());</b>
+<b class="nc"><i>100</i>&nbsp;        counter++;</b>
+<b class="nc"><i>101</i>&nbsp;        idx++;</b>
+<b class="nc"><i>102</i>&nbsp;      }</b>
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;      // Commit the batch
+<b class="nc"><i>105</i>&nbsp;      int finalIdx = idx;</b>
+<b class="nc"><i>106</i>&nbsp;      batch.commit()</b>
+<b class="nc"><i>107</i>&nbsp;              .addOnSuccessListener(unused -&gt; Timber.i(&quot;Batch set complete: %s %d items&quot;, this.collectionName, finalIdx))</b>
+<b class="nc"><i>108</i>&nbsp;              .addOnFailureListener(Timber::e);</b>
+<b class="nc"><i>109</i>&nbsp;    }</b>
+<b class="nc"><i>110</i>&nbsp;  }</b>
+<i>111</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-10-22 21:46</div>
+</div>
+</body>
+</html>

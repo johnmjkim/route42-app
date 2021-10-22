@@ -108,7 +108,6 @@ public class PostTest {
     Assert.assertEquals(date, post.getPostDatetime());
   }
 
-  //writetoparcel
   @Test
   public void checkLatLng() {
     LatLng latLng = new LatLng(lat, lon);
@@ -137,10 +136,14 @@ public class PostTest {
 
   @Test
   public void HashtagCheck() {
-    String testcase1 = "test1 test2 #test3";
-    String testcase2 = "test1 test2 #test3, test4 #test5";
-    Assert.assertEquals(Post.getHashTagsFromTextInput(testcase1).toString(), "[#test3]");
-    Assert.assertEquals(Post.getHashTagsFromTextInput(testcase2).toString(), "[#test3, #test5]");
+    List<String> hashtags = new ArrayList<>();
+    hashtags.add("#test1");
+    hashtags.add("#test2");
+    hashtags.add("#test3");
+    Assert.assertEquals(Post.getHashTagsFromString("test1 test2 #test3"), hashtags);
+    hashtags.add("#test4");
+    hashtags.add("#test5");
+    Assert.assertEquals(Post.getHashTagsFromString("test1 test2 #test3, test4 #test5"), hashtags);
   }
 
   @Test

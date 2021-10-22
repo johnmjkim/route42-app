@@ -1,0 +1,553 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ProfileFragment</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.comp6442.route42.ui.fragment</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ProfileFragment (com.comp6442.route42.ui.fragment)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProfileFragment</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 202)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.ui.fragment;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import android.content.Intent;
+<i>4</i>&nbsp;import android.os.Bundle;
+<i>5</i>&nbsp;import android.view.LayoutInflater;
+<i>6</i>&nbsp;import android.view.View;
+<i>7</i>&nbsp;import android.view.ViewGroup;
+<i>8</i>&nbsp;import android.widget.ImageView;
+<i>9</i>&nbsp;import android.widget.TextView;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import androidx.annotation.NonNull;
+<i>12</i>&nbsp;import androidx.annotation.Nullable;
+<i>13</i>&nbsp;import androidx.core.widget.NestedScrollView;
+<i>14</i>&nbsp;import androidx.fragment.app.Fragment;
+<i>15</i>&nbsp;import androidx.fragment.app.FragmentActivity;
+<i>16</i>&nbsp;import androidx.lifecycle.Observer;
+<i>17</i>&nbsp;import androidx.lifecycle.ViewModelProvider;
+<i>18</i>&nbsp;import androidx.recyclerview.widget.LinearLayoutManager;
+<i>19</i>&nbsp;import androidx.recyclerview.widget.RecyclerView;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;import com.bumptech.glide.Glide;
+<i>22</i>&nbsp;import com.bumptech.glide.load.engine.DiskCacheStrategy;
+<i>23</i>&nbsp;import com.comp6442.route42.R;
+<i>24</i>&nbsp;import com.comp6442.route42.data.FirebaseAuthLiveData;
+<i>25</i>&nbsp;import com.comp6442.route42.data.model.Post;
+<i>26</i>&nbsp;import com.comp6442.route42.data.model.User;
+<i>27</i>&nbsp;import com.comp6442.route42.data.repository.FirebaseStorageRepository;
+<i>28</i>&nbsp;import com.comp6442.route42.data.repository.PostRepository;
+<i>29</i>&nbsp;import com.comp6442.route42.data.repository.UserRepository;
+<i>30</i>&nbsp;import com.comp6442.route42.ui.activity.LogInActivity;
+<i>31</i>&nbsp;import com.comp6442.route42.ui.adapter.FirestorePostAdapter;
+<i>32</i>&nbsp;import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
+<i>33</i>&nbsp;import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
+<i>34</i>&nbsp;import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+<i>35</i>&nbsp;import com.google.android.material.bottomnavigation.BottomNavigationView;
+<i>36</i>&nbsp;import com.google.android.material.button.MaterialButton;
+<i>37</i>&nbsp;import com.google.android.material.switchmaterial.SwitchMaterial;
+<i>38</i>&nbsp;import com.google.firebase.auth.FirebaseAuth;
+<i>39</i>&nbsp;import com.google.firebase.firestore.ListenerRegistration;
+<i>40</i>&nbsp;import com.google.firebase.firestore.Query;
+<i>41</i>&nbsp;import com.google.firebase.storage.StorageReference;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;import java.util.ArrayList;
+<i>44</i>&nbsp;import java.util.List;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;import timber.log.Timber;
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;public class ProfileFragment extends Fragment {</b>
+<i>49</i>&nbsp;  private static final String ARG_PARAM1 = &quot;uid&quot;;
+<b class="nc"><i>50</i>&nbsp;  private final List&lt;ListenerRegistration&gt; firebaseListenerRegs = new ArrayList&lt;&gt;();</b>
+<i>51</i>&nbsp;  private FirebaseAuth mAuth;
+<i>52</i>&nbsp;  private String uid;
+<i>53</i>&nbsp;  private LiveUserViewModel liveUserVM;
+<i>54</i>&nbsp;  private ProfileUserViewModel profileUserVM;
+<i>55</i>&nbsp;  private TextView userNameView, followerCountView, followingCountView;
+<i>56</i>&nbsp;  private SwitchMaterial blockSwitch, followSwitch;
+<i>57</i>&nbsp;  private MaterialButton messageButton, signOutButton, showBlockedUsersButton;
+<i>58</i>&nbsp;  private NestedScrollView scrollview;
+<i>59</i>&nbsp;  private RecyclerView recyclerView;
+<i>60</i>&nbsp;  private FirestorePostAdapter adapter;
+<i>61</i>&nbsp;  private LinearLayoutManager layoutManager;
+<i>62</i>&nbsp;  private BottomNavigationView bottomNavView;
+<i>63</i>&nbsp;
+<b class="nc"><i>64</i>&nbsp;  public ProfileFragment() {</b>
+<i>65</i>&nbsp;    // Required empty public constructor
+<b class="nc"><i>66</i>&nbsp;  }</b>
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;  /**
+<i>69</i>&nbsp;   * Use this factory method to create a new instance of
+<i>70</i>&nbsp;   * this fragment using the provided parameters.
+<i>71</i>&nbsp;   *
+<i>72</i>&nbsp;   * @param param1 Parameter 1.
+<i>73</i>&nbsp;   * @return A new instance of fragment HomeFragment.
+<i>74</i>&nbsp;   */
+<i>75</i>&nbsp;  public static ProfileFragment newInstance(String param1) {
+<b class="nc"><i>76</i>&nbsp;    Timber.i(&quot;New instance created with param %s&quot;, param1);</b>
+<b class="nc"><i>77</i>&nbsp;    ProfileFragment fragment = new ProfileFragment();</b>
+<b class="nc"><i>78</i>&nbsp;    Bundle args = new Bundle();</b>
+<b class="nc"><i>79</i>&nbsp;    args.putString(ARG_PARAM1, param1);</b>
+<b class="nc"><i>80</i>&nbsp;    fragment.setArguments(args);</b>
+<b class="nc"><i>81</i>&nbsp;    return fragment;</b>
+<i>82</i>&nbsp;  }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;  /**
+<i>85</i>&nbsp;   * The callback also receives a savedInstanceState Bundle argument containing any state
+<i>86</i>&nbsp;   * previously saved by onSaveInstanceState(). Note that savedInstanceState has
+<i>87</i>&nbsp;   * a null value the first time the fragment is created
+<i>88</i>&nbsp;   */
+<i>89</i>&nbsp;  @Override
+<i>90</i>&nbsp;  public void onCreate(Bundle savedInstanceState) {
+<b class="nc"><i>91</i>&nbsp;    super.onCreate(savedInstanceState);</b>
+<b class="nc"><i>92</i>&nbsp;    this.mAuth = FirebaseAuthLiveData.getInstance().getAuth();</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;    if (getArguments() != null) {</b>
+<b class="nc"><i>95</i>&nbsp;      this.uid = getArguments().getString(ARG_PARAM1);</b>
+<i>96</i>&nbsp;    }
+<b class="nc"><i>97</i>&nbsp;    Timber.i(&quot;onCreate called with uid %s&quot;, uid);</b>
+<b class="nc"><i>98</i>&nbsp;  }</b>
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;  @Override
+<i>101</i>&nbsp;  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+<b class="nc"><i>102</i>&nbsp;    Timber.d(&quot;breadcrumb&quot;);</b>
+<b class="nc"><i>103</i>&nbsp;    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);</b>
+<b class="nc"><i>104</i>&nbsp;    return inflater.inflate(R.layout.fragment_profile, container, false);</b>
+<i>105</i>&nbsp;  }
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;  @Override
+<i>108</i>&nbsp;  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+<b class="nc"><i>109</i>&nbsp;    super.onViewCreated(view, savedInstanceState);</b>
+<b class="nc"><i>110</i>&nbsp;    Timber.d(&quot;breadcrumb&quot;);</b>
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;    // BottomNavigationView bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);
+<i>113</i>&nbsp;    // bottomNavView.animate().translationY(0).setDuration(250);
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;    liveUserVM = new ViewModelProvider(requireActivity()).get(LiveUserViewModel.class);</b>
+<b class="nc"><i>116</i>&nbsp;    profileUserVM = new ViewModelProvider(requireActivity()).get(ProfileUserViewModel.class);</b>
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    // set view variables
+<b class="nc"><i>119</i>&nbsp;    userNameView = view.findViewById(R.id.profile_username);</b>
+<b class="nc"><i>120</i>&nbsp;    blockSwitch = view.findViewById(R.id.profile_block_switch);</b>
+<b class="nc"><i>121</i>&nbsp;    followSwitch = view.findViewById(R.id.profile_follow_switch);</b>
+<b class="nc"><i>122</i>&nbsp;    messageButton = view.findViewById(R.id.profile_message_button);</b>
+<b class="nc"><i>123</i>&nbsp;    signOutButton = view.findViewById(R.id.sign_out_button);</b>
+<b class="nc"><i>124</i>&nbsp;    followerCountView = view.findViewById(R.id.profile_primary_text);</b>
+<b class="nc"><i>125</i>&nbsp;    followingCountView = view.findViewById(R.id.profile_secondary_text);</b>
+<b class="nc"><i>126</i>&nbsp;    showBlockedUsersButton = view.findViewById(R.id.show_blocked_users_button);</b>
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;    if (savedInstanceState != null) {</b>
+<i>129</i>&nbsp;      //Restore the fragment&#39;s state here
+<b class="nc"><i>130</i>&nbsp;      this.uid = savedInstanceState.getString(ARG_PARAM1);</b>
+<b class="nc"><i>131</i>&nbsp;      Timber.d(&quot;Restoring fragment state for uid: %s&quot;, this.uid);</b>
+<i>132</i>&nbsp;    }
+<i>133</i>&nbsp;
+<b class="nc"><i>134</i>&nbsp;    if (this.uid != null) {</b>
+<b class="nc"><i>135</i>&nbsp;      if (this.uid.contains(&quot;\&quot;&quot;)) this.uid = this.uid.replaceAll(&quot;^\&quot;|\&quot;$&quot;, &quot;&quot;);</b>
+<b class="nc"><i>136</i>&nbsp;      Timber.i(&quot;Received uid: %s&quot;, this.uid);</b>
+<i>137</i>&nbsp;
+<i>138</i>&nbsp;      // create observer to update the profile UI on change to the `ProfileUser`
+<b class="nc"><i>139</i>&nbsp;      final Observer&lt;User&gt; userObserver = updatedProfileUser -&gt; {</b>
+<b class="nc"><i>140</i>&nbsp;        Timber.i(&quot;userObserver notified: %s&quot;, updatedProfileUser);</b>
+<b class="nc"><i>141</i>&nbsp;        if (updatedProfileUser == null) return;</b>
+<b class="nc"><i>142</i>&nbsp;        User currentProfileUser = this.profileUserVM.getUser().getValue();</b>
+<b class="nc"><i>143</i>&nbsp;        assert currentProfileUser != null;</b>
+<b class="nc"><i>144</i>&nbsp;        if (currentProfileUser.getId().equals(updatedProfileUser.getId())) {</b>
+<b class="nc"><i>145</i>&nbsp;          renderProfile(updatedProfileUser, view);</b>
+<i>146</i>&nbsp;        }
+<b class="nc"><i>147</i>&nbsp;        renderRecyclerView(updatedProfileUser, view);</b>
+<b class="nc"><i>148</i>&nbsp;      };</b>
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;      // initialize profileUser, observe change to the profileUser data, and get a registration
+<b class="nc"><i>151</i>&nbsp;      profileUserVM.loadProfileUser(this.uid);</b>
+<b class="nc"><i>152</i>&nbsp;      profileUserVM.getUser().observe(getViewLifecycleOwner(), userObserver);</b>
+<b class="nc"><i>153</i>&nbsp;      firebaseListenerRegs.add(profileUserVM.addSnapshotListener(this.uid));</b>
+<b class="nc"><i>154</i>&nbsp;    } else {</b>
+<b class="nc"><i>155</i>&nbsp;      Timber.w(&quot;uid is null&quot;);</b>
+<i>156</i>&nbsp;    }
+<b class="nc"><i>157</i>&nbsp;  }</b>
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;  /* It is strongly recommended to tie Lifecycle-aware components to the STARTED state of a
+<i>160</i>&nbsp;      fragment, as this state guarantees that the fragment&#39;s view is available, if one was created,
+<i>161</i>&nbsp;      and that it is safe to perform a FragmentTransaction on the child FragmentManager of the fragment.
+<i>162</i>&nbsp;      If the fragment&#39;s view is non-null, the fragment&#39;s view Lifecycle is moved to STARTED
+<i>163</i>&nbsp;      immediately after the fragment&#39;s Lifecycle is moved to STARTED.
+<i>164</i>&nbsp;      When the fragment becomes STARTED, the onStart() callback is invoked.
+<i>165</i>&nbsp;      * */
+<i>166</i>&nbsp;  @Override
+<i>167</i>&nbsp;  public void onStart() {
+<b class="nc"><i>168</i>&nbsp;    super.onStart();</b>
+<b class="nc"><i>169</i>&nbsp;    Timber.d(&quot;breadcrumb&quot;);</b>
+<i>170</i>&nbsp;
+<b class="nc"><i>171</i>&nbsp;  }</b>
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;  /* When your activity is no longer visible to the user, it has entered the Stopped state,
+<i>174</i>&nbsp;   *  and the system invokes the onStop() callback. This may occur, for example,
+<i>175</i>&nbsp;   *  when a newly launched activity covers the entire screen. The system may also call onStop()
+<i>176</i>&nbsp;   *  when the activity has finished running, and is about to be terminated.
+<i>177</i>&nbsp;   * */
+<i>178</i>&nbsp;  @Override
+<i>179</i>&nbsp;  public void onStop() {
+<b class="nc"><i>180</i>&nbsp;    super.onStop();</b>
+<b class="nc"><i>181</i>&nbsp;    Timber.d(&quot;breadcrumb&quot;);</b>
+<b class="nc"><i>182</i>&nbsp;    if (adapter != null) adapter.stopListening();</b>
+<b class="nc"><i>183</i>&nbsp;  }</b>
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;  @Override
+<i>186</i>&nbsp;  public void onSaveInstanceState(@NonNull Bundle outState) {
+<b class="nc"><i>187</i>&nbsp;    super.onSaveInstanceState(outState);</b>
+<b class="nc"><i>188</i>&nbsp;    outState.putString(ARG_PARAM1, this.uid);</b>
+<b class="nc"><i>189</i>&nbsp;    Timber.i(&quot;Saved instance state&quot;);</b>
+<b class="nc"><i>190</i>&nbsp;  }</b>
+<i>191</i>&nbsp;
+<i>192</i>&nbsp;  /* After all of the exit animations and transitions have completed, and the
+<i>193</i>&nbsp;  fragment&#39;s view has been detached from the window, the fragment&#39;s view Lifecycle is
+<i>194</i>&nbsp;  moved into the DESTROYED state and emits the ON_DESTROY event to its observers. The
+<i>195</i>&nbsp;  fragment then invokes its onDestroyView() callback. At this point, the fragment&#39;s view
+<i>196</i>&nbsp;  has reached the end of its lifecycle and getViewLifecycleOwnerLiveData() returns a null value.
+<i>197</i>&nbsp;  At this point, all references to the fragment&#39;s view should be removed,
+<i>198</i>&nbsp;  allowing the fragment&#39;s view to be garbage collected.
+<i>199</i>&nbsp;  */
+<i>200</i>&nbsp;  @Override
+<i>201</i>&nbsp;  public void onDestroyView() {
+<b class="nc"><i>202</i>&nbsp;    super.onDestroyView();</b>
+<b class="nc"><i>203</i>&nbsp;    Timber.d(&quot;breadcrumb&quot;);</b>
+<b class="nc"><i>204</i>&nbsp;  }</b>
+<i>205</i>&nbsp;
+<i>206</i>&nbsp;  @Override
+<i>207</i>&nbsp;  public void onDestroy() {
+<b class="nc"><i>208</i>&nbsp;    firebaseListenerRegs.forEach(ListenerRegistration::remove);</b>
+<b class="nc"><i>209</i>&nbsp;    super.onDestroy();</b>
+<i>210</i>&nbsp;    //detach listeners when Activity destroyed
+<b class="nc"><i>211</i>&nbsp;  }</b>
+<i>212</i>&nbsp;
+<i>213</i>&nbsp;  /* onDetach() is always called after any Lifecycle state changes. */
+<i>214</i>&nbsp;  @Override
+<i>215</i>&nbsp;  public void onDetach() {
+<b class="nc"><i>216</i>&nbsp;    super.onDetach();</b>
+<b class="nc"><i>217</i>&nbsp;    firebaseListenerRegs.forEach(ListenerRegistration::remove);</b>
+<b class="nc"><i>218</i>&nbsp;    Timber.d(&quot;breadcrumb&quot;);</b>
+<b class="nc"><i>219</i>&nbsp;  }</b>
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;  private void setProfilePic(User user, View view) {
+<i>222</i>&nbsp;    // TODO: enable cache
+<b class="nc"><i>223</i>&nbsp;    ImageView profilePic = view.findViewById(R.id.profile_picture);</b>
+<b class="nc"><i>224</i>&nbsp;    Timber.i(user.toString());</b>
+<b class="nc"><i>225</i>&nbsp;    if (user.getProfilePicUrl() != null) {</b>
+<b class="nc"><i>226</i>&nbsp;      if (user.getProfilePicUrl().startsWith(&quot;http&quot;)) {</b>
+<b class="nc"><i>227</i>&nbsp;        Glide.with(profilePic.getContext())</b>
+<b class="nc"><i>228</i>&nbsp;                .load(user.getProfilePicUrl())</b>
+<b class="nc"><i>229</i>&nbsp;                .placeholder(R.drawable.unknown_user)</b>
+<b class="nc"><i>230</i>&nbsp;                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)</b>
+<b class="nc"><i>231</i>&nbsp;                .skipMemoryCache(false)</b>
+<b class="nc"><i>232</i>&nbsp;                .circleCrop()</b>
+<b class="nc"><i>233</i>&nbsp;                .into(profilePic);</b>
+<i>234</i>&nbsp;      } else {
+<i>235</i>&nbsp;        // Get reference to the image file in Cloud Storage, download route image, use stock photo if fail
+<b class="nc"><i>236</i>&nbsp;        StorageReference profilePicRef = FirebaseStorageRepository.getInstance().get(user.getProfilePicUrl());</b>
+<i>237</i>&nbsp;
+<b class="nc"><i>238</i>&nbsp;        Glide.with(profilePic.getContext())</b>
+<b class="nc"><i>239</i>&nbsp;                .load(profilePicRef)</b>
+<b class="nc"><i>240</i>&nbsp;                .placeholder(R.drawable.unknown_user)</b>
+<b class="nc"><i>241</i>&nbsp;                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)</b>
+<b class="nc"><i>242</i>&nbsp;                .skipMemoryCache(false)</b>
+<b class="nc"><i>243</i>&nbsp;                .circleCrop()</b>
+<b class="nc"><i>244</i>&nbsp;                .into(profilePic);</b>
+<i>245</i>&nbsp;      }
+<i>246</i>&nbsp;    }
+<b class="nc"><i>247</i>&nbsp;  }</b>
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;  private void setFollowerCount(User user) {
+<i>250</i>&nbsp;    try {
+<b class="nc"><i>251</i>&nbsp;      followerCountView.setText(String.valueOf(user.getFollowers().size()));</b>
+<b class="nc"><i>252</i>&nbsp;      followerCountView.setOnClickListener(new View.OnClickListener() {</b>
+<i>253</i>&nbsp;        @Override
+<i>254</i>&nbsp;        public void onClick(View view) {
+<i>255</i>&nbsp;          Fragment fragment = new UserListFragment();
+<i>256</i>&nbsp;          Bundle bundle = new Bundle();
+<i>257</i>&nbsp;
+<i>258</i>&nbsp;          bundle.putString(&quot;uid&quot;, user.getId());
+<i>259</i>&nbsp;          bundle.putString(&quot;fieldName&quot;, &quot;followers&quot;);
+<i>260</i>&nbsp;          fragment.setArguments(bundle);
+<i>261</i>&nbsp;          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+<i>262</i>&nbsp;                  .beginTransaction()
+<i>263</i>&nbsp;                  .add(R.id.fragment_container_view, fragment)
+<i>264</i>&nbsp;                  .addToBackStack(this.getClass().getCanonicalName())
+<i>265</i>&nbsp;                  .commit();
+<i>266</i>&nbsp;        }
+<i>267</i>&nbsp;      });
+<b class="nc"><i>268</i>&nbsp;      Timber.i(&quot;Set follower count&quot;);</b>
+<b class="nc"><i>269</i>&nbsp;    } catch (Exception exc) {</b>
+<b class="nc"><i>270</i>&nbsp;      Timber.w(&quot;Could not set follower count&quot;);</b>
+<b class="nc"><i>271</i>&nbsp;      Timber.e(exc);</b>
+<b class="nc"><i>272</i>&nbsp;    }</b>
+<b class="nc"><i>273</i>&nbsp;  }</b>
+<i>274</i>&nbsp;
+<i>275</i>&nbsp;  private void setFollowingCount(User user) {
+<i>276</i>&nbsp;    try {
+<b class="nc"><i>277</i>&nbsp;      followingCountView.setText(String.valueOf(user.getFollowing().size()));</b>
+<b class="nc"><i>278</i>&nbsp;      followingCountView.setOnClickListener(new View.OnClickListener() {</b>
+<i>279</i>&nbsp;        @Override
+<i>280</i>&nbsp;        public void onClick(View view) {
+<i>281</i>&nbsp;          Fragment fragment = new UserListFragment();
+<i>282</i>&nbsp;          Bundle bundle = new Bundle();
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;          bundle.putString(&quot;uid&quot;, user.getId());
+<i>285</i>&nbsp;          bundle.putString(&quot;fieldName&quot;, &quot;following&quot;);
+<i>286</i>&nbsp;          fragment.setArguments(bundle);
+<i>287</i>&nbsp;          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+<i>288</i>&nbsp;                  .beginTransaction()
+<i>289</i>&nbsp;                  .add(R.id.fragment_container_view, fragment)
+<i>290</i>&nbsp;                  .addToBackStack(this.getClass().getCanonicalName())
+<i>291</i>&nbsp;                  .commit();
+<i>292</i>&nbsp;        }
+<i>293</i>&nbsp;      });
+<b class="nc"><i>294</i>&nbsp;      Timber.i(&quot;Set follow count&quot;);</b>
+<b class="nc"><i>295</i>&nbsp;    } catch (Exception exc) {</b>
+<b class="nc"><i>296</i>&nbsp;      Timber.w(&quot;Could not set follow count&quot;);</b>
+<b class="nc"><i>297</i>&nbsp;      Timber.e(exc);</b>
+<b class="nc"><i>298</i>&nbsp;    }</b>
+<b class="nc"><i>299</i>&nbsp;  }</b>
+<i>300</i>&nbsp;
+<i>301</i>&nbsp;  private void setFollowSwitch(User user) {
+<b class="nc"><i>302</i>&nbsp;    assert this.uid != null &amp;&amp; user.getId() != null;</b>
+<b class="nc"><i>303</i>&nbsp;    String loggedInUserUid = liveUserVM.getUser().getValue().getId();</b>
+<i>304</i>&nbsp;
+<i>305</i>&nbsp;//    String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+<b class="nc"><i>306</i>&nbsp;    followSwitch.setOnCheckedChangeListener(null);</b>
+<i>307</i>&nbsp;
+<i>308</i>&nbsp;    // check if loggedInUser already follows profileUser
+<b class="nc"><i>309</i>&nbsp;    followSwitch.setChecked(</b>
+<b class="nc"><i>310</i>&nbsp;            user.getFollowers().stream().anyMatch(</b>
+<b class="nc"><i>311</i>&nbsp;                    follower -&gt; follower.getId().equals(loggedInUserUid)));</b>
+<i>312</i>&nbsp;
+<b class="nc"><i>313</i>&nbsp;    followSwitch.setOnCheckedChangeListener((compoundButton, isOn) -&gt; {</b>
+<b class="nc"><i>314</i>&nbsp;      if (isOn) {</b>
+<i>315</i>&nbsp;        // follow action triggers unblock
+<b class="nc"><i>316</i>&nbsp;        Timber.i(&quot;Follow event recorded: %s -&gt; %s&quot;, loggedInUserUid, user.getId());</b>
+<b class="nc"><i>317</i>&nbsp;        UserRepository.getInstance().follow(loggedInUserUid, user.getId());</b>
+<i>318</i>&nbsp;      } else {
+<b class="nc"><i>319</i>&nbsp;        Timber.i(&quot;UnFollow event recorded: %s -&gt; %s&quot;, loggedInUserUid, user.getId());</b>
+<b class="nc"><i>320</i>&nbsp;        UserRepository.getInstance().unfollow(loggedInUserUid, user.getId());</b>
+<i>321</i>&nbsp;      }
+<b class="nc"><i>322</i>&nbsp;    });</b>
+<b class="nc"><i>323</i>&nbsp;  }</b>
+<i>324</i>&nbsp;
+<i>325</i>&nbsp;  private void setBlockSwitch(User user) {
+<b class="nc"><i>326</i>&nbsp;    assert this.uid != null &amp;&amp; user.getId() != null;</b>
+<b class="nc"><i>327</i>&nbsp;    String loggedInUserUid = liveUserVM.getUser().getValue().getId();</b>
+<i>328</i>&nbsp;//    String loggedInUserUid = FirebaseAuthLiveData.getInstance().getAuth().getUid();
+<b class="nc"><i>329</i>&nbsp;    blockSwitch.setOnCheckedChangeListener(null);</b>
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;    // check if loggedInUser already blocked profileUser
+<b class="nc"><i>332</i>&nbsp;    blockSwitch.setChecked(</b>
+<b class="nc"><i>333</i>&nbsp;            user.getBlockedBy().stream().anyMatch(</b>
+<b class="nc"><i>334</i>&nbsp;                    blocker -&gt; blocker.getId().equals(loggedInUserUid)));</b>
+<i>335</i>&nbsp;
+<b class="nc"><i>336</i>&nbsp;    if (blockSwitch.isChecked()) {</b>
+<b class="nc"><i>337</i>&nbsp;      followSwitch.setEnabled(false);</b>
+<i>338</i>&nbsp;    }
+<i>339</i>&nbsp;
+<b class="nc"><i>340</i>&nbsp;    blockSwitch.setOnCheckedChangeListener((compoundButton, isOn) -&gt; {</b>
+<b class="nc"><i>341</i>&nbsp;      if (isOn) {</b>
+<i>342</i>&nbsp;        // .block(loggedInUserUid, user.getId()) is automatically followed by unfollow (if following before blocking)
+<b class="nc"><i>343</i>&nbsp;        Timber.i(&quot;Block event recorded: %s -&gt; %s&quot;, loggedInUserUid, user.getId());</b>
+<b class="nc"><i>344</i>&nbsp;        UserRepository.getInstance().block(loggedInUserUid, user.getId());</b>
+<b class="nc"><i>345</i>&nbsp;        if (followSwitch.isChecked()) {</b>
+<b class="nc"><i>346</i>&nbsp;          followSwitch.setOnCheckedChangeListener(null);</b>
+<b class="nc"><i>347</i>&nbsp;          followSwitch.setChecked(false);</b>
+<b class="nc"><i>348</i>&nbsp;          setFollowSwitch(user);</b>
+<i>349</i>&nbsp;        }
+<b class="nc"><i>350</i>&nbsp;        followSwitch.setEnabled(false);</b>
+<i>351</i>&nbsp;      } else {
+<b class="nc"><i>352</i>&nbsp;        Timber.i(&quot;Unblock event recorded: %s -&gt; %s&quot;, loggedInUserUid, user.getId());</b>
+<b class="nc"><i>353</i>&nbsp;        UserRepository.getInstance().unblock(loggedInUserUid, user.getId());</b>
+<b class="nc"><i>354</i>&nbsp;        followSwitch.setEnabled(true);</b>
+<i>355</i>&nbsp;      }
+<b class="nc"><i>356</i>&nbsp;    });</b>
+<b class="nc"><i>357</i>&nbsp;  }</b>
+<i>358</i>&nbsp;
+<i>359</i>&nbsp;  public void logOut() {
+<b class="nc"><i>360</i>&nbsp;    if (mAuth.getCurrentUser() != null) mAuth.signOut();</b>
+<b class="nc"><i>361</i>&nbsp;    Timber.i(&quot;Taking user to sign-in screen&quot;);</b>
+<b class="nc"><i>362</i>&nbsp;    startActivity(new Intent(getActivity(), LogInActivity.class));</b>
+<b class="nc"><i>363</i>&nbsp;  }</b>
+<i>364</i>&nbsp;
+<i>365</i>&nbsp;  public void renderProfile(User profileUser, View view) {
+<b class="nc"><i>366</i>&nbsp;    if (profileUser == null) {</b>
+<b class="nc"><i>367</i>&nbsp;      Timber.i(&quot;profileUser is null, this.uid=%s&quot;, ProfileFragment.this.uid);</b>
+<b class="nc"><i>368</i>&nbsp;      return;</b>
+<i>369</i>&nbsp;    }
+<i>370</i>&nbsp;
+<b class="nc"><i>371</i>&nbsp;    uid = profileUser.getId();</b>
+<i>372</i>&nbsp;
+<i>373</i>&nbsp;    // fill in user info
+<b class="nc"><i>374</i>&nbsp;    userNameView.setText(profileUser.getUserName());</b>
+<b class="nc"><i>375</i>&nbsp;    setProfilePic(profileUser, view);</b>
+<b class="nc"><i>376</i>&nbsp;    setFollowerCount(profileUser);</b>
+<b class="nc"><i>377</i>&nbsp;    setFollowingCount(profileUser);</b>
+<b class="nc"><i>378</i>&nbsp;    setFollowSwitch(profileUser);</b>
+<b class="nc"><i>379</i>&nbsp;    setBlockSwitch(profileUser);</b>
+<b class="nc"><i>380</i>&nbsp;    User liveUser = liveUserVM.getUser().getValue();</b>
+<b class="nc"><i>381</i>&nbsp;    assert liveUser != null &amp;&amp; liveUser.getId() != null;</b>
+<b class="nc"><i>382</i>&nbsp;    Timber.i(&quot;Firebase current uid: %s\t\tthis.uid: %s&quot;, liveUser.getId(), uid);</b>
+<b class="nc"><i>383</i>&nbsp;    Timber.i(&quot;Current LiveUser: %s&quot;, liveUser);</b>
+<b class="nc"><i>384</i>&nbsp;    Timber.i(&quot;Current ProfileUser: %s&quot;, profileUserVM.getUser().getValue());</b>
+<i>385</i>&nbsp;
+<i>386</i>&nbsp;    int visibility;
+<i>387</i>&nbsp;
+<i>388</i>&nbsp;    // if a user is looking at his/her own profile, hide Follow and Message buttons, show Logout button and blocked users
+<i>389</i>&nbsp;    // TODO: delete these parts entirely instead of setting to invisible
+<b class="nc"><i>390</i>&nbsp;    if (liveUser.getId().equals(profileUser.getId())) {</b>
+<b class="nc"><i>391</i>&nbsp;      Timber.i(&quot;Viewing self&#39;s profile. Hiding Follow and Message buttons.&quot;);</b>
+<b class="nc"><i>392</i>&nbsp;      visibility = View.GONE;</b>
+<b class="nc"><i>393</i>&nbsp;      signOutButton.setEnabled(true);</b>
+<b class="nc"><i>394</i>&nbsp;      signOutButton.setOnClickListener(unused -&gt; ProfileFragment.this.logOut());</b>
+<b class="nc"><i>395</i>&nbsp;      signOutButton.setVisibility(View.VISIBLE);</b>
+<b class="nc"><i>396</i>&nbsp;      showBlockedUsersButton.setVisibility(View.VISIBLE);</b>
+<b class="nc"><i>397</i>&nbsp;      showBlockedUsersButton.setOnClickListener(new View.OnClickListener() {</b>
+<i>398</i>&nbsp;        @Override
+<i>399</i>&nbsp;        public void onClick(View view) {
+<i>400</i>&nbsp;          Fragment fragment = new UserListFragment();
+<i>401</i>&nbsp;          Bundle bundle = new Bundle();
+<i>402</i>&nbsp;
+<i>403</i>&nbsp;          bundle.putString(&quot;uid&quot;, liveUser.getId());
+<i>404</i>&nbsp;          bundle.putString(&quot;fieldName&quot;, &quot;blocked&quot;);
+<i>405</i>&nbsp;          fragment.setArguments(bundle);
+<i>406</i>&nbsp;          ((FragmentActivity) view.getContext()).getSupportFragmentManager()
+<i>407</i>&nbsp;                  .beginTransaction()
+<i>408</i>&nbsp;                  .add(R.id.fragment_container_view, fragment)
+<i>409</i>&nbsp;                  .addToBackStack(this.getClass().getCanonicalName())
+<i>410</i>&nbsp;                  .commit();
+<i>411</i>&nbsp;        }
+<i>412</i>&nbsp;      });
+<i>413</i>&nbsp;    } else {
+<b class="nc"><i>414</i>&nbsp;      visibility = View.VISIBLE;</b>
+<b class="nc"><i>415</i>&nbsp;      signOutButton.setEnabled(false);</b>
+<b class="nc"><i>416</i>&nbsp;      signOutButton.setVisibility(View.GONE);</b>
+<b class="nc"><i>417</i>&nbsp;      showBlockedUsersButton.setVisibility(View.GONE);</b>
+<i>418</i>&nbsp;    }
+<b class="nc"><i>419</i>&nbsp;    followSwitch.setVisibility(visibility);</b>
+<b class="nc"><i>420</i>&nbsp;    blockSwitch.setVisibility(visibility);</b>
+<b class="nc"><i>421</i>&nbsp;    messageButton.setVisibility(visibility);</b>
+<b class="nc"><i>422</i>&nbsp;  }</b>
+<i>423</i>&nbsp;
+<i>424</i>&nbsp;  private void renderRecyclerView(User user, View view) {
+<b class="nc"><i>425</i>&nbsp;    Timber.i(&quot;Rendering feed by user: %s&quot;, user);</b>
+<b class="nc"><i>426</i>&nbsp;    Query query = PostRepository.getInstance().getMany(user.getId(), 20);</b>
+<b class="nc"><i>427</i>&nbsp;    FirestoreRecyclerOptions&lt;Post&gt; postsOptions = new FirestoreRecyclerOptions.Builder&lt;Post&gt;()</b>
+<b class="nc"><i>428</i>&nbsp;            .setQuery(query, Post.class)</b>
+<b class="nc"><i>429</i>&nbsp;            .build();</b>
+<i>430</i>&nbsp;
+<b class="nc"><i>431</i>&nbsp;    adapter = new FirestorePostAdapter(postsOptions, liveUserVM.getUser().getValue().getId());</b>
+<b class="nc"><i>432</i>&nbsp;    layoutManager = new LinearLayoutManager(getActivity());</b>
+<b class="nc"><i>433</i>&nbsp;    layoutManager.setReverseLayout(false);</b>
+<b class="nc"><i>434</i>&nbsp;    layoutManager.setStackFromEnd(false);</b>
+<i>435</i>&nbsp;
+<b class="nc"><i>436</i>&nbsp;    recyclerView = view.findViewById(R.id.profile_recycler_view);</b>
+<b class="nc"><i>437</i>&nbsp;    recyclerView.setLayoutManager(layoutManager);</b>
+<b class="nc"><i>438</i>&nbsp;    recyclerView.setAdapter(adapter);</b>
+<b class="nc"><i>439</i>&nbsp;    recyclerView.setHasFixedSize(false);</b>
+<b class="nc"><i>440</i>&nbsp;    recyclerView.setNestedScrollingEnabled(false);</b>
+<i>441</i>&nbsp;
+<b class="nc"><i>442</i>&nbsp;    scrollview = view.findViewById(R.id.profile_scroll_view);</b>
+<b class="nc"><i>443</i>&nbsp;    scrollview.setSmoothScrollingEnabled(true);</b>
+<i>444</i>&nbsp;
+<b class="nc"><i>445</i>&nbsp;    adapter.startListening();</b>
+<i>446</i>&nbsp;
+<b class="nc"><i>447</i>&nbsp;    Timber.i(&quot;FirestorePostAdapter bound to RecyclerView with size %d&quot;, adapter.getItemCount());</b>
+<b class="nc"><i>448</i>&nbsp;    query.get().addOnSuccessListener(queryDocumentSnapshots -&gt; Timber.i(&quot;%d items found&quot;, queryDocumentSnapshots.getDocuments().size()));</b>
+<i>449</i>&nbsp;
+<i>450</i>&nbsp;    // hide search view on scroll
+<b class="nc"><i>451</i>&nbsp;    bottomNavView = requireActivity().findViewById(R.id.bottom_navigation_view);</b>
+<b class="nc"><i>452</i>&nbsp;    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {</b>
+<i>453</i>&nbsp;      @Override
+<i>454</i>&nbsp;      public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+<i>455</i>&nbsp;        super.onScrolled(recyclerView, dx, dy);
+<i>456</i>&nbsp;
+<i>457</i>&nbsp;        if (layoutManager.findFirstCompletelyVisibleItemPosition() != 0) {
+<i>458</i>&nbsp;          if (dy &gt; 0)
+<i>459</i>&nbsp;            bottomNavView.animate().translationY(bottomNavView.getHeight()).setDuration(1000); // scrolling down
+<i>460</i>&nbsp;          else bottomNavView.animate().translationY(0).setDuration(1000); // scrolling up
+<i>461</i>&nbsp;        }
+<i>462</i>&nbsp;      }
+<i>463</i>&nbsp;
+<i>464</i>&nbsp;      @Override
+<i>465</i>&nbsp;      public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+<i>466</i>&nbsp;        super.onScrollStateChanged(recyclerView, newState);
+<i>467</i>&nbsp;      }
+<i>468</i>&nbsp;    });
+<b class="nc"><i>469</i>&nbsp;  }</b>
+<i>470</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-10-22 21:46</div>
+</div>
+</body>
+</html>

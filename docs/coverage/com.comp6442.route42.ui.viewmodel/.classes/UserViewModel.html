@@ -1,0 +1,127 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UserViewModel</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.comp6442.route42.ui.viewmodel</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UserViewModel (com.comp6442.route42.ui.viewmodel)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserViewModel</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    43.8%
+  </span>
+  <span class="absValue">
+    (7/ 16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.ui.viewmodel;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import androidx.lifecycle.LiveData;
+<i>4</i>&nbsp;import androidx.lifecycle.MutableLiveData;
+<i>5</i>&nbsp;import androidx.lifecycle.ViewModel;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import com.comp6442.route42.data.model.User;
+<i>8</i>&nbsp;import com.comp6442.route42.data.repository.UserRepository;
+<i>9</i>&nbsp;import com.google.firebase.firestore.DocumentReference;
+<i>10</i>&nbsp;import com.google.firebase.firestore.ListenerRegistration;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import timber.log.Timber;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;// ViewModels are independent of configuration changes and are cleared when activity/fragment is destroyed
+<b class="fc"><i>15</i>&nbsp;public class UserViewModel extends ViewModel {</b>
+<b class="fc"><i>16</i>&nbsp;  private final MutableLiveData&lt;User&gt; user = new MutableLiveData&lt;&gt;();</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;  //the ViewModel only exposes immutable LiveData objects to the observers.
+<i>19</i>&nbsp;  public LiveData&lt;User&gt; getUser() {
+<b class="fc"><i>20</i>&nbsp;    return user;</b>
+<i>21</i>&nbsp;  }
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;  public void setUser(User user) {
+<b class="fc"><i>24</i>&nbsp;    if (user != null) this.user.setValue(user);</b>
+<b class="fc"><i>25</i>&nbsp;  }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;  public ListenerRegistration addSnapshotListener(String uid) {
+<b class="fc"><i>29</i>&nbsp;    if (uid != null) {</b>
+<b class="nc"><i>30</i>&nbsp;      DocumentReference docPath = UserRepository.getInstance().getOne(uid);</b>
+<b class="nc"><i>31</i>&nbsp;      return docPath.addSnapshotListener((value, error) -&gt; {</b>
+<b class="nc"><i>32</i>&nbsp;        if (error == null) {</b>
+<b class="nc"><i>33</i>&nbsp;          assert value != null;</b>
+<b class="nc"><i>34</i>&nbsp;          setUser(value.toObject(User.class));</b>
+<b class="nc"><i>35</i>&nbsp;          Timber.i(&quot;added snapshot listener to uid: %s&quot;, uid);</b>
+<b class="nc"><i>36</i>&nbsp;          return;</b>
+<i>37</i>&nbsp;        }
+<b class="nc"><i>38</i>&nbsp;        Timber.e(error);</b>
+<b class="nc"><i>39</i>&nbsp;      });</b>
+<b class="fc"><i>40</i>&nbsp;    } else return null; // TODO fix, don&#39;t return null</b>
+<i>41</i>&nbsp;  }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-10-22 21:46</div>
+</div>
+</body>
+</html>
