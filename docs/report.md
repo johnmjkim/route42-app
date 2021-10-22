@@ -293,9 +293,8 @@ User Interactivity
 2. The ability for users to ‘follow’ other users. There must be an adjustment to either the user’s
    timeline in relation to their following users or a section specifically dedicated to posts by
    followed users. [stored in-memory] (medium)
-5. Scheduled actions. At least two different types of actions must be schedulable. For example, a
+3. Scheduled actions. At least two different types of actions must be schedulable. For example, a
    user can schedule a post, a like, a follow, a comment, etc. (medium)
-   1. Like: long-press thumb-up button
 
 User Privacy
 
