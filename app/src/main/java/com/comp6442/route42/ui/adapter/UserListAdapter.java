@@ -66,7 +66,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     if (user.getProfilePicUrl().startsWith("http")) {
       Glide.with(viewHolder.userIcon.getContext())
               .load(user.getProfilePicUrl())
-              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
               .skipMemoryCache(false)
               .circleCrop()
               .into(viewHolder.userIcon);
@@ -77,7 +77,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
       Glide.with(viewHolder.userIcon.getContext())
               .load(profilePicRef)
               .placeholder(R.drawable.unknown_user)
-              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
               .skipMemoryCache(false)
               .circleCrop()
               .into(viewHolder.userIcon);

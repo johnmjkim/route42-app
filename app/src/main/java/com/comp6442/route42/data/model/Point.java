@@ -1,6 +1,5 @@
 package com.comp6442.route42.data.model;
 
-import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -86,15 +85,7 @@ public class Point implements Parcelable {
       parcel.writeDouble(longitude);
     }
   }
-
-  public LatLng toLatLng() {
-    return new LatLng(this.latitude, this.longitude);
-  }
-
-  public static Point fromLocation(Location location) {
-    return new Point(location.getLatitude(), location.getLongitude());
-  }
-  public static Point fromLatLng(LatLng location) {
-    return new Point(location.latitude, location.longitude);
+  public static LatLng latLngFromLocation(android.location.Location location) {
+    return  new LatLng(location.getLatitude(), location.getLongitude());
   }
 }

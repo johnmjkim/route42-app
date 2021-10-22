@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
   public void onDestroy() {
     super.onDestroy();
     //detach listeners when Activity destroyed
+    if(firebaseListenerRegs.size()>1)//check firebasListenerRegs is not null
     firebaseListenerRegs.forEach(ListenerRegistration::remove);
   }
 }

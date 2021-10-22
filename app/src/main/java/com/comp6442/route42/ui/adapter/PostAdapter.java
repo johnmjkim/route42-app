@@ -61,7 +61,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     if (post.getProfilePicUrl().startsWith("http")) {
       Glide.with(viewHolder.imageView.getContext())
               .load(post.getProfilePicUrl())
-              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
               .skipMemoryCache(false)
               .circleCrop()
               .into(viewHolder.userIcon);
@@ -72,7 +72,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
       Glide.with(viewHolder.userIcon.getContext())
               .load(profilePicRef)
               .placeholder(R.drawable.unknown_user)
-              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
               .skipMemoryCache(false)
               .circleCrop()
               .into(viewHolder.userIcon);
@@ -82,7 +82,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     if (post.getImageUrl().startsWith("http")) {
       Glide.with(viewHolder.imageView.getContext())
               .load(post.getImageUrl())
-              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
               .skipMemoryCache(false)
               .centerCrop()
               .into(viewHolder.imageView);
@@ -91,7 +91,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
       StorageReference postImageRef = FirebaseStorageRepository.getInstance().get(post.getImageUrl());
       Glide.with(viewHolder.imageView.getContext())
               .load(postImageRef)
-              .diskCacheStrategy(DiskCacheStrategy.NONE)
+              .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
               .skipMemoryCache(false)
               .centerCrop()
               .into(viewHolder.imageView);

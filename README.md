@@ -79,7 +79,13 @@
 6. Open the project root directory in Android Studio. It should recognize `build.gradle` files and set up the project for you.
 7. Compile and run.
 
-## Fake data
+# Testing
+
+```
+./gradlew createDebugCoverageReport
+```
+
+# Fake data
 
 In the app-level `build.gradle` file, you will see the following line:
 

@@ -34,6 +34,9 @@
 - Conflicts will be resolved through civil discussion and democratic voting process involving all parties interested in the matter.
 	- For example, if someone wants to change the direction or the concept of the app, everyone must be involved in the decision-making. If someone wants to change a small class in the project, then that can be done either through voting, or by mutual agreement upon directly discussing with the person who created the class.
 	
+- Task assignments: Trello Kanban board
+
+	<img src="report.assets/trello2.png" alt="trello2" style="zoom:50%;" />
 
 ## Application Description
 
@@ -46,7 +49,11 @@ Route42 is a social networking app for athletes of various levels. With Route42,
 3. Follow other users, and view and like other people's workouts.
 4. Search for posts by username, hashtags, and proximity to the user's location
 
-==TODO add screenshots==
+<img src="Report.assets/screenshots/screens.png" alt="screens" style="zoom:60%;" />
+
+Image: Feed, Activity logging, Profile, Route, and Nearest Neighbor Search screens (Left to Right)
+
+
 
 ### Use Case Example
 
@@ -158,52 +165,57 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 
 ### **Grammars**
 
-*Production Rules* <br>
-\<Term> ::=  \<Factor> | \<Term> + \<Term> | \<Term> + \<Connector>
-<br>
-\<Factor> ::= \<Keyword> | \<bracket>
-<br>
-\<Connector> ::= \<and> | \<or>
-<br>
+- `<Term>      ::=    <Expr> | <Term> + <Term> | <Term> + <Operator>`
+- `<Expr>      ::= <Keyword> | <bracket>`
+- `<Operator>  ::=     <and> | <or>`
 
-*[How do you design the grammar? What are the advantages of your designs?]*<br>
+Advantage
 
-- Our grammar is simple and obvious. Dividing input data into factors and connectors to understand it easily.<br>
-- This is using for search data so mostly input data is keyword and need to classify it to bracket and connectors <br>
+- Parser Tree is a binary tree as opposed to being a n-ary tree, making it easier to construct the Parser Tree.
 
-*If there are several grammars, list them all under this section and what they relate to.*
+Disadvantage
+
+- When multiple AND / OR operations are used in the query (i.e. `"hashtag: #running AND hashtag: #jogging"`), Parser Tree does not make optimizations. While Firestore supports `.arrayContains()` operation, our Parser Tree represent each `AND/OR` as a single node. In other words, `"hashtag: #running AND hashtag: #jogging"` could be represented as a single node in an n-ary tree, but 
 
 ### **Tokenizer and Parsers**
 
-*[Where do you use tokenisers and parsers? How are they built? What are the advantages of the designs?]*
-
-Every token either contains an operator and two expressions, or a key and value.<br>Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. <br>Example 1 below is an example of a token that has the key `hashtags` and value `["test"]`. <br>For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
+- Every token either contains an operator and two expressions, or a key and value.
+- Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. 
+- For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
 
 ```
 EXAMPLES
-1. "test" -> {hashtags: ["test"]}
+1. "test test2" -> {hashtags: ["test", "test2"]} -> 
+Node(
+	Node(null, "hashtags:test", null), 
+	OR, 
+	Node(null, "hashtags:test2", null)
+)
 
-2. "username: xxx hashtags: #hashtag #android #app" ->
+2. "username: xxx AND hashtags: #hashtag1 #android #app" ->
 {OR: [
     {userName: "xxx"}, 
-    {hashtags: ["#hashtag", "#android", "#app"]}
+    {hashtags: ["#hashtag1", "#android", "#app"]}
   ]
 }
-
-3. "(username: xxxx or hashtags: #hashtag #android #app) and username: yyy" ->
- {AND: [
-     {OR: [
-         {userName: "xxx"}, 
-         {hashtags: ["#hashtag", "#android", "#app"]}
-     ]},
-     {userName: "yyy"}
- ]}
-
+Node(
+	Node(null, "username:xxx", null), 
+	AND, 
+	Node(
+		Node(
+			null, 
+			"hashtags: #hashtag1", 
+			null
+		), 
+		OR, ,
+		Node(
+			Node(null, "hashtags: #android", null), 
+			OR, 
+			Node(null, "hashtags: #app", null)
+		)
+	)
+)
 ```
-
-### **Other**
-
-*[What other design decisions have you made which you feel are relevant? Feel free to separate these into their own subheadings.]*
 
 ## Summary of Known Errors and Bugs
 
@@ -223,30 +235,6 @@ EXAMPLES
 
 ## Testing Summary
 
-- Number of test cases: 13
-	- UI Tests : 15
-	- Unit Tests : ??(update later)
-
-- Types of tests created: ...
-
-| UI/Unit Tests  |  Class Name  | Test Description | Code Coverage | Numbers of Tests |
-|      :---:     |    :----:   |      :---      |     :----:     |     :----:     |
-| UI             |  LoginTest  | <ul><li>Check login with correct and wrong id and password</li></ul> | N/A           | 2 |
-| UI             |  MainTest   | <ul><li>Switch the page throughout navigation bar</li><li>create posts and check the post is properly made</li><li>cancel making a post</li><li>making a schduled post</li><li>like and unlike the post</li><li> block and unblock user</li><li>follow and unfollow user</li><li>block following user</li><li>follow blocked user</li></ul> | N/A           | #of tests |
-| Unit           |  KNearestNeighbourServiceTest  | <ul><li>Test call method of rest-api service post</li><li>Test printing Strings</li></ul> | 70%           | 2 |
-| Unit           |  QueryStringTest  | <ul><li>Test query is properly made</li></ul> | 100%           | 2 |
-| Unit           |  SearchServiceTest  | <ul><li>Test search input data is properly made to the query</li><li>Calling query</li></ul> | 100%           | 1 |
-| Unit           |  CryptoTest  | <ul><li>Check Encryption</li></ul> | 100%           | 3 |
-| Unit           |  UserListAdapterTest  | <ul><li>?</li></ul> | ?           | ? |
-| Unit           |  BaseActivityTest  | <ul><li>Check factors</li></ul> | 100%           | 1 |
-| Unit           |  PointTest  | <ul><li>Check latitude and longitude</li></ul> | 75%           | 4 |
-| Unit           |  UserTest  | <ul><li>Check factors</li></ul> | 92%           | 7 |
-| Unit           |  SchedulableTest  | <ul><li>?</li></ul> | ?           | ? |
-| Unit           |  UserViewModelTest  | <ul><li>Tests method of getUser and setUser</li> | 75%           | 2 |
-| Unit           |  PostTest  | <ul><li>Check factors</li><li>Check extracting hashtags from input text</li></ul> | 86%           | 17 |
-| Unit           |  ActiveMapViewModelTest  | <ul><li>Check activity data and types</li><li>Check elapsed time</li><li>Check last update time</li><li>Check reset function</li><li>Check pastlocation</li><li>Check snapshot file name</li></ul> | 73%           | 7 |
-
-
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
 
 ## Implemented Features
@@ -256,50 +244,103 @@ EXAMPLES
 - Hard: 1
 - Very Hard: 1
 
-
-
 Improved Search
-
 1. Search functionality can handle partially valid and invalid search queries. (medium)
 
 UI Design and Testing
-
 1. UI tests using espresso or similar. Please note that your tests must be of reasonable quality. (For UI testing, you may use something such as espresso) (hard)
 
 Greater Data Usage, Handling and Sophistication
-
-1. Read data instances from multiple local files in different formats (JSON, XML or
-Bespoken). (easy)
+1. Read data instances from multiple local files in different formats (JSON, XML or Bespoken). (easy)
 2. User profile activity containing a media file (image, animation (e.g. gif), video). (easy)
 3. Use GPS information. (easy)
 4. User statistics. Provide users with the ability to see a report of total views, total followers, total posts, total likes, in a graphical manner. (medium)
 
 User Interactivity
-
 1. The ability to micro-interact with 'posts' (e.g. like, report, etc.) [stored in-memory]. (easy)
 2. The ability for users to ‘follow’ other users. There must be an adjustment to either the user’s timeline in relation to their following users or a section specifically dedicated to posts by followed users. [stored in-memory] (medium)
-5. Scheduled actions. At least two different types of actions must be schedulable. For
-example, a user can schedule a post, a like, a follow, a comment, etc. (medium)
+5. Scheduled actions. At least two different types of actions must be schedulable. For example, a user can schedule a post, a like, a follow, a comment, etc. (medium)
 
 User Privacy
-
 1. Privacy II: A user can only see a profile that is Public (consider that there are at least two types of profiles: public and private). (easy)
 
 Peer to Peer Messaging
-
-1. Privacy I: provide users with the ability to ‘block’ users. Preventing them from
-
-	directly messaging them. (medium)
+1. Privacy I: provide users with the ability to ‘block’ users. Preventing them from directly messaging them. (medium)
 
 Firebase Integration
-
 1. Use Firebase to implement user Authentication/Authorisation. (easy)
+2. Use Firebase to persist all data used in your app (this item replace the requirement to retrieve data from a local file) (medium)
+3. Using Firebase or another remote database to store user posts and having a user’s timeline update as the remote database is updated without restarting the application. E.g. User A makes a post, user B on a separate instance of the application sees user A’s post appear on their timeline without restarting their application. (very hard)
 
-2. Use Firebase to persist all data used in your app (this item replace the requirement
+# Appendix
 
-	to retrieve data from a local file) (medium)
+## Third-party libraries used
 
-3. Using Firebase or another remote database to store user posts and having a user’s
+### Android App
+```
+implementation 'androidx.annotation:annotation:1.2.0'
+implementation 'androidx.activity:activity:1.2.0'
+implementation 'androidx.fragment:fragment:1.3.0'
+implementation 'androidx.appcompat:appcompat:1.3.1'
+implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
+implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+implementation 'androidx.multidex:multidex:2.0.1'
+implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+implementation "androidx.work:work-runtime:2.7.0"
 
-	timeline update as the remote database is updated without restarting the application. E.g. User A makes a post, user B on a separate instance of the application sees user A’s post appear on their timeline without restarting their application. (very hard)
+// ------ utils ------
+implementation 'com.google.code.gson:gson:2.8.8'
+implementation 'com.google.android.material:material:1.4.0'
+implementation 'com.jakewharton.timber:timber:5.0.1'
+
+// ------ Navigation Component ------
+def nav_version = "2.3.5"
+androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+implementation "androidx.navigation:navigation-compose:2.4.0-alpha08"
+implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+implementation "androidx.navigation:navigation-fragment:$nav_version"
+implementation "androidx.navigation:navigation-ui:$nav_version"
+
+// ----------- Glide ----------------
+implementation 'com.github.bumptech.glide:glide:4.12.0'
+annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+// ----------- Google Maps ----------
+implementation 'com.google.android.gms:play-services-location:18.0.0'
+implementation 'com.google.android.gms:play-services-maps:17.0.1'
+
+// ----------- REST API ------------
+implementation 'com.squareup.retrofit2:retrofit:2.8.0'
+implementation 'com.squareup.retrofit2:converter-gson:2.8.0'
+implementation 'com.squareup.okhttp3:logging-interceptor:3.12.7'
+
+// ----------- Firebase ------------
+implementation platform('com.google.firebase:firebase-bom:28.4.0')
+implementation 'com.google.firebase:firebase-analytics'
+implementation 'com.google.firebase:firebase-auth'
+implementation 'com.google.firebase:firebase-firestore:23.0.3'
+implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
+implementation 'com.google.firebase:firebase-storage'
+implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
+implementation 'com.firebase:geofire-android-common:3.1.0'
+
+// ----------- Tests ---------------
+testImplementation 'junit:junit:4.+'
+androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
+androidTestImplementation 'androidx.test:runner:1.4.0'
+androidTestImplementation 'androidx.test:rules:1.4.0'
+implementation "androidx.profileinstaller:profileinstaller:1.1.0-alpha04"```
+```
+
+### REST API
+```
+implementation 'com.google.firebase:firebase-admin:8.1.0'
+implementation 'org.springframework.boot:spring-boot-starter-web:2.5.5'
+implementation 'org.springframework.cloud:spring-cloud-gcp-starter-firestore:1.2.8.RELEASE'
+developmentOnly 'org.springframework.boot:spring-boot-devtools:2.5.5'
+```
 

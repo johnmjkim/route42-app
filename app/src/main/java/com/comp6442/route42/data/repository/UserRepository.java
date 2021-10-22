@@ -1,17 +1,13 @@
 package com.comp6442.route42.data.repository;
 
-import com.comp6442.route42.BuildConfig;
 import com.comp6442.route42.data.model.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 
-import java.util.List;
 import java.util.Objects;
 
 import timber.log.Timber;
