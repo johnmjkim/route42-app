@@ -1,7 +1,5 @@
 package com.comp6442.route42.ui.fragment;
 
-import static com.comp6442.route42.data.model.Post.getHashTagsFromTextInput;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -168,7 +166,7 @@ public class CreatePostFragment extends Fragment {
               "",
               latitude,
               longitude,
-              getHashTagsFromTextInput(postDescription),
+              Post.getHashTagsFromString(postDescription),
               0,
               "snapshots/" + activeMapViewModel.getSnapshotFileName(),
               new ArrayList<>(0));

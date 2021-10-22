@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @IgnoreExtraProperties
@@ -116,12 +115,15 @@ public class Post extends Model implements Parcelable {
     in.createStringArrayList().forEach(s -> this.likedBy.add(FirebaseFirestore.getInstance().document(s)));
   }
 
-  public static List<String> getHashTagsFromTextInput(String textInput) {
+  public static List<String> getHashTagsFromString(String str) {
+
     return Arrays.stream(
-            textInput.toLowerCase()
+            str.toLowerCase()
                     .replaceAll("[^a-zA-Z0-9]", " ")
                     .split(" ")
-    ).map(s -> "#" + s).collect(Collectors.toList());
+    ).filter(s -> !s.trim().isEmpty())
+    .map(s -> "#" + s)
+    .collect(Collectors.toList());
   }
 
   @Override
