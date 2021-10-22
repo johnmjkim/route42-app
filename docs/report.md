@@ -231,33 +231,28 @@ EXAMPLES
 
 - Overall Coverage Summary 
   - Unit Test cases : 15
-
-All unit tests for logical parts (models/objects) are covered with coverage exceeding 70% of all codes related to logical parts (models/objects).
-
-Codes related to logical parts (models/objects) and their coverages are all shown below.
+  - All unit tests for logic parts (models/objects) are covered with coverage exceeding 70% of all codes related to logical parts (models/objects). Models/objects codes and their coverages are all shown below.
 
 <img src="Report.assets/coverage_overall.jpeg" alt="coverage_overall" style="zoom:100%;" />
 
-- Data Model Coverage Summary
+  - Data Model Coverage Summary
 
 <img src="Report.assets/coverage_datamodel.jpeg" alt="coverage_datamodel" style="zoom:100%;" />
 
-- Api Coverage Summary
+  - Api Coverage Summary
 
 <img src="Report.assets/coverage_api.jpeg" alt="coverage_api" style="zoom:100%;" />
 
-- Utils Coverage Summary
+  - Utils Coverage Summary
 
 <img src="Report.assets/coverage_utils.jpeg" alt="coverage_utils" style="zoom:100%;" />
 
-- Others
-  
-Codes that are not for logical parts are as below
-
-  - UI
-  - data repository
-  - utils tasks, xmlresource
-  - built-in classes CustomLogger, MockLocation, MyGlideModule
+  - Others 
+	- Codes that are not for logical parts are as below
+	  - UI
+	  - data repository
+	  - utils tasks, xmlresource
+	  - built-in classes CustomLogger, MockLocation, MyGlideModule
 
 ## Implemented Features
 
