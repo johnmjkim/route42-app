@@ -19,7 +19,7 @@ import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.adapter.UserListAdapter;
-import com.comp6442.route42.ui.viewmodel.UserViewModel;
+import com.comp6442.route42.ui.viewmodel.ProfileUserViewModel;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class UserListFragment extends Fragment {
   private String uid;
   private String fieldName;
 
-  private UserViewModel viewModel;
+  private ProfileUserViewModel profileUserVM;
   private RecyclerView recyclerView;
   private LinearLayoutManager layoutManager;
 
@@ -83,11 +83,11 @@ public class UserListFragment extends Fragment {
       this.fieldName = savedInstanceState.getString(ARG_PARAM2);
     }
 
-    viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+    profileUserVM = new ViewModelProvider(requireActivity()).get(ProfileUserViewModel.class);
 
     if (this.uid != null) {
-      viewModel.loadProfileUser(uid);
-      User user = viewModel.getProfileUser().getValue();
+      profileUserVM.loadProfileUser(uid);
+      User user = profileUserVM.getUser().getValue();
 
       if (user != null) {
         List<User> users = new ArrayList<>();
@@ -135,24 +135,21 @@ public class UserListFragment extends Fragment {
                   });
         });
         String toastText = "";
-        if(usersRef.size()==0){
-          if(fieldName.equals("followers")){
+        if (usersRef.size() == 0) {
+          if (fieldName.equals("followers")) {
             toastText = "No " + fieldName;
-          }
-          else{
+          } else {
             toastText = "Nobody " + fieldName;
           }
-        }
-        else{
-          if(fieldName.equals("followers")){
+        } else {
+          if (fieldName.equals("followers")) {
             toastText = "Total " + usersRef.size() + " " + fieldName;
-          }
-          else{
+          } else {
             toastText = "Total " + usersRef.size() + " people " + fieldName;
           }
 
         }
-        Toast toast = Toast.makeText(getContext(), toastText,Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getContext(), toastText, Toast.LENGTH_SHORT);
         toast.show();
       }
     } else {

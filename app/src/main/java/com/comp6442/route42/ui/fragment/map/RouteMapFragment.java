@@ -38,7 +38,7 @@ public class RouteMapFragment extends MapFragment {
   public static PointMapFragment newInstance(Post param1) {
     PointMapFragment fragment = new PointMapFragment();
     Bundle args = new Bundle();
-    args.putParcelable(ARG_PARAM1, (Post) param1);
+    args.putParcelable(ARG_PARAM1, param1);
     fragment.setArguments(args);
     return fragment;
   }

@@ -14,11 +14,11 @@ import retrofit2.http.Query;
 public interface RestApiClient {
 
   @GET("post/{id}")
-  public Call<Post> getPost(@Path("id") String postId);
+  Call<Post> getPost(@Path("id") String postId);
 
   @POST("search/")
-  public Call<List<Post>> search(@Body QueryString query);
+  Call<List<Post>> search(@Body QueryString query);
 
   @GET("search/knn")
-  public Call<List<Post>> getKNearestNeighbors(@Query("k") int k, @Query("lat") Double lat, @Query("lon") Double lon);
+  Call<List<Post>> getKNearestNeighbors(@Query("k") int k, @Query("lat") Double lat, @Query("lon") Double lon);
 }

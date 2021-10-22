@@ -19,8 +19,8 @@ import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
 import com.comp6442.route42.data.repository.PostRepository;
-import com.comp6442.route42.ui.fragment.map.PointMapFragment;
 import com.comp6442.route42.ui.fragment.ProfileFragment;
+import com.comp6442.route42.ui.fragment.map.PointMapFragment;
 import com.comp6442.route42.ui.fragment.map.RouteMapFragment;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.storage.StorageReference;
@@ -97,20 +97,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
               .into(viewHolder.imageView);
     }
 
-    viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Fragment fragment = new RouteMapFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("post", post);
-        fragment.setArguments(bundle);
-        ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_container_view, fragment)
-                .addToBackStack(this.getClass().getCanonicalName())
-                .commit();
-      }
-    });
+    if (post.getRoute().size() > 0) {
+      viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Fragment fragment = new RouteMapFragment();
+          Bundle bundle = new Bundle();
+          bundle.putParcelable("post", post);
+          fragment.setArguments(bundle);
+          ((FragmentActivity) viewHolder.itemView.getContext()).getSupportFragmentManager()
+                  .beginTransaction()
+                  .add(R.id.fragment_container_view, fragment)
+                  .addToBackStack(this.getClass().getCanonicalName())
+                  .commit();
+        }
+      });
+    }
 
     Timber.d("OnBindView complete.");
   }

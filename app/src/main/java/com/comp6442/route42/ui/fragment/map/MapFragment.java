@@ -161,6 +161,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
       fusedLocationProviderClient.getLastLocation()
               .addOnSuccessListener(location -> {
                 if (location != null) renderMap(location);
+                else Timber.w("Could not fetch device location");
               });
     } catch (SecurityException e) {
       Timber.w("Unable to get current location");
@@ -176,7 +177,7 @@ public abstract class MapFragment extends Fragment implements OnMapReadyCallback
   @Override
   public void onPause() {
     super.onPause();
-    getActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
+    requireActivity().findViewById(R.id.Btn_Create_Activity).setVisibility(View.VISIBLE);
     if (mapFragment != null) mapFragment.onPause();
   }
 
