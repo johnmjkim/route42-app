@@ -236,13 +236,13 @@ EXAMPLES
 	- Searching with specific hashtag
 	- Clicking like, block, follow button for checking like/unlike, block/unblock, follow/unfollow
 	  
-  - Part of methods for UI Tests uses references listed as below:
-	- [MyViewAction](https://stackoverflow.com/questions/28476507/using-espresso-to-click-view-inside-recyclerview-item)
+  - Part of methods for UI Tests below methods which are based on uses references:
+	- `MyViewAction`
 	  - Activates an item (e.g. like button, follow button etc) of specific post in recyclerview
-	- [RecyclerViewMatcher](https://github.com/levibostian/RecyclerViewMatcher)
+	- `RecyclerViewMatcher`
 	  - Detects status of an item of specific post in recyclerview
 	  - Returns false if no item and input id is matched
-	- [setChecked](https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked)
+	- `setChecked`
 	  - Sets status of an item
 
 
