@@ -4,6 +4,7 @@ import static com.comp6442.route42.data.model.Post.getHashTagsFromTextInput;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -145,8 +146,9 @@ public class CreatePostFragment extends Fragment {
     User liveUser = liveUserVM.getUser().getValue();
     assert liveUser != null;
     String postDescription = postDescriptionInput.getText().toString().trim();
-    Double latitude = activeMapViewModel.getDeviceLocation().getValue().getLatitude();
-    Double longitude = activeMapViewModel.getDeviceLocation().getValue().getLongitude();
+    Location location = activeMapViewModel.getDeviceLocation().getValue();
+    Double latitude = location == null? 0.0 : location.getLatitude();
+    Double longitude = location == null? 0.0 : location.getLongitude();
     List<LatLng> pastLocations = activeMapViewModel.getPastLocations();
     List<Point> route = new ArrayList<>(pastLocations.size());
     pastLocations.forEach(loc-> {
