@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class SchedulablePostTest {
@@ -29,12 +31,13 @@ public class SchedulablePostTest {
   private final String locationName = "Sydney";
   private final Double latitude = -33.865;
   private final Double longitude = 151.209;
-  Context context = Mockito.mock(Context.class);
-  PostScheduler schedulablePost = new PostScheduler(snapshotFilePath, snapshotFilename, uid, userName, isPublic, profilePicUrl, postDescription, locationName, latitude, longitude);
   private final UUID workId = null;
   private final WorkManager workManager = null;
+  List route = new ArrayList();
+  Context context = Mockito.mock(Context.class);
+  PostScheduler schedulablePost = new PostScheduler(snapshotFilePath, snapshotFilename, uid, userName, isPublic, profilePicUrl, postDescription, route, locationName, latitude, longitude);
 
-  @Before
+    @Before
   public void setUp() {
     schedulablePost.schedule(context, 30);
   }

@@ -24,6 +24,7 @@ public class PostTest {
   DocumentReference documentReference;
   Date date = new Date();
   Parcel parcelOutput;
+  List route = new ArrayList();
 
   private void setRelations() {
     likedBy.addAll(Arrays.asList("Chris", "Robin", "Kyle"));
@@ -182,7 +183,7 @@ public class PostTest {
     Assert.assertEquals(post1.toString(), "Post{id='" + post.getId() + "', uid=" + documentReference + ", userName='hyro', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', postDatetime=" + date + ", postDescription='Station', locationName='Sydney', latitude=-33.865, longitude=151.209, route=[], geohash='r3gx2g5414', hashtags=[#morning, #evening], likeCount=10, imageUrl='https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400', likedBy=[Chris, Robin, Kyle]}");
 
     Post post2 = new Post(documentReference, "hiro", 0, "https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200",
-            date, "Station", "Sydney", -33.865, 151.209, hashTagList, 10,
+            date, "Station",route, "Sydney", -33.865, 151.209, hashTagList, 10,
             "https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400", likedBy);
     Assert.assertEquals(post2.toString(), "Post{id='" + post2.getId() + "', uid=" + documentReference + ", userName='hiro', isPublic=0, profilePicUrl='https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200', postDatetime=" + date + ", postDescription='Station', locationName='Sydney', latitude=-33.865, longitude=151.209, route=[], geohash='r3gx2g5414', hashtags=[#morning, #evening], likeCount=10, imageUrl='https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400', likedBy=[Chris, Robin, Kyle]}");
   }

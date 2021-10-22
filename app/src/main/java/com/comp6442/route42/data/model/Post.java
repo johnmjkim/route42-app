@@ -117,12 +117,15 @@ public class Post extends Model implements Parcelable {
   }
 
   public static List<String> getHashTagsFromTextInput(String textInput) {
-    return Arrays.stream(
-            textInput.toLowerCase()
-                    .replaceAll("[^a-zA-Z0-9]", " ")
-                    .split(" ")
-    ).map(s -> "#" + s).collect(Collectors.toList());
-  }
+    List text = new ArrayList();
+    String[] strArr = textInput.split(" |,|\n|\t");
+    for(String split:strArr)
+      text.add(split);
+    for(int i=text.size()-1;i>=0;i--)
+      if (!(text.get(i).toString().contains("#")))
+        text.remove(i);
+      return text;
+    }
 
   @Override
   public int describeContents() {
