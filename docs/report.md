@@ -227,16 +227,23 @@ EXAMPLES
 ## Testing Summary
 
 - Espresso UI Test
-  - [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui) 
-  - *your description for Espresso UI Test*
-	
+  - For UI test was done on the test module [`ui`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui). Following UI functionalities were tested :
+  	- Logging in
+	- Changing the feed page
+	- Creating different types of posts
+	- Canceling posts
+	- Creating scheduled post
+	- Searching with specific hashtag
+	- Clicking like, block, follow button for checking like/unlike, block/unblock, follow/unfollow
+	  
   - Part of methods for UI Tests uses references listed as below:
 	- [MyViewAction](https://stackoverflow.com/questions/28476507/using-espresso-to-click-view-inside-recyclerview-item)
-	  - *your description for MyViewAction*
+	  - Activates an item (e.g. like button, follow button etc) of specific post in recyclerview
 	- [RecyclerViewMatcher](https://github.com/levibostian/RecyclerViewMatcher)
-	  - *your description for MyViewAction*
+	  - Detects status of an item of specific post in recyclerview
+	  - Returns false if no item and input id is matched
 	- [setChecked](https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked)
-	  - *your description for MyViewAction*
+	  - Sets status of an item
 
 
 - Overall Coverage Summary 
