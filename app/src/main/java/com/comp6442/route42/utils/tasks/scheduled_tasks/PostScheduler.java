@@ -8,9 +8,11 @@ import androidx.work.Operation;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import com.comp6442.route42.data.model.Point;
 import com.comp6442.route42.utils.xmlresource.PostXMLCreator;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -26,13 +28,14 @@ public class PostScheduler implements Scheduler {
     private final String uid;
     private final String userName;
     private final int isPublic;
+    private final List<Point> route;
     private final String profilePicUrl;
     private final String postDescription;
     private final String locationName;
     private final Double latitude;
     private final Double longitude;
 
-    public PostScheduler(String snapshotFilePath, String snapshotFilename, String uid, String userName, int isPublic, String profilePicUrl, String postDescription, String locationName, Double latitude, Double longitude) {
+    public PostScheduler(String snapshotFilePath, String snapshotFilename, String uid, String userName, int isPublic, String profilePicUrl, String postDescription, List<Point> route, String locationName, Double latitude, Double longitude) {
         this.snapshotFilePath = snapshotFilePath;
         this.snapshotFilename = snapshotFilename;
         this.uid = uid;
@@ -40,6 +43,7 @@ public class PostScheduler implements Scheduler {
         this.isPublic = isPublic;
         this.profilePicUrl = profilePicUrl;
         this.postDescription = postDescription;
+        this.route = route;
         this.locationName = locationName;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -69,6 +73,10 @@ public class PostScheduler implements Scheduler {
         return locationName;
     }
 
+    public List<Point> getRoute() {
+        return route;
+    }
+
     public Double getLatitude() {
         return latitude;
     }
@@ -79,9 +87,9 @@ public class PostScheduler implements Scheduler {
 
     @Override
     public void schedule(Context context, int scheduledDelay) {
-        //create dom and save as xml file
         try {
             String xmlFilePath = context.getFilesDir().getPath() + "/" + storageFilename;
+            //create dom and save as xml file
             PostXMLCreator.create(this, xmlFilePath);
             WorkRequest workRequest = new OneTimeWorkRequest.Builder(ScheduledTask.class)
                     .setInitialDelay(scheduledDelay, TimeUnit.MINUTES)

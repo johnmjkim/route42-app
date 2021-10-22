@@ -74,7 +74,7 @@ public class Post extends Model implements Parcelable {
   }
 
   public Post(DocumentReference uid, String userName, int isPublic, String profilePicUrl, Date postDatetime,
-              String postDescription, String locationName, Double latitude, Double longitude, List<String> hashtags,
+              String postDescription, List<Point> route, String locationName, Double latitude, Double longitude, List<String> hashtags,
               int likeCount, String imageUrl, List<DocumentReference> likedBy) {
     super();
     this.uid = uid;

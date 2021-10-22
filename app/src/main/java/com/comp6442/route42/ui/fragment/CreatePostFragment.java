@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.model.Activity;
+import com.comp6442.route42.data.model.Point;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.model.User;
 import com.comp6442.route42.data.repository.FirebaseStorageRepository;
@@ -28,12 +29,14 @@ import com.comp6442.route42.data.repository.UserRepository;
 import com.comp6442.route42.ui.viewmodel.ActiveMapViewModel;
 import com.comp6442.route42.ui.viewmodel.LiveUserViewModel;
 import com.comp6442.route42.utils.tasks.scheduled_tasks.PostScheduler;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CreatePostFragment extends Fragment {
 
@@ -144,6 +147,11 @@ public class CreatePostFragment extends Fragment {
     String postDescription = postDescriptionInput.getText().toString().trim();
     Double latitude = activeMapViewModel.getDeviceLocation().getValue().getLatitude();
     Double longitude = activeMapViewModel.getDeviceLocation().getValue().getLongitude();
+    List<LatLng> pastLocations = activeMapViewModel.getPastLocations();
+    List<Point> route = new ArrayList<>(pastLocations.size());
+    pastLocations.forEach(loc-> {
+      route.add(Point.fromLatLng(loc));
+    });
     assert getArguments() != null;
     String snapshotPath = getContext().getFilesDir().getPath() + "/" + getArguments().getString("local_filename");
     if (scheduleSwitchButton.isChecked()) {
@@ -153,6 +161,7 @@ public class CreatePostFragment extends Fragment {
               liveUser.getIsPublic(),
               liveUser.getProfilePicUrl(),
               postDescription,
+              route,
               "",
               latitude,
               longitude
@@ -165,6 +174,7 @@ public class CreatePostFragment extends Fragment {
               liveUser.getProfilePicUrl(),
               new Date(),
               postDescription,
+              route,
               "",
               latitude,
               longitude,

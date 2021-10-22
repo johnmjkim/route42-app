@@ -94,4 +94,7 @@ public class Point implements Parcelable {
   public static Point fromLocation(Location location) {
     return new Point(location.getLatitude(), location.getLongitude());
   }
+  public static Point fromLatLng(LatLng location) {
+    return new Point(location.latitude, location.longitude);
+  }
 }

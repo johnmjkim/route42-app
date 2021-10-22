@@ -2,6 +2,7 @@ package com.comp6442.route42.utils.xmlresource;
 
 import static com.comp6442.route42.data.model.Post.getHashTagsFromTextInput;
 
+import com.comp6442.route42.data.model.Point;
 import com.comp6442.route42.data.model.Post;
 import com.comp6442.route42.data.repository.UserRepository;
 import com.google.firebase.firestore.DocumentReference;
@@ -15,6 +16,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
@@ -30,6 +33,9 @@ public class PostXMLParser {
     private class PostParserHandler extends DefaultHandler {
         private Post post;
         private final Stack<String> elementStack = new Stack<String>();
+        private List<Point> route = new ArrayList<>();
+        private double longitude;
+        private double latitude;
         private StringBuilder elementContents = new StringBuilder();
         @Override
         public void startDocument() {
@@ -55,7 +61,14 @@ public class PostXMLParser {
             String value = elementContents.toString();
             if(value.length() == 0) return;
             switch (currentElement().toLowerCase()) {
-
+                case "route_point_latitude":
+                    latitude = Double.parseDouble(value);
+                case "route_point_longitude":
+                    longitude = Double.parseDouble(value);
+                case "route_point":
+                    route.add(new Point(longitude, latitude));
+                case "route":
+                    post.setRoute(route);
                 case "uid":
                     DocumentReference userRef = UserRepository.getInstance().getOne(value);
                     post.setUid(userRef);

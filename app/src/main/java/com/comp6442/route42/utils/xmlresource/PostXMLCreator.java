@@ -40,6 +40,13 @@ public class PostXMLCreator {
             rootEl.appendChild(createTextElement(postDoc, "postDescription", post.getPostDescription()));
             rootEl.appendChild(createTextElement(postDoc, "userName", post.getUserName()));
             rootEl.appendChild(createTextElement(postDoc, "isPublic", String.valueOf(post.getIsPublic())));
+            Element routeEl = postDoc.createElement("route");
+            rootEl.appendChild(routeEl);
+            if(!post.getRoute().isEmpty()) {
+                post.getRoute().forEach(point -> {
+                    rou
+                });
+            }
             rootEl.appendChild(createTextElement(postDoc, "locationName", post.getLocationName()));
             rootEl.appendChild(createTextElement(postDoc, "Latitude", String.valueOf(post.getLatitude())));
             rootEl.appendChild(createTextElement(postDoc, "Longitude", String.valueOf(post.getLongitude())));
