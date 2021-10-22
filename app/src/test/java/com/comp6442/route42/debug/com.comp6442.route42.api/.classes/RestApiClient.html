@@ -1,0 +1,71 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: RestApiClient</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.comp6442.route42.api</a> ]
+</div>
+
+<h1>Coverage Summary for Class: RestApiClient (com.comp6442.route42.api)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">RestApiClient</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.comp6442.route42.api;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.comp6442.route42.data.model.Post;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import retrofit2.Call;
+<i>8</i>&nbsp;import retrofit2.http.Body;
+<i>9</i>&nbsp;import retrofit2.http.GET;
+<i>10</i>&nbsp;import retrofit2.http.POST;
+<i>11</i>&nbsp;import retrofit2.http.Path;
+<i>12</i>&nbsp;import retrofit2.http.Query;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;public interface RestApiClient {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;  @GET(&quot;post/{id}&quot;)
+<i>17</i>&nbsp;  Call&lt;Post&gt; getPost(@Path(&quot;id&quot;) String postId);
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;  @POST(&quot;search/&quot;)
+<i>20</i>&nbsp;  Call&lt;List&lt;Post&gt;&gt; search(@Body QueryString query);
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;  @GET(&quot;search/knn&quot;)
+<i>23</i>&nbsp;  Call&lt;List&lt;Post&gt;&gt; getKNearestNeighbors(@Query(&quot;k&quot;) int k, @Query(&quot;lat&quot;) Double lat, @Query(&quot;lon&quot;) Double lon);
+<i>24</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-10-22 13:46</div>
+</div>
+</body>
+</html>
