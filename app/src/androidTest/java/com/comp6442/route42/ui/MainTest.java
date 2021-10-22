@@ -121,10 +121,10 @@ public class MainTest {
         //make delay to get data
         Thread.sleep(500);
         onView(withId(R.id.activity_button)).perform(click());
-        Thread.sleep(10000);//make delay to get data from map
+        Thread.sleep(3000);//make delay to get data from map
         onView(withId(R.id.activity_button)).perform(click());
         onView(withText("End Activity")).perform(click());
-        Thread.sleep(500);//make delay to get data
+        Thread.sleep(2000);//make delay to get data
         onView(withId(R.id.post_description_input)).perform(typeText("CancelTest"), closeSoftKeyboard());
         onView(withId(R.id.cancel_post_button)).perform(click());
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(isDisplayed()));
@@ -143,13 +143,13 @@ public class MainTest {
         Thread.sleep(10000);//make delay to get data from map
         onView(withId(R.id.activity_button)).perform(click());
         onView(withText("End Activity")).perform(click());
-        Thread.sleep(500);//make delay to get data
+        Thread.sleep(5000);//make delay to get data
         onView(withId(R.id.post_description_input)).perform(typeText("#delayTest"), closeSoftKeyboard());
         onView(withId(R.id.create_post_schedule_switch)).perform(click());
         onView(withText("Select Delay (Minutes)")).check(matches(isDisplayed()));
         onView(withText("1")).perform(click());
         onView(withId(R.id.create_post_button)).perform(click());
-        Thread.sleep(60000);//make delay one minute
+        Thread.sleep(65000);//make delay one minute
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.navigation_profile)).perform(click()).check(matches(withId(R.id.navigation_profile)));
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("delayTest")))));
@@ -213,7 +213,7 @@ public class MainTest {
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));//check dialog is on
         onView(withText(activityType)).perform(click());//choose activity type
-        Thread.sleep(4000);//make delay to get data from active_map_fragment
+        Thread.sleep(2000);//make delay to get data from active_map_fragment
         onView(withId(R.id.activity_button)).perform(click());
         Thread.sleep(4000); //make delay to start duration
         //--------------------------Active_map_fragment------------------------------------------------
