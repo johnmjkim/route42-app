@@ -6,22 +6,12 @@ declaration: >-
   I declare that everything I have submitted in this assignment is entirely our
   own work, with the following exceptions:
 
-
 # add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external code)
 code:
-  - comment:
-    url:
-    licence:
-
-
-# add as many "url+licence+comment" entries as necessary
-# (or remove it altogether if you haven't used any external assets)
-assets:
-  # NOTE: "Bliss" is just here as an example, you should remove it
-  - comment: "_Bliss_ by Charles O'Rear"
-    url: https://en.wikipedia.org/wiki/Bliss_(image)
-    licence: fair use
+  - comment: We build our KDTree based on the code found in this page.
+    url: https://rosettacode.org/wiki/K-d_tree#Java
+    licence: GNU Free Documentation License 1.2
 
 # for each member, write your name and uid here
 # remove any empty "name+uid" entries

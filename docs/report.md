@@ -301,19 +301,32 @@ implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
 implementation 'androidx.multidex:multidex:2.0.1'
 implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 implementation "androidx.work:work-runtime:2.7.0"
+
+// ------ utils ------
 implementation 'com.google.code.gson:gson:2.8.8'
 implementation 'com.google.android.material:material:1.4.0'
-
-// logging
 implementation 'com.jakewharton.timber:timber:5.0.1'
 
-// ----------- Navigation Component ------------
+// ------ Navigation Component ------
 def nav_version = "2.3.5"
 androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 implementation "androidx.navigation:navigation-compose:2.4.0-alpha08"
 implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
 implementation "androidx.navigation:navigation-fragment:$nav_version"
 implementation "androidx.navigation:navigation-ui:$nav_version"
+
+// ----------- Glide ----------------
+implementation 'com.github.bumptech.glide:glide:4.12.0'
+annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+// ----------- Google Maps ----------
+implementation 'com.google.android.gms:play-services-location:18.0.0'
+implementation 'com.google.android.gms:play-services-maps:17.0.1'
+
+// ----------- REST API ------------
+implementation 'com.squareup.retrofit2:retrofit:2.8.0'
+implementation 'com.squareup.retrofit2:converter-gson:2.8.0'
+implementation 'com.squareup.okhttp3:logging-interceptor:3.12.7'
 
 // ----------- Firebase ------------
 implementation platform('com.google.firebase:firebase-bom:28.4.0')
@@ -324,19 +337,6 @@ implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
 implementation 'com.google.firebase:firebase-storage'
 implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
 implementation 'com.firebase:geofire-android-common:3.1.0'
-
-// ----------- Glide ------------
-implementation 'com.github.bumptech.glide:glide:4.12.0'
-annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
-
-// ----------- Google Maps ------------
-implementation 'com.google.android.gms:play-services-location:18.0.0'
-implementation 'com.google.android.gms:play-services-maps:17.0.1'
-
-// ----------- REST API ------------
-implementation 'com.squareup.retrofit2:retrofit:2.8.0'
-implementation 'com.squareup.retrofit2:converter-gson:2.8.0'
-implementation 'com.squareup.okhttp3:logging-interceptor:3.12.7'
 
 // ----------- Tests ---------------
 testImplementation 'junit:junit:4.+'
