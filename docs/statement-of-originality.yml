@@ -7,13 +7,6 @@ declaration: >-
   own work, with the following exceptions:
 
 
-# add as many "name+comment" entries as necessary
-# (or remove it altogether if you haven't collaborated with anyone outside your group)
-collaboration:
-  - name:
-    comment: >-
-
-
 # add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external code)
 code:
@@ -33,11 +26,11 @@ assets:
 # for each member, write your name and uid here
 # remove any empty "name+uid" entries
 members:
-  - name:
-    uid:
-  - name:
-    uid:
-  - name:
-    uid:
-  - name:
-    uid:
+  - name: Kai Hirota
+    uid: u7233149
+  - name: John (Min Jae) Kim
+    uid: u7269158
+  - name: Honggic Oh
+    uid: u7234659
+  - name: Theo Darmawan
+    uid: u7199021
