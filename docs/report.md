@@ -33,7 +33,7 @@
   
 - Task assignments: Trello Kanban board
 
-  <img src="report.assets/trello2.png" alt="trello2" style="zoom:50%;" />
+  <img src="Report.assets/trello2.png" alt="trello2" style="zoom:50%;" />
 
 ## Application Description
 
