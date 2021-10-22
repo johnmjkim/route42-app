@@ -30,8 +30,6 @@ public class LogInTest {
         onView(withId(R.id.login_form_email)).perform(typeText("foo@bar.com"), closeSoftKeyboard());
         onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
         onView(withId(R.id.login_button)).perform(click());
-        onView(withId(R.id.sign_out_button)).perform(click());
-        onView(withId(R.id.login_button)); // check exists
     }
 
     @Test
