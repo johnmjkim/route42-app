@@ -260,15 +260,17 @@ EXAMPLES
   - Others 
 	- Codes that are not for logical parts are as below
 	  
-	  - All classes and submodules in [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui) module
+	  - All classes and submodules in [`ui`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui) module
 		- All UI classes can be covered by Espresso UI Tests
 		  
-	  - All classes [Data Repository](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/repository) module and [`FirebaseAuthLiveData`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/FirebaseAuthLiveData.java)
+	  - All classes [`data/repository`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/repository) module and [`FirebaseAuthLiveData`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/FirebaseAuthLiveData.java)
 		- All data repository can only be tested with mocking firebase.
 		- Firebase/Firestore cannot be mocked for unit tests.
 		  
-	  - All classes [Utilities](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils) module except [`Crypto`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/Crypto.java)
-		- They are built-in classes
+	  - All classes in submodules in [`utils`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils) module except [`Crypto`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/Crypto.java)
+		- [`CustomLogger`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/CustomerLogger.java) and [`MyGlideModule`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/MyGlideModule.java) directly and solely uses built-in classes, which are no needed to be tested
+	    - [`MockLocation`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/MockLocation.java) requires to retrieve live location data
+	    - Submodules [`tasks`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/tasks) and [`xmlresource`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/xmlresource) requires to mock Firebase/Firestore or repository
 
 ## Implemented Features
 
