@@ -53,11 +53,14 @@ Route42 is a social networking app for athletes of various levels. With Route42,
 1. Athletic Activity Tracking and Sharing
 	1. Michael runs at ANU running club, and wants to record and share his daily runs.
 	2. Once ready, he starts the `run` activity on the app
+	<img src="Report.assets/add_activity.jpg" alt="Add activity" style="zoom:67%;" />
 	3. The app tracks Michael's location and route, and display it on a map. Performance metrics are displayed in real time.
 	4. After finishing his run, Michael ends the `run` activity on the app.
 	5. The app will display a post template for sharing the completed activity.
+	<img src="Report.assets/toggle_schedule.jpg" alt="Add activity" style="zoom:67%;" />
 	6. Michael may write a description and add hashtags like `#ANUrunning` before sharing it. The app will extract the hashtags and tag the post for you.
 	7. The created post can immediately be viewed by other users on their feeds. 
+	<img src="Report.assets/post_created.jpg" alt="Add activity" style="zoom:67%;" />
 	8. Michael can also select his past posts or posts created by others and see an interactive map of the route associated with the post.
 2. Social networking and searching
 	1. Emily is an avid runner who recently started competing in marathons. Emily wants to connect with other aspiring athletes.
@@ -77,19 +80,19 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 
 ### Architecture
 
-<img src="report.assets/Architecture.png" alt="Architecture" style="zoom:67%;" />
+<img src="Report.assets/Architecture.png" alt="Architecture" style="zoom:67%;" />
 
 [Link](https://app.creately.com/diagram/K2ScahytOcK)
 
 ### Mobile App
 
-<img src="report.assets/Route42%20UML.png" alt="Route42 UML" style="zoom:80%;" />
+<img src="Report.assets/Route42%20UML.png" alt="Route42 UML" style="zoom:80%;" />
 
 [Link](https://lucid.app/lucidchart/d393dc76-9233-4176-90cd-def360405cbf/edit?invitationId=inv_ca06d23e-a397-4482-a2fc-3623c77f8ec2)
 
 ### REST API
 
-<img src="report.assets/Route42%20REST%20API%20UML.png" alt="Route42 REST API UML" style="zoom:80%;" />
+<img src="Report.assets/Route42%20REST%20API%20UML.png" alt="Route42 REST API UML" style="zoom:80%;" />
 
 [Link](https://lucid.app/lucidchart/7f02648c-8f14-4af9-95ab-6c9379064044/edit?invitationId=inv_8e28283d-2136-4e55-8941-7e763d5021cf)
 
