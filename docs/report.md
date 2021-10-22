@@ -295,13 +295,14 @@ User Interactivity
    followed users. [stored in-memory] (medium)
 5. Scheduled actions. At least two different types of actions must be schedulable. For example, a
    user can schedule a post, a like, a follow, a comment, etc. (medium)
+   1. Like: long-press thumb-up button
 
 User Privacy
 
 1. Privacy II: A user can only see a profile that is Public (consider that there are at least two
    types of profiles: public and private). (easy)
 
-Peer to Peer Messaging
+Peer-to-Peer Messaging
 
 1. Privacy I: provide users with the ability to ‘block’ users. Preventing them from directly
    messaging them. (medium)
@@ -315,6 +316,8 @@ Firebase Integration
    as the remote database is updated without restarting the application. E.g. User A makes a post,
    user B on a separate instance of the application sees user A’s post appear on their timeline
    without restarting their application. (very hard)
+
+---
 
 # Appendix
 
