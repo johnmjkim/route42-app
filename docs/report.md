@@ -84,19 +84,19 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 
 ### Architecture
 
-<img src="report.assets/Architecture.png" alt="Architecture" style="zoom:67%;" />
+<img src="Report.assets/Architecture.png" alt="Architecture" style="zoom:67%;" />
 
 [Link](https://app.creately.com/diagram/K2ScahytOcK)
 
 ### Mobile App
 
-<img src="report.assets/Route42%20UML.png" alt="Route42 UML" style="zoom:80%;" />
+<img src="Report.assets/Route42%20UML.png" alt="Route42 UML" style="zoom:80%;" />
 
 [Link](https://lucid.app/lucidchart/d393dc76-9233-4176-90cd-def360405cbf/edit?invitationId=inv_ca06d23e-a397-4482-a2fc-3623c77f8ec2)
 
 ### REST API
 
-<img src="report.assets/Route42%20REST%20API%20UML.png" alt="Route42 REST API UML" style="zoom:80%;" />
+<img src="Report.assets/Route42%20REST%20API%20UML.png" alt="Route42 REST API UML" style="zoom:80%;" />
 
 [Link](https://lucid.app/lucidchart/7f02648c-8f14-4af9-95ab-6c9379064044/edit?invitationId=inv_8e28283d-2136-4e55-8941-7e763d5021cf)
 
