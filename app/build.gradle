@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
     id 'androidx.navigation.safeargs'
+    id 'jacoco'
 }
 
 android {
@@ -17,19 +18,26 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("boolean", "EMULATOR", "false")
         buildConfigField("boolean", "loadData", "false")
-        buildConfigField("boolean", "skipLogin", "true")
+        buildConfigField("boolean", "skipLogin", "false")
         buildConfigField("String", "testUserEmail", "\"foo@bar.com\"")
         buildConfigField("String", "testUserPassword", "\"password\"")
-        buildConfigField("int", "FIRESTORE_BATCH_SIZE", "500")
+
+        // firestore
+        buildConfigField("String", "EMULATOR_ADDRESS", "\"10.0.2.2\"")
+        buildConfigField("int", "FIREBASE_FIRESTORE_PORT", "8090")
+        buildConfigField("int", "FIREBASE_STORAGE_PORT", "9199")
 
         // for demo
         buildConfigField("boolean", "DEMO", "false")
         buildConfigField("int", "batchSize", "1")
-        buildConfigField("int", "intervalLengthInSeconds", "4")
-        buildConfigField("int", "demoPostLimit", "500") // also controls how many posts are inserted when loadData is true
+        buildConfigField("int", "intervalLengthInSeconds", "5")
+        buildConfigField("int", "demoPostLimit", "100") // how many posts to create in demo mode
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -42,35 +50,40 @@ android {
     buildFeatures {
         viewBinding true
     }
-
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.2.0'
     implementation 'androidx.activity:activity:1.2.0'
-    implementation 'androidx.fragment:fragment:1.3.0'
+    implementation 'androidx.annotation:annotation:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.fragment:fragment:1.3.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.guava:guava:30.1.1-android'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.google.code.gson:gson:2.8.8'
-    implementation "com.xwray:groupie:2.9.0"
     implementation 'com.google.android.gms:play-services-location:18.0.0'
-//    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
 
     // UI
     implementation 'com.google.android.material:material:1.4.0'
-
+    //Worker thread support
+    def work_version = "2.7.0"
+    implementation "androidx.work:work-runtime:$work_version"
     // ----------- Navigation Component ------------
     def nav_version = "2.3.5"
+
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
@@ -122,8 +135,32 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
     testImplementation 'junit:junit:4.+'
-
+    testImplementation 'org.mockito:mockito-core:3.9.0'
     implementation "androidx.profileinstaller:profileinstaller:1.1.0-alpha04"
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = ['com/comp6442/route42/ui/fragment/*',
+                      'com/comp6442/route42/ui/activity/*']
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: fileFilter)
+        }))
+    }
+}
+
+android {
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 configurations.all {
