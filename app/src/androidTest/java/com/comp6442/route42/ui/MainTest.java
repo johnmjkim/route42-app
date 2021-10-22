@@ -14,6 +14,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.core.StringContains.containsString;
+import android.Manifest;
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.Checkable;
@@ -24,6 +25,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.rule.GrantPermissionRule;
 import com.comp6442.route42.R;
 import com.comp6442.route42.data.FirebaseAuthLiveData;
 import com.comp6442.route42.ui.activity.MainActivity;
@@ -43,6 +45,9 @@ import org.junit.runner.RunWith;
 public class MainTest {
     @Rule
     public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
+
+    @Rule
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION);
     private FirebaseAuth mAuth;
 
     @Before
@@ -109,6 +114,7 @@ public class MainTest {
 
     @Test
     public void cancelPost() throws InterruptedException {//cancel making post and check the post is exist
+        Thread.sleep(500);
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));
         onView(withText("CYCLING")).perform(click());
@@ -128,6 +134,7 @@ public class MainTest {
 
     @Test
     public void schedulePost() throws InterruptedException {//make scheduled post(1min delay) and check the post after 1 min
+        Thread.sleep(500);
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));
         onView(withText("CYCLING")).perform(click());
@@ -150,6 +157,7 @@ public class MainTest {
 
     @Test
     public void pushLikeUnlike() throws InterruptedException {//check like,unlike buttons are active
+        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.like_button)));
         Thread.sleep(500);
@@ -158,6 +166,7 @@ public class MainTest {
 
     @Test
     public void blockUnBlockCheck() throws InterruptedException {//check block,unblock buttons are active
+        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check blocked
@@ -167,6 +176,7 @@ public class MainTest {
 
     @Test
     public void followUnfollowCheck() throws InterruptedException {//check follow,unfollow buttons are active
+        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_follow_switch)).perform(click(), setChecked(true)).check(matches(isChecked()));//check followed
@@ -177,6 +187,7 @@ public class MainTest {
 
     @Test
     public void followBlockCheck() throws InterruptedException {//check follow user is translated to unfollow whey blocked
+        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_follow_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check followed
@@ -198,7 +209,7 @@ public class MainTest {
 
     public void createPost(String keyword, String activityType) throws InterruptedException {
         //--------------------------Start to make post-------------------------------------------------
-
+        Thread.sleep(500);
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));//check dialog is on
         onView(withText(activityType)).perform(click());//choose activity type
@@ -300,7 +311,7 @@ public class MainTest {
             };
         }
     }
-    public static ViewAction setChecked(final boolean checked) {//reference3
+    public static ViewAction setChecked(final boolean checked) {//reference3 https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked
         return new ViewAction() {
             @Override
             public BaseMatcher<View> getConstraints() {
