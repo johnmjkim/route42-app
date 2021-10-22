@@ -158,52 +158,57 @@ If the user needs to pause the workout, they can manually do so. Otherwise, navi
 
 ### **Grammars**
 
-*Production Rules* <br>
-\<Term> ::=  \<Factor> | \<Term> + \<Term> | \<Term> + \<Connector>
-<br>
-\<Factor> ::= \<Keyword> | \<bracket>
-<br>
-\<Connector> ::= \<and> | \<or>
-<br>
+- `<Term>      ::=    <Expr> | <Term> + <Term> | <Term> + <Operator>`
+- `<Expr>      ::= <Keyword> | <bracket>`
+- `<Operator>  ::=     <and> | <or>`
 
-*[How do you design the grammar? What are the advantages of your designs?]*<br>
+Advantage
 
-- Our grammar is simple and obvious. Dividing input data into factors and connectors to understand it easily.<br>
-- This is using for search data so mostly input data is keyword and need to classify it to bracket and connectors <br>
+- Parser Tree is a binary tree as opposed to being a n-ary tree, making it easier to construct the Parser Tree.
 
-*If there are several grammars, list them all under this section and what they relate to.*
+Disadvantage
+
+- When multiple AND / OR operations are used in the query (i.e. `"hashtag: #running AND hashtag: #jogging"`), Parser Tree does not make optimizations. While Firestore supports `.arrayContains()` operation, our Parser Tree represent each `AND/OR` as a single node. In other words, `"hashtag: #running AND hashtag: #jogging"` could be represented as a single node in an n-ary tree, but 
 
 ### **Tokenizer and Parsers**
 
-*[Where do you use tokenisers and parsers? How are they built? What are the advantages of the designs?]*
-
-Every token either contains an operator and two expressions, or a key and value.<br>Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. <br>Example 1 below is an example of a token that has the key `hashtags` and value `["test"]`. <br>For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
+- Every token either contains an operator and two expressions, or a key and value.
+- Tokens are extracted by prioritizing parenthesis, and then extracting from left to right. 
+- For example, if a query consists of 10 hashtags chained by OR, then the resulting `QuerySyntaxTree` will be equivalent to a linked list, where each node only has a right child.
 
 ```
 EXAMPLES
-1. "test" -> {hashtags: ["test"]}
+1. "test test2" -> {hashtags: ["test", "test2"]} -> 
+Node(
+	Node(null, "hashtags:test", null), 
+	OR, 
+	Node(null, "hashtags:test2", null)
+)
 
-2. "username: xxx hashtags: #hashtag #android #app" ->
+2. "username: xxx AND hashtags: #hashtag1 #android #app" ->
 {OR: [
     {userName: "xxx"}, 
-    {hashtags: ["#hashtag", "#android", "#app"]}
+    {hashtags: ["#hashtag1", "#android", "#app"]}
   ]
 }
-
-3. "(username: xxxx or hashtags: #hashtag #android #app) and username: yyy" ->
- {AND: [
-     {OR: [
-         {userName: "xxx"}, 
-         {hashtags: ["#hashtag", "#android", "#app"]}
-     ]},
-     {userName: "yyy"}
- ]}
-
+Node(
+	Node(null, "username:xxx", null), 
+	AND, 
+	Node(
+		Node(
+			null, 
+			"hashtags: #hashtag1", 
+			null
+		), 
+		OR, ,
+		Node(
+			Node(null, "hashtags: #android", null), 
+			OR, 
+			Node(null, "hashtags: #app", null)
+		)
+	)
+)
 ```
-
-### **Other**
-
-*[What other design decisions have you made which you feel are relevant? Feel free to separate these into their own subheadings.]*
 
 ## Summary of Known Errors and Bugs
 
@@ -222,30 +227,6 @@ EXAMPLES
 *List all the known errors and bugs here. If we find bugs/errors that your team do not know of, it shows that your testing is not through.*
 
 ## Testing Summary
-
-- Number of test cases: 13
-	- UI Tests : 15
-	- Unit Tests : ??(update later)
-
-- Types of tests created: ...
-
-| UI/Unit Tests  |  Class Name  | Test Description | Code Coverage | Numbers of Tests |
-|      :---:     |    :----:   |      :---      |     :----:     |     :----:     |
-| UI             |  LoginTest  | <ul><li>Check login with correct and wrong id and password</li></ul> | N/A           | 2 |
-| UI             |  MainTest   | <ul><li>Switch the page throughout navigation bar</li><li>create posts and check the post is properly made</li><li>cancel making a post</li><li>making a schduled post</li><li>like and unlike the post</li><li> block and unblock user</li><li>follow and unfollow user</li><li>block following user</li><li>follow blocked user</li></ul> | N/A           | #of tests |
-| Unit           |  KNearestNeighbourServiceTest  | <ul><li>Test call method of rest-api service post</li><li>Test printing Strings</li></ul> | 70%           | 2 |
-| Unit           |  QueryStringTest  | <ul><li>Test query is properly made</li></ul> | 100%           | 2 |
-| Unit           |  SearchServiceTest  | <ul><li>Test search input data is properly made to the query</li><li>Calling query</li></ul> | 100%           | 1 |
-| Unit           |  CryptoTest  | <ul><li>Check Encryption</li></ul> | 100%           | 3 |
-| Unit           |  UserListAdapterTest  | <ul><li>?</li></ul> | ?           | ? |
-| Unit           |  BaseActivityTest  | <ul><li>Check factors</li></ul> | 100%           | 1 |
-| Unit           |  PointTest  | <ul><li>Check latitude and longitude</li></ul> | 75%           | 4 |
-| Unit           |  UserTest  | <ul><li>Check factors</li></ul> | 92%           | 7 |
-| Unit           |  SchedulableTest  | <ul><li>?</li></ul> | ?           | ? |
-| Unit           |  UserViewModelTest  | <ul><li>Tests method of getUser and setUser</li> | 75%           | 2 |
-| Unit           |  PostTest  | <ul><li>Check factors</li><li>Check extracting hashtags from input text</li></ul> | 86%           | 17 |
-| Unit           |  ActiveMapViewModelTest  | <ul><li>Check activity data and types</li><li>Check elapsed time</li><li>Check last update time</li><li>Check reset function</li><li>Check pastlocation</li><li>Check snapshot file name</li></ul> | 73%           | 7 |
-
 
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
 
