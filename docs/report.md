@@ -253,17 +253,7 @@ Node(
 
 ## Summary of Known Errors and Bugs
 
-*[Where are the known errors and bugs? What consequences might they lead to?]*
-
-1. Search functionality can handle partially valid and invalid search queries. (medium)
-
-1. *Bug 1:*
-
-- *A space bar (' ') in the sign in email will crash the application.*
-- ...
-
-2. *Bug 2:*
-3. ...
+1. Base assumption of the app is that location data permission will be given, as a lot of core features depend on location data. As such, we did not place too much consideration on the case where the user declines location permission.
 
 *List all the known errors and bugs here. If we find bugs/errors that your team do not know of, it
 shows that your testing is not through.*
