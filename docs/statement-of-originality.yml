@@ -33,10 +33,10 @@ assets:
 # for each member, write your name and uid here
 # remove any empty "name+uid" entries
 members:
-  - name: theodore darmawan
-    uid: u7199021
-  - name: John (Min Jae), Kin
-    uid: u7269158
+  - name:
+    uid:
+  - name:
+    uid:
   - name:
     uid:
   - name:
