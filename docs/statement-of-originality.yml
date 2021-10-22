@@ -12,6 +12,19 @@ code:
   - comment: We build our KDTree based on the code found in this page.
     url: https://rosettacode.org/wiki/K-d_tree#Java
     licence: GNU Free Documentation License 1.2
+  
+  - comment: MyViewAction (activates an item (e.g. like button, follow button etc) of specific post in recyclerview.)
+    url: https://stackoverflow.com/questions/28476507/using-espresso-to-click-view-inside-recyclerview-item
+    licence: public
+
+  - comment: recyclerViewMatcher (detects pecific items in recyclerview.)
+    url: https://github.com/levibostian/RecyclerViewMatcher
+    licence: public
+
+  - comment: setchecked method (sets status of an item)
+    url: https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked
+    licence: public
+
 
 # for each member, write your name and uid here
 # remove any empty "name+uid" entries
