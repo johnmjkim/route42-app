@@ -226,17 +226,38 @@ EXAMPLES
 
 ## Testing Summary
 
+- Espresso UI Test
+  - written by Paul
+
+- Overall Coverage Summary 
+  - Unit Test cases : 15
+
+All unit tests for logical parts (models/objects) are covered with coverage exceeding 70% of all codes related to logical parts (models/objects).
+
+Codes related to logical parts (models/objects) and their coverages are all shown below.
+
 <img src="Report.assets/coverage_overall.jpeg" alt="coverage_overall" style="zoom:100%;" />
+
+- Data Model Coverage Summary
 
 <img src="Report.assets/coverage_datamodel.jpeg" alt="coverage_datamodel" style="zoom:100%;" />
 
+- Api Coverage Summary
+
 <img src="Report.assets/coverage_api.jpeg" alt="coverage_api" style="zoom:100%;" />
+
+- Utils Coverage Summary
 
 <img src="Report.assets/coverage_utils.jpeg" alt="coverage_utils" style="zoom:100%;" />
 
-- UI Test cases : 15
-	
-*Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
+- Others
+  
+Codes that are not for logical parts are as below
+
+  - UI
+  - data repository
+  - utils tasks, xmlresource
+  - built-in classes CustomLogger, MockLocation, MyGlideModule
 
 ## Implemented Features
 
