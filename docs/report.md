@@ -263,11 +263,11 @@ EXAMPLES
 	  - All classes and submodules in [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui) module
 		- All UI classes can be covered by Espresso UI Tests
 		  
-	  - All classes [Data Repository](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/repository) module and [Firebase Authentication Live Data](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/FirebaseAuthLiveData.java)
+	  - All classes [Data Repository](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/repository) module and [`FirebaseAuthLiveData`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/FirebaseAuthLiveData.java)
 		- All data repository can only be tested with mocking firebase.
 		- Firebase/Firestore cannot be mocked for unit tests.
 		  
-	  - All classes [Utilities](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils) module except [Crypto.java](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/Crypto.java)
+	  - All classes [Utilities](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils) module except [`Crypto`](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/Crypto.java)
 		- They are built-in classes
 
 ## Implemented Features
