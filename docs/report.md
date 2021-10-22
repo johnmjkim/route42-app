@@ -17,7 +17,7 @@
 ### Team Members and Roles
 
 | UID | Name | Role |
-| :--- | :----: | ---: |
+| :--- | :----: | :---: |
 | u7233149 | Kai Hirota | Full-Stack |
 | u7269158 | John (Min Jae) Kim | Data Structure, Feature Testing |
 | u7234659 | Honggic Oh | Search, Feature Testing |
@@ -238,6 +238,7 @@ EXAMPLES
 	- [setChecked](https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked)
 	  - *your description for MyViewAction*
 
+
 - Overall Coverage Summary 
   - Unit Test cases : 15
   - All unit tests for logic parts (models/objects) are covered with coverage exceeding 70% of all codes related to logical parts (models/objects). Models/objects codes and their coverages are all shown below.
@@ -258,11 +259,14 @@ EXAMPLES
 
   - Others 
 	- Codes that are not for logical parts are as below
+	  
 	  - All classes and submodules in [UI](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/ui) module
 		- All UI classes can be covered by Espresso UI Tests
+		  
 	  - All classes [Data Repository](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/repository) module and [Firebase Authentication Live Data](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/data/FirebaseAuthLiveData.java)
 		- All data repository can only be tested with mocking firebase.
 		- Firebase/Firestore cannot be mocked for unit tests.
+		  
 	  - All classes [Utilities](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils) module except [Crypto.java](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/tree/dev/app/src/test/java/com/comp6442/route42/utils/Crypto.java)
 		- They are built-in classes
 
