@@ -254,6 +254,8 @@ EXAMPLES
 	  - utils tasks, xmlresource
 	  - built-in classes CustomLogger, MockLocation, MyGlideModule
 
+[Meeting 1 - 31st August](https://gitlab.cecs.anu.edu.au/u7233149/software-construction-group-project/-/blob/report/docs/meetings/aug31.md)
+
 ## Implemented Features
 
 - Easy: 6
