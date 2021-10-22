@@ -225,10 +225,15 @@ EXAMPLES
 *List all the known errors and bugs here. If we find bugs/errors that your team do not know of, it shows that your testing is not through.*
 
 ## Testing Summary
-![coverage3](/uploads/49d4a10e008575000df6553622a90d85/coverage3.JPG)
-![1](/uploads/55a3ae2ae0f9e6c436d2b90e88ae5487/1.JPG)
-![2](/uploads/2ff38120ebef72d09d73791decb4bd97/2.JPG)
-![3](/uploads/a076f2e2e8ade23fd199ec18e10760a5/3.JPG)
+
+<img src="Report.assets/coverage_overall.jpeg" alt="coverage_overall" style="zoom:100%;" />
+
+<img src="Report.assets/coverage_datamodel.jpeg" alt="coverage_datamodel" style="zoom:100%;" />
+
+<img src="Report.assets/coverage_api.jpeg" alt="coverage_api" style="zoom:100%;" />
+
+<img src="Report.assets/coverage_utils.jpeg" alt="coverage_utils" style="zoom:100%;" />
+
 - UI Test cases : 15
 	
 *Please provide some screenshots of your testing summary, showing the achieved testing coverage. Feel free to provide further details on your tests.*
