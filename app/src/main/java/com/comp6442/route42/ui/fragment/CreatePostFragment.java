@@ -64,7 +64,6 @@ public class CreatePostFragment extends Fragment {
     return inflater.inflate(R.layout.create_post_fragment, container, false);
   }
 
-
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -187,13 +186,10 @@ public class CreatePostFragment extends Fragment {
     activeMapViewModel.reset();
   }
 
-
   private void savePost(Post newPost) {
     String pathToFile = getContext().getFilesDir().getPath() + "/" + getArguments().getString("local_filename");
     String storedFileName = getArguments().getString("storage_filename");
-    FirebaseStorageRepository.getInstance()
-            .uploadSnapshotFromLocal(pathToFile, storedFileName);
+    FirebaseStorageRepository.getInstance().uploadSnapshotFromLocal(pathToFile, storedFileName);
     postRepository.createOne(newPost);
   }
-
 }
