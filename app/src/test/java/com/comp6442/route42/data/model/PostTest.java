@@ -136,18 +136,20 @@ public class PostTest {
 
   @Test
   public void HashtagCheck() {
-    List<String> hashtags = new ArrayList<>();
-    hashtags.add("#test3");
-    Assert.assertEquals(Post.getHashTagsFromTextInput("test1 test2 #test3"), hashtags);
-    hashtags.add("#test5");
-    Assert.assertEquals(Post.getHashTagsFromTextInput("test1 test2 #test3, test4 #test5"), hashtags);
+    String s = "test1 test2 #test3 ##test_4 #test-5 #test.6";
+    List<String> hashtags = Post.getHashTagsFromTextInput(s);
+    Assert.assertEquals(4, hashtags.size());
+    Assert.assertTrue(hashtags.contains("#test3"));
+    Assert.assertTrue(hashtags.contains("#test_4"));
+    Assert.assertTrue(hashtags.contains("#test-5"));
+    Assert.assertTrue(hashtags.contains("#test"));
+    Assert.assertFalse(hashtags.contains("#test.6"));
   }
 
   @Test
   public void checkUrl() {
     Assert.assertEquals("https://images.unsplash.com/photo-1415769663272-8504c6cc02b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODY1MTk&ixlib=rb-1.2.1&q=80&w=200", post.getProfilePicUrl());
     Assert.assertEquals("https://images.unsplash.com/photo-1631515998707-f54897e89a68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3NjR8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2ODIzNTM&ixlib=rb-1.2.1&q=80&w=400", post.getImageUrl());
-
   }
 
   @Test

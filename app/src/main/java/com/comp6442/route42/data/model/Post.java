@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -116,48 +117,15 @@ public class Post extends Model implements Parcelable {
     in.createStringArrayList().forEach(s -> this.likedBy.add(FirebaseFirestore.getInstance().document(s)));
   }
 
+  /**
+   * source: https://stackoverflow.com/questions/49450052/regular-expression-hashtag
+   */
   public static List<String> getHashTagsFromTextInput(String str) {
-
-//    List text = new ArrayList();
-//    String[] strArr = str.split(" |,|\n|\t");
-//    for(String split:strArr)
-//      text.add(split);
-//    for(int i=text.size()-1;i>=0;i--)
-//      if (!(text.get(i).toString().contains("#")))
-//        text.remove(i);
-//    return text;
-    List<String> hashTags = new ArrayList<>();
-
-    String currentTag = "";
-
-    str = str.toLowerCase().trim();
-    for (int i=0; i<str.length(); i++) {
-      char c = str.charAt(i);
-      if(c == '#') {
-        for(int j=i;j<str.length();j++){
-          if(str.charAt(j)==' '||str.charAt(j)==','||str.charAt(j)=='\n'){
-            i=j;
-            break;
-          }
-          currentTag+= str.charAt(j);
-        }
-
-      } else if (currentTag.length()>0 && Pattern.matches("[:space:]" , Character.toString(c))) {
-        hashTags.add(currentTag.trim());
-        currentTag = "";
-      }
-      else if (currentTag.length()>0 && Pattern.matches("\\p{Punct}" , Character.toString(c)) ) {
-        hashTags.add(currentTag.trim());
-        currentTag = "";
-      }
-//      else if (currentTag.length()>0) {
-//        currentTag += c;
-//      }
-    }
-    if (currentTag.length()>0) {
-      hashTags.add(currentTag.trim());
-    }
-    return hashTags;
+    Pattern pattern = Pattern.compile("(#[A-Za-z0-9-_]+)(?:#[A-Za-z0-9-_]+)*\\b");
+    Matcher matcher = pattern.matcher(str);
+    List<String> hashtags = new ArrayList<>();
+    while (matcher.find()) hashtags.add(matcher.group(1));
+    return hashtags;
   }
 
   @Override
