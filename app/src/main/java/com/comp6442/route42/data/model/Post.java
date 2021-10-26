@@ -87,6 +87,7 @@ public class Post extends Model implements Parcelable {
     this.postDatetime = postDatetime;
     this.postDescription = postDescription;
     this.locationName = locationName;
+    this.route = route;
     this.latitude = latitude;
     this.longitude = longitude;
     this.hashtags = hashtags;
