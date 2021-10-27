@@ -60,19 +60,17 @@ public class MainTest {
             onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
             onView(withId(R.id.login_button)).perform(click());
         }
-        Thread.sleep(500);
+        Thread.sleep(5000);
     }
 
     @Test
     public void profileToFeedCheck() throws InterruptedException {//check both side page change between profile and feed
-        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.navigation_profile)).perform(click()).check(matches(withId(R.id.navigation_profile)));
     }
 
     @Test
     public void profileToMapCheck() throws InterruptedException {//check both side page change between profile and map
-        Thread.sleep(500);
         onView(withId(R.id.navigation_map)).perform(click()).check(matches(withId(R.id.navigation_map)));
         onView(withId(R.id.navigation_profile)).perform(click()).check(matches(withId(R.id.navigation_profile)));
         onView(withId(R.id.sign_out_button)).perform(click());
@@ -80,7 +78,6 @@ public class MainTest {
 
     @Test
     public void feedToMapCheck() throws InterruptedException {//check both side page change between feed and map
-        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
         onView(withId(R.id.navigation_map)).perform(click()).check(matches(withId(R.id.navigation_map)));
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
@@ -90,7 +87,6 @@ public class MainTest {
 
     @Test
     public void createCyclingPost() throws InterruptedException {//make cyclingpost and check hashtags
-        Thread.sleep(500);
         createPost("#cycle #bicycle","CYCLING");
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("cycle")))));
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("bicycle")))));
@@ -98,7 +94,6 @@ public class MainTest {
 
     @Test
     public void createRunningPost() throws InterruptedException {//make runningpost and check hashtags
-        Thread.sleep(500);
         createPost("#run #course","RUNNING");
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("run")))));
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("course")))));
@@ -106,7 +101,6 @@ public class MainTest {
 
     @Test
     public void createWalkingPost() throws InterruptedException {////make walkingpost and check hashtags
-        Thread.sleep(500);
         createPost("#walk #join","WALKING");
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("walk")))));
         onView(new RecyclerViewMatcher(R.id.profile_recycler_view).atPosition(0)).check(matches(hasDescendant(withText(containsString("join")))));
@@ -114,7 +108,6 @@ public class MainTest {
 
     @Test
     public void cancelPost() throws InterruptedException {//cancel making post and check the post is exist
-        Thread.sleep(500);
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));
         onView(withText("CYCLING")).perform(click());
@@ -134,7 +127,6 @@ public class MainTest {
 
     @Test
     public void schedulePost() throws InterruptedException {//make scheduled post(1min delay) and check the post after 1 min
-        Thread.sleep(500);
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));
         onView(withText("CYCLING")).perform(click());
@@ -157,8 +149,8 @@ public class MainTest {
 
     @Test
     public void pushLikeUnlike() throws InterruptedException {//check like,unlike buttons are active
-        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        Thread.sleep(1000);
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.like_button)));
         Thread.sleep(500);
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.unlike_button)));
@@ -166,8 +158,8 @@ public class MainTest {
 
     @Test
     public void blockUnBlockCheck() throws InterruptedException {//check block,unblock buttons are active
-        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        Thread.sleep(1000);
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check blocked
         Thread.sleep(500);
@@ -176,8 +168,8 @@ public class MainTest {
 
     @Test
     public void followUnfollowCheck() throws InterruptedException {//check follow,unfollow buttons are active
-        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        Thread.sleep(1000);
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_follow_switch)).perform(click(), setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
@@ -187,8 +179,8 @@ public class MainTest {
 
     @Test
     public void followBlockCheck() throws InterruptedException {//check follow user is translated to unfollow whey blocked
-        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        Thread.sleep(1000);
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_follow_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
@@ -198,8 +190,8 @@ public class MainTest {
 
     @Test
     public void blockFollowCheck() throws InterruptedException {//check cannot follow blocked user
-        Thread.sleep(500);
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
+        Thread.sleep(1000);
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
@@ -209,7 +201,6 @@ public class MainTest {
 
     public void createPost(String keyword, String activityType) throws InterruptedException {
         //--------------------------Start to make post-------------------------------------------------
-        Thread.sleep(500);
         onView(withId(R.id.Btn_Create_Activity)).perform(click());
         onView(withText("Choose Activity Type")).check(matches(isDisplayed()));//check dialog is on
         onView(withText(activityType)).perform(click());//choose activity type
