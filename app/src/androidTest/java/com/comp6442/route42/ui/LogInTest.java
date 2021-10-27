@@ -33,10 +33,11 @@ public class LogInTest {
     }
 
     @Test
-    public void logInFail() {
+    public void logInFail() throws InterruptedException {
         onView(withId(R.id.login_form_email)).perform(typeText("fake@fake.com"), closeSoftKeyboard());
         onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
         onView(withId(R.id.login_button)).perform(click());
+        Thread.sleep(1000);
         onView(withId(R.id.login_form_password)).check(matches(withText("")));
     }
 }
