@@ -60,7 +60,7 @@ public class MainTest {
             onView(withId(R.id.login_form_password)).perform(typeText("password"), closeSoftKeyboard());
             onView(withId(R.id.login_button)).perform(click());
         }
-        Thread.sleep(5000);
+        Thread.sleep(5000);// add delay to make time to load data from server
     }
 
     @Test
@@ -150,7 +150,7 @@ public class MainTest {
     @Test
     public void pushLikeUnlike() throws InterruptedException {//check like,unlike buttons are active
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
-        Thread.sleep(1000);
+        Thread.sleep(1000); //add delay to make time to get posts from server
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.like_button)));
         Thread.sleep(500);
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, MyViewAction.clickChildViewWithId(R.id.unlike_button)));
@@ -159,7 +159,7 @@ public class MainTest {
     @Test
     public void blockUnBlockCheck() throws InterruptedException {//check block,unblock buttons are active
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
-        Thread.sleep(1000);
+        Thread.sleep(1000);//add delay to make time to get posts from server
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check blocked
         Thread.sleep(500);
@@ -169,7 +169,7 @@ public class MainTest {
     @Test
     public void followUnfollowCheck() throws InterruptedException {//check follow,unfollow buttons are active
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
-        Thread.sleep(1000);
+        Thread.sleep(1000);//add delay to make time to get posts from server
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_follow_switch)).perform(click(), setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
@@ -180,7 +180,7 @@ public class MainTest {
     @Test
     public void followBlockCheck() throws InterruptedException {//check follow user is translated to unfollow whey blocked
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
-        Thread.sleep(1000);
+        Thread.sleep(1000);//add delay to make time to get posts from server
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_follow_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
@@ -191,7 +191,7 @@ public class MainTest {
     @Test
     public void blockFollowCheck() throws InterruptedException {//check cannot follow blocked user
         onView(withId(R.id.navigation_feed)).perform(click()).check(matches(withId(R.id.navigation_feed)));
-        Thread.sleep(1000);
+        Thread.sleep(1000);//add delay to make time to get posts from server
         onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(10, MyViewAction.clickChildViewWithId(R.id.card_username)));
         onView(withId(R.id.profile_block_switch)).perform(click(),setChecked(true)).check(matches(isChecked()));//check followed
         Thread.sleep(500);
@@ -222,7 +222,7 @@ public class MainTest {
     }
 
     public static class MyViewAction {//reference1 https://stackoverflow.com/questions/28476507/using-espresso-to-click-view-inside-recyclerview-item
-
+                                        // click specific container's inside item
         public static ViewAction clickChildViewWithId(final int id) {
             return new ViewAction() {
                 @Override
@@ -245,7 +245,7 @@ public class MainTest {
     }
 
     public class RecyclerViewMatcher {//reference2 https://github.com/levibostian/RecyclerViewMatcher
-
+                                        // check specific container's inside item
         private final int recyclerViewId;
 
         public RecyclerViewMatcher(int recyclerViewId) {
@@ -303,6 +303,7 @@ public class MainTest {
         }
     }
     public static ViewAction setChecked(final boolean checked) {//reference3 https://stackoverflow.com/questions/37819278/android-espresso-click-checkbox-if-not-checked
+                                                                //force status to checked or not checked
         return new ViewAction() {
             @Override
             public BaseMatcher<View> getConstraints() {
