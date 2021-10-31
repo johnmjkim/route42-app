@@ -31,7 +31,7 @@ android {
         buildConfigField("boolean", "DEMO", "false")
         buildConfigField("int", "batchSize", "1")
         buildConfigField("int", "intervalLengthInSeconds", "5")
-        buildConfigField("int", "demoPostLimit", "100") // how many posts to create in demo mode
+        buildConfigField("int", "demoPostLimit", "24") // how many posts to create in demo mode
     }
 
     buildTypes {
